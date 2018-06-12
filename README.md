@@ -1,2 +1,3 @@
-# SSBtools
-Statistics Norway's Miscellaneous Tools
+# R package SSBtools
+
+Tools used by other packages from Statistics Norway
