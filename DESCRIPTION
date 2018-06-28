@@ -1,12 +1,13 @@
 Package: SSBtools
 Type: Package
-Title: Statistics Norway's Miscellaneous Small Tools
-Version: 0.2.1
-Date: 2017-02-07
+Title: Statistics Norway's Miscellaneous Tools
+Version: 0.2.6
+Date: 2018-06-28
 Author: Øyvind Langsrud
 Maintainer: Øyvind Langsrud <oyl@ssb.no>
-Depends: R (>= 2.15.0)
-Description: Small functions used by other packages from Statistics Norway are gathered. Both general data manipulation functions and some more special functions for statistical disclosure control are included. One reason for a separate package is possible reuse of the functions within a Renjin environment.
+Depends: R (>= 3.0.0), Matrix
+Imports: stringr
+Description: Functions used by other packages from Statistics Norway are gathered. Both general data manipulation functions and some more special functions for statistical disclosure control are included.
 License: Apache License 2.0 | file LICENSE
 LazyData: TRUE
 RoxygenNote: 6.0.1
