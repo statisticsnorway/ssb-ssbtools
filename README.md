@@ -2,10 +2,17 @@
 
 Tools used by other packages from Statistics Norway
 
+```r
+library(devtools)                           # Load package containing install_github
+install_github("statisticsnorway/SSBtools") # Install SSBtools from GitHub
+library(SSBtools)                           # Load SSBtools
+?HierarchyCompute                           # Help documentation of function HierarchyCompute
+```
+
  Function        |   |
 | ---------------------------- | -------------------------------------------------------------- |
 | AddLeadingZeros | Add leading zeros to numbers while preserving other text |
-| AutoSplit	Creating | variables by splitting the elements of a character vector without needing a split string |
+| AutoSplit	| Creating variables by splitting the elements of a character vector without needing a split string |
 | CbindIdMatch |	Combine several data frames by using id variables to match rows |
 | DummyHierarchy |	Converting hierarchy specifications to a (signed) dummy matrix |
 | FactorLevCorr |	Factor level correlation |
