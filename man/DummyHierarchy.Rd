@@ -48,7 +48,8 @@ DummyHierarchy(h$mapsFrom, h$mapsTo, h$sign, h$level, inputInOutput = TRUE)
 DummyHierarchy(h$mapsFrom, h$mapsTo, h$sign, h$level, keepCodes = c("Portugal", "Spain"))
 
 # Extend the hierarchy table to illustrate the effect of unionComplement
-h2 <- rbind(data.frame(mapsFrom = c("EU", "Schengen"), mapsTo = "EUandSchengen", sign = 1, level = 3), h)
+h2 <- rbind(data.frame(mapsFrom = c("EU", "Schengen"), mapsTo = "EUandSchengen", 
+                       sign = 1, level = 3), h)
 
 DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level)
 DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level, unionComplement = TRUE)

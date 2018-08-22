@@ -52,7 +52,8 @@ the computation is performed by a slower but more memory efficient algorithm.}
 This function computes aggregates by crossing several hierarchical specifications and factorial variables.
 }
 \details{
-A key element of this function is the matrix multiplication: \code{outputMatrix = dataDummyHierarchy \%*\% valueMatrix}.
+A key element of this function is the matrix multiplication: 
+\code{outputMatrix} \code{=} \code{dataDummyHierarchy} \code{\%*\%} \code{valueMatrix}.
 The matrix, \code{valueMatrix} is a re-organized version of the valueVar vector from input. In particular,
 if a variable is selected as \code{colFactor}, there is one column for each level of that variable.
 The matrix, \code{dataDummyHierarchy} is constructed by crossing dummy coding of hierarchies (\code{\link{DummyHierarchy}}) and factorial variables
@@ -73,34 +74,43 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "ths
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per")
 
 # Internally the computations are different as seen when output='matrixComponents'
-HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "ths_per", output = "matrixComponents")
-HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", output = "matrixComponents")
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "ths_per", 
+                 output = "matrixComponents")
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
+                 output = "matrixComponents")
 
 
 # Include input age groups by setting inputInOutput = TRUE for this variable
-HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", inputInOutput = c(TRUE, FALSE))
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
+                 inputInOutput = c(TRUE, FALSE))
 
 # Only input age groups by switching to rowFactor
 HierarchyCompute(x, list(age = "rowFactor", geo = geoHier, year = "colFactor"), "ths_per")
 
 # Select some years (colFactor) including a year not in input data (zeros produced)
-HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", colSelect = c("2014", "2016", "2018"))
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
+                 colSelect = c("2014", "2016", "2018"))
 
 # Select combinations of geo and age including a code not in data or hierarchy (zeros produced)
-HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", rowSelect = data.frame(geo = "EU", age = c("Y0-100", "Y15-64", "Y15-29")))
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
+                 rowSelect = data.frame(geo = "EU", age = c("Y0-100", "Y15-64", "Y15-29")))
 
 
-# Extend the hierarchy table to illustrate the effect of unionComplement Omit level since this is handled by autoLevel
-geoHier2 <- rbind(data.frame(mapsFrom = c("EU", "Spain"), mapsTo = "EUandSpain", sign = 1), geoHier[, -4])
+# Extend the hierarchy table to illustrate the effect of unionComplement 
+# Omit level since this is handled by autoLevel
+geoHier2 <- rbind(data.frame(mapsFrom = c("EU", "Spain"), mapsTo = "EUandSpain", sign = 1), 
+                  geoHier[, -4])
 
 # Spain is counted twice
 HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "ths_per")
 
 # Can be seen in the dataDummyHierarchy matrix
-HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "ths_per", output = "matrixComponents")
+HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "ths_per", 
+                 output = "matrixComponents")
 
 # With unionComplement=TRUE Spain is not counted twice
-HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "ths_per", unionComplement = TRUE)
+HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "ths_per", 
+                 unionComplement = TRUE)
 
 # With constantsInOutput
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per",

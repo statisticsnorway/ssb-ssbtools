@@ -1,11 +1,11 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 0.2.6
-Date: 2018-06-28
+Version: 0.3.0
+Date: 2018-08-22
 Author: Øyvind Langsrud
 Maintainer: Øyvind Langsrud <oyl@ssb.no>
-Depends: R (>= 3.0.0), Matrix
+Depends: R (>= 3.2.0), Matrix
 Imports: stringr
 Description: Functions used by other packages from Statistics Norway are gathered. Both general data manipulation functions and some more special functions for statistical disclosure control are included.
 License: Apache License 2.0 | file LICENSE

@@ -16,14 +16,14 @@ data frame
 Function that returns a dataset
 }
 \details{
-\code{\strong{FIFA2018ABCD:}} A hierarchy table based on
+\strong{FIFA2018ABCD:} A hierarchy table based on
 countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
-\code{\strong{sprt_emp:}} Employment in sport in thousand persons. Data from \url{http://ec.europa.eu/eurostat/web/sport/employment-in-sport/data/database}
+\strong{sprt_emp:} Employment in sport in thousand persons. Data from \url{http://ec.europa.eu/eurostat/web/sport/employment-in-sport/data/database}
  
-\code{\strong{sprt_emp_geoHier:}}  Country hierarchy for the employment in sport data.
+\strong{sprt_emp_geoHier:}  Country hierarchy for the employment in sport data.
 
-\code{\strong{sprt_emp_ageHier:}}  Age hierarchy for the employment in sport data.
+\strong{sprt_emp_ageHier:}  Age hierarchy for the employment in sport data.
 }
 \examples{
 SSBtoolsData("FIFA2018ABCD")

@@ -7,7 +7,7 @@
 Number(n, width = 3)
 }
 \arguments{
-\item{n}{numeric vector}
+\item{n}{numeric vector of whole numbers}
 
 \item{width}{width}
 }
