@@ -2,30 +2,35 @@
 
 Tools used by other packages from Statistics Norway
 
+Official version on CRAN: [https://cran.r-project.org/package=SSBtools](https://cran.r-project.org/package=SSBtools)
+
+
 ```r
-library(devtools)                           # Load package containing install_github
-install_github("statisticsnorway/SSBtools") # Install SSBtools from GitHub
-library(SSBtools)                           # Load SSBtools
-?HierarchyCompute                           # Help documentation of function HierarchyCompute
+install.packages("SSBtools")  # Install from CRAN 
+library(SSBtools)             # Load SSBtools
+?HierarchyCompute             # Help documentation of function HierarchyCompute
+
+# Alternatively install from GitHub if you want to test the newest changes
+devtools::install_github("statisticsnorway/SSBtools") 
 ```
+
+### Some of the functions
 
  Function        |   |
 | ---------------------------- | -------------------------------------------------------------- |
 | AddLeadingZeros | Add leading zeros to numbers while preserving other text |
+| AutoHierarchies | Ensure standardized coding of hierarchies
 | AutoSplit	| Creating variables by splitting the elements of a character vector without needing a split string |
 | CbindIdMatch |	Combine several data frames by using id variables to match rows |
-| DummyHierarchy |	Converting hierarchy specifications to a (signed) dummy matrix |
+| DimList2Hrc/Hrc2DimList |	Conversion between hierarchy coding in sdcTable and TauArgus |
 | FactorLevCorr |	Factor level correlation |
-| FindCommonCells |	Finding commonCells |
 | FindDimLists |	Finding dimList |
-| FindTableGroup |	Finding table(s) of hierarchical variable groups |
 | HierarchicalGroups |	Finding hierarchical variable groups |
 | HierarchicalWildcardGlobbing |	Find variable combinations by advanced wildcard/globbing specifications. |
+| Hierarchies2ModelMatrix |	Model matrix representing crossed hierarchies
 | HierarchyCompute |	Hierarchical Computations |
-| HierarchyFix |	Change the hierarchy table to follow the standard |
 | Match |	Matching rows in data frames |
 | matlabColon |	Simulate Matlab's ':' |
-| Number |	Adding leading zeros |
 | RbindAll |	Combining several data frames when the columns don't match |
 | RowGroups |	Create numbering according to unique rows |
 | SSBtoolsData |	Function that returns a dataset |
