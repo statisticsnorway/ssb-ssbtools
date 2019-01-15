@@ -15,4 +15,7 @@ data frame
 \description{
 ForceFactorDataFrame
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

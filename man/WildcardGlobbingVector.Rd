@@ -34,3 +34,6 @@ WildcardGlobbingVector(x, c("B*", "C*", "Sa*", "-?o*", "-???t*"))
 # Add to the selection cities not having six or more letters.
 WildcardGlobbingVector(x, c("B*", "C*", "Sa*", "-?o*", "-???t*", "!??????*"))
 }
+\author{
+Øyvind Langsrud
+}

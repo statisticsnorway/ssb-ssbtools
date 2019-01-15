@@ -44,3 +44,6 @@ A sort of correlation matrix useful to detect (hierarchical) relationships betwe
  FactorLevCorr(m)
 
 }
+\author{
+Øyvind Langsrud
+}

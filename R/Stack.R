@@ -14,6 +14,7 @@
 #' 
 #' 
 #' @export
+#' @author Øyvind Langsrud
 #' @importFrom utils stack
 #' 
 #' @seealso  \code{\link{Unstack}}
@@ -58,6 +59,7 @@ Stack <- function(data, stackVar = 1:NCOL(data), blockVar = integer(0), rowData 
 #'         \item{data}{Unstacked data}
 #'         \item{rowData}{A separate data frame with one row for each unstack grouping composed of the stackVar variables}
 #' @export
+#' @author Øyvind Langsrud
 #' @importFrom utils unstack
 #' @importFrom stats formula
 #'

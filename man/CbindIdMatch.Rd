@@ -52,3 +52,6 @@ CbindIdMatch(list(a=zA,b=zB,c=zC,d=zD))              # List is alternative input
 \seealso{
 \code{\link{RbindAll}} (same example data)
 }
+\author{
+Øyvind Langsrud
+}

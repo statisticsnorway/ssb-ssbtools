@@ -17,4 +17,7 @@ data frame
 \description{
 MatrixToDataFrame
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

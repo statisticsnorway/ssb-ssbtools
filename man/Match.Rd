@@ -52,3 +52,6 @@ x <- y[sample.int(n, m), ]
 row.names(x) <- NULL
 ix <- Match(x, y)
 }
+\author{
+Øyvind Langsrud
+}

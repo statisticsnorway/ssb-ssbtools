@@ -19,4 +19,7 @@ the row names of dummyHierarchy.
 \description{
 Create a (signed) dummy matrix for hierarcical mapping of codes in data
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

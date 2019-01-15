@@ -4,8 +4,8 @@
 \alias{FixHierarchy}
 \title{FixHierarchy}
 \usage{
-FixHierarchy(hi, hierarchyVarNames = c(mapsFrom = "from", mapsTo = "to", sign
-  = "sign", level = "level"))
+FixHierarchy(hi, hierarchyVarNames = c(mapsFrom = "from", mapsTo = "to",
+  sign = "sign", level = "level"))
 }
 \arguments{
 \item{hi}{hi}

@@ -15,4 +15,7 @@ data frame
 \description{
 CharacterDataFrame
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

@@ -1,8 +1,11 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 0.3.0
-Date: 2018-08-22
+Version: 0.3.2
+Date: 2018-12-07
+Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
+                    email = "oyl@ssb.no"),
+             person("Bjørn-Helge", "Mevik", role = c("cph")))
 Author: Øyvind Langsrud
 Maintainer: Øyvind Langsrud <oyl@ssb.no>
 Depends: R (>= 3.2.0), Matrix
@@ -10,5 +13,7 @@ Imports: stringr
 Description: Functions used by other packages from Statistics Norway are gathered. Both general data manipulation functions and some more special functions for statistical disclosure control are included.
 License: Apache License 2.0 | file LICENSE
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Encoding: UTF-8
+Suggests: 
+    testthat

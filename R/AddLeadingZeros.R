@@ -12,6 +12,7 @@
 #'
 #' @return
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #' AddLeadingZeros(c("1", "ABC", "12345", " 23", "-8", "45 ", " -9", " Agent ", "007", 
@@ -105,6 +106,7 @@ AddLeadingZeros <- function(codes, places, warningText = NULL, viaFactor = TRUE,
 #'
 #' @return
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 Number <- function(n, width = 3) {

@@ -58,3 +58,6 @@ DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level, unionComplement = TRUE
 DummyHierarchy(h$mapsFrom, h$mapsTo, h$sign, h$level,
                mapsInput = c(h$mapsFrom[!(h$mapsFrom \%in\% h$mapsTo)], "Norway", "Finland"))
 }
+\author{
+Øyvind Langsrud
+}

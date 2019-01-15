@@ -7,10 +7,12 @@
 \usage{
 HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
   colSelect = NULL, inputInOutput = FALSE, output = "data.frame",
-  autoLevel = TRUE, unionComplement = FALSE, constantsInOutput = NULL,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign =
-  "sign", level = "level"), selectionByMultiplicationLimit = 10^7,
-  colNotInDataWarning = TRUE, useMatrixToDataFrame = TRUE)
+  autoLevel = TRUE, unionComplement = FALSE,
+  constantsInOutput = NULL, hierarchyVarNames = c(mapsFrom =
+  "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
+  selectionByMultiplicationLimit = 10^7, colNotInDataWarning = TRUE,
+  useMatrixToDataFrame = TRUE, handleDuplicated = "sum",
+  asInput = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{The input data frame}
@@ -27,7 +29,7 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
 TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 
 \item{output}{One of "data.frame" (default), "dummyHierarchies", "outputMatrix", "dataDummyHierarchy", "valueMatrix", "fromCrossCode",
-CrossCode", "crossCode" (as toCrossCode), "outputMatrixWithCrossCode", "matrixComponents".}
+"toCrossCode", "crossCode" (as toCrossCode), "outputMatrixWithCrossCode", "matrixComponents".}
 
 \item{autoLevel}{Logical vector (possibly recycled) for each element of hierarchies.
 When TRUE, level is computed by automatic method as in \code{\link{HierarchyFix}}.
@@ -47,6 +49,15 @@ the computation is performed by a slower but more memory efficient algorithm.}
 \item{colNotInDataWarning}{When TRUE, warning produced when elements of \code{colSelect} are not in data.}
 
 \item{useMatrixToDataFrame}{When TRUE (default) special functionality for saving time and memory is used.}
+
+\item{handleDuplicated}{Handling of duplicated code rows in data. One of: "sum" (default), "sumByAggregate", "sumWithWarning", "stop" (error), "single" or "singleWithWarning".
+With no colFactor sum and sumByAggregate/sumWithWarning are different (original values or aggregates in "valueMatrix"). 
+When single, only one of the values is used (by matrix subsetting).}
+
+\item{asInput}{When TRUE (FALSE is default) output matrices match input data. Thus
+\code{valueMatrix} \code{=} \code{Matrix(data[, valueVar],ncol=1)}. Only possible when no colFactor.}
+
+\item{verbose}{Whether to print information during calculations. FALSE is default.}
 }
 \description{
 This function computes aggregates by crossing several hierarchical specifications and factorial variables.
@@ -115,4 +126,7 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "th
 # With constantsInOutput
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per",
                  constantsInOutput = data.frame(c1 = "AB", c2 = "CD"))
+}
+\author{
+Øyvind Langsrud
 }

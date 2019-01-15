@@ -31,3 +31,6 @@ According to the (factor) levels of the variables
  m <- cbind(x,y,z,zy)
  HierarchicalGroups(m)
 }
+\author{
+Øyvind Langsrud
+}

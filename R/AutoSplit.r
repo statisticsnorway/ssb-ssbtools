@@ -14,6 +14,7 @@
 #'
 #' @return A data frame with s as row names. 
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #' s <- c("A12-3-A-x","A12-3-B-x","B12-3-A-x","B12-3-B-x",

@@ -44,3 +44,6 @@ names(wg) <- names(x)
 # - Cars with less than nine letters and cities with less than seven letters
 x[WildcardGlobbing(x, wg), ]
 }
+\author{
+Øyvind Langsrud
+}

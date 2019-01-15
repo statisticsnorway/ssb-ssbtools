@@ -19,4 +19,7 @@ data frame
 \description{
 Cross codes in data frames
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

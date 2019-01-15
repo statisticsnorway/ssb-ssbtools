@@ -14,3 +14,6 @@ Number(n, width = 3)
 \description{
 Adding leading zeros
 }
+\author{
+Øyvind Langsrud
+}

@@ -6,6 +6,7 @@
 #'
 #' @return matrix
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 DataFrameToMatrix <- function(x) {
@@ -39,6 +40,7 @@ DataFrameToMatrix <- function(x) {
 #'
 #' @return data frame
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 MatrixToDataFrame <- function(x, forceStringsAsFactors = FALSE) {
@@ -83,6 +85,7 @@ MatrixToDataFrame <- function(x, forceStringsAsFactors = FALSE) {
 #'
 #' @return data frame
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 ForceFactorDataFrame <- function(x) {
@@ -98,6 +101,7 @@ ForceFactorDataFrame <- function(x) {
 #'
 #' @return data frame
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 CharacterDataFrame <- function(x) {
@@ -111,6 +115,7 @@ CharacterDataFrame <- function(x) {
 #'
 #' @return data frame
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 ForceCharacterDataFrame <- function(x) {
@@ -140,6 +145,7 @@ CrossCodeFramesA <- function(codeFrame1, codeFrame2) {
 #'
 #' @return data frame
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 #' @examples

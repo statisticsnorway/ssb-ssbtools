@@ -27,3 +27,6 @@ RowGroups(a, TRUE)
 RowGroups(a[, 1:2], TRUE, TRUE)
 RowGroups(a[, 1, drop = FALSE], TRUE)
 }
+\author{
+Øyvind Langsrud
+}

@@ -15,6 +15,7 @@
 #'
 #' @return A single data frame
 #' @export
+#' @author Øyvind Langsrud
 #' 
 #' @seealso \code{\link{RbindAll}} (same example data)
 #'
@@ -81,6 +82,7 @@ CbindIdMatch <-  function(...,addName=names(x),sep="_",
 #'
 #' @return A single data frame
 #' @export
+#' @author Øyvind Langsrud
 #' 
 #' @note The function is an extended version of rbind.all.columns at 
 #'       \url{https://amywhiteheadresearch.wordpress.com/2013/05/13/combining-dataframes-when-the-columns-dont-match/}

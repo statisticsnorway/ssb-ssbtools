@@ -5,7 +5,8 @@
 \title{CrossDataDummyHierarchies}
 \usage{
 CrossDataDummyHierarchies(dataDummyHierarchies, codeFrames = NULL,
-  makeDimnames = FALSE, useMatrixToDataFrame = TRUE)
+  makeDimnames = FALSE, useMatrixToDataFrame = TRUE,
+  removeEmpty = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{dataDummyHierarchies}{dataDummyHierarchies}
@@ -13,6 +14,10 @@ CrossDataDummyHierarchies(dataDummyHierarchies, codeFrames = NULL,
 \item{codeFrames}{codeFrames}
 
 \item{makeDimnames}{makeDimnames}
+
+\item{removeEmpty}{removeEmpty}
+
+\item{verbose}{Whether to print information during calculations. FALSE is default.}
 }
 \description{
 CrossDataDummyHierarchies

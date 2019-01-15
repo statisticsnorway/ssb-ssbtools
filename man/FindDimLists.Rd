@@ -5,8 +5,8 @@
 \alias{FindDimLists}
 \title{Finding dimList}
 \usage{
-FindDimLists(x, groupVarInd = HierarchicalGroups(x = x), addName = FALSE,
-  sep = ".", xReturn = FALSE, total = "Total")
+FindDimLists(x, groupVarInd = HierarchicalGroups(x = x),
+  addName = FALSE, sep = ".", xReturn = FALSE, total = "Total")
 }
 \arguments{
 \item{x}{Matrix or data frame containing the variables (micro data or cell counts data).}
@@ -36,4 +36,7 @@ dimList to the function makeProblem in package sdcTable
  zy <- paste(z,y,sep='')
  m <- cbind(x,y,z,zy)
  FindDimLists(m)
+}
+\author{
+Øyvind Langsrud
 }

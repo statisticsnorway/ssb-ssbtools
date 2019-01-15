@@ -22,6 +22,7 @@
 #' @importFrom stats dist hclust
 #' @importFrom utils flush.console
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples                   
 #' # useUnique=NULL betyr valg ut fra antall rader i kombinasjonsfil
@@ -275,6 +276,7 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
 #' @importFrom utils glob2rx 
 #' @importFrom stringr str_split 
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #' # Create data input
@@ -333,6 +335,7 @@ WildcardGlobbing <- function(x, wg, sign = TRUE, invert = "!") {
 #'
 #' @return vector with selected elements of x
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #' data(precip)

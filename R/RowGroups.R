@@ -7,6 +7,7 @@
 #' @return A vector with the numbering or, according to the arguments, 
 #'         a list with more output.
 #' @export
+#' @author Øyvind Langsrud
 #' 
 #' @examples 
 #' a <- data.frame(x = c("a", "b"), y = c("A", "B", "A"), z = rep(1:4, 3))
@@ -114,6 +115,7 @@ MatchYTreg <- function(x, y) {
 #'
 #' @return An integer vector giving the position in y of the first match if there is a match, otherwise NA.
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'

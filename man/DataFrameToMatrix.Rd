@@ -15,4 +15,7 @@ matrix
 \description{
 DataFrameToMatrix
 }
+\author{
+Øyvind Langsrud
+}
 \keyword{internal}

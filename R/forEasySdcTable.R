@@ -30,6 +30,7 @@
 #'
 #'
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'  x <- rep(c("A","B","C"),3)
@@ -85,6 +86,7 @@ Nlevels = function(x){
 #' @return Output is a list containing the groups. First variable has most levels.
 #'
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'  x <- rep(c("A","B","C"),3)
@@ -154,6 +156,7 @@ SortNrList <- function(x, index.return = FALSE) {
 #'
 #' @return sorted m
 #' @export
+#' @author Øyvind Langsrud
 #' @keywords internal
 #'
 #' @examples
@@ -184,6 +187,7 @@ SortRows <- function(m, cols = 1:dim(m)[2], index.return = FALSE) {
 #'  \item{table}{List containing one or two tables. These tables are coded as indices referring to elements of groupVarInd.}
 #'
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'  x <- rep(c('A','B','C'),3)
@@ -287,6 +291,7 @@ DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Tot
 #'         When xReturn is TRUE output has an extra list level and x is the first element.
 #'
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'  x <- rep(c('A','B','C'),3)
@@ -365,6 +370,7 @@ CheckLevels <- function(data, dimVarInd = 1:NCOL(data), CheckLevelsHandling = wa
 #' @return Output is a list according to the specifications in sdcTable.
 #'
 #' @export
+#' @author Øyvind Langsrud
 #'
 #' @examples
 #'  x <- rep(c('A','B','C'),3)

@@ -5,8 +5,8 @@
 \alias{HierarchyFix}
 \title{Change the hierarchy table to follow the standard}
 \usage{
-HierarchyFix(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo =
-  "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE)
+HierarchyFix(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
+  mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE)
 }
 \arguments{
 \item{hierarchy}{data frame with hierarchy table}
@@ -41,4 +41,7 @@ h2 <- rbind(data.frame(from = c("Oceania", "Asia", "Africa", "America", "Europe"
 # Run HierarchyFix - Three levels created
 HierarchyFix(h2, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
 
+}
+\author{
+Øyvind Langsrud
 }
