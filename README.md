@@ -25,6 +25,7 @@ devtools::install_github("statisticsnorway/SSBtools")
 | DimList2Hrc/Hrc2DimList |	Conversion between hierarchy coding in sdcTable and TauArgus |
 | FactorLevCorr |	Factor level correlation |
 | FindDimLists |	Finding dimList |
+| FormulaSums |	Sums (aggregates) and/or sparse model matrix with possible cross table |
 | HierarchicalGroups |	Finding hierarchical variable groups |
 | HierarchicalWildcardGlobbing |	Find variable combinations by advanced wildcard/globbing specifications. |
 | Hierarchies2ModelMatrix |	Model matrix representing crossed hierarchies

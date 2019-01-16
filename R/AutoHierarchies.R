@@ -19,6 +19,8 @@
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param total Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}}.  
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
+#' @param combineHierarchies Whether to combine several hierarchies for same variable into a single hierarchy
+#' @param unionComplement Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined. 
 #' 
 #' @seealso \code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}.
 #'
@@ -46,14 +48,28 @@
 #' identical(h3, h4)
 #' 
 #' FindHierarchies(z[, c("geo", "eu", "age")])
-AutoHierarchies <- function(hierarchies, data = NULL, total = "Total", hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", 
-                                                                                             level = "level")) {
+AutoHierarchies <- function(hierarchies, data = NULL, total = "Total", 
+                            hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
+                            combineHierarchies = TRUE, unionComplement = FALSE) {
   total <- rep_len(total, length(hierarchies))
   namesHierarchies <- names(hierarchies)
   if (is.null(namesHierarchies)) 
     stop("hierarchies must be a named list")
   for (i in 1:length(hierarchies)) {
     hierarchies[[i]] <- AutoHierarchies1(hierarchies[[i]], data = data, total = total[i], hierarchyVarNames = hierarchyVarNames, varName = namesHierarchies[i])
+  }
+  if (combineHierarchies) {
+    dph <- duplicated(names(hierarchies))
+    if (any(dph)) {
+      hi <- hierarchies
+      unionComplement <- rep_len(unionComplement, length(hi))
+      hierarchies <- hi[!dph]
+      for (i in seq_len(length(hierarchies))) {
+        nam <- names(hi) == names(hierarchies)[i]
+        if (sum(nam) > 1) 
+          hierarchies[[i]] <- CombineHierarchies(hi[nam], unionComplement = unionComplement)
+      }
+    }
   }
   hierarchies
 }
@@ -267,4 +283,35 @@ Formula2Hierarchy <- function(s) {
 }
 
 
+
+
+CombineHierarchies <- function(hierarchies, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE, unionComplement = FALSE) {
+  n <- length(hierarchies)
+  m <- vector("list", n)
+  rNames <- character(0)
+  for (i in seq_len(n)) {
+    hi <- HierarchyFix(hierarchies[[i]], hierarchyVarNames, autoLevel)
+    m[[i]] <- as.data.frame(as.matrix(DummyHierarchy(hi$mapsFrom, hi$mapsTo, hi$sign, hi$level)))
+    rNames <- c(rNames, rownames(m[[i]]))
+  }
+  m <- as.matrix(RbindAll(m))
+  m[is.na(m)] <- 0
+  uniqueRows <- RowGroups(m, returnGroupsId = TRUE)$idg
+  ok <- TRUE
+  if (length(uniqueRows) != length(unique(rNames))) 
+    ok <- FALSE
+  if (length(uniqueRows) != length(unique(rNames[uniqueRows]))) 
+    ok <- FALSE
+  if (!ok) 
+    stop("Could not combine hierarchies")
+  m <- m[uniqueRows, , drop = FALSE]
+  rownames(m) <- rNames[uniqueRows]
+  HierarchyFix(HierarchyFromDummy(m))
+}
+
+
+HierarchyFromDummy <- function(d) {
+  x <- data.frame(mapsFrom = colnames(d)[as.vector(col(d))], mapsTo = rownames(d)[as.vector(row(d))], sign = as.vector(d), stringsAsFactors = FALSE)
+  x[x$sign != 0, , drop = FALSE]
+}
 
