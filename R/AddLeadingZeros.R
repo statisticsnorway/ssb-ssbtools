@@ -10,7 +10,7 @@
 #' @param nWarning Number of elements to be written before ... in warnings.
 #' @param removeLeadingTrailingWhitespace Remove leading and trailing whitespace
 #'
-#' @return
+#' @return Character vector
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -104,11 +104,12 @@ AddLeadingZeros <- function(codes, places, warningText = NULL, viaFactor = TRUE,
 #' @param n  numeric vector of whole numbers
 #' @param width width
 #'
-#' @return
+#' @return Character vector
 #' @export
 #' @author Øyvind Langsrud
 #'
 #' @examples
+#' Number(1:3)
 Number <- function(n, width = 3) {
   s <- "s <- sprintf('%0d', n)"
   s <- gsub("0", as.character(width), s)

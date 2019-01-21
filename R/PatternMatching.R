@@ -370,7 +370,6 @@ WildcardGlobbingVector <- function(x, wg, negSign = "-", invert = "!") {
 #' @param x x
 #' @param y y
 #'
-#' @return
 #' @keywords internal
 #'
 crossMerge <- function(ind1, ind2, x, y, useMatrixToDataFrame = TRUE) {

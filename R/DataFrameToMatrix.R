@@ -148,7 +148,6 @@ CrossCodeFramesA <- function(codeFrame1, codeFrame2) {
 #' @author Øyvind Langsrud
 #' @keywords internal
 #'
-#' @examples
 CrossCodeFrames <- function(codeFrame1, codeFrame2, useMatrixToDataFrame = TRUE) {
   if (!useMatrixToDataFrame) 
     return(CrossCodeFramesA(codeFrame1, codeFrame2))

@@ -76,7 +76,6 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
 
 #' @rdname AutoHierarchies
 #' @export
-#' @examples
 FindHierarchies <- function(data, total = "Total") {
   AutoHierarchies(FindDimLists(data, total = total))
 }
@@ -101,8 +100,10 @@ AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
     if (!is.data.frame(hi)) 
       stop("Something is wrong")
     if (NCOL(hi) == 2) 
-      hi <- DimList2Hierarchy(hi) else hi <- FixHierarchy(hi, hierarchyVarNames)
-      hi
+      hi <- DimList2Hierarchy(hi) 
+    else 
+      hi <- HierarchyFix(hi, hierarchyVarNames)
+    hi
 }
 
 

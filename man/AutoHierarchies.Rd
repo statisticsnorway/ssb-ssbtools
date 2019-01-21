@@ -7,7 +7,8 @@
 \usage{
 AutoHierarchies(hierarchies, data = NULL, total = "Total",
   hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign =
-  "sign", level = "level"))
+  "sign", level = "level"), combineHierarchies = TRUE,
+  unionComplement = FALSE)
 
 FindHierarchies(data, total = "Total")
 }
@@ -19,6 +20,10 @@ FindHierarchies(data, total = "Total")
 \item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}}.}
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
+
+\item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy}
+
+\item{unionComplement}{Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined.}
 }
 \value{
 List of hierarchies

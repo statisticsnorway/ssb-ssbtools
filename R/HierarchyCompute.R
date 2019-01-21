@@ -89,7 +89,7 @@ HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
 #'         \code{valueMatrix} \code{=} \code{Matrix(data[, valueVar],ncol=1)}. Only possible when no colFactor.
 #' @param verbose Whether to print information during calculations. FALSE is default.
 #'
-#' @return
+#' @return As specified by the parameter \code{output}
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -618,10 +618,8 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
 #' @param hierarchies hierarchies
 #' @param data data
 #'
-#' @return
 #' @keywords internal
 #'
-#' @examples
 AddMapsInput <- function(hierarchies, data = NULL) {
   for (i in length(hierarchies)) {
     if (is.list(hierarchies[[i]])) {
@@ -649,10 +647,8 @@ AddMapsInput <- function(hierarchies, data = NULL) {
 #' @param data data
 #' @param rowSelect rowSelect
 #'
-#' @return
 #' @keywords internal
 #'
-#' @examples
 AddNonExistingCode <- function(hierarchies, rowSelect = NULL, inputInOutput = TRUE) {
   if (is.null(rowSelect)) 
     return(hierarchies)
@@ -691,10 +687,8 @@ AddNonExistingCode <- function(hierarchies, rowSelect = NULL, inputInOutput = TR
 #' @param makeDimnames makeDimnames
 #' @param removeEmpty removeEmpty
 #' @param verbose Whether to print information during calculations. FALSE is default.
-#' @return
 #' @keywords internal
 #'
-#' @examples
 CrossDataDummyHierarchies <- function(dataDummyHierarchies, codeFrames = NULL, makeDimnames = FALSE, useMatrixToDataFrame = TRUE, 
                                       removeEmpty = FALSE, verbose = FALSE) {
   if(verbose){
@@ -865,10 +859,8 @@ SelectionCrossDataDummyHierarchy <- function(dataDummyHierarchies, codeFrame, ve
 #' @param hi hi
 #' @param hierarchyVarNames hierarchyVarNames
 #'
-#' @return
 #' @keywords internal
 #'
-#' @examples
 FixHierarchy <- function(hi, hierarchyVarNames = c(mapsFrom = "from", mapsTo = "to", sign = "sign", level = "level")) {
   ma <- match(names(hi), hierarchyVarNames)
   wma <- which(!is.na(ma))
@@ -890,7 +882,6 @@ FixHierarchy <- function(hi, hierarchyVarNames = c(mapsFrom = "from", mapsTo = "
 #' @return x
 #' @keywords internal
 #'
-#' @examples
 AutoLevel <- function(x) {
   mapsFrom <- as.character(x$mapsFrom)
   mapsTo <- as.character(x$mapsTo)
@@ -1040,7 +1031,6 @@ DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inpu
 #' @author Øyvind Langsrud
 #' @keywords internal
 #'
-#' @examples
 DataDummyHierarchy <- function(dataVector, dummyHierarchy) {
   x <- factor(dataVector, levels = colnames(dummyHierarchy))
   m <- dummyHierarchy[, as.integer(x), drop = FALSE]
@@ -1059,10 +1049,8 @@ DataDummyHierarchy <- function(dataVector, dummyHierarchy) {
 #' @param codeFrame2 codeFrame2
 #' @param makeDimnames makeDimnames
 #'
-#' @return
 #' @keywords internal
 #'
-#' @examples
 CrossDataDummyHierarchy <- function(dataDummyHierarchy1, dataDummyHierarchy2 = NULL, codeFrame1 = NULL, codeFrame2 = NULL, makeDimnames = FALSE, useMatrixToDataFrame = TRUE) {
   if (is.null(dataDummyHierarchy2)) {
     if (is.null(codeFrame1)) 

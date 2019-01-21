@@ -59,6 +59,9 @@ When single, only one of the values is used (by matrix subsetting).}
 
 \item{verbose}{Whether to print information during calculations. FALSE is default.}
 }
+\value{
+As specified by the parameter \code{output}
+}
 \description{
 This function computes aggregates by crossing several hierarchical specifications and factorial variables.
 }

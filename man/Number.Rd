@@ -11,8 +11,14 @@ Number(n, width = 3)
 
 \item{width}{width}
 }
+\value{
+Character vector
+}
 \description{
 Adding leading zeros
+}
+\examples{
+Number(1:3)
 }
 \author{
 Øyvind Langsrud
