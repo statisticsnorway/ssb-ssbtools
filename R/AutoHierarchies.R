@@ -83,7 +83,7 @@ FindHierarchies <- function(data, total = "Total") {
 
 AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
   if (is.character(hi)) 
-    if (length(hi) == 1) {
+    if (length(hi) == 1) if(!grepl("\\=", hi)) {
       if (hi == "") 
         hi <- "rowFactor"
       if (hi %in% c("rowFactor", "colFactor")) 
@@ -146,11 +146,12 @@ DimList2Hierarchy <- function(x) {
     z$mapsFrom[i] <- codes[i + 1]
     z$mapsTo[i] <- parentCodes[1]
   }
-  z
+  z[ z$mapsFrom!=z$mapsTo, ,drop=FALSE]
 }
 
 
-FixDimListNames <- function(x) {
+FixDimListNames <- function(x) {  # CharacterDataFrame also
+  x <- CharacterDataFrame(x)
   if (!any(!(c("levels", "codes") %in% names(x)))) 
     return(x)
   a <- unique(c(pmatch(c("lev", "cod", "nam"), names(x)), 1:2))
@@ -297,16 +298,31 @@ CombineHierarchies <- function(hierarchies, hierarchyVarNames = c(mapsFrom = "ma
   }
   m <- as.matrix(RbindAll(m))
   m[is.na(m)] <- 0
-  uniqueRows <- RowGroups(m, returnGroupsId = TRUE)$idg
+  
+  
+  
+  rg <- RowGroups(data.frame(r_Na_Me_s_ = rNames,m,stringsAsFactors = FALSE))
+  #rg <- RowGroups(m)
+  #rg <- RowGroups(m, returnGroupsId = TRUE)
+  #uniqueRows <- rg$idg
+  
+  
   ok <- TRUE
-  if (length(uniqueRows) != length(unique(rNames))) 
-    ok <- FALSE
-  if (length(uniqueRows) != length(unique(rNames[uniqueRows]))) 
-    ok <- FALSE
+  
+  selectedRows <- !duplicated(rNames)
+  if(Nlevels(rg[selectedRows]) != Nlevels(rg))  
+    ok <- FALSE # Same name used for different m rows
+  
+
+  #if (length(uniqueRows) != length(unique(rNames))) 
+  #  ok <- FALSE
+  #if (length(uniqueRows) != length(unique(rNames[uniqueRows]))) 
+  #  ok <- FALSE
+  
   if (!ok) 
     stop("Could not combine hierarchies")
-  m <- m[uniqueRows, , drop = FALSE]
-  rownames(m) <- rNames[uniqueRows]
+  m <- m[selectedRows, , drop = FALSE]
+  rownames(m) <- rNames[selectedRows]
   HierarchyFix(HierarchyFromDummy(m))
 }
 

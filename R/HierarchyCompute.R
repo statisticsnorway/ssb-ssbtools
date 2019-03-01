@@ -625,7 +625,7 @@ AddMapsInput <- function(hierarchies, data = NULL) {
     if (is.list(hierarchies[[i]])) {
       mapsInput <- as.character(hierarchies[[i]]$mapsFrom)[!(as.character(hierarchies[[i]]$mapsFrom) %in% as.character(hierarchies[[i]]$mapsTo))]
       if (!is.null(data)) 
-        mapsInput <- c(mapsInput, unique(data[, names(hierarchies)[i]]))
+        mapsInput <- c(mapsInput, as.character(unique(data[, names(hierarchies)[i]])))
       mapsInput <- as.character(sort(as.factor(unique(mapsInput))))
       
       if (any(mapsInput %in% as.character(hierarchies[[i]]$mapsTo))) {
@@ -885,16 +885,15 @@ FixHierarchy <- function(hi, hierarchyVarNames = c(mapsFrom = "from", mapsTo = "
 AutoLevel <- function(x) {
   mapsFrom <- as.character(x$mapsFrom)
   mapsTo <- as.character(x$mapsTo)
-  mapsInput <- mapsFrom[!(mapsFrom %in% mapsTo)]
   sign <- x$sign
   if (any(mapsFrom == mapsTo)) {
     sel <- !(mapsFrom == mapsTo)
     mapsFrom <- mapsFrom[sel]
     mapsTo <- mapsTo[sel]
-    mapsInput <- mapsInput[sel]
     sign <- sign[sel]
     warning("hierarchy rows where mapsFrom==mapsTo removed")
   }
+  mapsInput <- mapsFrom[!(mapsFrom %in% mapsTo)]
   
   level <- rep(0L, length(mapsFrom))
   

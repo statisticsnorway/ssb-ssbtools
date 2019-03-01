@@ -223,12 +223,7 @@ Match <- function(x, y) {
 
 
 
-#' Title UniqueIntegerSortMatrix
-#'
-#' @param x x
-#'
-#' @return Matrix
-#' @importFrom Matrix Matrix
+# Title UniqueIntegerSortMatrix
 UniqueIntegerSortMatrix <- function(x) {
   if (!is.integer(x)) 
     stop("x must be integer")
