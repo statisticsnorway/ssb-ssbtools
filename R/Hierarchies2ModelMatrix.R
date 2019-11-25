@@ -35,7 +35,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' 
 #' Make a model matrix, x, that corresponds to data and represents all hierarchies crossed.
 #' This means that aggregates corresponding to numerical variables can be computed as 
-#' \code{x \%*\% y}, where  \code{y} is a matrix with one column for each numerical variable.
+#' \code{t(x) \%*\% y}, where  \code{y} is a matrix with one column for each numerical variable.
 #' 
 #' This function makes use of \code{\link{AutoHierarchies}}
 #' and \code{\link{HierarchyCompute}}  via  \code{\link{HierarchyComputeDummy}}  

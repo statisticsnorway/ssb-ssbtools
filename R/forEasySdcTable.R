@@ -407,11 +407,18 @@ FindCommonCells <- function(dimList1, dimList2) {
       commonCells[[i]][[2]] <- commonNames[i]
       if (okAll) 
         commonCells[[i]][[3]] <- "All" else {
-          c1 <- dimList1[[which(names(dimList1) == commonNames[i])]]$codes
-          c2 <- dimList2[[which(names(dimList2) == commonNames[i])]]$codes
+          #c1 <- dimList1[[which(names(dimList1) == commonNames[i])]]$codes
+          #c2 <- dimList2[[which(names(dimList2) == commonNames[i])]]$codes
+          #cc <- c1[c1 %in% c2]
+          #commonCells[[i]][[3]] <- cc
+          #commonCells[[i]][[4]] <- cc
+          i1 = which(names(dimList1) == commonNames[i])
+          i2 = which(names(dimList2) == commonNames[i])
+          c1 <- dimList1[[i1]]$codes
+          c2 <- dimList2[[i2]]$codes
           cc <- c1[c1 %in% c2]
-          commonCells[[i]][[3]] <- cc
-          commonCells[[i]][[4]] <- cc
+          commonCells[[i]][[3]] <- DimListReCode(cc, dimList1[[i1]])
+          commonCells[[i]][[4]] <- DimListReCode(cc, dimList2[[i2]])
         }
   }
   commonCells
@@ -464,3 +471,31 @@ GroupNrList <- function(x) {
 CrossLevels <- function(x) {
   SortRows(unique(x, MARGIN = 1))
 }
+
+
+
+# Re-coding since “bogus» codes are removed internally in sdcTable.
+# See sdcTools/UserSupport/issues/133 at GitHub
+DimListReCode <- function(codes, dimList) {
+  hi <- SSBtools::DimList2Hierarchy(dimList)
+  dupCodes <- unique(hi$mapsTo[duplicated(hi$mapsTo)])
+  hi <- hi[!(hi$mapsTo %in% dupCodes), ]
+  if (nrow(hi) == 0) 
+    return(codes)
+  for (i in 0:nrow(hi)) {
+    ma <- match(codes, hi$mapsFrom)
+    isMatch <- !is.na(ma)
+    if (!any(isMatch)) 
+      return(codes)
+    codes[isMatch] <- hi$mapsTo[ma[isMatch]]
+  }
+  stop("Something is wrong. Cyclic hierarchy?")
+}
+
+
+
+
+
+
+
+
