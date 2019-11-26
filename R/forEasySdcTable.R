@@ -477,7 +477,7 @@ CrossLevels <- function(x) {
 # Re-coding since “bogus» codes are removed internally in sdcTable.
 # See sdcTools/UserSupport/issues/133 at GitHub
 DimListReCode <- function(codes, dimList) {
-  hi <- SSBtools::DimList2Hierarchy(dimList)
+  hi <- DimList2Hierarchy(dimList)
   dupCodes <- unique(hi$mapsTo[duplicated(hi$mapsTo)])
   hi <- hi[!(hi$mapsTo %in% dupCodes), ]
   if (nrow(hi) == 0) 
