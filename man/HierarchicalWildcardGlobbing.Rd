@@ -21,20 +21,20 @@ HierarchicalWildcardGlobbing(z, wg, useUnique = NULL,
 
 \item{printInfo}{When TRUE, information is printed during the process.}
 
-\item{useMatrixToDataFrame}{When TRUE, special functions (DataFrameToMatrix/MatrixToDataFrame) 
+\item{useMatrixToDataFrame}{When TRUE, special functions (DataFrameToMatrix/MatrixToDataFrame)
 for improving speed and memory is utilized.}
 }
 \value{
 data.frame
 }
 \description{
-Find combinations present in an input data frame or, when input is a list, 
+Find combinations present in an input data frame or, when input is a list,
 find all possible combinations that meet the requirements.
 }
 \details{
-The final variable combinations must meet the requirements in each positive sign group 
-and must not match the requirements in the negative sign groups.The function is implemented by 
-calling \code{\link{WildcardGlobbing}} several times within an algorithm that uses 
+The final variable combinations must meet the requirements in each positive sign group
+and must not match the requirements in the negative sign groups.The function is implemented by
+calling \code{\link{WildcardGlobbing}} several times within an algorithm that uses
 hierarchical clustering (\code{\link{hclust}}).
 }
 \examples{

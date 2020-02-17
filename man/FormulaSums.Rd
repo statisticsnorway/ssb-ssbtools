@@ -2,11 +2,14 @@
 % Please edit documentation in R/FormulaSums.R
 \name{FormulaSums}
 \alias{FormulaSums}
+\alias{Formula2ModelMatrix}
 \title{Sums (aggregates) and/or sparse model matrix with possible cross table}
 \usage{
 FormulaSums(data, formula, makeNames = TRUE, crossTable = FALSE,
-  total = "Total", printInc = TRUE, dropResponse = FALSE,
+  total = "Total", printInc = FALSE, dropResponse = FALSE,
   makeModelMatrix = NULL, sep = "-", sepCross = ":")
+
+Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 }
 \arguments{
 \item{data}{data frame}
@@ -28,6 +31,8 @@ FormulaSums(data, formula, makeNames = TRUE, crossTable = FALSE,
 \item{sep}{String to separate when creating column names}
 
 \item{sepCross}{String to separate when creating column names involving crossing}
+
+\item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
 \value{
 A matrix of sums, a sparse model matrix or a list of three elements (model matrix, cross table and sums).

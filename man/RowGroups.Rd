@@ -14,8 +14,8 @@ RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE)
 \item{returnGroupsId}{When TRUE Index of unique rows are returned}
 }
 \value{
-A vector with the numbering or, according to the arguments, 
-        a list with more output.
+A vector with the numbering or, according to the arguments,
+a list with more output.
 }
 \description{
 Create numbering according to unique rows

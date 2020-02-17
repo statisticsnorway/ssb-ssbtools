@@ -12,7 +12,8 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
   "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
   selectionByMultiplicationLimit = 10^7, colNotInDataWarning = TRUE,
   useMatrixToDataFrame = TRUE, handleDuplicated = "sum",
-  asInput = FALSE, verbose = FALSE)
+  asInput = FALSE, verbose = FALSE, reOrder = FALSE,
+  reduceData = TRUE, makeRownames = NULL)
 }
 \arguments{
 \item{data}{The input data frame}
@@ -21,7 +22,8 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
 
 \item{valueVar}{Name of the variable to be aggregated.}
 
-\item{rowSelect}{Data frame specifying variable combinations for output. The colFactor variable is not included.}
+\item{rowSelect}{Data frame specifying variable combinations for output. The colFactor variable is not included.
+In addition \code{rowSelect=="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.}
 
 \item{colSelect}{Vector specifying categories of the colFactor variable for output.}
 
@@ -29,7 +31,9 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
 TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 
 \item{output}{One of "data.frame" (default), "dummyHierarchies", "outputMatrix", "dataDummyHierarchy", "valueMatrix", "fromCrossCode",
-"toCrossCode", "crossCode" (as toCrossCode), "outputMatrixWithCrossCode", "matrixComponents".}
+"toCrossCode", "crossCode" (as toCrossCode), "outputMatrixWithCrossCode", "matrixComponents",
+"dataDummyHierarchyWithCodeFrame", "dataDummyHierarchyQuick".
+The latter two do not require \code{valueVar} (\code{reduceData} set to \code{FALSE}).}
 
 \item{autoLevel}{Logical vector (possibly recycled) for each element of hierarchies.
 When TRUE, level is computed by automatic method as in \code{\link{HierarchyFix}}.
@@ -51,13 +55,19 @@ the computation is performed by a slower but more memory efficient algorithm.}
 \item{useMatrixToDataFrame}{When TRUE (default) special functionality for saving time and memory is used.}
 
 \item{handleDuplicated}{Handling of duplicated code rows in data. One of: "sum" (default), "sumByAggregate", "sumWithWarning", "stop" (error), "single" or "singleWithWarning".
-With no colFactor sum and sumByAggregate/sumWithWarning are different (original values or aggregates in "valueMatrix"). 
+With no colFactor sum and sumByAggregate/sumWithWarning are different (original values or aggregates in "valueMatrix").
 When single, only one of the values is used (by matrix subsetting).}
 
 \item{asInput}{When TRUE (FALSE is default) output matrices match input data. Thus
 \code{valueMatrix} \code{=} \code{Matrix(data[, valueVar],ncol=1)}. Only possible when no colFactor.}
 
 \item{verbose}{Whether to print information during calculations. FALSE is default.}
+
+\item{reOrder}{When TRUE (FALSE is default) output codes are ordered differently, more similar to a usual model matrix ordering.}
+
+\item{reduceData}{When TRUE (default) unnecessary (for the aggregated result) rows of \code{valueMatrix} are allowed to be removed.}
+
+\item{makeRownames}{When TRUE \code{dataDummyHierarchy} contains rownames. By default, this is decided based on the parameter \code{output}.}
 }
 \value{
 As specified by the parameter \code{output}
@@ -66,7 +76,7 @@ As specified by the parameter \code{output}
 This function computes aggregates by crossing several hierarchical specifications and factorial variables.
 }
 \details{
-A key element of this function is the matrix multiplication: 
+A key element of this function is the matrix multiplication:
 \code{outputMatrix} \code{=} \code{dataDummyHierarchy} \code{\%*\%} \code{valueMatrix}.
 The matrix, \code{valueMatrix} is a re-organized version of the valueVar vector from input. In particular,
 if a variable is selected as \code{colFactor}, there is one column for each level of that variable.
@@ -129,6 +139,9 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "th
 # With constantsInOutput
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per",
                  constantsInOutput = data.frame(c1 = "AB", c2 = "CD"))
+}
+\seealso{
+\code{\link{Hierarchies2ModelMatrix}}
 }
 \author{
 Øyvind Langsrud

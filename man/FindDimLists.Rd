@@ -23,7 +23,7 @@ FindDimLists(x, groupVarInd = HierarchicalGroups(x = x),
 }
 \value{
 Output is a list according to the specifications in sdcTable.
-        When xReturn is TRUE output has an extra list level and x is the first element.
+When xReturn is TRUE output has an extra list level and x is the first element.
 }
 \description{
 Finding lists of level-hierarchy as needed for the input parameter

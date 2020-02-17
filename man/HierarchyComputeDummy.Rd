@@ -23,7 +23,7 @@ A sparse model matrix or a list of model matrix and cross table
 From hierarchies to a sparse model matrix with possible cross table by wrapping HierarchyCompute
 }
 \details{
-This function is a special wrapper of \code{\link{HierarchyCompute}} and the input argument hierarchies is specified the same way. 
+This function is a special wrapper of \code{\link{HierarchyCompute}} and the input argument hierarchies is specified the same way.
 That is, variables can also be coded by \code{"rowFactor"}  ( but not colFactor).
 }
 \examples{

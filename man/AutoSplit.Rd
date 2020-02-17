@@ -14,8 +14,8 @@ AutoSplit(s, split = NULL, border = "_", revBorder = FALSE,
 
 \item{split}{Split string. When NULL (default), automatic splitting without a split string.}
 
-\item{border}{A split character 
-or an integer (move split) to be used when the exact split position 
+\item{border}{A split character
+or an integer (move split) to be used when the exact split position
 is not unique.}
 
 \item{revBorder}{When border is integer the split position is moved from the other side.}
@@ -24,7 +24,7 @@ is not unique.}
 
 \item{varNames}{Variable names of the created variables (too many is ok)}
 
-\item{tryReverse}{When TRUE, the automatic method tries to find more variables by 
+\item{tryReverse}{When TRUE, the automatic method tries to find more variables by
 splitting from reversed strings.}
 }
 \value{

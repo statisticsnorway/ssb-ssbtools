@@ -15,7 +15,7 @@ Stack(data, stackVar = 1:NCOL(data), blockVar = integer(0),
 
 \item{blockVar}{Indices of variables to be replicated}
 
-\item{rowData}{A separate data frame where NROW(rowData)=length(stackVar) 
+\item{rowData}{A separate data frame where NROW(rowData)=length(stackVar)
 such that each row may contain multiple information of each stackVar variable.
 The output data frame will contain an extended variant of rowData.}
 

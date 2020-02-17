@@ -21,7 +21,7 @@ A numeric vector, possibly empty.
 Functions to generate increasing sequences
 }
 \details{
-matlabColon(a,b) returns a:b (R's version) unless a > b, in which case it returns integer(0). 
+matlabColon(a,b) returns a:b (R's version) unless a > b, in which case it returns integer(0).
 SeqInc(a,b) is similar, but results in error when the calculated length of the sequence (1+to-from) is negative.
 }
 \examples{

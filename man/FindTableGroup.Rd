@@ -21,8 +21,8 @@ FindTableGroup(x = NULL, findLinked = FALSE, mainName = TRUE,
 }
 \value{
 Output is a list with items
- \item{groupVarInd}{List defining the hierarchical variable groups. First variable has most levels.}
- \item{table}{List containing one or two tables. These tables are coded as indices referring to elements of groupVarInd.}
+\item{groupVarInd}{List defining the hierarchical variable groups. First variable has most levels.}
+\item{table}{List containing one or two tables. These tables are coded as indices referring to elements of groupVarInd.}
 }
 \description{
 A single table or two linked tables are found

@@ -6,7 +6,7 @@
 \usage{
 CrossDataDummyHierarchies(dataDummyHierarchies, codeFrames = NULL,
   makeDimnames = FALSE, useMatrixToDataFrame = TRUE,
-  removeEmpty = FALSE, verbose = FALSE)
+  removeEmpty = FALSE, verbose = FALSE, reOrder = FALSE)
 }
 \arguments{
 \item{dataDummyHierarchies}{dataDummyHierarchies}

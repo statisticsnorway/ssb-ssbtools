@@ -6,7 +6,7 @@
 \usage{
 DummyHierarchy(mapsFrom, mapsTo, sign, level, mapsInput = NULL,
   inputInOutput = FALSE, keepCodes = mapsFrom[integer(0)],
-  unionComplement = FALSE)
+  unionComplement = FALSE, reOrder = FALSE)
 }
 \arguments{
 \item{mapsFrom}{Character vector from hierarchy table}
@@ -17,13 +17,15 @@ DummyHierarchy(mapsFrom, mapsTo, sign, level, mapsInput = NULL,
 
 \item{level}{Numeric vector from hierarchy table}
 
-\item{mapsInput}{All codes in mapsTo not in mapsFrom (created automatically when NULL) and possibly other codes in input data.}
+\item{mapsInput}{All codes in mapsFrom not in mapsTo (created automatically when NULL) and possibly other codes in input data.}
 
 \item{inputInOutput}{When FALSE all output rows represent codes in mapsTo}
 
 \item{keepCodes}{To prevent some codes to be removed when inputInOutput = TRUE}
 
 \item{unionComplement}{When TRUE, sign means union and complement instead of addition or subtraction (see note)}
+
+\item{reOrder}{When TRUE (FALSE is default) output codes are ordered differently, more similar to a usual model matrix ordering.}
 }
 \value{
 A sparse matrix with row and column and names

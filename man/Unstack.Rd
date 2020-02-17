@@ -27,8 +27,8 @@ Unstack(data, mainVar = 1, stackVar = (1:NCOL(data))[-mainVar],
 }
 \value{
 When returnRowData=TRUE output is list of two elements.
-        \item{data}{Unstacked data}
-        \item{rowData}{A separate data frame with one row for each unstack grouping composed of the stackVar variables}
+\item{data}{Unstacked data}
+\item{rowData}{A separate data frame with one row for each unstack grouping composed of the stackVar variables}
 }
 \description{
 Unstack a column from a data frame and include additional variables.

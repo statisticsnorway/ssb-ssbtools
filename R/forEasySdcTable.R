@@ -4,6 +4,7 @@
 #'
 #'
 #' @encoding UTF8
+#' @noMd
 #'
 #' @param x Input matrix or data frame containing the variables
 #'

@@ -32,13 +32,13 @@ List of hierarchies
 Automatic convert list of hierarchies coded in different ways to standardized to-from coding
 }
 \details{
-Input can be to-from coded hierarchies, hierarchies/dimList as in sdcTable, TauArgus coded hierarchies or formulas. 
+Input can be to-from coded hierarchies, hierarchies/dimList as in sdcTable, TauArgus coded hierarchies or formulas.
 Automatic coding from data is also supported. Output is on a from ready for input to \code{\link{HierarchyCompute}}.
 \code{FindHierarchies} wraps \code{\link{FindDimLists}} and \code{AutoHierarchies} into a single function.
-A single string as hierarchy input is assumed to be a total code. 
+A single string as hierarchy input is assumed to be a total code.
 Then, the hierarchy is created as a simple hierarchy where all codes in data sum up to this total.
-For consistence with \code{HierarchyCompute}, 
-the codes \code{"rowFactor"} and \code{"colFactor"} are unchanged. 
+For consistence with \code{HierarchyCompute},
+the codes \code{"rowFactor"} and \code{"colFactor"} are unchanged.
 An empty string is recoded to  \code{"rowFactor"}.
 }
 \examples{

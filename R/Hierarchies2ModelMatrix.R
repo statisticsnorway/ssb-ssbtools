@@ -23,9 +23,16 @@
 #' HierarchyComputeDummy(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), 
 #'                       inputInOutput = FALSE, crossTable = TRUE)
 HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, crossTable = FALSE, ...) {
-  a <- HierarchyCompute(data = data, hierarchies = hierarchies, inputInOutput = inputInOutput, output = "dataDummyHierarchyWithCodeFrame", asInput = TRUE, ...)
+  if(crossTable)
+    output <- "dataDummyHierarchyWithCodeFrame"
+  else
+    output = "dataDummyHierarchyQuick"
+  
+  a <- HierarchyCompute(data = data, hierarchies = hierarchies, inputInOutput = inputInOutput, output = output, asInput = TRUE, ...)
+  
   if (!crossTable) 
-    return(t(a$dataDummyHierarchy))
+    return(t(a))
+  
   list(modelMatrix = t(a$dataDummyHierarchy), crossTable = CharacterDataFrame(a$codeFrame))
 }
 
@@ -38,7 +45,9 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' \code{t(x) \%*\% y}, where  \code{y} is a matrix with one column for each numerical variable.
 #' 
 #' This function makes use of \code{\link{AutoHierarchies}}
-#' and \code{\link{HierarchyCompute}}  via  \code{\link{HierarchyComputeDummy}}  
+#' and \code{\link{HierarchyCompute}}  via  \code{\link{HierarchyComputeDummy}}.
+#' Since the dummy matrix is transposed in comparison to \code{HierarchyCompute}, the parameter \code{rowSelect} is renamed to \code{select}
+#' and  \code{makeRownames} is renamed to \code{makeColnames}.  
 #'
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param hierarchies List of hierarchies, which can be converted by \code{\link{AutoHierarchies}}.
@@ -51,6 +60,12 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' @param unionComplement Logical vector (possibly recycled) for each element of hierarchies.
 #'        When TRUE, sign means union and complement instead of addition or subtraction. 
 #'        Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored. 
+#' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
+#' @param select Data frame specifying variable combinations for output.
+#' @param selectionByMultiplicationLimit With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
+#'          the computation is performed by a slower but more memory efficient algorithm. 
+#' @param makeColnames Colnames included when TRUE (default).
+#' @param verbose Whether to print information during calculations. FALSE is default.              
 #'
 #' @return A sparse model matrix or a list of two elements (model matrix and cross table)
 #' @export
@@ -62,9 +77,11 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' ageHier <- SSBtoolsData("sprt_emp_ageHier")
 #' geoDimList <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
 #' 
+#' 
 #' # First example has list output
 #' Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), inputInOutput = FALSE, 
 #'                         crossTable = TRUE)
+#' 
 #' 
 #' m1 <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), inputInOutput = FALSE)
 #' m2 <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList))
@@ -81,6 +98,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' m6 <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoHier2, year = "allYears"), 
 #'                               inputInOutput = FALSE, unionComplement = TRUE)
 #' 
+#' 
 #' # Compute aggregates
 #' ths_per <- as.matrix(z[, "ths_per", drop = FALSE])  # matrix with the values to be aggregated
 #' t(m1) %*% ths_per  # crossprod(m1, ths_per) is equivalent and faster
@@ -89,11 +107,26 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' t(m4) %*% ths_per
 #' t(m5) %*% ths_per
 #' t(m6) %*% ths_per
+#' 
+#' 
+#' # Example using the select parameter
+#' select <- data.frame(age = c("Y15-64", "Y15-29", "Y30-64"), geo = c("EU", "nonEU", "Spain"))
+#' m2a <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), select = select)
+#' 
+#' # Same result by slower alternative
+#' m2B <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), crossTable = TRUE)
+#' m2b <- m2B$modelMatrix[, Match(select, m2B$crossTable), drop = FALSE]
+#' t(m2b) %*% ths_per
 Hierarchies2ModelMatrix <- function(data, hierarchies, inputInOutput = TRUE, crossTable = FALSE, total = "Total", 
                                     hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), 
-                                    unionComplement = FALSE) {
+                                    unionComplement = FALSE, reOrder = TRUE,
+                                    select = NULL, selectionByMultiplicationLimit = 10^7, 
+                                    makeColnames = TRUE, verbose = FALSE) {
   autoHierarchies <- AutoHierarchies(hierarchies = hierarchies, data = data, total = total, hierarchyVarNames = hierarchyVarNames)
-  HierarchyComputeDummy(data = data, hierarchies = autoHierarchies, inputInOutput = inputInOutput, crossTable = crossTable, unionComplement = unionComplement)
+  HierarchyComputeDummy(data = data, hierarchies = autoHierarchies, inputInOutput = inputInOutput, crossTable = crossTable, 
+                        unionComplement = unionComplement, reOrder=reOrder, rowSelect = select, 
+                        selectionByMultiplicationLimit = selectionByMultiplicationLimit, 
+                        makeRownames = makeColnames, verbose =  verbose)
 }
 
 

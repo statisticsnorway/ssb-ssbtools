@@ -9,7 +9,7 @@
 #' \strong{FIFA2018ABCD:} A hierarchy table based on
 #' countries within groups A-D in the football championship, 2018 FIFA World Cup.
 #' 
-#' \strong{sprt_emp:} Employment in sport in thousand persons. Data from \url{https://ec.europa.eu/eurostat/web/sport/employment-in-sport/data/database}
+#' \strong{sprt_emp:} Employment in sport in thousand persons. Data from Eurostat database.
 #'  
 #' \strong{sprt_emp_geoHier:}  Country hierarchy for the employment in sport data.
 #' 

@@ -23,7 +23,7 @@ The selected rows match combined requirements for all variables.
 }
 \details{
 This function is used by \code{\link{HierarchicalWildcardGlobbing}}
-and \code{\link{WildcardGlobbingVector}} and make use of 
+and \code{\link{WildcardGlobbingVector}} and make use of
 \code{\link{grepl}} and \code{\link{glob2rx}}.
 }
 \examples{

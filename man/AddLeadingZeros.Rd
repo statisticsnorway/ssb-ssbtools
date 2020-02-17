@@ -24,7 +24,7 @@ AddLeadingZeros(codes, places, warningText = NULL, viaFactor = TRUE,
 Character vector
 }
 \description{
-This function is created to fix problems caused by a serious bug in Excel. 
+This function is created to fix problems caused by a serious bug in Excel.
 Editing csv files in that program causes leading zeros to disappear.
 }
 \examples{

@@ -15,11 +15,11 @@ Match(x, y)
 An integer vector giving the position in y of the first match if there is a match, otherwise NA.
 }
 \description{
-The algorithm is based on converting variable combinations to whole numbers. 
+The algorithm is based on converting variable combinations to whole numbers.
 The final matching is performed using \code{\link{match}}.
 }
 \details{
-When the result of multiplying together the number of unique values in each column of x exceeds 9E15 
+When the result of multiplying together the number of unique values in each column of x exceeds 9E15
 (largest value stored exactly by the numeric data type), the algorithm is recursive.
 }
 \examples{
