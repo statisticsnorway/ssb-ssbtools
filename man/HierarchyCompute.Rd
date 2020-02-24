@@ -20,7 +20,7 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
 
 \item{hierarchies}{A named (names in \code{data}) list with hierarchies. Variables can also be coded by \code{"rowFactor"} and \code{"colFactor"}.}
 
-\item{valueVar}{Name of the variable to be aggregated.}
+\item{valueVar}{Name of the variable(s) to be aggregated.}
 
 \item{rowSelect}{Data frame specifying variable combinations for output. The colFactor variable is not included.
 In addition \code{rowSelect=="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.}
@@ -139,6 +139,10 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier2, year = "colFactor"), "th
 # With constantsInOutput
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per",
                  constantsInOutput = data.frame(c1 = "AB", c2 = "CD"))
+                 
+# More that one valueVar
+x$y <- 10*x$ths_per
+HierarchyCompute(x, list(age = ageHier, geo = geoHier), c("y", "ths_per"))
 }
 \seealso{
 \code{\link{Hierarchies2ModelMatrix}}
