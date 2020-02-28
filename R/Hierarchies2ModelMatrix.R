@@ -68,6 +68,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' @param verbose Whether to print information during calculations. FALSE is default.              
 #'
 #' @return A sparse model matrix or a list of two elements (model matrix and cross table)
+#' @seealso \code{\link{HierarchiesAndFormula2ModelMatrix}}
 #' @export
 #' @author Øyvind Langsrud
 #'

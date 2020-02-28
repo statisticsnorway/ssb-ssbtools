@@ -97,7 +97,7 @@ HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
 #' @param makeRownames When TRUE \code{dataDummyHierarchy} contains rownames. By default, this is decided based on the parameter \code{output}. 
 #'
 #' @return As specified by the parameter \code{output}
-#' @seealso \code{\link{Hierarchies2ModelMatrix}}
+#' @seealso \code{\link{Hierarchies2ModelMatrix}}, \code{\link{AutoHierarchies}}.
 #' @importFrom methods hasArg
 #' @export
 #' @author Øyvind Langsrud

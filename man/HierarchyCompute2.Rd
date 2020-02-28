@@ -62,6 +62,9 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "ths
                  colVar = c("age", "geo"), output = "matrixComponents")
 
 }
+\seealso{
+\code{\link{Hierarchies2ModelMatrix}}, \code{\link{AutoHierarchies}}.
+}
 \author{
 Øyvind Langsrud
 }

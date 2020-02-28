@@ -152,7 +152,7 @@ x$y <- 10*x$ths_per
 HierarchyCompute(x, list(age = ageHier, geo = geoHier), c("y", "ths_per"))
 }
 \seealso{
-\code{\link{Hierarchies2ModelMatrix}}
+\code{\link{Hierarchies2ModelMatrix}}, \code{\link{AutoHierarchies}}.
 }
 \author{
 Øyvind Langsrud

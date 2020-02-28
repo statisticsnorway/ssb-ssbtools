@@ -26,6 +26,7 @@
 #' @param ...  Further parameters sent to \code{\link{HierarchyCompute}} 
 #'
 #' @return As specified by the parameter \code{output}
+#' @seealso \code{\link{Hierarchies2ModelMatrix}}, \code{\link{AutoHierarchies}}.
 #' @export
 #'
 #' @author Øyvind Langsrud
