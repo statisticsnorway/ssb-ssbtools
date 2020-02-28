@@ -204,16 +204,17 @@ test_that("miscellaneous", {
   b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, inputInOutput = c(FALSE, TRUE))[,names(a)]
   expect_equivalent(a[Match(b, a), names(b)], b)
   
-  for (i in 1:4) {
+  for (i in 1:5) {
     if (i == 1) rows <- c(11 * (1:13), 8, 19)
     if (i == 2) rows <- 100
     if (i == 3) rows <- 104
     if (i == 4) rows <- integer(0)
+    if (i == 5) rows <- c(8, 11, 19, 100, 104, 8, 11)
     
     rowSelect <- a[rows, 1:3, drop = FALSE]
     
     d <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "y", rowSelect = rowSelect, selectionByMultiplicationLimit = 0)
-    expect_equivalent(a[rows, ], d[, names(a)])
+    expect_equivalent(a[unique(rows), ], d[, names(a)])
     b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "y", rowSelect = rowSelect, inputInOutput = TRUE)
     expect_identical(b, d)
     b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "y", reduceData = FALSE, rowSelect = rowSelect, selectionByMultiplicationLimit = 0)
@@ -273,6 +274,82 @@ test_that("miscellaneous", {
 })
 
 
+
+ReB = function(a,b){
+  if(nrow(a) != nrow(b))
+    stop("nrow error")
+  ma = Match(a,b[,names(a)])
+  z = b[ma,names(a)]
+  rownames(z) = NULL
+  z
+}
+
+
+
+test_that("HierarchyCompute2", {
+  
+  x <- rbind(x[x$geo == "Iceland", ], x)
+  
+  # HierarchyCompute2 inputInOutput = c(FALSE, TRUE)
+  a <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", inputInOutput = c(FALSE, TRUE), reduceData = FALSE)
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "year", inputInOutput = c(FALSE, TRUE))
+  expect_identical(a, b)
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "geo",inputInOutput = c(FALSE, TRUE))
+  expect_identical(a, ReB(a,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", c("geo","year"), inputInOutput = c(FALSE, TRUE))
+  expect_identical(a, ReB(a,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, c("year","age"), inputInOutput = c(FALSE, TRUE))
+  expect_identical(a, ReB(a,b))
+  
+  
+  # HierarchyCompute2 inputInOutput = TRUE
+  a <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", inputInOutput = TRUE, reduceData = FALSE)
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "year", inputInOutput = TRUE)
+  expect_identical(a, b)
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "geo", inputInOutput = TRUE)
+  expect_identical(a, ReB(a,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", c("geo","year"), inputInOutput = TRUE)
+  expect_identical(a, ReB(a,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, c("year","age"), inputInOutput = TRUE)
+  expect_identical(a, ReB(a,b))
+  
+  # With handleDuplicated = "single"
+  d <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", inputInOutput = TRUE, handleDuplicated = "single")
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "year", inputInOutput = TRUE, handleDuplicated = "single")
+  expect_identical(d, b)
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", "geo", inputInOutput = TRUE,  handleDuplicated = "single")
+  expect_identical(d, ReB(d,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, c("geo","year"), inputInOutput = TRUE, handleDuplicated = "single")
+  expect_identical(d, ReB(d,b))
+  b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", c("year","age"), inputInOutput = TRUE, handleDuplicated = "single")
+  expect_identical(d, ReB(d,b))
+  
+  
+  # With select
+  aS_ = a[round((1:20)*7.2), ]
+  aS_ = aS_[aS_$year != "2015", ]
+  for (i in 1:5) {
+    if (i == 1) rows <- 1:15
+    if (i == 2) rows <- 1:3
+    if (i == 3) rows <- 4
+    if (i == 4) rows <- 6
+    if (i == 5) rows <- integer(0)
+    
+    aS = aS_[rows, ,drop=FALSE]
+    row.names(aS) = NULL
+    b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, inputInOutput = TRUE, select = aS[, 1:3])
+    expect_identical(aS, b[, names(aS)])
+    b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "rowFactor"), "y", inputInOutput = TRUE, select = aS[, 1:3])
+    expect_identical(aS, b[, names(aS)])
+    b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, c("geo","year"), inputInOutput = TRUE, select = aS[, 1:3])
+    expect_identical(aS, b[, names(aS)])
+    b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, "geo", inputInOutput = TRUE, select = aS[, 1:3])
+    expect_identical(aS, b[, names(aS)])
+    b <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", c("year","age"), inputInOutput = TRUE, select = aS[, 1:3])
+    expect_identical(aS, b[, names(aS)])
+  }
+  
+})
 
 
 

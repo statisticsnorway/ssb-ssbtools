@@ -5,15 +5,15 @@
 \alias{HierarchyCompute}
 \title{Hierarchical Computations}
 \usage{
-HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
-  colSelect = NULL, inputInOutput = FALSE, output = "data.frame",
-  autoLevel = TRUE, unionComplement = FALSE,
-  constantsInOutput = NULL, hierarchyVarNames = c(mapsFrom =
-  "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-  selectionByMultiplicationLimit = 10^7, colNotInDataWarning = TRUE,
-  useMatrixToDataFrame = TRUE, handleDuplicated = "sum",
-  asInput = FALSE, verbose = FALSE, reOrder = FALSE,
-  reduceData = TRUE, makeRownames = NULL)
+HierarchyCompute(data, hierarchies, valueVar, colVar = NULL,
+  rowSelect = NULL, colSelect = NULL, select = NULL,
+  inputInOutput = FALSE, output = "data.frame", autoLevel = TRUE,
+  unionComplement = FALSE, constantsInOutput = NULL,
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign =
+  "sign", level = "level"), selectionByMultiplicationLimit = 10^7,
+  colNotInDataWarning = TRUE, useMatrixToDataFrame = TRUE,
+  handleDuplicated = "sum", asInput = FALSE, verbose = FALSE,
+  reOrder = FALSE, reduceData = TRUE, makeRownames = NULL)
 }
 \arguments{
 \item{data}{The input data frame}
@@ -22,10 +22,14 @@ HierarchyCompute(data, hierarchies, valueVar, rowSelect = NULL,
 
 \item{valueVar}{Name of the variable(s) to be aggregated.}
 
+\item{colVar}{When non-NULL, the function \code{\link{HierarchyCompute2}} is called. See its documentation for more information.}
+
 \item{rowSelect}{Data frame specifying variable combinations for output. The colFactor variable is not included.
 In addition \code{rowSelect=="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.}
 
 \item{colSelect}{Vector specifying categories of the colFactor variable for output.}
+
+\item{select}{Data frame specifying variable combinations for output. The colFactor variable is included.}
 
 \item{inputInOutput}{Logical vector (possibly recycled) for each element of hierarchies.
 TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
@@ -118,7 +122,10 @@ HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths
 # Select combinations of geo and age including a code not in data or hierarchy (zeros produced)
 HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
                  rowSelect = data.frame(geo = "EU", age = c("Y0-100", "Y15-64", "Y15-29")))
-
+                 
+# Select combinations of geo, age and year 
+HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "ths_per", 
+     select = data.frame(geo = c("EU", "Spain"), age = c("Y15-64", "Y15-29"), year = 2015))
 
 # Extend the hierarchy table to illustrate the effect of unionComplement 
 # Omit level since this is handled by autoLevel
