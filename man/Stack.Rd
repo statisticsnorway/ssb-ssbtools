@@ -4,9 +4,14 @@
 \alias{Stack}
 \title{Stack columns from a data frame and include variables.}
 \usage{
-Stack(data, stackVar = 1:NCOL(data), blockVar = integer(0),
+Stack(
+  data,
+  stackVar = 1:NCOL(data),
+  blockVar = integer(0),
   rowData = data.frame(stackVar)[, integer(0), drop = FALSE],
-  valueName = "values", indName = "ind")
+  valueName = "values",
+  indName = "ind"
+)
 }
 \arguments{
 \item{data}{A data frame}

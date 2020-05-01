@@ -4,9 +4,15 @@
 \alias{HierarchicalWildcardGlobbing}
 \title{Find variable combinations by advanced wildcard/globbing specifications.}
 \usage{
-HierarchicalWildcardGlobbing(z, wg, useUnique = NULL,
-  useFactor = FALSE, makeWarning = TRUE, printInfo = FALSE,
-  useMatrixToDataFrame = TRUE)
+HierarchicalWildcardGlobbing(
+  z,
+  wg,
+  useUnique = NULL,
+  useFactor = FALSE,
+  makeWarning = TRUE,
+  printInfo = FALSE,
+  useMatrixToDataFrame = TRUE
+)
 }
 \arguments{
 \item{z}{list or data.frame}

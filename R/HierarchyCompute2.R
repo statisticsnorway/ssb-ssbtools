@@ -55,6 +55,8 @@ HierarchyCompute2 <- function(data, hierarchies, valueVar, colVar,
 HierarchyCompute2_ <- function(data, hierarchies, valueVar, colVar, rowSelect = NULL, colSelect = NULL, select = NULL, inputInOutput = FALSE, output = "data.frame", autoLevel = TRUE, 
                                unionComplement = FALSE, constantsInOutput = NULL, handleDuplicated = "sum", asInput = FALSE, verbose = FALSE, makeRownames = NULL, ...) {
   
+  # data <- tibble::as_tibble(data)  # To test whether tibble input works 
+  
   if (!length(valueVar)) 
     stop("valueVar needed")
   

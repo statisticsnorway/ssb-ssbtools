@@ -4,8 +4,14 @@
 \alias{AddLeadingZeros}
 \title{Add leading zeros to numbers while preserving other text}
 \usage{
-AddLeadingZeros(codes, places, warningText = NULL, viaFactor = TRUE,
-  nWarning = 6, removeLeadingTrailingWhitespace = TRUE)
+AddLeadingZeros(
+  codes,
+  places,
+  warningText = NULL,
+  viaFactor = TRUE,
+  nWarning = 6,
+  removeLeadingTrailingWhitespace = TRUE
+)
 }
 \arguments{
 \item{codes}{Character vector}

@@ -5,8 +5,12 @@
 \alias{MakeHierFormula}
 \title{Make model formula from data taking into account hierarchical variables}
 \usage{
-MakeHierFormula(data = NULL, hGroups = HierarchicalGroups2(data),
-  n = length(hGroups), sim = TRUE)
+MakeHierFormula(
+  data = NULL,
+  hGroups = HierarchicalGroups2(data),
+  n = length(hGroups),
+  sim = TRUE
+)
 }
 \arguments{
 \item{data}{data frame}

@@ -4,8 +4,13 @@
 \alias{HierarchyComputeDummy}
 \title{HierarchyComputeDummy}
 \usage{
-HierarchyComputeDummy(data, hierarchies, inputInOutput = TRUE,
-  crossTable = FALSE, ...)
+HierarchyComputeDummy(
+  data,
+  hierarchies,
+  inputInOutput = TRUE,
+  crossTable = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{data}

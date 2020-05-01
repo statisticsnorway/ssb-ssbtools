@@ -5,8 +5,12 @@
 \alias{HierarchicalGroups}
 \title{Finding hierarchical variable groups}
 \usage{
-HierarchicalGroups(x = NULL, mainName = TRUE, eachName = FALSE,
-  fCorr = FactorLevCorr(x))
+HierarchicalGroups(
+  x = NULL,
+  mainName = TRUE,
+  eachName = FALSE,
+  fCorr = FactorLevCorr(x)
+)
 }
 \arguments{
 \item{x}{Matrix or data frame containing the variables}

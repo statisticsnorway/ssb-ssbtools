@@ -182,6 +182,10 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
     return(eval(sysCall, envir=parentFrame))
   }
   
+  # # To test whether tibble input works 
+  # data <- tibble::as_tibble(data)  
+  # for (i in seq_along(hierarchies)) if (is.list(hierarchies[[i]])) hierarchies[[i]] <- tibble::as_tibble(hierarchies[[i]])
+  # if (!is.null(rowSelect)) if(!is.character(rowSelect)) rowSelect <- tibble::as_tibble(rowSelect)
   
   if(!(handleDuplicated %in% c("sum", "sumByAggregate", "sumWithWarning", "stop", "single", "singleWithWarning")))
     stop("invalid 'handleDuplicated' argument")
@@ -304,7 +308,6 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       inputInOutput[] <- FALSE  # Handeled by keep...
   }
   
-  
   for (i in seq_len(nHier)) {
     if (is.list(hierarchies[[i]])) {
       
@@ -328,7 +331,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
                                               reOrder = reOrder)
     } else {
       if (hierarchies[[i]] == "rowFactor") {
-        dummyHierarchies[[i]] <- fac2sparse(sort(factor(unique(data[, names(hierarchies)[i]]))))
+        dummyHierarchies[[i]] <- fac2sparse(sort(factor(unique(data[, names(hierarchies)[i], drop = TRUE]))))
         colnames(dummyHierarchies[[i]]) <- rownames(dummyHierarchies[[i]])
       }
       
@@ -345,14 +348,13 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   
   if (!is.null(rowSelect)) {
     for (i in hierarchyInd) {
-      iRows <- rownames(dummyHierarchies[[i]]) %in% rowSelect[, names(hierarchies)[i]]
+      iRows <- rownames(dummyHierarchies[[i]]) %in% rowSelect[, names(hierarchies)[i], drop=TRUE]
       dummyHierarchies[[i]] <- dummyHierarchies[[i]][iRows, , drop = FALSE]
     }
   }
   
-  
   if (!is.null(colSelect)) {
-    datacolvar <- as.character(data[, colVar])
+    datacolvar <- as.character(data[, colVar, drop = TRUE])
     colSelect <- unique(as.character(colSelect))
     colNotInData <- colSelect[!(colSelect %in% datacolvar)]
     if (length(colNotInData) > 0) {
@@ -381,9 +383,8 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       data <- data[rowsData, , drop = FALSE]
     }
   }
-  
+
   rownames(data) <- NULL
-  
   
   if (reduceData) 
     data <- ReduceDataByDummyHierarchiesAndValue(data, dummyHierarchies, valueVar, colVar)
@@ -391,7 +392,6 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   if(verbose){
     cat(".")
     flush.console()}
-  
   
   if(noColVar & noRowGroupsWhenNoColVar){
     rowGroups <- list(idx = seq_len(NROW(data)), groups = data[, hierarchyNames, drop = FALSE])
@@ -402,8 +402,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   if(verbose){
     cat(".")
     flush.console()}
-  
-  
+ 
   for (i in hierarchyInd) {
     dataDummyHierarchies[[i]] <- DataDummyHierarchy(as.character(rowGroups$groups[names(hierarchies)[i]][[1]]), dummyHierarchies[[i]])
     codeFrames[[i]] <- data.frame(a = factor(rownames(dummyHierarchies[[i]])))
@@ -434,11 +433,8 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       return(k)
     }
   } else {
-    
-    #k <- list(dataDummyHierarchy = NULL, codeFrame = CharacterDataFrame(rowSelect[, hierarchyNames, drop = FALSE]))
     k <- list(dataDummyHierarchy = NULL, codeFrame = rowSelect)
     if (!selectionByMultiplication) {
-      #if (reductionWhenKhatriRao) 
         k <- ReductionCrossDataDummyHierarchies(dataDummyHierarchies[hierarchyInd], codeFrames = codeFrames[hierarchyInd], codeFrame = k[[2]], 
                                                 makeDimnames = makeRownames, useMatrixToDataFrame = useMatrixToDataFrame, verbose = verbose)
     } else {
@@ -498,12 +494,12 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       if (nValueVar>1){
         valueMatrix[rowGroups$idx,  ] <- as.matrix(data[, valueVar])
       } else {
-        valueMatrix[rowGroups$idx, 1] <- data[, valueVar]
+        valueMatrix[rowGroups$idx, 1] <- data[, valueVar, drop = TRUE]
       }
     }
   } else {
     
-    colData <- factor(data[, colVar])
+    colData <- factor(data[, colVar, drop = TRUE])
     integerColData <- as.integer(colData)
     nCol <- max(integerColData, 0L)
     
@@ -550,7 +546,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
         mIntegerColData = rep(integerColData, nValueVar) + rep(nCol*SeqInc(0,nValueVar-1),each = length(integerColData))
         valueMatrix[cbind(idx = rowGroups$idx, mIntegerColData = mIntegerColData)] <-  as.vector(as.matrix(data[, valueVar]))
       } else {
-        valueMatrix[idx_integerColData] <- data[, valueVar]
+        valueMatrix[idx_integerColData] <- data[, valueVar, drop = TRUE]
       }
     }
     
@@ -732,7 +728,7 @@ AddMapsInput <- function(hierarchies, data = NULL) {
     if (is.list(hierarchies[[i]])) {
       mapsInput <- as.character(hierarchies[[i]]$mapsFrom)[!(as.character(hierarchies[[i]]$mapsFrom) %in% as.character(hierarchies[[i]]$mapsTo))]
       if (!is.null(data)) 
-        mapsInput <- c(mapsInput, as.character(unique(data[, names(hierarchies)[i]])))
+        mapsInput <- c(mapsInput, as.character(unique(data[, names(hierarchies)[i], drop = TRUE])))
       mapsInput <- as.character(sort(as.factor(unique(mapsInput))))
       
       if (any(mapsInput %in% as.character(hierarchies[[i]]$mapsTo))) {
@@ -764,7 +760,7 @@ AddNonExistingCode <- function(hierarchies, rowSelect = NULL, inputInOutput = TR
       mapsInput <- attr(hierarchies[[i]], "mapsInput")
       allCodes <- unique(c(as.character(mapsInput), hierarchies[[i]]$mapsTo))
       
-      uniqueRowSelect <- unique(rowSelect[, names(hierarchies)[i]])
+      uniqueRowSelect <- unique(rowSelect[, names(hierarchies)[i], drop = TRUE])
       newCodes <- uniqueRowSelect[!(uniqueRowSelect %in% allCodes)]
       if (length(newCodes) > 0) {
         hierarchyExtra <- hierarchies[[i]][rep(1, (length(newCodes))), , drop = FALSE]
@@ -887,7 +883,7 @@ ReductionCrossDataDummyHierarchies <- function(dataDummyHierarchies, codeFrames 
     
     z <- CrossDataDummyHierarchy(dataDummyHierarchy1 = dataDummyHierarchies[[1]], codeFrame1 = codeFrames[[1]], makeDimnames = makeDimnames, useMatrixToDataFrame = useMatrixToDataFrame)
     
-    selecti <- z[[2]][, 1] %in% codeFrame[, 1]
+    selecti <- z[[2]][, 1, drop = TRUE] %in% codeFrame[, 1, drop = TRUE]
     z[[1]] <- z[[1]][selecti, , drop = FALSE]
     z[[2]] <- z[[2]][selecti, , drop = FALSE]
     
@@ -907,11 +903,8 @@ ReductionCrossDataDummyHierarchies <- function(dataDummyHierarchies, codeFrames 
           warning("Not all rowSelect possible. Row removed")  # Sette inn NA isteden??
         }
        
-      
       z[[1]] <- z[[1]][selecti, , drop = FALSE]
       z[[2]] <- z[[2]][selecti, , drop = FALSE]
-      
-      
       
     }
   } else {
@@ -955,9 +948,9 @@ SelectionCrossDataDummyHierarchy <- function(dataDummyHierarchies, codeFrame, ve
   n <- length(dataDummyHierarchies)
   if (n == 0) 
     return(dataDummyHierarchies)
-  z <- SelectionDataDummyHierarchy(dataDummyHierarchies[[1]], codeFrame[, names(dataDummyHierarchies)[1]])
+  z <- SelectionDataDummyHierarchy(dataDummyHierarchies[[1]], codeFrame[, names(dataDummyHierarchies)[1],drop = TRUE])
   for (i in matlabColon(2, n)) {
-    z <- z * SelectionDataDummyHierarchy(dataDummyHierarchies[[i]], codeFrame[, names(dataDummyHierarchies)[i]])
+    z <- z * SelectionDataDummyHierarchy(dataDummyHierarchies[[i]], codeFrame[, names(dataDummyHierarchies)[i],drop = TRUE])
   }
   if(verbose){
     cat("]")
@@ -1179,17 +1172,17 @@ ReduceDataByDummyHierarchiesAndValue <- function(data, dummyHierarchies, valueVa
   if (length(valueVar)>1){
     sel <- rowSums(abs(data[, valueVar])) != 0
   } else {
-    sel <- data[, valueVar] != 0
+    sel <- data[, valueVar, drop = TRUE] != 0
   }
   for (i in seq_len(length(dummyHierarchies))) {
     if (!is.null(dummyHierarchies[[i]])) {
       keepCodes <- colnames(dummyHierarchies[[i]])[colSums(abs(dummyHierarchies[[i]])) != 0]
-      sel <- sel & (data[, names(dummyHierarchies)[i]] %in% keepCodes)
+      sel <- sel & (data[, names(dummyHierarchies)[i], drop = TRUE] %in% keepCodes)
     }
   }
   # må sørge for minst en av hver colVar
   if (length(colVar) > 0) {
-    setTRUE <- match(unique(data[, colVar]), data[, colVar])
+    setTRUE <- match(unique(data[, colVar, drop = TRUE]), data[, colVar, drop = TRUE])
     sel[setTRUE] <- TRUE  # Sørger for misnt en rad            # kan forbedre dette
   }
   data[sel, , drop = FALSE]

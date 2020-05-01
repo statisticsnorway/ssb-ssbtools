@@ -136,7 +136,7 @@ test_that("handleDuplicated and asInput", {
   valueMatrix = HierarchyCompute(x2, list(age = ageHier, geo = geoHier2, year = "rowFactor"), "ths_per", verbose = FALSE, output = "valueMatrix", asInput = TRUE)
   valueMatrix_ = HierarchyCompute(x2, list(age = ageHier, geo = geoHier2, year = "rowFactor"), c("y", "ths_per"), verbose = FALSE, output = "valueMatrix", asInput = TRUE)
   
-  expect_equivalent(matrix(x2[, "ths_per"],ncol=1), as.matrix(valueMatrix))
+  expect_equivalent(matrix(x2[, "ths_per", drop = TRUE],ncol=1), as.matrix(valueMatrix))
   expect_equivalent(as.matrix(x2[, c("y", "ths_per")]),as.matrix(valueMatrix_))
   
   

@@ -89,8 +89,8 @@ MatrixToDataFrame <- function(x, forceStringsAsFactors = FALSE) {
 #' @keywords internal
 #'
 ForceFactorDataFrame <- function(x) {
-  for (i in seq_len(NCOL(x))) if (is.character(x[, i])) 
-    x[, i] <- as.factor(x[, i])
+  for (i in seq_len(NCOL(x))) if (is.character(x[, i, drop =TRUE])) 
+    x[, i] <- as.factor(x[, i, drop =TRUE])
   x
 }
 
@@ -105,7 +105,8 @@ ForceFactorDataFrame <- function(x) {
 #' @keywords internal
 #'
 CharacterDataFrame <- function(x) {
-  for (i in seq_len(NCOL(x))) x[, i] <- as.character(x[, i])
+  for (i in seq_len(NCOL(x))) 
+    x[, i] <- as.character(x[, i, drop = TRUE])
   x
 }
 
@@ -119,8 +120,8 @@ CharacterDataFrame <- function(x) {
 #' @keywords internal
 #'
 ForceCharacterDataFrame <- function(x) {
-  for (i in seq_len(NCOL(x))) if (is.factor(x[, i])) 
-    x[, i] <- as.character(x[, i])
+  for (i in seq_len(NCOL(x))) if (is.factor(x[, i, drop =TRUE])) 
+    x[, i] <- as.character(x[, i, drop =TRUE])
   x
 }
 

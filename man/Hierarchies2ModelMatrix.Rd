@@ -4,12 +4,21 @@
 \alias{Hierarchies2ModelMatrix}
 \title{Model matrix representing crossed hierarchies}
 \usage{
-Hierarchies2ModelMatrix(data, hierarchies, inputInOutput = TRUE,
-  crossTable = FALSE, total = "Total", hierarchyVarNames = c(mapsFrom
-  = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-  unionComplement = FALSE, reOrder = TRUE, select = NULL,
-  selectionByMultiplicationLimit = 10^7, makeColnames = TRUE,
-  verbose = FALSE)
+Hierarchies2ModelMatrix(
+  data,
+  hierarchies,
+  inputInOutput = TRUE,
+  crossTable = FALSE,
+  total = "Total",
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level"),
+  unionComplement = FALSE,
+  reOrder = TRUE,
+  select = NULL,
+  selectionByMultiplicationLimit = 10^7,
+  makeColnames = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{Matrix or data frame with data containing codes of relevant variables}

@@ -5,8 +5,12 @@
 \alias{HierarchyFix}
 \title{Change the hierarchy table to follow the standard}
 \usage{
-HierarchyFix(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
-  mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE)
+HierarchyFix(
+  hierarchy,
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level"),
+  autoLevel = TRUE
+)
 }
 \arguments{
 \item{hierarchy}{data frame with hierarchy table}

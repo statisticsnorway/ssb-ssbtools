@@ -4,9 +4,14 @@
 \alias{CrossDataDummyHierarchy}
 \title{CrossDataDummyHierarchy}
 \usage{
-CrossDataDummyHierarchy(dataDummyHierarchy1, dataDummyHierarchy2 = NULL,
-  codeFrame1 = NULL, codeFrame2 = NULL, makeDimnames = FALSE,
-  useMatrixToDataFrame = TRUE)
+CrossDataDummyHierarchy(
+  dataDummyHierarchy1,
+  dataDummyHierarchy2 = NULL,
+  codeFrame1 = NULL,
+  codeFrame2 = NULL,
+  makeDimnames = FALSE,
+  useMatrixToDataFrame = TRUE
+)
 }
 \arguments{
 \item{dataDummyHierarchy1}{dataDummyHierarchy1}

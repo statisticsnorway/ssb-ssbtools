@@ -5,9 +5,18 @@
 \alias{Formula2ModelMatrix}
 \title{Sums (aggregates) and/or sparse model matrix with possible cross table}
 \usage{
-FormulaSums(data, formula, makeNames = TRUE, crossTable = FALSE,
-  total = "Total", printInc = FALSE, dropResponse = FALSE,
-  makeModelMatrix = NULL, sep = "-", sepCross = ":")
+FormulaSums(
+  data,
+  formula,
+  makeNames = TRUE,
+  crossTable = FALSE,
+  total = "Total",
+  printInc = FALSE,
+  dropResponse = FALSE,
+  makeModelMatrix = NULL,
+  sep = "-",
+  sepCross = ":"
+)
 
 Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 }

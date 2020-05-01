@@ -23,6 +23,7 @@ devtools::install_github("statisticsnorway/SSBtools")
 | AutoSplit	| Creating variables by splitting the elements of a character vector without needing a split string |
 | CbindIdMatch |	Combine several data frames by using id variables to match rows |
 | DimList2Hrc/Hrc2DimList |	Conversion between hierarchy coding in sdcTable and TauArgus |
+| GaussSuppression | Secondary suppression by Gaussian elimination |
 | FactorLevCorr |	Factor level correlation |
 | FindDimLists |	Finding dimList |
 | FormulaSums/Formula2ModelMatrix |	Sums (aggregates) and/or sparse model matrix with possible cross table |

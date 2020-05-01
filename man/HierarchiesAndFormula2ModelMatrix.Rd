@@ -4,11 +4,21 @@
 \alias{HierarchiesAndFormula2ModelMatrix}
 \title{Model matrix representing crossed hierarchies according to a formula}
 \usage{
-HierarchiesAndFormula2ModelMatrix(data, hierarchies, formula,
-  inputInOutput = TRUE, makeColNames = TRUE, crossTable = FALSE,
-  total = "Total", simplify = TRUE, hierarchyVarNames = c(mapsFrom =
-  "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-  unionComplement = FALSE, reOrder = TRUE, sep = "-")
+HierarchiesAndFormula2ModelMatrix(
+  data,
+  hierarchies,
+  formula,
+  inputInOutput = TRUE,
+  makeColNames = TRUE,
+  crossTable = FALSE,
+  total = "Total",
+  simplify = TRUE,
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level"),
+  unionComplement = FALSE,
+  reOrder = TRUE,
+  sep = "-"
+)
 }
 \arguments{
 \item{data}{Matrix or data frame with data containing codes of relevant variables}

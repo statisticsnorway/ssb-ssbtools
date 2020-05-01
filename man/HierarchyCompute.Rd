@@ -5,15 +5,31 @@
 \alias{HierarchyCompute}
 \title{Hierarchical Computations}
 \usage{
-HierarchyCompute(data, hierarchies, valueVar, colVar = NULL,
-  rowSelect = NULL, colSelect = NULL, select = NULL,
-  inputInOutput = FALSE, output = "data.frame", autoLevel = TRUE,
-  unionComplement = FALSE, constantsInOutput = NULL,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign =
-  "sign", level = "level"), selectionByMultiplicationLimit = 10^7,
-  colNotInDataWarning = TRUE, useMatrixToDataFrame = TRUE,
-  handleDuplicated = "sum", asInput = FALSE, verbose = FALSE,
-  reOrder = FALSE, reduceData = TRUE, makeRownames = NULL)
+HierarchyCompute(
+  data,
+  hierarchies,
+  valueVar,
+  colVar = NULL,
+  rowSelect = NULL,
+  colSelect = NULL,
+  select = NULL,
+  inputInOutput = FALSE,
+  output = "data.frame",
+  autoLevel = TRUE,
+  unionComplement = FALSE,
+  constantsInOutput = NULL,
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level"),
+  selectionByMultiplicationLimit = 10^7,
+  colNotInDataWarning = TRUE,
+  useMatrixToDataFrame = TRUE,
+  handleDuplicated = "sum",
+  asInput = FALSE,
+  verbose = FALSE,
+  reOrder = FALSE,
+  reduceData = TRUE,
+  makeRownames = NULL
+)
 }
 \arguments{
 \item{data}{The input data frame}

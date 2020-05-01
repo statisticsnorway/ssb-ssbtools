@@ -4,9 +4,17 @@
 \alias{DummyHierarchy}
 \title{Converting hierarchy specifications to a (signed) dummy matrix}
 \usage{
-DummyHierarchy(mapsFrom, mapsTo, sign, level, mapsInput = NULL,
-  inputInOutput = FALSE, keepCodes = mapsFrom[integer(0)],
-  unionComplement = FALSE, reOrder = FALSE)
+DummyHierarchy(
+  mapsFrom,
+  mapsTo,
+  sign,
+  level,
+  mapsInput = NULL,
+  inputInOutput = FALSE,
+  keepCodes = mapsFrom[integer(0)],
+  unionComplement = FALSE,
+  reOrder = FALSE
+)
 }
 \arguments{
 \item{mapsFrom}{Character vector from hierarchy table}

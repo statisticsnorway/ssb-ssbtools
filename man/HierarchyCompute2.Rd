@@ -4,8 +4,17 @@
 \alias{HierarchyCompute2}
 \title{Extended Hierarchical Computations}
 \usage{
-HierarchyCompute2(data, hierarchies, valueVar, colVar, rowSelect = NULL,
-  colSelect = NULL, select = NULL, output = "data.frame", ...)
+HierarchyCompute2(
+  data,
+  hierarchies,
+  valueVar,
+  colVar,
+  rowSelect = NULL,
+  colSelect = NULL,
+  select = NULL,
+  output = "data.frame",
+  ...
+)
 }
 \arguments{
 \item{data}{The input data frame}

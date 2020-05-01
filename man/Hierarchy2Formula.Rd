@@ -5,8 +5,11 @@
 \alias{Formula2Hierarchy}
 \title{Hierarchy2Formula}
 \usage{
-Hierarchy2Formula(x, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo
-  = "mapsTo", sign = "sign", level = "level"))
+Hierarchy2Formula(
+  x,
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level")
+)
 
 Formula2Hierarchy(s)
 }

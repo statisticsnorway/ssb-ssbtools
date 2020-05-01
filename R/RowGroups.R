@@ -69,7 +69,7 @@ RowGroups0rows <- function(x, returnGroups = FALSE, returnGroupsId = FALSE) {
 
 AsFactorInteger <- function(x) {
   
-  for (i in seq_len(NCOL(x))) x[, i] <- as.integer(factor(x[, i], exclude = NULL)) - 1
+  for (i in seq_len(NCOL(x))) x[, i] <- as.integer(factor(x[, i, drop = TRUE], exclude = NULL)) - 1
   
   
   hyperN <- rev(cumprod(as.numeric(apply(x, MARGIN = c(2), max) + 1)))[1]
@@ -82,7 +82,8 @@ AsFactorInteger <- function(x) {
   
   k <- rev(c(1, cumprod(rev(as.numeric(apply(x, MARGIN = c(2), max)) + 1))))[-1]
   
-  for (i in seq_len(NCOL(x))) x[, i] <- k[i] * x[, i]
+  for (i in seq_len(NCOL(x))) 
+    x[, i] <- k[i] * x[, i, drop = TRUE]
   
   rowSums(x)
   
@@ -147,6 +148,12 @@ MatchYTreg <- function(x, y) {
 #' row.names(x) <- NULL
 #' ix <- Match(x, y)
 Match <- function(x, y) {
+  
+  # # To test whether tibble input works 
+  # x <- tibble::as_tibble(x)
+  # y <- tibble::as_tibble(y)
+  
+  
   if (NROW(x) == 0) 
     return(integer(0))
   
@@ -156,14 +163,14 @@ Match <- function(x, y) {
   if (any(!(names(x) == names(y)))) 
     y <- y[, names(x), drop = FALSE]
   
-  for (i in seq_len(NCOL(x))) x[, i] <- factor(x[, i], exclude = NULL)
+  for (i in seq_len(NCOL(x))) x[, i] <- factor(x[, i, drop = TRUE], exclude = NULL)
   
-  for (i in seq_len(NCOL(x))) y[, i] <- factor(y[, i], levels = levels(x[, i]), exclude = NULL)
+  for (i in seq_len(NCOL(x))) y[, i] <- factor(y[, i, drop = TRUE], levels = levels(x[, i, drop = TRUE]), exclude = NULL)
   
   
-  for (i in seq_len(NCOL(x))) x[, i] <- as.integer(x[, i]) - 1
+  for (i in seq_len(NCOL(x))) x[, i] <- as.integer(x[, i, drop = TRUE]) - 1
   
-  for (i in seq_len(NCOL(x))) y[, i] <- as.integer(y[, i]) - 1
+  for (i in seq_len(NCOL(x))) y[, i] <- as.integer(y[, i, drop = TRUE]) - 1
   
   
   

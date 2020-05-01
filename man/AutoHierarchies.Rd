@@ -5,10 +5,15 @@
 \alias{FindHierarchies}
 \title{Ensure standardized coding of hierarchies}
 \usage{
-AutoHierarchies(hierarchies, data = NULL, total = "Total",
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign =
-  "sign", level = "level"), combineHierarchies = TRUE,
-  unionComplement = FALSE)
+AutoHierarchies(
+  hierarchies,
+  data = NULL,
+  total = "Total",
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
+    = "level"),
+  combineHierarchies = TRUE,
+  unionComplement = FALSE
+)
 
 FindHierarchies(data, total = "Total")
 }

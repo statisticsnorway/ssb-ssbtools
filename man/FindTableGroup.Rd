@@ -5,8 +5,13 @@
 \alias{FindTableGroup}
 \title{Finding table(s) of hierarchical variable groups}
 \usage{
-FindTableGroup(x = NULL, findLinked = FALSE, mainName = TRUE,
-  fCorr = FactorLevCorr(x), CheckHandling = warning)
+FindTableGroup(
+  x = NULL,
+  findLinked = FALSE,
+  mainName = TRUE,
+  fCorr = FactorLevCorr(x),
+  CheckHandling = warning
+)
 }
 \arguments{
 \item{x}{Matrix or data frame containing the variables}

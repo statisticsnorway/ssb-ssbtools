@@ -4,9 +4,16 @@
 \alias{Unstack}
 \title{Unstack a column from a data frame and include additional variables.}
 \usage{
-Unstack(data, mainVar = 1, stackVar = (1:NCOL(data))[-mainVar],
-  extraVar = integer(0), blockVar = integer(0), sep = "_",
-  returnRowData = TRUE, sorted = FALSE)
+Unstack(
+  data,
+  mainVar = 1,
+  stackVar = (1:NCOL(data))[-mainVar],
+  extraVar = integer(0),
+  blockVar = integer(0),
+  sep = "_",
+  returnRowData = TRUE,
+  sorted = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame}

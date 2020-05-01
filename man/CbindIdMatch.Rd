@@ -4,8 +4,14 @@
 \alias{CbindIdMatch}
 \title{Combine several data frames by using id variables to match rows}
 \usage{
-CbindIdMatch(..., addName = names(x), sep = "_", idNames = sapply(x,
-  function(x) names(x)[1]), idNames1 = idNames, addLast = FALSE)
+CbindIdMatch(
+  ...,
+  addName = names(x),
+  sep = "_",
+  idNames = sapply(x, function(x) names(x)[1]),
+  idNames1 = idNames,
+  addLast = FALSE
+)
 }
 \arguments{
 \item{...}{Several data frames as several input parameters or a list of data frames}

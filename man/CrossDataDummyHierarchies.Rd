@@ -4,9 +4,15 @@
 \alias{CrossDataDummyHierarchies}
 \title{CrossDataDummyHierarchies}
 \usage{
-CrossDataDummyHierarchies(dataDummyHierarchies, codeFrames = NULL,
-  makeDimnames = FALSE, useMatrixToDataFrame = TRUE,
-  removeEmpty = FALSE, verbose = FALSE, reOrder = FALSE)
+CrossDataDummyHierarchies(
+  dataDummyHierarchies,
+  codeFrames = NULL,
+  makeDimnames = FALSE,
+  useMatrixToDataFrame = TRUE,
+  removeEmpty = FALSE,
+  verbose = FALSE,
+  reOrder = FALSE
+)
 }
 \arguments{
 \item{dataDummyHierarchies}{dataDummyHierarchies}

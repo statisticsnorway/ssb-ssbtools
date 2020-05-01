@@ -5,9 +5,15 @@
 \title{Creating variables by splitting the elements of a character vector
 without needing a split string}
 \usage{
-AutoSplit(s, split = NULL, border = "_", revBorder = FALSE,
-  noSplit = FALSE, varNames = paste("var", 1:100, sep = ""),
-  tryReverse = TRUE)
+AutoSplit(
+  s,
+  split = NULL,
+  border = "_",
+  revBorder = FALSE,
+  noSplit = FALSE,
+  varNames = paste("var", 1:100, sep = ""),
+  tryReverse = TRUE
+)
 }
 \arguments{
 \item{s}{The character vector}
