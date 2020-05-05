@@ -22,9 +22,9 @@
 #' @param primary    Indices of primary suppressed cells
 #' @param forced     Indices forced to be not suppressed 
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
-#' @param sigelton Logical vector specifying inner cells for sigelton handlig. 
+#' @param singleton Logical vector specifying inner cells for singleton handlig. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param sigeltonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"subSum"`, `"subSpace"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param ... Extra unused parameters
 #'
@@ -57,14 +57,14 @@
 #' datF$suppressedB[GaussSuppression(x, c(which(datF$values == 0), which(datF$values > 0)), 
 #'                             primary = is.na(datF$primary))] <- NA
 #' 
-#' # with sigelton
+#' # with singleton
 #' datF$suppressedC[GaussSuppression(x, c(which(datF$values == 0), which(datF$values > 0)), 
-#'                             primary = is.na(datF$primary), sigelton = df$values == 1)] <- NA
+#'                             primary = is.na(datF$primary), singleton = df$values == 1)] <- NA
 #' 
 #' datF
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
-                             sigelton = rep(FALSE, NROW(x)), sigeltonMethod = "anySum", printInc = TRUE, 
+                             singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, 
                              ...) {
   if (is.logical(primary)) 
     primary <- which(primary) 
@@ -101,34 +101,34 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     candidates <- c(forced, candidates)
   }
   
-  if (!is.logical(sigelton)) {
-    sigeltonA <- rep(FALSE, NROW(x))
-    sigeltonA[sigelton] <- TRUE
-    sigelton <- sigeltonA
+  if (!is.logical(singleton)) {
+    singletonA <- rep(FALSE, NROW(x))
+    singletonA[singleton] <- TRUE
+    singleton <- singletonA
   }
   
-  if (is.function(sigeltonMethod)) {   # Alternative function possible
-    return(sigeltonMethod(x, candidates, primary, printInc, sigelton = sigelton, nForced = nForced))
+  if (is.function(singletonMethod)) {   # Alternative function possible
+    return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   }
   
-  if (sigeltonMethod %in% c("subSum", "subSpace", "anySum", "subSumSpace", "subSumAny", "none")) {
-    return(GaussSuppression1(x, candidates, primary, printInc, sigelton = sigelton, nForced = nForced, sigeltonMethod = sigeltonMethod))
+  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "subSumSpace", "subSumAny", "none")) {
+    return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod))
   }
   
-  stop("wrong sigeltonMethod")
+  stop("wrong singletonMethod")
 }
 
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForced, sigeltonMethod) {
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod) {
   
-  if (sigeltonMethod == "none") {
-    sigelton <- FALSE
+  if (singletonMethod == "none") {
+    singleton <- FALSE
   }
   
   # make new primary suppressed subSum-cells
-  if (grepl("subSum", sigeltonMethod)) {
-    if (any(sigelton)) {
-      pZ <- x * sigelton
+  if (grepl("subSum", singletonMethod)) {
+    if (any(singleton)) {
+      pZ <- x * singleton
       colZ <- colSums(pZ) > 1
       if (any(colZ)) {
         pZ <- pZ[, colZ, drop = FALSE]
@@ -138,45 +138,45 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
         x <- cbind(x, pZ)
       }
     }
-    if (sigeltonMethod == "subSum") 
-      sigelton <- FALSE
+    if (singletonMethod == "subSum") 
+      singleton <- FALSE
   }
   
-  if (!any(sigelton)) 
-    sigelton <- NULL
+  if (!any(singleton)) 
+    singleton <- NULL
   
   if (printInc) {
-    cat(paste0("GaussSuppression_", sigeltonMethod))
+    cat(paste0("GaussSuppression_", singletonMethod))
     flush.console()
   }
   
-  if (!is.null(sigelton)) {
-    ordSigelton <- order(sigelton)
-    sigelton <- sigelton[ordSigelton]
+  if (!is.null(singleton)) {
+    ordSingleton <- order(singleton)
+    singleton <- singleton[ordSingleton]
     
-    maTRUE <- match(TRUE, sigelton)
+    maTRUE <- match(TRUE, singleton)
     
     if (!is.na(maTRUE)) {
-      ordyB <- ordSigelton[seq_len(maTRUE - 1)]
+      ordyB <- ordSingleton[seq_len(maTRUE - 1)]
       maxInd <- maTRUE - 1
     } else {
-      ordyB <- ordSigelton
-      maxInd <- length(sigelton)
+      ordyB <- ordSingleton
+      maxInd <- length(singleton)
     }
     
     # maxInd made for subSpace, maxInd2 needed by anySum
     maxInd2 <- maxInd
     
     # Removes cells that are handled by anySum/subSpace anyway
-    if (!grepl("subSum", sigeltonMethod)) {
+    if (!grepl("subSum", singletonMethod)) {
       primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
     }
     
-    A <- Matrix2listInt(x[ordSigelton, candidates, drop = FALSE])
-    if (grepl("Space", sigeltonMethod)) {
+    A <- Matrix2listInt(x[ordSingleton, candidates, drop = FALSE])
+    if (grepl("Space", singletonMethod)) {
       B <- Matrix2listInt(x[ordyB, primary, drop = FALSE])
     } else {
-      B <- Matrix2listInt(x[ordSigelton, primary, drop = FALSE])
+      B <- Matrix2listInt(x[ordSingleton, primary, drop = FALSE])
       maxInd <- nrow(x)
     }
   } else {
@@ -222,11 +222,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
     }
     if (length(A$r[[j]])) {
       if (j > nForced) {
-        if (is.null(sigelton)) {
+        if (is.null(singleton)) {
           isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x)
         } else {
           subSubSec <- A$r[[j]][1] > maxInd2
-          if (grepl("Space", sigeltonMethod)) {
+          if (grepl("Space", singletonMethod)) {
             okArj <- A$r[[j]] <= maxInd
             isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x))
           } else {
@@ -299,7 +299,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
             }
           }
         }
-        if (!is.null(sigelton)) {
+        if (!is.null(singleton)) {
           okInd <- (Arj <= maxInd)
           Arj <- Arj[okInd]
           Axj <- Axj[okInd]

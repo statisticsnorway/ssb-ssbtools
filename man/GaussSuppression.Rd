@@ -10,8 +10,8 @@ GaussSuppression(
   primary = NULL,
   forced = NULL,
   hidden = NULL,
-  sigelton = rep(FALSE, NROW(x)),
-  sigeltonMethod = "anySum",
+  singleton = rep(FALSE, NROW(x)),
+  singletonMethod = "anySum",
   printInc = TRUE,
   ...
 )
@@ -27,10 +27,10 @@ GaussSuppression(
 
 \item{hidden}{Indices to be removed from the above \code{candidates} input (see details)}
 
-\item{sigelton}{Logical vector specifying inner cells for sigelton handlig.
+\item{singleton}{Logical vector specifying inner cells for singleton handlig.
 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.}
 
-\item{sigeltonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"subSum"}, \code{"subSpace"} or \code{"none"} (see details).}
+\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"subSum"}, \code{"subSpace"} or \code{"none"} (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
 
@@ -82,9 +82,9 @@ datF$suppressedA[GaussSuppression(x, primary = is.na(datF$primary))] <- NA
 datF$suppressedB[GaussSuppression(x, c(which(datF$values == 0), which(datF$values > 0)), 
                             primary = is.na(datF$primary))] <- NA
 
-# with sigelton
+# with singleton
 datF$suppressedC[GaussSuppression(x, c(which(datF$values == 0), which(datF$values > 0)), 
-                            primary = is.na(datF$primary), sigelton = df$values == 1)] <- NA
+                            primary = is.na(datF$primary), singleton = df$values == 1)] <- NA
 
 datF
 
