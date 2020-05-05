@@ -28,7 +28,8 @@
 #' @param printInc Printing "..." to console when TRUE
 #' @param ... Extra unused parameters
 #'
-#' @return Secondary suppression indices   
+#' @return Secondary suppression indices  
+#' @importFrom Matrix colSums t
 #' @export
 #'
 #' @examples
@@ -128,10 +129,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
   if (grepl("subSum", sigeltonMethod)) {
     if (any(sigelton)) {
       pZ <- x * sigelton
-      colZ <- Matrix::colSums(pZ) > 1
+      colZ <- colSums(pZ) > 1
       if (any(colZ)) {
         pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!duplicated(as.matrix(Matrix::t(pZ))))
+        nodupl <- which(!duplicated(as.matrix(t(pZ))))
         pZ <- pZ[, nodupl, drop = FALSE]
         primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
         x <- cbind(x, pZ)
@@ -166,12 +167,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
     # maxInd made for subSpace, maxInd2 needed by anySum
     maxInd2 <- maxInd
     
+    # Removes cells that are handled by anySum/subSpace anyway
+    if (!grepl("subSum", sigeltonMethod)) {
+      primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
+    }
+    
     A <- Matrix2listInt(x[ordSigelton, candidates, drop = FALSE])
     if (grepl("Space", sigeltonMethod)) {
       B <- Matrix2listInt(x[ordyB, primary, drop = FALSE])
     } else {
       B <- Matrix2listInt(x[ordSigelton, primary, drop = FALSE])
-      maxInd <- length(sigelton)
+      maxInd <- nrow(x)
     }
   } else {
     A <- Matrix2listInt(x[, candidates, drop = FALSE])
@@ -184,10 +190,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, sigelton, nForce
   nB <- length(B$r)
   secondary <- rep(FALSE, n)
   
-  SqSum <- function(x) sum(x^2)
-  
-  colSums_B_2 <- sapply(B$x, SqSum)
-  b <- sqrt(colSums_B_2)
   if (printInc) {
     cat(": ")
     flush.console()
