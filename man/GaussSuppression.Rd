@@ -27,7 +27,7 @@ GaussSuppression(
 
 \item{hidden}{Indices to be removed from the above \code{candidates} input (see details)}
 
-\item{singleton}{Logical vector specifying inner cells for singleton handlig.
+\item{singleton}{Logical vector specifying inner cells for singleton handling.
 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.}
 
 \item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"subSum"}, \code{"subSpace"} or \code{"none"} (see details).}

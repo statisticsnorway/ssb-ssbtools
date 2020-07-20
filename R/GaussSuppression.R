@@ -22,7 +22,7 @@
 #' @param primary    Indices of primary suppressed cells
 #' @param forced     Indices forced to be not suppressed 
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
-#' @param singleton Logical vector specifying inner cells for singleton handlig. 
+#' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
 #' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
