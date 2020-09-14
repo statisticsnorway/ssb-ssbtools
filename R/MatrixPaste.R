@@ -9,6 +9,7 @@
 #' @details Each row in input will be combined to a single string using sep.
 #'
 #' @keywords internal
+#' @export
 #' @author Øyvind Langsrud
 #'
 #' @examples
@@ -32,4 +33,5 @@ MatrixPaste = function(x, sep="_", forceCharacter=FALSE, stringEmpty = " "){
 
 #' @rdname MatrixPaste
 #' @keywords internal
+#' @export
 MatrixPaste1 = function(x,stringEmpty = "1") MatrixPaste(x,stringEmpty = stringEmpty)
