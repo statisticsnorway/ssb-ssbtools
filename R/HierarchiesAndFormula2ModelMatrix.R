@@ -15,6 +15,7 @@
 #' @param unionComplement Logical vector (possibly recycled) for each element of hierarchies.
 #'        When TRUE, sign means union and complement instead of addition or subtraction. 
 #'        Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored. 
+#' @param removeEmpty When TRUE, empty columns (only zeros) are not included in output.        
 #' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
 #' @param sep String to separate when creating column names
 #'
@@ -43,6 +44,9 @@
 #' # Another model and with crossTable in output
 #' H(s, geoYear, ~geo + year, crossTable = TRUE)
 #' 
+#' # Without empty columns  
+#' H(s, geoYear, ~geo + year, crossTable = TRUE, removeEmpty = TRUE)
+#' 
 #' # Three dimensions
 #' ageGeoYear <- list(age = ageHier, geo = geoDimList, year = "allYears")
 #' m <- H(z, ageGeoYear, ~age * geo + geo * year)
@@ -66,7 +70,12 @@
 HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputInOutput = TRUE, makeColNames = TRUE, 
                                               crossTable = FALSE, total = "Total", simplify = TRUE, 
                                               hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), 
-                                              unionComplement = FALSE, reOrder = TRUE, sep = "-") {
+                                              unionComplement = FALSE, removeEmpty = FALSE, 
+                                              reOrder = TRUE, sep = "-") {
+  rowSelect <- NULL
+  if (removeEmpty)
+    rowSelect <- "removeEmpty"
+  
   nHier <- length(hierarchies)
   nam <- names(hierarchies)
   n <- NROW(data)
@@ -138,7 +147,7 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
     fack <- fac[, k]
     hcd <- HierarchyComputeDummy(data = data, hierarchies = hierarchies[fack], inputInOutput = inputInOutput[fack], 
                                  crossTable = (crossTable | makeColNames), unionComplement = unionComplement[fack], 
-                                 reOrder = reOrder, makeRownames = FALSE)
+                                 reOrder = reOrder, makeRownames = FALSE, rowSelect = rowSelect)
     if (crossTable | makeColNames) {
       
       fr <- firstROW[rep(1, NROW(hcd$crossTable)), , drop = FALSE]

@@ -41,7 +41,7 @@ HierarchyCompute(
 \item{colVar}{When non-NULL, the function \code{\link{HierarchyCompute2}} is called. See its documentation for more information.}
 
 \item{rowSelect}{Data frame specifying variable combinations for output. The colFactor variable is not included.
-In addition \code{rowSelect=="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.}
+In addition \code{rowSelect="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.}
 
 \item{colSelect}{Vector specifying categories of the colFactor variable for output.}
 

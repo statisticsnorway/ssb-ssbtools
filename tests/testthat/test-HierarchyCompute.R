@@ -259,12 +259,16 @@ test_that("miscellaneous", {
   
   m1 <- HierarchiesAndFormula2ModelMatrix(x, ageGeoYearFactor, ~geo * age + year:geo)
   m2 <- Formula2ModelMatrix(x, ~geo * age + year:geo)
+  m3 <- HierarchiesAndFormula2ModelMatrix(x, ageGeoYearFactor, ~geo * age + year:geo, removeEmpty = TRUE)
   m1 = m1[ ,colSums(abs(m1))!=0]
   expect_identical(t(m1), t(m2))
+  expect_identical(t(m1), t(m3))
   
   m1 <- Hierarchies2ModelMatrix(x, ageGeoYearFactor, select = "removeEmpty")
   m2 <- Formula2ModelMatrix(x, ~age:geo:year - 1, sep=":")
+  m3 <- Hierarchies2ModelMatrix(x, ageGeoYearFactor, removeEmpty = TRUE)
   expect_identical(m1, m2)
+  expect_identical(m1, m3)
   
   ageGeoYearTotal <- list(age = "Total", geo = "Total", year = "Total")
   m1 <- Hierarchies2ModelMatrix(x, ageGeoYearTotal, select = "removeEmpty")

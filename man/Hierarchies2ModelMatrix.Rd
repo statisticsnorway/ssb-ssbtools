@@ -15,6 +15,7 @@ Hierarchies2ModelMatrix(
   unionComplement = FALSE,
   reOrder = TRUE,
   select = NULL,
+  removeEmpty = FALSE,
   selectionByMultiplicationLimit = 10^7,
   makeColnames = TRUE,
   verbose = FALSE
@@ -42,6 +43,8 @@ Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 \item{reOrder}{When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering.}
 
 \item{select}{Data frame specifying variable combinations for output.}
+
+\item{removeEmpty}{When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.}
 
 \item{selectionByMultiplicationLimit}{With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 the computation is performed by a slower but more memory efficient algorithm.}

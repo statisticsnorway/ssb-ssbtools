@@ -65,7 +65,7 @@ HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
 #' @param valueVar Name of the variable(s) to be aggregated.
 #' @param colVar When non-NULL, the function \code{\link{HierarchyCompute2}} is called. See its documentation for more information.  
 #' @param rowSelect Data frame specifying variable combinations for output. The colFactor variable is not included.
-#'                  In addition \code{rowSelect=="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.
+#'                  In addition \code{rowSelect="removeEmpty"} removes combinations corresponding to empty rows (only zeros) of \code{dataDummyHierarchy}.
 #' @param colSelect Vector specifying categories of the colFactor variable for output.
 #' @param select Data frame specifying variable combinations for output. The colFactor variable is included.
 #' @param inputInOutput Logical vector (possibly recycled) for each element of hierarchies.

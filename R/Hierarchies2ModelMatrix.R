@@ -62,6 +62,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #'        Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored. 
 #' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
 #' @param select Data frame specifying variable combinations for output.
+#' @param removeEmpty When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.
 #' @param selectionByMultiplicationLimit With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 #'          the computation is performed by a slower but more memory efficient algorithm. 
 #' @param makeColnames Colnames included when TRUE (default).
@@ -121,8 +122,12 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 Hierarchies2ModelMatrix <- function(data, hierarchies, inputInOutput = TRUE, crossTable = FALSE, total = "Total", 
                                     hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), 
                                     unionComplement = FALSE, reOrder = TRUE,
-                                    select = NULL, selectionByMultiplicationLimit = 10^7, 
+                                    select = NULL, removeEmpty = FALSE, 
+                                    selectionByMultiplicationLimit = 10^7, 
                                     makeColnames = TRUE, verbose = FALSE) {
+  if (is.null(select))
+    if (removeEmpty)
+      select <- "removeEmpty"
   autoHierarchies <- AutoHierarchies(hierarchies = hierarchies, data = data, total = total, hierarchyVarNames = hierarchyVarNames)
   HierarchyComputeDummy(data = data, hierarchies = autoHierarchies, inputInOutput = inputInOutput, crossTable = crossTable, 
                         unionComplement = unionComplement, reOrder=reOrder, rowSelect = select, 

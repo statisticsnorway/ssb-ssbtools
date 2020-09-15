@@ -16,6 +16,7 @@ HierarchiesAndFormula2ModelMatrix(
   hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
     = "level"),
   unionComplement = FALSE,
+  removeEmpty = FALSE,
   reOrder = TRUE,
   sep = "-"
 )
@@ -44,6 +45,8 @@ TRUE means that codes from input are included in output. Values corresponding to
 \item{unionComplement}{Logical vector (possibly recycled) for each element of hierarchies.
 When TRUE, sign means union and complement instead of addition or subtraction.
 Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
+
+\item{removeEmpty}{When TRUE, empty columns (only zeros) are not included in output.}
 
 \item{reOrder}{When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering.}
 
@@ -74,6 +77,9 @@ attr(m, "startCol")  # Two model terms needed
 
 # Another model and with crossTable in output
 H(s, geoYear, ~geo + year, crossTable = TRUE)
+
+# Without empty columns  
+H(s, geoYear, ~geo + year, crossTable = TRUE, removeEmpty = TRUE)
 
 # Three dimensions
 ageGeoYear <- list(age = ageHier, geo = geoDimList, year = "allYears")
