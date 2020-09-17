@@ -35,6 +35,7 @@ devtools::install_github("statisticsnorway/SSBtools")
 | Match |	Matching rows in data frames |
 | matlabColon |	Simulate Matlab's ':' |
 | RbindAll |	Combining several data frames when the columns don't match |
+| Reduce0exact |	Reducing a non-negative regression problem |
 | RowGroups |	Create numbering according to unique rows |
 | SSBtoolsData |	Function that returns a dataset |
 | Stack |	Stack columns from a data frame and include variables. |
