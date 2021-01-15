@@ -275,6 +275,21 @@ test_that("miscellaneous", {
   m2 <- Formula2ModelMatrix(x, ~age*geo*year, sep=":")
   expect_identical(m1, m2[, match(colnames(m1),colnames(m2))])
   
+  
+  
+  # -- New test based on earlier bug --
+  # Create some input
+  z <- SSBtoolsData("sprt_emp_withEU")
+  z$age[z$age=="Y15-29"] <- "young"
+  z$age[z$age=="Y30-64"] <- "old" 
+  ageHier <- data.frame(mapsFrom = c("young", "old"), mapsTo = "Total", sign = 1)
+  geoDimList <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
+  # Small dataset example. Two dimensions.
+  s <- z[z$geo == "Spain" & z$year != 2016, ]
+  m1 <- HierarchiesAndFormula2ModelMatrix(s, list(age = ageHier, geo = geoDimList, year = ""), formula = ~age*geo + year, inputInOutput = c(TRUE, FALSE), removeEmpty = FALSE, crossTable = TRUE)$crossTable
+  m2 <- HierarchiesAndFormula2ModelMatrix(s, list(age = ageHier, geo = geoDimList, year = ""), formula = ~year + age*geo, inputInOutput = c(TRUE, FALSE), removeEmpty = FALSE, crossTable = TRUE)$crossTable
+  expect_identical(unique(diff(sort(Match(m1,m2)))),1L)
+  
 })
 
 

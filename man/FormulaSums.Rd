@@ -44,7 +44,7 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
 \value{
-A matrix of sums, a sparse model matrix or a list of three elements (model matrix, cross table and sums).
+A matrix of sums, a sparse model matrix or a list of two or three elements (model matrix and cross table and sums when relevant).
 }
 \description{
 By default this function return sums if the formula contains a response part and a model matrix otherwise

@@ -1044,7 +1044,7 @@ AutoLevel <- function(x) {
 #' @param level Numeric vector from hierarchy table
 #' @param mapsInput All codes in mapsFrom not in mapsTo (created automatically when NULL) and possibly other codes in input data.
 #' @param inputInOutput When FALSE all output rows represent codes in mapsTo
-#' @param keepCodes To prevent some codes to be removed when inputInOutput = TRUE
+#' @param keepCodes To prevent some codes to be removed when inputInOutput = FALSE
 #' @param unionComplement When TRUE, sign means union and complement instead of addition or subtraction (see note)
 #' @param reOrder When TRUE (FALSE is default) output codes are ordered differently, more similar to a usual model matrix ordering.
 #'

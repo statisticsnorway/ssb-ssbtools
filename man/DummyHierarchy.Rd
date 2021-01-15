@@ -29,7 +29,7 @@ DummyHierarchy(
 
 \item{inputInOutput}{When FALSE all output rows represent codes in mapsTo}
 
-\item{keepCodes}{To prevent some codes to be removed when inputInOutput = TRUE}
+\item{keepCodes}{To prevent some codes to be removed when inputInOutput = FALSE}
 
 \item{unionComplement}{When TRUE, sign means union and complement instead of addition or subtraction (see note)}
 

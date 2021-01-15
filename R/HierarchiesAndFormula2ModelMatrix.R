@@ -85,6 +85,7 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
   
   allVars <- row.names(attr(delete.response(terms(as.formula(formula))), "factors"))
   
+  
   ma <- match(allVars, names(hierarchies))
   if (any(is.na(ma))) 
     stop("Var in formula not in hi")
@@ -97,12 +98,14 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
   hierarchies <- AutoHierarchies(hierarchies = hierarchies[ma], data = data, total = total, hierarchyVarNames = hierarchyVarNames)
   
   nHier <- length(hierarchies)
+  allVars <- names(hierarchies)
   
+
   names(total) <- names(hierarchies) 
   
   if (simplify) {
     totCode <- FindTotCode(hierarchies, data)  #, hierarchyVarNames=hierarchyVarNames) 
-    formula <- ReduceFormula(formula, nam[sapply(totCode, length) > 0])
+    formula <- ReduceFormula(formula, allVars[sapply(totCode, length) > 0])
     for (i in 1:nHier) {
       li <- length(totCode[[i]])
       if (li) {
@@ -113,8 +116,16 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
     }
   }
   termsFormula <- terms(as.formula(formula))
-  fac <- attr(delete.response(termsFormula), "factors") != 0
+  fac_ <- attr(delete.response(termsFormula), "factors") != 0
   intercept <- attr(termsFormula, "intercept") != 0
+  
+  
+  # Ensure same variables after possibly changed formula
+  fac <- matrix(FALSE, nHier, ncol(fac_))
+  rownames(fac) <- allVars
+  colnames(fac) <- colnames(fac_) 
+  fac[match(rownames(fac_), rownames(fac)), ] <- fac_
+  
   
   if (crossTable | makeColNames) {
     firstROW <- CharacterDataFrame(data[1, allVars, drop = FALSE])
@@ -137,8 +148,6 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
     termNames <- colnames(fac)
     startCol <- integer(0)
   }
-  
-  
   
   nFac <- NCOL(fac)
   

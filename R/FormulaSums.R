@@ -18,7 +18,7 @@
 #' @param sepCross String to separate when creating column names involving crossing
 #'
 #' @return
-#'   A matrix of sums, a sparse model matrix or a list of three elements (model matrix, cross table and sums).
+#'   A matrix of sums, a sparse model matrix or a list of two or three elements (model matrix and cross table and sums when relevant).
 #'   
 #' @importFrom stats aggregate as.formula delete.response terms
 #' @importFrom Matrix fac2sparse
@@ -154,7 +154,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     m <- Matrix::t(m) else m <- NULL
   
   if (!response) 
-    allSums <- NULL
+    return(list(modelMatrix = m, crossTable = allRows)) #allSums <- NULL
   
   list(modelMatrix = m, crossTable = allRows, allSums = allSums)
 }
