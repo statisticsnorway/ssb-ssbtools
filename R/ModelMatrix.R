@@ -109,7 +109,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL,
 #' @param allFactor When TRUE all variables are coerced to factor
 #' @param sparse When TRUE sparse matrix created by sparse.model.matrix()
 #'
-#' @return model matrix created via model.matrix(), sparse.model.matrix() or FormulaSums()
+#' @return model matrix created via model.matrix() or sparse.model.matrix()
 #' @importFrom stats model.frame model.matrix
 #' @importFrom Matrix sparse.model.matrix
 #' @export

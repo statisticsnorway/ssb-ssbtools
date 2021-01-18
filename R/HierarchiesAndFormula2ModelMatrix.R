@@ -20,7 +20,7 @@
 #' @param sep String to separate when creating column names
 #'
 #' @return A sparse model matrix or a list of two elements (model matrix and cross table)
-#' @seealso \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.
+#' @seealso \code{\link{ModelMatrix}}, \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.
 #' @export
 #' @author Øyvind Langsrud
 #'

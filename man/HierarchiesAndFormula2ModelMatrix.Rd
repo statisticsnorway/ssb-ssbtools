@@ -103,7 +103,7 @@ ageGeoYearFactor <- list(age = "", geo = "", year = "")
 t(H(z, ageGeoYearFactor, ~geo * age + year:geo))
 }
 \seealso{
-\code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.
+\code{\link{ModelMatrix}}, \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.
 }
 \author{
 Øyvind Langsrud

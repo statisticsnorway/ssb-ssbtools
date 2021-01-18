@@ -23,7 +23,8 @@
 #' @importFrom stats aggregate as.formula delete.response terms
 #' @importFrom Matrix fac2sparse
 #' @importFrom utils flush.console
-#'
+#' 
+#' @seealso \code{\link{ModelMatrix}}
 #' @export
 #' @author Øyvind Langsrud
 #'

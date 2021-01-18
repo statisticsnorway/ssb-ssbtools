@@ -24,7 +24,7 @@ Model_Matrix(
 \item{sparse}{When TRUE sparse matrix created by sparse.model.matrix()}
 }
 \value{
-model matrix created via model.matrix(), sparse.model.matrix() or FormulaSums()
+model matrix created via model.matrix() or sparse.model.matrix()
 }
 \description{
 All factor levels included

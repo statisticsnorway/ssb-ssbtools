@@ -115,7 +115,7 @@ m2b <- m2B$modelMatrix[, Match(select, m2B$crossTable), drop = FALSE]
 t(m2b) \%*\% ths_per
 }
 \seealso{
-\code{\link{HierarchiesAndFormula2ModelMatrix}}
+\code{\link{ModelMatrix}}, \code{\link{HierarchiesAndFormula2ModelMatrix}}
 }
 \author{
 Øyvind Langsrud

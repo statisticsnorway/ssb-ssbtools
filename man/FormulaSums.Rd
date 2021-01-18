@@ -62,6 +62,9 @@ FormulaSums(x, ~ year*age*eu)
 FormulaSums(x, ths_per ~ year*age*geo + year*age*eu, crossTable = TRUE, makeModelMatrix = TRUE)
 FormulaSums(x, ths_per ~ year:age:geo -1)
 }
+\seealso{
+\code{\link{ModelMatrix}}
+}
 \author{
 Øyvind Langsrud
 }
