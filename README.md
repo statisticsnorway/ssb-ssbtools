@@ -34,6 +34,7 @@ devtools::install_github("statisticsnorway/SSBtools")
 | HierarchyCompute |	Hierarchical Computations |
 | Match |	Matching rows in data frames |
 | matlabColon |	Simulate Matlab's ':' |
+| ModelMatrix |	Model matrix from hierarchies and/or a formula (common interface) |
 | RbindAll |	Combining several data frames when the columns don't match |
 | Reduce0exact |	Reducing a non-negative regression problem |
 | RowGroups |	Create numbering according to unique rows |

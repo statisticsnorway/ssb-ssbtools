@@ -1,14 +1,14 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 0.8.1
-Date: 2021-01-15
+Version: 0.8.2
+Date: 2021-01-18
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no"),
              person("Bjørn-Helge", "Mevik", role = c("cph")))
 Depends: Matrix
 Imports: stringr, methods, MASS
-Description: Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, and functions for hierarchical computations are included. The hierarchy specification functions are useful within statistical disclosure control.
+Description: Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, and functions for hierarchical computations are included (Langsrud, 2020) <doi:10.13140/RG.2.2.27313.61283>. The hierarchy specification functions are useful within statistical disclosure control.
 License: Apache License 2.0 | file LICENSE
 URL: https://github.com/statisticsnorway/SSBtools
 BugReports: https://github.com/statisticsnorway/SSBtools/issues
