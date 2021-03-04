@@ -16,6 +16,7 @@
 #' @param makeModelMatrix Make model matrix when TRUE. NULL means automatic.
 #' @param sep String to separate when creating column names
 #' @param sepCross String to separate when creating column names involving crossing
+#' @param ... Extra unused parameters
 #'
 #' @return
 #'   A matrix of sums, a sparse model matrix or a list of two or three elements (model matrix and cross table and sums when relevant).
@@ -37,7 +38,7 @@
 #' FormulaSums(x, ths_per ~ year*age*geo + year*age*eu, crossTable = TRUE, makeModelMatrix = TRUE)
 #' FormulaSums(x, ths_per ~ year:age:geo -1)
 FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, total = "Total", printInc = FALSE, 
-                        dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":") {
+                        dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", ...) {
   
   hg <- NULL  # Possible input in a future version
   

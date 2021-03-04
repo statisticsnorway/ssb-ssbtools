@@ -15,7 +15,8 @@ FormulaSums(
   dropResponse = FALSE,
   makeModelMatrix = NULL,
   sep = "-",
-  sepCross = ":"
+  sepCross = ":",
+  ...
 )
 
 Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)

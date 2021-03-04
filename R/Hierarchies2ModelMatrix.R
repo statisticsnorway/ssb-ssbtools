@@ -66,7 +66,8 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' @param selectionByMultiplicationLimit With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 #'          the computation is performed by a slower but more memory efficient algorithm. 
 #' @param makeColnames Colnames included when TRUE (default).
-#' @param verbose Whether to print information during calculations. FALSE is default.              
+#' @param verbose Whether to print information during calculations. FALSE is default.    
+#' @param ... Extra unused parameters          
 #'
 #' @return A sparse model matrix or a list of two elements (model matrix and cross table)
 #' @seealso \code{\link{ModelMatrix}}, \code{\link{HierarchiesAndFormula2ModelMatrix}}
@@ -124,7 +125,7 @@ Hierarchies2ModelMatrix <- function(data, hierarchies, inputInOutput = TRUE, cro
                                     unionComplement = FALSE, reOrder = TRUE,
                                     select = NULL, removeEmpty = FALSE, 
                                     selectionByMultiplicationLimit = 10^7, 
-                                    makeColnames = TRUE, verbose = FALSE) {
+                                    makeColnames = TRUE, verbose = FALSE, ...) {
   if (is.null(select))
     if (removeEmpty)
       select <- "removeEmpty"

@@ -18,6 +18,7 @@
 #' @param removeEmpty When TRUE, empty columns (only zeros) are not included in output.        
 #' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
 #' @param sep String to separate when creating column names
+#' @param ... Extra unused parameters
 #'
 #' @return A sparse model matrix or a list of two elements (model matrix and cross table)
 #' @seealso \code{\link{ModelMatrix}}, \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.
@@ -71,7 +72,7 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
                                               crossTable = FALSE, total = "Total", simplify = TRUE, 
                                               hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), 
                                               unionComplement = FALSE, removeEmpty = FALSE, 
-                                              reOrder = TRUE, sep = "-") {
+                                              reOrder = TRUE, sep = "-", ...) {
   rowSelect <- NULL
   if (removeEmpty)
     rowSelect <- "removeEmpty"

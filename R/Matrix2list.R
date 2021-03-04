@@ -25,6 +25,14 @@ Matrix2list <- function(x) {
     z <- list(r = vector("list",ncolx), 
              x = vector("list",ncolx))
   }
+  if(length(z[[1]]) != ncolx){  # Fix for aggregate in old R versions (< 3.5.0)
+    z_ <- z
+    z <- list(r = vector("list",ncolx), 
+              x = vector("list",ncolx))
+    ind <- aggregate(rep(1L, length(colf[[1]])), by = colf, FunX, drop = FALSE, simplify = FALSE)[[1]]
+    z$r[ind] <- z_$r
+    z$x[ind] <- z_$x
+  }
   for (i in seq_len(ncolx)) {
     if (is.null(z$r[[i]])) {
       z$r[[i]] <- integer(0)
@@ -50,6 +58,14 @@ Matrix2listInt <- function(x) {
   } else {
     z <- list(r = vector("list",ncolx), 
               x = vector("list",ncolx))
+  }
+  if(length(z[[1]]) != ncolx){  # Fix for aggregate in old R versions (< 3.5.0)
+    z_ <- z
+    z <- list(r = vector("list",ncolx), 
+              x = vector("list",ncolx))
+    ind <- aggregate(rep(1L, length(colf[[1]])), by = colf, FunX, drop = FALSE, simplify = FALSE)[[1]]
+    z$r[ind] <- z_$r
+    z$x[ind] <- z_$x
   }
   for (i in seq_len(ncolx)) {
     if (is.null(z$r[[i]])) {

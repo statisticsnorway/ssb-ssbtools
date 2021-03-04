@@ -18,7 +18,8 @@ HierarchiesAndFormula2ModelMatrix(
   unionComplement = FALSE,
   removeEmpty = FALSE,
   reOrder = TRUE,
-  sep = "-"
+  sep = "-",
+  ...
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 \item{reOrder}{When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering.}
 
 \item{sep}{String to separate when creating column names}
+
+\item{...}{Extra unused parameters}
 }
 \value{
 A sparse model matrix or a list of two elements (model matrix and cross table)

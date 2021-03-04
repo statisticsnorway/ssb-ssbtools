@@ -87,6 +87,12 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL,
     a <- Formula2ModelMatrix(data = data, formula = formula, crossTable = crossTable, total=total, ...)
   }
   
+  if (crossTable) {
+    if (!is.data.frame(a$crossTable)) {
+      a$crossTable <- as.data.frame(a$crossTable)
+    }
+  }
+  
   if(!sparse){
     if(crossTable){
       a$modelMatrix <- as.matrix(a$modelMatrix)

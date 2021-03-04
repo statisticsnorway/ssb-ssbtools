@@ -18,7 +18,8 @@ Hierarchies2ModelMatrix(
   removeEmpty = FALSE,
   selectionByMultiplicationLimit = 10^7,
   makeColnames = TRUE,
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ the computation is performed by a slower but more memory efficient algorithm.}
 \item{makeColnames}{Colnames included when TRUE (default).}
 
 \item{verbose}{Whether to print information during calculations. FALSE is default.}
+
+\item{...}{Extra unused parameters}
 }
 \value{
 A sparse model matrix or a list of two elements (model matrix and cross table)
