@@ -267,8 +267,8 @@ test_that("miscellaneous", {
   m1 <- Hierarchies2ModelMatrix(x, ageGeoYearFactor, select = "removeEmpty")
   m2 <- Formula2ModelMatrix(x, ~age:geo:year - 1, sep=":")
   m3 <- Hierarchies2ModelMatrix(x, ageGeoYearFactor, removeEmpty = TRUE)
-  expect_identical(m1, m2)
-  expect_identical(m1, m3)
+  expect_identical(t(m1), t(m2))
+  expect_identical(t(m1), t(m3))
   
   ageGeoYearTotal <- list(age = "Total", geo = "Total", year = "Total")
   m1 <- Hierarchies2ModelMatrix(x, ageGeoYearTotal, select = "removeEmpty")

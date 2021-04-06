@@ -14,6 +14,8 @@ ModelMatrix(
   viaOrdinary = FALSE,
   total = "Total",
   removeEmpty = FALSE,
+  modelMatrix = NULL,
+  dimVar = NULL,
   ...
 )
 }
@@ -39,10 +41,14 @@ Since these functions omit a factor level, an empty factor level is first added.
 
 \item{removeEmpty}{When TRUE, empty columns (only zeros) are not included in output (relevant when hierarchies)}
 
+\item{modelMatrix}{The model matrix as input (same as output)}
+
+\item{dimVar}{The main dimensional variables and additional aggregating variables. This parameter can be  useful when hierarchies and formula are unspecified.}
+
 \item{...}{Further arguments to  \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} or \code{\link{HierarchiesAndFormula2ModelMatrix}}}
 }
 \value{
-A sparse model matrix or a list of two elements (model matrix and cross table)
+A (sparse) model matrix or a list of two elements (model matrix and cross table)
 }
 \description{
 A common interface to \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} and \code{\link{HierarchiesAndFormula2ModelMatrix}}
@@ -80,6 +86,7 @@ ModelMatrix(s, list(age = ageHier, geo = geoDimList, year = ""), formula = ~age 
             inputInOutput = c(TRUE, FALSE), removeEmpty = FALSE, crossTable = TRUE)
 ModelMatrix(z, list(age = ageHier, geo = geoDimList, year = ""), formula = ~age * year + geo, 
             inputInOutput = c(FALSE, TRUE), crossTable = TRUE)
+            
 }
 \author{
 Øyvind Langsrud

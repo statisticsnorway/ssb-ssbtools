@@ -5,6 +5,7 @@
 #' The model matrix is constructed by calling fac2sparse() repeatedly. The sums are computed by calling aggregate() repeatedly.
 #' Hierarchical variables handled when constructing cross table.
 #' Column names constructed from the cross table.
+#' The returned model matrix includes the attribute \code{startCol} (see last example line).
 #'
 #' @param data data frame
 #' @param formula A model formula
@@ -16,6 +17,7 @@
 #' @param makeModelMatrix Make model matrix when TRUE. NULL means automatic.
 #' @param sep String to separate when creating column names
 #' @param sepCross String to separate when creating column names involving crossing
+#' @param avoidHierarchical Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.  
 #' @param ... Extra unused parameters
 #'
 #' @return
@@ -37,10 +39,22 @@
 #' FormulaSums(x, ~ year*age*eu)
 #' FormulaSums(x, ths_per ~ year*age*geo + year*age*eu, crossTable = TRUE, makeModelMatrix = TRUE)
 #' FormulaSums(x, ths_per ~ year:age:geo -1)
+#' m <- Formula2ModelMatrix(x, ~ year*geo + year*eu)
+#' print(m[1:3, ], col.names = TRUE)
+#' attr(m, "startCol")
 FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, total = "Total", printInc = FALSE, 
-                        dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", ...) {
+                        dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", 
+                        avoidHierarchical = FALSE, ...) {
   
   hg <- NULL  # Possible input in a future version
+ 
+  if (is.logical(avoidHierarchical)) {
+    if (avoidHierarchical) {
+      avoidHierarchical <- seq_len(ncol(data))
+    } else {
+      avoidHierarchical <- NULL
+    }
+  }
   
   termsFormula <- terms(as.formula(formula))
   
@@ -54,11 +68,33 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   if (is.null(makeModelMatrix)) 
     makeModelMatrix <- !response
   
+  attr_startCol <- makeModelMatrix
+  
   fac <- attr(delete.response(termsFormula), "factors") != 0
   faccol <- match(rownames(fac), colnames(data))
   
-  if (is.null(hg)) 
-    hg <- HierarchicalGroups3(data[, faccol, drop = FALSE])
+  if (is.null(hg)){
+    if (is.null(avoidHierarchical)){
+      hg <- HierarchicalGroups3(data[, faccol, drop = FALSE])
+    } else {
+      avoidvar <- colnames(data[1, avoidHierarchical, drop=FALSE])
+      avoidcol <- match(avoidvar, colnames(data))
+      faccol_a <- faccol[!(faccol %in% avoidcol)]
+      if(length((faccol_a))){
+        hg_a <- HierarchicalGroups3(data[, faccol_a, drop = FALSE])
+        faccol_aa <- which(!(faccol %in% avoidcol))
+        for(i in seq_along(hg_a)){
+          hg_a[[i]] <- faccol_aa[hg_a[[i]]] 
+        }
+      } else {
+        hg_a <- NULL
+      }
+      avoidcol_b <- match(avoidcol, faccol)
+      hg_b <- as.list(avoidcol_b[!is.na(avoidcol_b)])
+      names(hg_b) <- avoidvar[!is.na(avoidcol_b)]
+      hg <- SortNrList(c(hg_a, hg_b))
+    }
+  }
   
   hgid <- match(names(hg), colnames(data))
   
@@ -82,6 +118,17 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   else 
     allRows <- firstROW[integer(0), , drop = FALSE]
   
+  if (attr_startCol) {
+    # Copy from HierarchiesAndFormula2ModelMatrix
+    if (intercept) {
+      termNames <- c("(Intercept)", colnames(fac))
+      startCol <- 1L
+    } else {
+      termNames <- colnames(fac)
+      startCol <- integer(0)
+    }
+  }
+  
   if (makeModelMatrix) {
     m <- fac2sparse(rep(1, NROW(data)))
     if (!intercept) 
@@ -103,6 +150,10 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   nFac <- NCOL(fac)
   
   for (k in seq_len(nFac)) {
+    if (attr_startCol) {
+      startCol <- c(startCol, nrow(m) + 1L)
+    }
+                  
     if (printInc) 
       if (k%%max(1, round(nFac/10)) == 0) {
         cat(".")
@@ -135,6 +186,8 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       if (makeModelMatrix) 
         m <- rbind(m, fac2sparse(RowGroups(data[, ck, drop = FALSE], returnGroups = FALSE)))
   }
+  
+  
   if (makeNames) {
     rowNames <- MatrixPaste(allRows, sep = sep)
     if (makeModelMatrix) 
@@ -143,8 +196,18 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       rownames(allSums) <- rowNames
   }
   
-  if ((makeModelMatrix) & (!crossTable) & (!response)) 
+  if (attr_startCol) {
+    names(startCol) <- termNames
+  }
+  
+  if ((makeModelMatrix) & (!crossTable) & (!response)) {
+    if (attr_startCol) {
+      m <- Matrix::t(m)
+      attr(m, "startCol") <- startCol
+      return(m)
+    }
     return(Matrix::t(m))
+  }
   
   if ((!makeModelMatrix) & (!crossTable) & (response)) 
     return(allSums)
@@ -152,8 +215,14 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   if (!crossTable) 
     allRows <- NULL
   
-  if (makeModelMatrix) 
-    m <- Matrix::t(m) else m <- NULL
+  if (makeModelMatrix) {
+    m <- Matrix::t(m)
+    if (attr_startCol) {
+      attr(m, "startCol") <- startCol
+    }
+  } else {
+    m <- NULL
+  }
   
   if (!response) 
     return(list(modelMatrix = m, crossTable = allRows)) #allSums <- NULL

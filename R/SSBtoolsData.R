@@ -17,7 +17,10 @@
 #' 
 #' \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 #' 
+#' \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
+#' 
 #' @export
+#' @importFrom utils data
 #' @author Øyvind Langsrud
 #'
 #' @examples
@@ -26,6 +29,7 @@
 #' SSBtoolsData("sprt_emp_geoHier")
 #' SSBtoolsData("sprt_emp_ageHier")
 #' SSBtoolsData("sprt_emp_withEU")
+#' SSBtoolsData("z1w")
 SSBtoolsData <- function(dataset) {
   if (dataset == "FIFA2018ABCD") {
     return(data.frame(stringsAsFactors = FALSE, mapsFrom = c("Australia", "Iran", "Saudi Arabia", "Egypt", "Morocco", "Nigeria", "Argentina", "Peru", "Uruguay", "Croatia", "Denmark", "France", "Iceland", "Portugal", "Russia", "Spain", "Iceland", "Russia", "Russia", "Croatia", "Europe", "nonEU", "Europe", "nonSchengen"), 
@@ -55,5 +59,86 @@ SSBtoolsData <- function(dataset) {
     x$eu = with(x, c("EU", "nonEU")[1+(geo=="Iceland")]) 
     return(x)
   }
+  
+  if (dataset %in% c(if (dataset %in% c("sosialFiktiv", "z1", "z1w", "z2", "z2w", "z3", "z3w", "z3wb")) {
+    return(SSBtoolsData_(dataset))
+  })) {
+    return(SSBtoolsData_(dataset))
+  }
+  
   stop(paste("No data with dataset =", dataset))
 }
+
+
+
+
+# stackoverflow questions 30357330
+pkgEnvSSBtoolsData <- new.env(parent=emptyenv())
+
+
+SSBtoolsData_ <- function(dataset) {
+  if (!exists(dataset, pkgEnvSSBtoolsData))
+    data(list = dataset, package = "SSBtools", envir = pkgEnvSSBtoolsData)
+  return(pkgEnvSSBtoolsData[[dataset]])
+  return(NULL)
+}
+
+
+#' Fictitious datasets returned by SSBtoolsData()
+#' 
+#' The most comprehensive dataset, \code{sosialFiktiv}, contains three dimensions. The first dimension is 'region' which is grouped in two ways, 'fylke' and  'kostragr'. The other two are 'hovedint' and 'mnd'. In 'mnd2' two of the three categories in 'mnd' are merged.
+#' The other datasets (\code{z1}, \code{z1w}, \code{z2}, \code{z2w}, \code{z3}, \code{z3w}, \code{z3wb}) are smaller subdatasets.
+#' Datasets marked with '\code{w}' are unstacked and several variables are holding counts.
+#'
+#' @docType data
+#' @keywords datasets internal
+#' @name sosialFiktiv
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z1
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z1micro
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z1w
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z2
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z2w
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z3
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z3w
+NULL
+
+#' @rdname sosialFiktiv
+#' @name z3wb
+NULL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

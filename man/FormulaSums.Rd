@@ -16,6 +16,7 @@ FormulaSums(
   makeModelMatrix = NULL,
   sep = "-",
   sepCross = ":",
+  avoidHierarchical = FALSE,
   ...
 )
 
@@ -42,6 +43,8 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 
 \item{sepCross}{String to separate when creating column names involving crossing}
 
+\item{avoidHierarchical}{Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.}
+
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
 \value{
@@ -54,6 +57,7 @@ By default this function return sums if the formula contains a response part and
 The model matrix is constructed by calling fac2sparse() repeatedly. The sums are computed by calling aggregate() repeatedly.
 Hierarchical variables handled when constructing cross table.
 Column names constructed from the cross table.
+The returned model matrix includes the attribute \code{startCol} (see last example line).
 }
 \examples{
 x <- SSBtoolsData("sprt_emp_withEU")
@@ -62,6 +66,9 @@ FormulaSums(x, ths_per ~ year*geo + year*eu)
 FormulaSums(x, ~ year*age*eu)
 FormulaSums(x, ths_per ~ year*age*geo + year*age*eu, crossTable = TRUE, makeModelMatrix = TRUE)
 FormulaSums(x, ths_per ~ year:age:geo -1)
+m <- Formula2ModelMatrix(x, ~ year*geo + year*eu)
+print(m[1:3, ], col.names = TRUE)
+attr(m, "startCol")
 }
 \seealso{
 \code{\link{ModelMatrix}}
