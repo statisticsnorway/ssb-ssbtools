@@ -23,7 +23,6 @@
 #'
 #' @return logical vector marking direct-disclosive cells
 #' 
-#' @importFrom SSBtools Match
 #' @export
 #'
 #' @examples
