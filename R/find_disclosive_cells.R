@@ -1,0 +1,171 @@
+#' Find direct-disclosive cells
+#' 
+#' Function for determining which cells in a frequency table can lead to 
+#' direct disclosure of an identifiable individual, assuming an attacker has the
+#' background knowledge to place themselves in the table. Supports also simple
+#' coalitions, assuming attacker can know up to a provided number of coalition
+#' cells
+#' 
+#' @param data the data set
+#' @param freq vector containing frequencies
+#' @param dimVar The main dimensional variables and additional aggregating variables
+#' @param crossTable cross table of key variables produced by SSBtools::ModelMatrix
+#' in parent function
+#' @param primaryDims dimensions to be considered for direct disclosure.
+#' @param unknowns vector of unknown values for each of the primary dimensions.
+#' If a primary dimension does not contain unknown values, NA should be passed.
+#' @param total string name for marginal values
+#' @param unknown.threshold numeric for specifying a percentage for calculating
+#' safety of cells. A cell is "safe" in a row if the number of unknowns exceeds
+#' `unknown.threshold` percent of the row total.
+#' @param coalition maximum number of units in a possible coalition, default 1
+#' @param ... parameters from main suppression method
+#'
+#' @return logical vector marking direct-disclosive cells
+#' 
+#' @importFrom SSBtools Match
+#' @export
+#'
+#' @examples
+#' extable <- data.frame(v1 = rep(c('a', 'b', 'c'), times = 4),
+#' v2 = c('i','i', 'i','h','h','h','i','i','i','h','h','h'),
+#' v3 = c('y', 'y', 'y', 'y', 'y', 'y','z','z', 'z', 'z', 'z', 'z'),
+#' freq = c(0,0,5,0,2,3,1,0,3,1,1,2))
+#' ex_freq<-c(18,10,8,9,5,4,9,5,4,2,0,2,1,0,1,1,0,1,3,2,1,3,2,1,0,0,0,13,8,5,5,3,2,8,5,3)
+#' cross <-data.frame(v1 = c("Total","Total","Total","Total","Total","Total","Total","Total","Total","a","a","a","a","a","a","a","a","a","b","b","b","b","b","b","b","b","b","c","c","c","c","c","c","c","c","c"),
+#'                   v2 = c("Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i"),
+#'                   v3 = c("Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z"))
+#' 
+#' find_disclosive_cells(extable, ex_freq, c("v1", "v2", "v3"), cross) 
+find_disclosive_cells <- function(data,
+                       freq,
+                       dimVar,
+                       crossTable,
+                       primaryDims = dimVar,
+                       unknowns = rep(NA, length(primaryDims)),
+                       total = "Total",
+                       unknown.threshold = 0,
+                       coalition = 1,
+                       ...) {
+  if (!is.numeric(unknown.threshold))
+    stop(paste0("Given unknown.threshold: \"", unknown.threshold,
+                "\". Must be a number between 0 and 100."))
+  else if (as.numeric(unknown.threshold) < 0 | 
+           as.numeric(unknown.threshold) > 100)
+      stop(paste0("Given unknown.threshold: \"", unknown.threshold,
+                  "\". Must be a number between 0 and 100."))
+  
+  if (length(primaryDims) > length(unknowns)) {
+    warning("Length of input parameter unknowns less than input dimensions, 
+            remaining filled with NA")
+    unknowns <- c(unknowns, rep(NA, length(primaryDims)-length(unknowns)))
+  }
+  if (length(primaryDims) < length(unknowns)) {
+    warning("Length of input dimensions is less than number of provided unknowns, 
+            superfluous unknown values will be ignored.")
+  }
+  # number unique values in each dimension of primaryDims
+  numval <- lapply(data[primaryDims],
+                   function (x)
+                     length(unique(x)))
+  varnames <- colnames(crossTable)
+  # dataframe for lagring av prikkestatus etter variabel. Kan effektifiseres 
+  # (bl.a. fjerne Reduce senere), men for debugging gjøres det slikt nå
+  out <- crossTable[primaryDims]
+  # vector specifying whether each cell is a member of some unknown category
+  is_unknown <- cross_unknowns(crossTable, primaryDims, unknowns)
+
+  for (ind in 1:length(primaryDims)) {
+    var <- primaryDims[ind]
+    unknown <- unknowns[ind]
+    is_total <- crossTable[[var]] == total
+    between <- as.vector(varnames[varnames != var])
+    rt <- freq[is_total]
+    row_totals <- rt[SSBtools::Match(crossTable[between],
+                                     crossTable[is_total, between, drop=FALSE])]
+    
+    # check whether cells are member of current dimension's unknown
+    if (!is.na(unknown)) {
+      vars_unknown <- crossTable[[var]] == unknown
+      if (!any(vars_unknown))
+        warning(paste0("Ingen tilfeller av \"", unknown, "\" funnet i ", var))
+    }
+    else
+      vars_unknown <- FALSE
+    # count number of zeros and ones in each row
+    agg <- aggregate(
+      list(
+        n_zero = freq == 0 & !is_total & !vars_unknown,
+        n_one = freq == 1 & !is_total & !vars_unknown
+      ),
+      crossTable[, between, drop = FALSE],
+      sum
+    )
+    n <- agg[SSBtools::Match(crossTable[between],agg[between]),
+             c("n_zero", "n_one")]
+    if (is.na(unknown)) {
+    # no unknowns in this dimension, so threshold for zeroes is #values - 1
+      prim <- !is_total & !is_unknown &
+      ((freq > 0 & n$n_zero == (numval[[var]] - 1)) |
+         # if there is a one, disclosive if there is only one other val
+         ((freq >= 1 & freq <= coalition) & n$n_zero == numval[[var]]-2))
+    }
+    else {
+      a_unknown <- freq[vars_unknown]
+      n_unknown <- a_unknown[SSBtools::Match(crossTable[between],
+                                             crossTable[vars_unknown, between,
+                                                        drop=FALSE])]
+      # determine safe unknowns by p% rule if threshold is > 0,
+      # otherwise presence of unknowns is considered safe
+      safe_unknowns <- safe_unknown(threshold = unknown.threshold,
+                                    rowtotals = row_totals,
+                                    n_unknown = n_unknown)
+      prim <- !safe_unknowns &
+            !is_unknown & !is_total &
+            ((freq > 0 & n$n_zero == (numval[[var]] - 2)) |
+              ((freq >= 1 & freq <= coalition)  & n$n_zero == numval[[var]] - 3))
+    }
+    out[var] <- prim
+  }
+  out <- as.data.frame(out)
+  primary <- Reduce(`|`, out)
+  names(out) <- paste0(names(out), "-prikk")
+  list(primary = primary, numExtra = out)
+}
+
+#' internal function for determining unknowns in find_disclosive_cells
+#'
+#' @param crosstable cross table of key variables produced by SSBtools::ModelMatrix
+#' in parent function
+#' @param vars vector of variable names to be considered
+#' @param unknowns string vector of unknown values for each variable in `vars`
+#'
+#' @return logical vector marking relevant cells as containing unknowns
+#' @keywords Internal
+#'
+cross_unknowns <- function(crosstable, vars, unknowns) {
+  ret <- FALSE
+  for (ind in 1:length(vars)) {
+    var <- vars[ind]
+    unk <- unknowns[ind]
+    if (!is.na(unk))
+      ret <- ret | (crosstable[[var]] == unk)
+  }
+  ret
+}
+
+#' internal function for unknown safety threshold in find_disclosive_cells
+#'
+#' @param threshold integer vector of length one between 0 and 100
+#' @param rowtotals vector containing row totals
+#' @param n_unknown vector containing number of unknowns in row
+#'
+#' @return logical vector marking relevant cells as safe according to unknown
+#' threshold rule
+#' @keywords Internal
+#'
+safe_unknown <- function(threshold, rowtotals, n_unknown) {
+    min_unk <- threshold / 100 * (rowtotals-1)
+    n_unknown > min_unk
+}
+
