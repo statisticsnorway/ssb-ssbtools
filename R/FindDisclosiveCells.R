@@ -80,7 +80,7 @@ FindDisclosiveCells <- function(data,
     is_total <- crossTable[[var]] == total
     between <- as.vector(varnames[varnames != var])
     rt <- freq[is_total]
-    row_totals <- rt[SSBtools::Match(crossTable[between],
+    row_totals <- rt[Match(crossTable[between],
                                      crossTable[is_total, between, drop=FALSE])]
     
     # check whether cells are member of current dimension's unknown
@@ -100,7 +100,7 @@ FindDisclosiveCells <- function(data,
       crossTable[, between, drop = FALSE],
       sum
     )
-    n <- agg[SSBtools::Match(crossTable[between],agg[between]),
+    n <- agg[Match(crossTable[between],agg[between]),
              c("n_zero", "n_one")]
     if (is.na(unknown)) {
     # no unknowns in this dimension, so threshold for zeroes is #values - 1
@@ -111,7 +111,7 @@ FindDisclosiveCells <- function(data,
     }
     else {
       a_unknown <- freq[vars_unknown]
-      n_unknown <- a_unknown[SSBtools::Match(crossTable[between],
+      n_unknown <- a_unknown[Match(crossTable[between],
                                              crossTable[vars_unknown, between,
                                                         drop=FALSE])]
       # determine safe unknowns by p% rule if threshold is > 0,
