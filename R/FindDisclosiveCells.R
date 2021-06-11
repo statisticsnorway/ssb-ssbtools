@@ -36,8 +36,8 @@
 #'                   v2 = c("Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i"),
 #'                   v3 = c("Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z"))
 #' 
-#' find_disclosive_cells(extable, ex_freq, c("v1", "v2", "v3"), cross) 
-find_disclosive_cells <- function(data,
+#' FindDisclosiveCells(extable, ex_freq, c("v1", "v2", "v3"), cross) 
+FindDisclosiveCells <- function(data,
                        freq,
                        dimVar,
                        crossTable,
