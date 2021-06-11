@@ -27,6 +27,8 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
 \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 
+\strong{my_km2:} Fictitious grid data.
+
 \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 }
 \examples{

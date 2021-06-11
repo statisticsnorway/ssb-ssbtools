@@ -17,6 +17,8 @@
 #' 
 #' \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 #' 
+#' \strong{my_km2:} Fictitious grid data. 
+#' 
 #' \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 #' 
 #' @export
@@ -57,6 +59,18 @@ SSBtoolsData <- function(dataset) {
   if (dataset == "sprt_emp_withEU") {
     x <- SSBtoolsData("sprt_emp")
     x$eu = with(x, c("EU", "nonEU")[1+(geo=="Iceland")]) 
+    return(x)
+  }
+   
+  if (dataset == "my_km2") { # my_km² not allowed, Portable packages must use only ASCII characters in their R code,
+    x <- data.frame(Square1000m  = c(rep("my_km",10), rep("another_km",8)),
+                    Square250m   = c(rep("500_000",3), rep("750_250",4), rep("750_500",3), rep("another_500_000",4), rep("another_750_250",4)),
+                    Municipality = c(rep("Oslo",3), rep("Nittedal",6), rep("Oslo",9)),
+                    Age = c("15_to_65", "15_to_65", "under_15", "15_to_65", "15_to_65", "under_15", "under_15", "65_and_over", "65_and_over", "15_to_65", 
+                            "15_to_65", "15_to_65", "under_15", "under_15", "15_to_65", "15_to_65", "65_and_over", "65_and_over"),
+                    Sex = c("female", "male", "male", "female", "male", "female", "male", "female", "male", "female", "female", "male", "female", "male", 
+                            "female", "male", "female", "male"),
+                    freq = c(3, 2, 1, 2, 2, 1, 1, 1, 1, 1, 26, 21, 31, 34, 2, 1, 10, 13))
     return(x)
   }
   
