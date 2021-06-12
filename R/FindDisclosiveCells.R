@@ -6,7 +6,8 @@
 #' 
 #' @param data the data set
 #' @param freq vector containing frequencies
-#' @param dimVar The main dimensional variables and additional aggregating variables
+#' @param dimVar The main dimensional variables and additional aggregating
+#' variables
 #' @param crossTable cross table of key variables produced by ModelMatrix
 #' in parent function
 #' @param primaryDims dimensions to be considered for direct disclosure.
@@ -25,10 +26,11 @@
 #'
 #' @examples
 #' extable <- data.frame(v1 = rep(c('a', 'b', 'c'), times = 4),
-#' v2 = c('i','i', 'i','h','h','h','i','i','i','h','h','h'),
-#' v3 = c('y', 'y', 'y', 'y', 'y', 'y','z','z', 'z', 'z', 'z', 'z'),
-#' freq = c(0,0,5,0,2,3,1,0,3,1,1,2))
-#' ex_freq<-c(18,10,8,9,5,4,9,5,4,2,0,2,1,0,1,1,0,1,3,2,1,3,2,1,0,0,0,13,8,5,5,3,2,8,5,3)
+#'             v2 = c('i','i', 'i','h','h','h','i','i','i','h','h','h'),
+#'             v3 = c('y', 'y', 'y', 'y', 'y', 'y','z','z', 'z', 'z', 'z', 'z'),
+#'             freq = c(0,0,5,0,2,3,1,0,3,1,1,2))
+#' ex_freq <- c(18,10,8,9,5,4,9,5,4,2,0,2,1,0,1,1,0,1,3,2,1,3,2,1,0,0,0,13,8,5,
+#'              5,3,2,8,5,3)
 #' cross <- ModelMatrix(extable,
 #'                      list(v1 = extable$v1, v2 = extable$v2, v3 = extable$v3),
 #'                      crossTable = TRUE)$crossTable
