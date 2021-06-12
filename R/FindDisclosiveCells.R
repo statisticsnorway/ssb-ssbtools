@@ -2,14 +2,12 @@
 #' 
 #' Function for determining which cells in a frequency table can lead to 
 #' direct disclosure of an identifiable individual, assuming an attacker has the
-#' background knowledge to place themselves in the table. Supports also simple
-#' coalitions, assuming attacker can know up to a provided number of other
-#' cells.
+#' background knowledge to place themselves (or a coalition) in the table.
 #' 
 #' @param data the data set
 #' @param freq vector containing frequencies
 #' @param dimVar The main dimensional variables and additional aggregating variables
-#' @param crossTable cross table of key variables produced by SSBtools::ModelMatrix
+#' @param crossTable cross table of key variables produced by ModelMatrix
 #' in parent function
 #' @param primaryDims dimensions to be considered for direct disclosure.
 #' @param unknowns vector of unknown values for each of the primary dimensions.
@@ -80,7 +78,7 @@ FindDisclosiveCells <- function(data,
     is_total <- crossTable[[var]] == total
     between <- as.vector(varnames[varnames != var])
     rt <- freq[is_total]
-    row_totals <- rt[SSBtools::Match(crossTable[between],
+    row_totals <- rt[Match(crossTable[between],
                                      crossTable[is_total, between, drop=FALSE])]
     
     # check whether cells are member of current dimension's unknown
@@ -90,7 +88,7 @@ FindDisclosiveCells <- function(data,
         warning(paste0("Ingen tilfeller av \"", unknown, "\" funnet i ", var))
       
       a_unknown <- freq[vars_unknown]
-      n_unknown <- a_unknown[SSBtools::Match(crossTable[between],
+      n_unknown <- a_unknown[Match(crossTable[between],
                                              crossTable[vars_unknown, between,
                                                         drop=FALSE])]
       # determine safe unknowns by p% rule if threshold is > 0,
@@ -115,7 +113,7 @@ FindDisclosiveCells <- function(data,
       crossTable[, between, drop = FALSE],
       sum
     )
-    n_zero <- agg[SSBtools::Match(crossTable[between],agg[between]), "n_zero"]
+    n_zero <- agg[Match(crossTable[between],agg[between]), "n_zero"]
 
     prim <- !safe_unknowns & !is_unknown & !is_total &
            ((freq > 0 & n_zero == zeros.threshold) |
@@ -130,7 +128,7 @@ FindDisclosiveCells <- function(data,
 
 #' internal function for determining unknowns in find_disclosive_cells
 #'
-#' @param crosstable cross table of key variables produced by SSBtools::ModelMatrix
+#' @param crosstable cross table of key variables produced by ModelMatrix
 #' in parent function
 #' @param vars vector of variable names to be considered
 #' @param unknowns string vector of unknown values for each variable in `vars`
@@ -179,7 +177,7 @@ find_row_max <- function(freq, crossTable, between, is_total, is_unknown) {
   vals <- aggregate(list(maxes = ntu_freq),
                     crossTable[, between, drop = FALSE],
                     c, simplify = FALSE)
-  fs <- vals$maxes[SSBtools::Match(crossTable[between], vals[between])]
+  fs <- vals$maxes[Match(crossTable[between], vals[between])]
   out <- sapply(fs, max)
   out
 }
