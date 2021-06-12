@@ -31,9 +31,9 @@
 #' v3 = c('y', 'y', 'y', 'y', 'y', 'y','z','z', 'z', 'z', 'z', 'z'),
 #' freq = c(0,0,5,0,2,3,1,0,3,1,1,2))
 #' ex_freq<-c(18,10,8,9,5,4,9,5,4,2,0,2,1,0,1,1,0,1,3,2,1,3,2,1,0,0,0,13,8,5,5,3,2,8,5,3)
-#' cross <-data.frame(v1 = c("Total","Total","Total","Total","Total","Total","Total","Total","Total","a","a","a","a","a","a","a","a","a","b","b","b","b","b","b","b","b","b","c","c","c","c","c","c","c","c","c"),
-#'                   v2 = c("Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i","Total","Total","Total","h","h","h","i","i","i"),
-#'                   v3 = c("Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z","Total","y","z"))
+#' cross <- ModelMatrix(extable,
+#'                      list(v1 = extable$v1, v2 = extable$v2, v3 = extable$v3),
+#'                      crossTable = TRUE)$crossTable
 #' 
 #' FindDisclosiveCells(extable, ex_freq, c("v1", "v2", "v3"), cross) 
 FindDisclosiveCells <- function(data,
