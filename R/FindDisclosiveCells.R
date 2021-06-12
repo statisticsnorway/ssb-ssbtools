@@ -111,18 +111,14 @@ FindDisclosiveCells <- function(data,
     row_max <- find_row_max(freq, crossTable, between, is_total, vars_unknown)
     # count number of zeros and ones in each row
     agg <- aggregate(
-      list(
-        n_zero = freq == 0 & !is_total & !vars_unknown,
-        n_one = freq == 1 & !is_total & !vars_unknown
-      ),
+      list(n_zero = freq == 0 & !is_total & !vars_unknown),
       crossTable[, between, drop = FALSE],
       sum
     )
-    n <- agg[SSBtools::Match(crossTable[between],agg[between]),
-             c("n_zero", "n_one")]
+    n_zero <- agg[SSBtools::Match(crossTable[between],agg[between]), "n_zero"]
 
     prim <- !safe_unknowns & !is_unknown & !is_total &
-           ((freq > 0 & n$n_zero == zeros.threshold) |
+           ((freq > 0 & n_zero == zeros.threshold) |
            ((freq > 0 & freq <= coalition) & (row_max >= row_totals - coalition)))
     out[var] <- prim
   }
