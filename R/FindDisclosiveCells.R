@@ -4,10 +4,10 @@
 #' direct disclosure of an identifiable individual, assuming an attacker has the
 #' background knowledge to place themselves (or a coalition) in the table.
 #' 
+#' This function does not work on data containing hierarchical variables.
+#' 
 #' @param data the data set
 #' @param freq vector containing frequencies
-#' @param dimVar The main dimensional variables and additional aggregating
-#' variables
 #' @param crossTable cross table of key variables produced by ModelMatrix
 #' in parent function
 #' @param primaryDims dimensions to be considered for direct disclosure.
@@ -35,14 +35,13 @@
 #'                      list(v1 = extable$v1, v2 = extable$v2, v3 = extable$v3),
 #'                      crossTable = TRUE)$crossTable
 #' 
-#' FindDisclosiveCells(extable, ex_freq, c("v1", "v2", "v3"), cross) 
+#' FindDisclosiveCells(extable, ex_freq, cross) 
 FindDisclosiveCells <- function(data,
                        freq,
-                       dimVar,
                        crossTable,
-                       primaryDims = dimVar,
+                       primaryDims = names(crossTable),
                        unknowns = rep(NA, length(primaryDims)),
-                       total = "Total",
+                       total = rep("Total", length(primaryDims)),
                        unknown.threshold = 0,
                        coalition = 1,
                        ...) {
@@ -77,7 +76,7 @@ FindDisclosiveCells <- function(data,
   for (ind in 1:length(primaryDims)) {
     var <- primaryDims[ind]
     unknown <- unknowns[ind]
-    is_total <- crossTable[[var]] == total
+    is_total <- crossTable[[var]] == total[ind]
     between <- as.vector(varnames[varnames != var])
     rt <- freq[is_total]
     row_totals <- rt[Match(crossTable[between],
@@ -98,27 +97,16 @@ FindDisclosiveCells <- function(data,
       safe_unknowns <- safe_unknown(threshold = unknown.threshold,
                                     rowtotals = row_totals,
                                     n_unknown = n_unknown)
-      # number of zeros for singleton row with unknown
-      zeros.threshold <- numval[[var]] - 2
     }
     else {
       vars_unknown <- FALSE
       safe_unknowns <- FALSE
-      # number of zeros for singleton row without unknown
-      zeros.threshold <- numval[[var]] - 1
     }
     # maximum freq per row, non-total and non-unknown
     row_max <- find_row_max(freq, crossTable, between, is_total, vars_unknown)
-    # count number of zeros and ones in each row
-    agg <- aggregate(
-      list(n_zero = freq == 0 & !is_total & !vars_unknown),
-      crossTable[, between, drop = FALSE],
-      sum
-    )
-    n_zero <- agg[Match(crossTable[between],agg[between]), "n_zero"]
-
+    
     prim <- !safe_unknowns & !is_unknown & !is_total &
-           ((freq > 0 & n_zero == zeros.threshold) |
+           ((freq > 0 & freq == row_totals) |
            ((freq > 0 & freq <= coalition) & (row_max >= row_totals - coalition)))
     out[var] <- prim
   }
@@ -128,16 +116,14 @@ FindDisclosiveCells <- function(data,
   list(primary = primary, numExtra = out)
 }
 
-#' internal function for determining unknowns in find_disclosive_cells
-#'
-#' @param crosstable cross table of key variables produced by ModelMatrix
-#' in parent function
-#' @param vars vector of variable names to be considered
-#' @param unknowns string vector of unknown values for each variable in `vars`
-#'
-#' @return logical vector marking relevant cells as containing unknowns
-#' @keywords Internal
-#'
+# internal function for determining unknowns in FindDisclosiveCells
+#
+# @param crosstable cross table of key variables produced by ModelMatrix
+# in parent function
+# @param vars vector of variable names to be considered
+# @param unknowns string vector of unknown values for each variable in `vars`
+#
+# @return logical vector marking relevant cells as containing unknowns
 cross_unknowns <- function(crosstable, vars, unknowns) {
   ret <- FALSE
   for (ind in 1:length(vars)) {
@@ -149,30 +135,28 @@ cross_unknowns <- function(crosstable, vars, unknowns) {
   ret
 }
 
-#' internal function for unknown safety threshold in find_disclosive_cells
-#'
-#' @param threshold integer vector of length one between 0 and 100
-#' @param rowtotals vector containing row totals
-#' @param n_unknown vector containing number of unknowns in row
-#'
-#' @return logical vector marking relevant cells as safe according to unknown
-#' threshold rule
-#' @keywords Internal
-#'
+# internal function for unknown safety threshold in FindDisclosiveCells 
+#
+# @param threshold integer vector of length one between 0 and 100
+# @param rowtotals vector containing row totals
+# @param n_unknown vector containing number of unknowns in row
+#
+# @return logical vector marking relevant cells as safe according to unknown
+# threshold rule
 safe_unknown <- function(threshold, rowtotals, n_unknown) {
     min_unk <- threshold / 100 * (rowtotals-1)
     n_unknown > min_unk
 }
-#' Internal function for finding maximum non-total, non-unknown row freq
-#'
-#' @param freq frequencies
-#' @param crossTable crossTable generated by ModelMatrix
-#' @param between variables specifying which row cell is in
-#' @param is_total boolean vector stating whether a cell is a total
-#' @param is_unknown boolean vector stating whether a cell is an unknown
-#'
-#' @return vector containing max non-total, non-unknown cell freq per row
-#' @keywords Internal
+
+# Internal function for finding maximum non-total, non-unknown row freq
+#
+# @param freq frequencies
+# @param crossTable crossTable generated by ModelMatrix
+# @param between variables specifying which row cell is in
+# @param is_total boolean vector stating whether a cell is a total
+# @param is_unknown boolean vector stating whether a cell is an unknown
+#
+# @return vector containing max non-total, non-unknown cell freq per row
 find_row_max <- function(freq, crossTable, between, is_total, is_unknown) {
   ntu_freq <- rep(-Inf, length(freq))
   ntu_freq[!is_total & !is_unknown] <- freq[!is_total & !is_unknown]
