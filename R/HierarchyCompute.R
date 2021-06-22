@@ -1034,7 +1034,6 @@ AutoLevel <- function(x) {
 #' Converting hierarchy specifications to a (signed) dummy matrix
 #'
 #' A matrix for mapping input codes (columns) to output codes (rows) are created.
-#'
 #' The elements of the matrix specify how columns contribute to rows.
 #'
 #'
@@ -1074,9 +1073,13 @@ AutoLevel <- function(x) {
 #' DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level)
 #' DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level, unionComplement = TRUE)
 #'
-#' #' # Extend mapsInput - leading to zero columns.
+#' # Extend mapsInput - leading to zero columns.
 #' DummyHierarchy(h$mapsFrom, h$mapsTo, h$sign, h$level,
 #'                mapsInput = c(h$mapsFrom[!(h$mapsFrom %in% h$mapsTo)], "Norway", "Finland"))
+#'
+#' # DummyHierarchies
+#' DummyHierarchies(FindHierarchies(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")]), 
+#'                  inputInOutput = c(FALSE, TRUE))
 DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inputInOutput = FALSE, keepCodes = mapsFrom[integer(0)], unionComplement = FALSE, reOrder = FALSE) {
   
   mapsFrom <- as.character(mapsFrom)  # Ensure character (if factor)
@@ -1122,6 +1125,44 @@ DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inpu
   }
   m  # Lage warnig/error om annet i matrisa enn 0, -1, 1 ?
 }
+
+#' @rdname DummyHierarchy
+#' @details `DummyHierarchies` is a user-friendly wrapper for the original function `DummyHierarchy`.
+#'           Then, the logical input parameters are vectors (possibly recycled).
+#'           `mapsInput` and `keepCodes` can be supplied as attributes.
+#'           `mapsInput` will be generated when `data` is non-NULL.   
+#'            
+#' 
+#' @param hierarchies  List of hierarchies
+#' @param data data
+#' @export
+DummyHierarchies <- function(hierarchies, data = NULL, inputInOutput = FALSE, unionComplement = FALSE, reOrder = FALSE) {
+  
+  n <- length(hierarchies)
+  inputInOutput <- rep_len(inputInOutput, n)
+  unionComplement <- rep_len(unionComplement, n)
+  reOrder <- rep_len(reOrder, n)
+  
+  
+  for (i in seq_len(n)) {
+    if (!is.null(data)) {
+      hierarchies[i] <- AddMapsInput(hierarchies[i], data)
+    }
+    
+    hierarchies[[i]] <- DummyHierarchy(mapsFrom = hierarchies[[i]]$mapsFrom, 
+                                       mapsTo = hierarchies[[i]]$mapsTo, 
+                                       mapsInput = attr(hierarchies[[i]], "mapsInput"),
+                                       keepCodes = attr(hierarchies[[i]], "keepCodes"), 
+                                       sign = hierarchies[[i]]$sign, 
+                                       level = hierarchies[[i]]$level, 
+                                       inputInOutput = inputInOutput[i],
+                                       unionComplement = unionComplement[i], 
+                                       reOrder = reOrder[i])
+  }
+  hierarchies
+}
+
+
 
 #' Create a (signed) dummy matrix for hierarcical mapping of codes in data
 #'

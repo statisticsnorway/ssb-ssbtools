@@ -2,6 +2,7 @@
 % Please edit documentation in R/HierarchyCompute.R
 \name{DummyHierarchy}
 \alias{DummyHierarchy}
+\alias{DummyHierarchies}
 \title{Converting hierarchy specifications to a (signed) dummy matrix}
 \usage{
 DummyHierarchy(
@@ -12,6 +13,14 @@ DummyHierarchy(
   mapsInput = NULL,
   inputInOutput = FALSE,
   keepCodes = mapsFrom[integer(0)],
+  unionComplement = FALSE,
+  reOrder = FALSE
+)
+
+DummyHierarchies(
+  hierarchies,
+  data = NULL,
+  inputInOutput = FALSE,
   unionComplement = FALSE,
   reOrder = FALSE
 )
@@ -34,15 +43,23 @@ DummyHierarchy(
 \item{unionComplement}{When TRUE, sign means union and complement instead of addition or subtraction (see note)}
 
 \item{reOrder}{When TRUE (FALSE is default) output codes are ordered differently, more similar to a usual model matrix ordering.}
+
+\item{hierarchies}{List of hierarchies}
+
+\item{data}{data}
 }
 \value{
 A sparse matrix with row and column and names
 }
 \description{
 A matrix for mapping input codes (columns) to output codes (rows) are created.
+The elements of the matrix specify how columns contribute to rows.
 }
 \details{
-The elements of the matrix specify how columns contribute to rows.
+\code{DummyHierarchies} is a user-friendly wrapper for the original function \code{DummyHierarchy}.
+Then, the logical input parameters are vectors (possibly recycled).
+\code{mapsInput} and \code{keepCodes} can be supplied as attributes.
+\code{mapsInput} will be generated when \code{data} is non-NULL.
 }
 \note{
 With unionComplement = FALSE (default), the sign of each mapping specifies the contribution as addition or subtraction.
@@ -64,9 +81,13 @@ h2 <- rbind(data.frame(mapsFrom = c("EU", "Schengen"), mapsTo = "EUandSchengen",
 DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level)
 DummyHierarchy(h2$mapsFrom, h2$mapsTo, h2$sign, h2$level, unionComplement = TRUE)
 
-#' # Extend mapsInput - leading to zero columns.
+# Extend mapsInput - leading to zero columns.
 DummyHierarchy(h$mapsFrom, h$mapsTo, h$sign, h$level,
                mapsInput = c(h$mapsFrom[!(h$mapsFrom \%in\% h$mapsTo)], "Norway", "Finland"))
+
+# DummyHierarchies
+DummyHierarchies(FindHierarchies(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")]), 
+                 inputInOutput = c(FALSE, TRUE))
 }
 \author{
 Øyvind Langsrud
