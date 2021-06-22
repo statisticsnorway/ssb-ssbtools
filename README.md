@@ -26,6 +26,7 @@ devtools::install_github("statisticsnorway/SSBtools")
 | GaussSuppression | Secondary suppression by Gaussian elimination |
 | FactorLevCorr |	Factor level correlation |
 | FindDimLists |	Finding dimList |
+| FindDisclosiveCells | find directly disclosive cells in frequency tables |
 | FormulaSums/Formula2ModelMatrix |	Sums (aggregates) and/or sparse model matrix with possible cross table |
 | HierarchicalGroups |	Finding hierarchical variable groups |
 | HierarchicalWildcardGlobbing |	Find variable combinations by advanced wildcard/globbing specifications. |
