@@ -32,7 +32,7 @@
 #' ex_freq <- c(18,10,8,9,5,4,9,5,4,2,0,2,1,0,1,1,0,1,3,2,1,3,2,1,0,0,0,13,8,5,
 #'              5,3,2,8,5,3)
 #' cross <- ModelMatrix(extable,
-#'                      list(v1 = extable$v1, v2 = extable$v2, v3 = extable$v3),
+#'                      dimVar = 1:3,
 #'                      crossTable = TRUE)$crossTable
 #' 
 #' FindDisclosiveCells(extable, ex_freq, cross) 
