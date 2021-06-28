@@ -34,9 +34,13 @@ GaussIndependent <- function(x, printInc = FALSE) {
   indcol <- rep(FALSE, n)
   indrow <- rep(FALSE, m)
   
+  if (printInc)
+    if(!is.numeric(printInc))
+      printInc = 25L
+  
   for (j in seq_len(n)) {
     if (printInc)
-      if (j%%max(1, n%/%25) == 0) {
+      if (j%%max(1, n%/%printInc) == 0) {
         cat(".")
         flush.console()
       }
@@ -94,10 +98,6 @@ GaussIndependent <- function(x, printInc = FALSE) {
       }
     }
     nrA[] <- NA_integer_
-  }
-  if (printInc) {
-    cat("\n")
-    flush.console()
   }
   
   return(list(rows = indrow, columns = indcol))
