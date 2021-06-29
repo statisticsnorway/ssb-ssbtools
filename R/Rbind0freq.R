@@ -1,22 +1,3 @@
-if(FALSE){
-  
-  z <- SSBtoolsData("sprt_emp_withEU")[c(1,4:6,8,11:15), ]
-  z$age[z$age == "Y15-29"] <- "young"
-  z$age[z$age == "Y30-64"] <- "old"
-  
-  Rbind0freq(z[, -4])  
-  Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"))  
-  Rbind0freq(z, varGroups = list( c("age", "geo", "year"), "eu"))
-  Rbind0freq(MakeFreq(z[c(1,1,1,2,2,3:10), -4]))
-  Rbind0freq(z, "ths_per")  
-  
-}
-
-
-
-
-
-
 
 #' Add zero frequency rows
 #' 
@@ -27,6 +8,7 @@ if(FALSE){
 #' @param hierarchical Hierarchical variables treated atomatically when `TRUE`  
 #' @param varGroups List of variable groups
 #' @param dimVar The dimensional variables
+#' @param extraVar extraVar description 
 #'
 #' @return Extended data frame
 #' @export
@@ -38,10 +20,12 @@ if(FALSE){
 #' 
 #' Rbind0freq(z[, -4])
 #' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"))
+#' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = "year")
+#' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = FALSE)
 #' Rbind0freq(z, varGroups = list(c("age", "geo", "year"), "eu"))
 #' Rbind0freq(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
 #' Rbind0freq(z, "ths_per")
-Rbind0freq <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL) {
+Rbind0freq <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
   
   if (is.null(dimVar)) {
     dimVar <- names(data)
@@ -64,6 +48,17 @@ Rbind0freq <- function(data, freqName = "freq", hierarchical = TRUE, varGroups =
     stop("Problematic varGroups")
   }
   
+  if (is.logical(extraVar)) {
+    if (extraVar) {
+      extraVar <- names(data)
+      extraVar <- extraVar[!(extraVar %in% c(dimVar, freqName))]
+    } else {
+      extraVar <- character(0)
+    }
+  } else {
+    extraVar <- names(data[1, extraVar, drop = FALSE])
+  }
+  
   z <- unique(data[, varGroups[[1]], drop = FALSE])
   for (i in SeqInc(2, length(varGroups))) {
     x <- unique(data[, varGroups[[i]], drop = FALSE])
@@ -74,20 +69,42 @@ Rbind0freq <- function(data, freqName = "freq", hierarchical = TRUE, varGroups =
     stop("Something is wrong")
   }
   
-  z <- z[dimVar]
   
-  ma <- Match(data[dimVar], z)
+  ma <- Match(data[dimVar], z[dimVar])
   z[freqName] <- 0L
   newrows <- rep(TRUE, nrow(z))
   newrows[ma] <- FALSE
   z <- z[newrows, , drop = FALSE]
   
-  if (!(freqName %in% names(data))) {
-    data <- data[dimVar]
-    data[freqName] <- 1L
+  
+  if (length(extraVar)) {
+    extraVar1 <- data[1, extraVar, drop = FALSE]
+    for (i in seq_along(extraVar1)) {
+      if (is.numeric(extraVar1[1, i])) {
+        extraVar1[1, i] <- 0L
+      } else {
+        extraVar1[1, i] <- NA
+      }
+    }
+    z <- cbind(z, extraVar1)
   }
   
-  z <- rbind(data[names(z)], z)
+  allVar <- names(data)
+  allVar <- allVar[allVar %in% c(dimVar, freqName, extraVar)]
+  
+  
+  if (!(freqName %in% names(data))) {
+    data <- data[allVar]
+    data[freqName] <- 1L
+    allVar <- c(allVar, freqName)
+  }
+  
+  if (identical(names(data), allVar)) {
+    z <- rbind(data, z[allVar])
+  } else {
+    z <- rbind(data[allVar], z[allVar])
+  }
+  
   rownames(z) <- NULL
   z
 }

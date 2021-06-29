@@ -9,7 +9,8 @@ Rbind0freq(
   freqName = "freq",
   hierarchical = TRUE,
   varGroups = NULL,
-  dimVar = NULL
+  dimVar = NULL,
+  extraVar = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ Rbind0freq(
 \item{varGroups}{List of variable groups}
 
 \item{dimVar}{The dimensional variables}
+
+\item{extraVar}{extraVar description}
 }
 \value{
 Extended data frame
@@ -36,6 +39,8 @@ z$age[z$age == "Y30-64"] <- "old"
 
 Rbind0freq(z[, -4])
 Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"))
+Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = "year")
+Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = FALSE)
 Rbind0freq(z, varGroups = list(c("age", "geo", "year"), "eu"))
 Rbind0freq(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
 Rbind0freq(z, "ths_per")
