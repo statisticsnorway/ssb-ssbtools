@@ -78,13 +78,28 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     stop("Something is wrong")
   }
   
-  
   ma <- Match(data[dimVar], z[dimVar])
   z[freqName] <- 0L
   newrows <- rep(TRUE, nrow(z))
   newrows[ma] <- FALSE
   z <- z[newrows, , drop = FALSE]
   
+  allVar <- names(data)
+  allVar <- allVar[allVar %in% c(dimVar, freqName, extraVar)]
+  
+  if (!(freqName %in% names(data))) {
+    data <- data[allVar]
+    data[freqName] <- 1L
+    allVar <- c(allVar, freqName)
+  }
+  
+  if (!nrow(z)) {
+    if (identical(names(data), allVar)) {
+      return(data)
+    } else {
+      return(data[allVar])
+    }
+  }
   
   if (length(extraVar)) {
     extraVar1 <- data[1, extraVar, drop = FALSE]
@@ -96,16 +111,6 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
       }
     }
     z <- cbind(z, extraVar1)
-  }
-  
-  allVar <- names(data)
-  allVar <- allVar[allVar %in% c(dimVar, freqName, extraVar)]
-  
-  
-  if (!(freqName %in% names(data))) {
-    data <- data[allVar]
-    data[freqName] <- 1L
-    allVar <- c(allVar, freqName)
   }
   
   if (identical(names(data), allVar)) {
