@@ -1,14 +1,23 @@
 
+
 #' Add zero frequency rows
 #' 
-#' Microdata or tabular frequency data is extended 
+#' Microdata or tabular frequency data is extended to contain all combinations of unique rows 
+#' of (hierarchical) groups of dimensional variables. Extra variables are extended by `NA`'s or `0`'s. 
+#' 
+#' By default, all variables, except the frequencies, are considered as dimensional variables.
+#' By default, the grouping of dimensional variables is based on hierarchical relationships (`hierarchical = TRUE`).
+#' With `varGroups = NULL` and `hierarchical = FALSE`,  
+#' each dimensional variable forms a separate group (as `as.list(dimVar)`). 
+#' Parameter `extraVar` can be specified as variable names. 
+#' `TRUE` means all remaining variables and `FALSE` no variables. 
 #'
 #' @param data data frame 
 #' @param freqName Name of (existing) frequency variable
 #' @param hierarchical Hierarchical variables treated atomatically when `TRUE`  
 #' @param varGroups List of variable groups
 #' @param dimVar The dimensional variables
-#' @param extraVar extraVar description 
+#' @param extraVar Extra variables as variable names, TRUE (all remaining) or FALSE (none). 
 #'
 #' @return Extended data frame
 #' @export
@@ -18,14 +27,14 @@
 #' z$age[z$age == "Y15-29"] <- "young"
 #' z$age[z$age == "Y30-64"] <- "old"
 #' 
-#' Rbind0freq(z[, -4])
-#' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"))
-#' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = "year")
-#' Rbind0freq(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = FALSE)
-#' Rbind0freq(z, varGroups = list(c("age", "geo", "year"), "eu"))
-#' Rbind0freq(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
-#' Rbind0freq(z, "ths_per")
-Rbind0freq <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
+#' Extend0(z[, -4])
+#' Extend0(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"))
+#' Extend0(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = "year")
+#' Extend0(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = FALSE)
+#' Extend0(z, varGroups = list(c("age", "geo", "year"), "eu"))
+#' Extend0(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
+#' Extend0(z, "ths_per")
+Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
   
   if (is.null(dimVar)) {
     dimVar <- names(data)
