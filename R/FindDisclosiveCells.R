@@ -1,4 +1,4 @@
-#' Find direct-disclosive cells
+#' Find directly disclosive cells
 #' 
 #' Function for determining which cells in a frequency table can lead to 
 #' direct disclosure of an identifiable individual, assuming an attacker has the
@@ -20,7 +20,9 @@
 #' @param coalition maximum number of units in a possible coalition, default 1
 #' @param ... parameters from main suppression method
 #'
-#' @return logical vector marking direct-disclosive cells
+#' @return list with two named elements, the first ($primary) being a logical vector
+#' marking directly disclosive cells, the second ($numExtra) a data.frame containing
+#' information regarding the dimensions in which the cells are directly disclosive.
 #' 
 #' @export
 #'
