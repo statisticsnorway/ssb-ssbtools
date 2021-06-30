@@ -5,6 +5,7 @@
 #' Microdata or tabular frequency data is extended to contain all combinations of unique rows 
 #' of (hierarchical) groups of dimensional variables. Extra variables are extended by `NA`'s or `0`'s. 
 #' 
+#' With no frequency variable in input (microdata), the frequency variable in output  consists of ones and zeros. 
 #' By default, all variables, except the frequencies, are considered as dimensional variables.
 #' By default, the grouping of dimensional variables is based on hierarchical relationships (`hierarchical = TRUE`).
 #' With `varGroups = NULL` and `hierarchical = FALSE`,  

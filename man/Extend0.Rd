@@ -34,6 +34,7 @@ Microdata or tabular frequency data is extended to contain all combinations of u
 of (hierarchical) groups of dimensional variables. Extra variables are extended by \code{NA}'s or \code{0}'s.
 }
 \details{
+With no frequency variable in input (microdata), the frequency variable in output  consists of ones and zeros.
 By default, all variables, except the frequencies, are considered as dimensional variables.
 By default, the grouping of dimensional variables is based on hierarchical relationships (\code{hierarchical = TRUE}).
 With \code{varGroups = NULL} and \code{hierarchical = FALSE},
