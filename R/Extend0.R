@@ -37,9 +37,17 @@
 #' Extend0(z, "ths_per")
 Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
   
+  
+  if (!is.logical(extraVar)) {
+    extraVar <- names(data[1, extraVar, drop = FALSE])
+    eVar <- extraVar
+  } else {
+    eVar <- character(0)
+  }
+  
   if (is.null(dimVar)) {
     dimVar <- names(data)
-    dimVar <- dimVar[!(dimVar %in% freqName)]
+    dimVar <- dimVar[!(dimVar %in% c(freqName, eVar))]
   } else {
     dimVar <- names(data[1, dimVar, drop = FALSE])
   }
@@ -65,9 +73,7 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     } else {
       extraVar <- character(0)
     }
-  } else {
-    extraVar <- names(data[1, extraVar, drop = FALSE])
-  }
+  } 
   
   z <- unique(data[, varGroups[[1]], drop = FALSE])
   for (i in SeqInc(2, length(varGroups))) {
