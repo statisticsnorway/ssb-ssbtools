@@ -241,7 +241,7 @@ Mipf <- function(x, z = NULL, iter = 100, yStart = matrix(1, nrow(x), 1), eps = 
     
     if (!(deviation < eps)) 
       warning("Deviation limit exceeded")
-    cat("Final deviation", deviation, "\n")
+    #cat("Final deviation", deviation, "\n")
     if(returnDetails){
       return(list(x = a$x, z = a$z, yKnown = yKnown, y = yHat))
     }
@@ -317,7 +317,8 @@ Mipf <- function(x, z = NULL, iter = 100, yStart = matrix(1, nrow(x), 1), eps = 
       warning("Iteration limit exceeded")
     }
   }
-  cat("   ", t, "iterations: deviation", deviation, "\n")
+  #cat("   ", t, "iterations: deviation", deviation, "\n")
+  cat(" ", t, "iterations: deviation", deviation)
   if(returnDetails){
     return(list(x = x, z = z, yKnown = rep(FALSE, dim(yStart)[1]), y = yStart))
   }
