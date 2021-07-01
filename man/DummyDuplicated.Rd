@@ -27,7 +27,7 @@ The random values are generated locally within the function without affecting th
 }
 \examples{
 x <- cbind(1, rbind(diag(2), diag(2)), diag(4)[, 1:2])
-z <- Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5)])
+z <- Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5, 2)])
 
 DummyDuplicated(z)
 which(DummyDuplicated(z, rows = TRUE))

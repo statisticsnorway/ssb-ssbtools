@@ -185,7 +185,7 @@ CrossAll <- function(data, hierarchies = TRUE) {
 #'
 #' @examples
 #' x <- cbind(1, rbind(diag(2), diag(2)), diag(4)[, 1:2])
-#' z <- Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5)])
+#' z <- Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5, 2)])
 #' 
 #' DummyDuplicated(z)
 #' which(DummyDuplicated(z, rows = TRUE))
@@ -239,9 +239,9 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
       o <- rep(FALSE, ncol(x))
     }
   }
-  r <- colSums_x[k@j + 1] == k@x & colSums_x[k@i + 1] == k@x
+  r <- which(colSums_x[k@j + 1] == k@x & colSums_x[k@i + 1] == k@x)
   if (idx) {
-    r <- r[!duplicated(k@j[r])]
+    r <- r[!(k@i[r] %in%  k@j[r])]
     o[k@j[r] + 1] <- o[k@i[r] + 1]
     return(o)
   }
