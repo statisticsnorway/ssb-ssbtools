@@ -1,8 +1,8 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 1.1.2
-Date: 2021-06-11
+Version: 1.2.0
+Date: 2021-07-02
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no"),
              person("Daniel", "Lupp", role = c("aut")),        
