@@ -2,7 +2,7 @@
 % Please edit documentation in R/FindDisclosiveCells.R
 \name{FindDisclosiveCells}
 \alias{FindDisclosiveCells}
-\title{Find direct-disclosive cells}
+\title{Find directly disclosive cells}
 \usage{
 FindDisclosiveCells(
   data,
@@ -40,7 +40,9 @@ safety of cells. A cell is "safe" in a row if the number of unknowns exceeds
 \item{...}{parameters from main suppression method}
 }
 \value{
-logical vector marking direct-disclosive cells
+list with two named elements, the first ($primary) being a logical vector
+marking directly disclosive cells, the second ($numExtra) a data.frame containing
+information regarding the dimensions in which the cells are directly disclosive.
 }
 \description{
 Function for determining which cells in a frequency table can lead to
