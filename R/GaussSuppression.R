@@ -16,6 +16,9 @@
 #' sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
 #' `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
 #'  and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
+#'  All the above methods assume that any published singletons are primary suppressed. 
+#'  When this is not the case, `"anySumNOTprimary"` must be used.
+#'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
 #' @param candidates Indices of candidates for secondary suppression   
@@ -24,7 +27,7 @@
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
 #' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"subSum"`, `"subSpace"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param ... Extra unused parameters
 #'
@@ -137,7 +140,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     if (singletonNOTprimary) {
       if (singletonMethod != "anySum")
-        stop('singletonMethod must be "anySum" or "anySumNOTprimary" when singletons not primary suppressed')
+        stop('singletonMethod must be "anySumNOTprimary" when singletons not primary suppressed')
       warning('singletonMethod is changed to "singletonNOTprimary"')
     }
   }
