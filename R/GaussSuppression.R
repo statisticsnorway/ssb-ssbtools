@@ -242,6 +242,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
     }
     if (length(A$r[[j]])) {
+      reduced <- FALSE
       if (j > nForced) {
         if (is.null(singleton)) {
           isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x)
@@ -280,15 +281,22 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                     B$x[[i]] <- B$x[[i]][!j_in_i]
                   }
                 }
+                isSecondary <- FALSE
+                reduced <- TRUE
+              } else {
+                isSecondary <- TRUE
               }
+              
+            } else {
+              isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x))
             }
-            isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x))
           }
         }
       } else {
         isSecondary <- FALSE
       }
       if (!isSecondary) {
+       if (!reduced) { 
         ind <- A$r[[j]][1]
         for (i in SeqInc(j + 1L, n)) 
           nrA[i] <- match(ind, A$r[[i]])
@@ -384,6 +392,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
         }
+       }  
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
         ii <- ii + 1L
