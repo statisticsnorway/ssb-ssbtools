@@ -111,7 +111,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   }
   
-  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "subSumSpace", "subSumAny", "none")) {
+  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
     return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod))
   }
   
@@ -124,18 +124,22 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (singletonMethod == "none") {
     singleton <- FALSE
   }
-  
-  
-  if (any(singleton)) {
+  if (singletonMethod == "anySumNOTprimary") {
+    singletonMethod <- "anySum"
     singletonNOTprimary <- TRUE
-    # Change here. New singletonMethod and/or automatically detect 
   } else {
-    singletonNOTprimary <- FALSE
-  }
-  
-  if (singletonNOTprimary) {
-    if (singletonMethod != "anySum") 
-      stop('singletonMethod must be "anySum" when singletons not primary suppressed')
+    if (any(singleton)) {
+      colSums_x <- colSums(x)
+      singletonZ <- (colSums(x[singleton, , drop = FALSE]) == 1 & colSums_x == 1)
+      singletonNOTprimary <- (sum(singletonZ) > sum(singletonZ[primary]))
+    } else {
+      singletonNOTprimary <- FALSE
+    }
+    if (singletonNOTprimary) {
+      if (singletonMethod != "anySum")
+        stop('singletonMethod must be "anySum" or "anySumNOTprimary" when singletons not primary suppressed')
+      warning('singletonMethod is changed to "singletonNOTprimary"')
+    }
   }
   
   
