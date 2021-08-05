@@ -125,6 +125,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singleton <- FALSE
   }
   
+  
+  if (any(singleton)) {
+    singletonNOTprimary <- TRUE
+    # Change here. New singletonMethod and/or automatically detect 
+  } else {
+    singletonNOTprimary <- FALSE
+  }
+  
+  if (singletonNOTprimary) {
+    if (singletonMethod != "anySum") 
+      stop('singletonMethod must be "anySum" when singletons not primary suppressed')
+  }
+  
+  
   # make new primary suppressed subSum-cells
   if (grepl("subSum", singletonMethod)) {
     if (any(singleton)) {
@@ -141,6 +155,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (singletonMethod == "subSum") 
       singleton <- FALSE
   }
+  
   
   if (!any(singleton)) 
     singleton <- NULL
@@ -168,8 +183,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     maxInd2 <- maxInd
     
     # Removes cells that are handled by anySum/subSpace anyway
-    if (!grepl("subSum", singletonMethod)) {
-      primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
+    if (!singletonNOTprimary) {
+      if (!grepl("subSum", singletonMethod)) {
+        primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
+      }
     }
     
     A <- Matrix2listInt(x[ordSingleton, candidates, drop = FALSE])
@@ -238,6 +255,26 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 } else {
                   # if(printInc) # "Can't-be-sure-suppression" if "AnyProportionalGaussInt(.." is FALSE
                   #   cat('@')   # More advanced method may improve
+                }
+              }
+            }
+            if (subSubSec & singletonNOTprimary) {
+              if (!Any0GaussInt(A$r[[j]], B$r)) {
+                subSubSec <- FALSE
+                Arj <- A$r[[j]]
+                for (i in SeqInc(j, n)) {  # Her blir A$r[[j]] borte også
+                  j_in_i <- A$r[[i]] %in% Arj
+                  if (any(j_in_i)) {
+                    A$r[[i]] <- A$r[[i]][!j_in_i]
+                    A$x[[i]] <- A$x[[i]][!j_in_i]
+                  }
+                }
+                for (i in seq_len(nB)) {
+                  j_in_i <- B$r[[i]] %in% Arj
+                  if (any(j_in_i)) {
+                    B$r[[i]] <- B$r[[i]][!j_in_i]
+                    B$x[[i]] <- B$x[[i]][!j_in_i]
+                  }
                 }
               }
             }
@@ -360,6 +397,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
 
 
 
+# Simplified version of AnyProportionalGaussInt 
+Any0GaussInt <- function(r, rB) {
+  for (i in seq_along(rB)) {
+    ni <- length(rB[[i]])
+    if (ni) {    
+      if( all(rB[[i]] %in% r) )
+        return(TRUE)
+    }
+  }
+  FALSE
+}
 
 
 
