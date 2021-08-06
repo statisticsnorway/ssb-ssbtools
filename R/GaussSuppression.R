@@ -124,6 +124,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
 
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod) {
   
+  if (printInc) {
+    cat(paste0("GaussSuppression_", singletonMethod))
+    flush.console()
+  }
+  
   if (singletonMethod == "none") {
     singleton <- FALSE
   }
@@ -167,10 +172,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (!any(singleton)) 
     singleton <- NULL
   
-  if (printInc) {
-    cat(paste0("GaussSuppression_", singletonMethod))
-    flush.console()
-  }
   
   if (!is.null(singleton)) {
     ordSingleton <- order(singleton)
