@@ -16,6 +16,9 @@
 #' sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
 #' `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
 #'  and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
+#'  All the above methods assume that any published singletons are primary suppressed. 
+#'  When this is not the case, `"anySumNOTprimary"` must be used.
+#'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
 #' @param candidates Indices of candidates for secondary suppression   
@@ -24,7 +27,7 @@
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
 #' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"subSum"`, `"subSpace"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param ... Extra unused parameters
 #'
@@ -111,7 +114,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   }
   
-  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "subSumSpace", "subSumAny", "none")) {
+  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
     return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod))
   }
   
@@ -121,9 +124,32 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
 
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod) {
   
+  if (printInc) {
+    cat(paste0("GaussSuppression_", singletonMethod))
+    flush.console()
+  }
+  
   if (singletonMethod == "none") {
     singleton <- FALSE
   }
+  if (singletonMethod == "anySumNOTprimary") {
+    singletonMethod <- "anySum"
+    singletonNOTprimary <- TRUE
+  } else {
+    if (any(singleton)) {
+      colSums_x <- colSums(x)
+      singletonZ <- (colSums(x[singleton, , drop = FALSE]) == 1 & colSums_x == 1)
+      singletonNOTprimary <- (sum(singletonZ) > sum(singletonZ[primary]))
+    } else {
+      singletonNOTprimary <- FALSE
+    }
+    if (singletonNOTprimary) {
+      if (singletonMethod != "anySum")
+        stop('singletonMethod must be "anySumNOTprimary" when singletons not primary suppressed')
+      warning('singletonMethod is changed to "singletonNOTprimary"')
+    }
+  }
+  
   
   # make new primary suppressed subSum-cells
   if (grepl("subSum", singletonMethod)) {
@@ -142,13 +168,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       singleton <- FALSE
   }
   
+  
   if (!any(singleton)) 
     singleton <- NULL
   
-  if (printInc) {
-    cat(paste0("GaussSuppression_", singletonMethod))
-    flush.console()
-  }
   
   if (!is.null(singleton)) {
     ordSingleton <- order(singleton)
@@ -168,8 +191,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     maxInd2 <- maxInd
     
     # Removes cells that are handled by anySum/subSpace anyway
-    if (!grepl("subSum", singletonMethod)) {
-      primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
+    if (!singletonNOTprimary) {
+      if (!grepl("subSum", singletonMethod)) {
+        primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
+      }
     }
     
     A <- Matrix2listInt(x[ordSingleton, candidates, drop = FALSE])
@@ -221,6 +246,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
     }
     if (length(A$r[[j]])) {
+      reduced <- FALSE
       if (j > nForced) {
         if (is.null(singleton)) {
           isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x)
@@ -241,13 +267,40 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 }
               }
             }
-            isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x))
+            if (subSubSec & singletonNOTprimary) {
+              if (!Any0GaussInt(A$r[[j]], B$r)) {
+                subSubSec <- FALSE
+                Arj <- A$r[[j]]
+                for (i in SeqInc(j, n)) {  # Her blir A$r[[j]] borte også
+                  j_in_i <- A$r[[i]] %in% Arj
+                  if (any(j_in_i)) {
+                    A$r[[i]] <- A$r[[i]][!j_in_i]
+                    A$x[[i]] <- A$x[[i]][!j_in_i]
+                  }
+                }
+                for (i in seq_len(nB)) {
+                  j_in_i <- B$r[[i]] %in% Arj
+                  if (any(j_in_i)) {
+                    B$r[[i]] <- B$r[[i]][!j_in_i]
+                    B$x[[i]] <- B$x[[i]][!j_in_i]
+                  }
+                }
+                isSecondary <- FALSE
+                reduced <- TRUE
+              } else {
+                isSecondary <- TRUE
+              }
+              
+            } else {
+              isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x))
+            }
           }
         }
       } else {
         isSecondary <- FALSE
       }
       if (!isSecondary) {
+       if (!reduced) { 
         ind <- A$r[[j]][1]
         for (i in SeqInc(j + 1L, n)) 
           nrA[i] <- match(ind, A$r[[i]])
@@ -343,6 +396,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
         }
+       }  
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
         ii <- ii + 1L
@@ -360,6 +414,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
 
 
 
+# Simplified version of AnyProportionalGaussInt 
+Any0GaussInt <- function(r, rB) {
+  for (i in seq_along(rB)) {
+    ni <- length(rB[[i]])
+    if (ni) {    
+      if( all(rB[[i]] %in% r) )
+        return(TRUE)
+    }
+  }
+  FALSE
+}
 
 
 
