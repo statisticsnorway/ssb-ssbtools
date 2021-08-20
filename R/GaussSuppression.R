@@ -1,4 +1,3 @@
-
 #' Secondary suppression by Gaussian elimination
 #' 
 #' Sequentially the secondary suppression candidates (columns in x) are used to reduce the x-matrix by Gaussian elimination. 
@@ -29,6 +28,7 @@
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
 #' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
+#' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -67,7 +67,7 @@
 #' datF
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
-                             singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, 
+                             singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              ...) {
   if (is.logical(primary)) 
     primary <- which(primary) 
@@ -115,14 +115,25 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   }
   
   if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
-    return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod))
+    return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...))
   }
   
   stop("wrong singletonMethod")
 }
 
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod) {
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE, ...) {
+  
+
+  # testMaxInt is parameter for testing 
+  # The Integer overflow situation will be forced when testMaxInt is exceeded   
+  DoTestMaxInt = testMaxInt > 0
+  
+  # allNumeric is parameter for testing 
+  # All calculations use numeric algorithm when TRUE
+  if(allNumeric){
+    Matrix2listInt <- SSBtools::Matrix2list 
+  }
   
   if (printInc) {
     cat(paste0("GaussSuppression_", singletonMethod))
@@ -223,14 +234,25 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   nrA <- rep(NA_integer_, n)
   nrB <- rep(NA_integer_, nB)
   
+  
+  # To store cumulative factors from ReduceGreatestDivisor
+  # Used to rescale when switching to numeric algorithm (caused by integer overflow).
+  kk_2_factorsA <- rep(1, n)
+  kk_2_factorsB <- rep(1, nB)
+  
+  
   subUsed <- rep(FALSE, m)  # needed by anySum
+  
+  dot <- "."
+  # dot will change to "-" when integer overflow occur (then numeric algorithm)  
+  
   
   # The main Gaussian elimination loop 
   # Code made for speed, not readability
   for (j in seq_len(n)) {
     if (printInc) 
       if (j%%max(1, n%/%25) == 0) {
-        cat(".")
+        cat(dot)
         flush.console()
       }
     if (ii > m) 
@@ -249,12 +271,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       reduced <- FALSE
       if (j > nForced) {
         if (is.null(singleton)) {
-          isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x)
+          isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
         } else {
           subSubSec <- A$r[[j]][1] > maxInd2
           if (grepl("Space", singletonMethod)) {
             okArj <- A$r[[j]] <= maxInd
-            isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x))
+            isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
           } else {
             if (subSubSec) {
               if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
@@ -292,7 +314,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               }
               
             } else {
-              isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x))
+              isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
             }
           }
         }
@@ -323,6 +345,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             if (length(A$x[[i]]) == 1L) {
               A$r[[i]] <- Arj
               A$x[[i]] <- Axj
+              kk_2_factorsA[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
             } else {
               ai <- Arj
               bi <- A$r[[i]][-nrA[i]]
@@ -331,19 +354,83 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               ma_isnama <- ma[!isnama]
               di <- c(bi, ai[isnama])
               if (abs(A$x[[i]][nrA[i]]) == abs(Axj1)) {
-                if (A$x[[i]][nrA[i]] == Axj1) {
-                  dx <- c(A$x[[i]][-nrA[i]], -Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                suppressWarnings({
+                  if (A$x[[i]][nrA[i]] == Axj1) {
+                    dx <- c(A$x[[i]][-nrA[i]], -Axj[isnama])
+                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                  } else {
+                    dx <- c(A$x[[i]][-nrA[i]], Axj[isnama])
+                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                  }
+                  if (DoTestMaxInt) {
+                    if (!anyNA(dx)) {
+                      if (max(dx) > testMaxInt) {
+                        dx[1] <- NA
+                        warning("testMaxInt exceeded")
+                      }
+                    }
+                  }
+                })
+                
+                if (anyNA(dx)) 
+                {
+                  dot <- "-"
+                  if (A$x[[i]][nrA[i]] == Axj1) {
+                    dx <- as.numeric(c(A$x[[i]][-nrA[i]], -Axj[isnama]))
+                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                  } else {
+                    dx <- as.numeric(c(A$x[[i]][-nrA[i]], Axj[isnama]))
+                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                  }
+                  dx <- dx/kk_2_factorsA[i]    # rescale needed since change to numeric
+                  kk_2_factorsA[i] <- 1
                 } else {
-                  dx <- c(A$x[[i]][-nrA[i]], Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                  if(!is.integer(dx)){
+                    if(is.integer(A$x[[i]])){  # Change to numeric caused by Axj, rescale needed here also
+                      dx <- dx/kk_2_factorsA[i]
+                      kk_2_factorsA[i] <- 1
+                    }
+                  }
                 }
               } else {
                 kk <- ReduceGreatestDivisor(c(A$x[[i]][nrA[i]], Axj1))
-                dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
-                dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                if(is.integer(kk)){
+                  kk_2_factorsA[i] <- kk[2] * kk_2_factorsA[i]
+                }
+                suppressWarnings({
+                  dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
+                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                  if (DoTestMaxInt) {
+                    if (!anyNA(dx)) {
+                      if (max(dx) > testMaxInt) {
+                        dx[1] <- NA
+                        warning("testMaxInt exceeded")
+                      }
+                    }
+                  }
+                })
+                if (anyNA(dx)) 
+                {
+                  dot <- "-"
+                  kk <- as.numeric(kk)
+                  dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
+                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                  dx <- dx/kk_2_factorsA[i]   # rescale needed since change to numeric
+                  kk_2_factorsA[i] <- 1
+                } else {
+                  if(!is.integer(dx)){
+                    if(is.integer(A$x[[i]])){      # Change to numeric caused by Axj, rescale needed here also
+                      dx <- dx/kk_2_factorsA[i]
+                      kk_2_factorsA[i] <- 1
+                    }
+                  }
+                }
               }
-              rows <- (dx != 0L)
+              if(is.integer(dx)){
+                rows <- (dx != 0L)
+              } else {
+                rows <- (abs(dx) >= tolGauss)
+              }
               di <- di[rows]
               dx <- dx[rows]
               r <- order(di)
@@ -367,6 +454,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             if (length(B$x[[i]]) == 1L) {
               B$r[[i]] <- Arj
               B$x[[i]] <- Axj
+              kk_2_factorsB[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
             } else {
               ai <- Arj
               bi <- B$r[[i]][-nrB[i]]
@@ -375,19 +463,86 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               ma_isnama <- ma[!isnama]
               di <- c(bi, ai[isnama])
               if (abs(B$x[[i]][nrB[i]]) == abs(Axj1)) {
-                if (B$x[[i]][nrB[i]] == Axj1) {
-                  dx <- c(B$x[[i]][-nrB[i]], -Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
-                } else {
-                  dx <- c(B$x[[i]][-nrB[i]], Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                suppressWarnings({
+                  if (B$x[[i]][nrB[i]] == Axj1) {
+                    dx <- c(B$x[[i]][-nrB[i]], -Axj[isnama])
+                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                  } else {
+                    dx <- c(B$x[[i]][-nrB[i]], Axj[isnama])
+                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                  }
+                  if (DoTestMaxInt) {
+                    if (!anyNA(dx)) {
+                      if (max(dx) > testMaxInt) {
+                        dx[1] <- NA
+                        warning("testMaxInt exceeded")
+                      }
+                    }
+                  }
+                })
+                if (anyNA(dx)) 
+                {
+                  dot <- "-"
+                  if (B$x[[i]][nrB[i]] == Axj1) {
+                    dx <- as.numeric(c(B$x[[i]][-nrB[i]], -Axj[isnama]))
+                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                  } else {
+                    dx <- as.numeric(c(B$x[[i]][-nrB[i]], Axj[isnama]))
+                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                  }
+                  dx <- dx/kk_2_factorsB[i]
+                  kk_2_factorsB[i] <- 1
+                }
+                else {
+                  if(!is.integer(dx)){
+                    if(is.integer(B$x[[i]])){
+                      dx <- dx/kk_2_factorsB[i]
+                      kk_2_factorsB[i] <- 1
+                    }
+                  }
                 }
               } else {
                 kk <- ReduceGreatestDivisor(c(B$x[[i]][nrB[i]], Axj1))
-                dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
-                dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                if(is.integer(kk)){
+                  kk_2_factorsB[i] <- kk[2] * kk_2_factorsB[i]
+                }
+                suppressWarnings({
+                  dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
+                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                  if (DoTestMaxInt) {
+                    if (!anyNA(dx)) {
+                      if (max(dx) > testMaxInt) {
+                        dx[1] <- NA
+                        warning("testMaxInt exceeded")
+                      }
+                    }
+                  }
+                })
+                if (anyNA(dx)) 
+                {
+                  dot <- "-"
+                  kk <- as.numeric(kk)
+                  dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
+                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                  dx <- dx/kk_2_factorsB[i]
+                  kk_2_factorsB[i] <- 1
+                } else {
+                  if(!is.integer(dx)){
+                    if(is.integer(B$x[[i]])){
+                      dx <- dx/kk_2_factorsB[i]
+                      kk_2_factorsB[i] <- 1
+                    }
+                  }
+                }
               }
-              rows <- (dx != 0L)
+              if(is.integer(dx)){
+                rows <- (dx != 0L)
+              } else {
+                rows <- (abs(dx) >= tolGauss)
+              }
+              if(!length(rows)){
+                stop("Suppression method failed")
+              }
               di <- di[rows]
               dx <- dx[rows]
               r <- order(di)
@@ -405,6 +560,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
     }
   }
+  
+  # cat("\n")
+  # print(table(kk_2_factorsA))
+  # print(table(kk_2_factorsB))
+  # print(table(sapply(A$x,class)))
+  # print(table(sapply(B$x,class)))
+  
   if (printInc) {
     cat("\n")
     flush.console()
@@ -429,7 +591,7 @@ Any0GaussInt <- function(r, rB) {
 
 
 
-AnyProportionalGaussInt <- function(r, x, rB, xB) {
+AnyProportionalGaussInt <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
   n <- length(r)
   if(!n){
     return(TRUE) # Empty "A-input" regarded as proportional
@@ -443,9 +605,23 @@ AnyProportionalGaussInt <- function(r, x, rB, xB) {
             return(TRUE)
           if (identical(-x, xB[[i]])) 
             return(TRUE)
-          kk <- ReduceGreatestDivisor(c(x[1], xB[[i]][1]))
-          if (identical(kk[2] * x, kk[1] * xB[[i]])) 
-            return(TRUE)
+          
+          cx1xBi1 <- c(x[1], xB[[i]][1])
+          if(is.integer(cx1xBi1)){
+            kk <- ReduceGreatestDivisor(cx1xBi1)
+            if (identical(kk[2] * x, kk[1] * xB[[i]])) 
+              return(TRUE)
+          } else {
+            #if (FALSE) {
+            #
+            #  Possible code here to look at distribution of numeric computing errors  
+            #
+            #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
+            #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
+            #}
+            if( all(abs(  xB[[i]] - (cx1xBi1[2]/cx1xBi1[1])* x) < tolGauss*abs(kk_2_factorsB[i]) )  )
+              return(TRUE)
+          }
         }
       }
     }
@@ -455,8 +631,11 @@ AnyProportionalGaussInt <- function(r, x, rB, xB) {
 
 
 
-# Reduce by Greatest common divisor (integer input)
+# Reduce by Greatest common divisor (when integer input)
 ReduceGreatestDivisor <- function(ab) {
+  if(!is.integer(ab)){
+    return(c(ab[1]/ab[2], 1))
+  }
   a <- ab[1]
   b <- ab[2]
   while (TRUE) {
@@ -468,3 +647,4 @@ ReduceGreatestDivisor <- function(ab) {
   }
   stop("Something wrong")
 }
+
