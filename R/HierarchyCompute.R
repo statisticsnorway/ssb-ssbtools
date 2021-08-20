@@ -566,10 +566,10 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   }
   
   if (is.null(selectedRows)) {
-    outputMatrix <- k[[1]] %*% valueMatrix
+    outputMatrix <- Mult(k[[1]], valueMatrix) #k[[1]] %*% valueMatrix
     xCrossCode <- k$codeFrame
   } else {
-      outputMatrix <- k[[1]][selectedRows, , drop = FALSE] %*% valueMatrix
+      outputMatrix <- Mult(k[[1]][selectedRows, , drop = FALSE], valueMatrix) #k[[1]][selectedRows, , drop = FALSE] %*% valueMatrix
     xCrossCode <- k$codeFrame[selectedRows, , drop = FALSE]
   }
   
@@ -1112,11 +1112,11 @@ DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inpu
     if(reOrder){
       if (unionComplement) 
         m <- rbind(CrossprodUnionComplement(mNew, m),m)  #  Better ordering 
-      else m <- rbind(crossprod(mNew, m),m)  
+      else m <- rbind(Mult_crossprod(mNew, m),m) #rbind(crossprod(mNew, m),m)  
     } else {
       if (unionComplement) 
         m <- rbind(m, CrossprodUnionComplement(mNew, m))  # Matrix::rBind(m,  CrossprodUnionComplement(mNew,m))
-      else m <- rbind(m, crossprod(mNew, m))  # Matrix::rBind(m,  crossprod(mNew,m))
+      else m <- rbind(m, Mult_crossprod(mNew, m)) #rbind(m, crossprod(mNew, m))  # Matrix::rBind(m,  crossprod(mNew,m))
     }
   }
   if (!inputInOutput & length(dropInput) > 0) {
@@ -1237,8 +1237,8 @@ CrossprodUnionComplement <- function(x, y) {
   yMinus <- y
   yPlus[y < 0] <- 0
   yMinus[y > 0] <- 0
-  zPlus <- crossprod(x, yPlus)
-  zMinus <- crossprod(x, yMinus)
+  zPlus <- Mult_crossprod(x, yPlus)
+  zMinus <- Mult_crossprod(x, yMinus)
   zPlus[zPlus > 1] <- 1
   z <- zPlus + zMinus
   z[z < 0] <- 0
