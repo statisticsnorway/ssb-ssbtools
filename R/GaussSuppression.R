@@ -609,9 +609,24 @@ AnyProportionalGaussInt <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
           cx1xBi1 <- c(x[1], xB[[i]][1])
           if(is.integer(cx1xBi1)){
             kk <- ReduceGreatestDivisor(cx1xBi1)
-            if (identical(kk[2] * x, kk[1] * xB[[i]])) 
+            suppressWarnings({
+              kk_2_x <- kk[2] * x 
+              kk_1_xB_i <- kk[1] * xB[[i]]
+            })
+            if(anyNA(kk_2_x) | anyNA(kk_1_xB_i)){
+              kk <- as.numeric(kk)
+              kk_2_x <- kk[2] * x 
+              kk_1_xB_i <- kk[1] * xB[[i]]
+              
+            }   
+            if (identical(kk_2_x, kk_1_xB_i)) 
               return(TRUE)
-          } else {
+            if(is.numeric(kk)){
+              if( all(abs( xB[[i]] - kk_2_x/kk[1]) < tolGauss))
+                return(TRUE)
+            }
+          }
+          else {
             #if (FALSE) {
             #
             #  Possible code here to look at distribution of numeric computing errors  
