@@ -292,21 +292,27 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             if (subSubSec & singletonNOTprimary) {
               if (!Any0GaussInt(A$r[[j]], B$r)) {
                 subSubSec <- FALSE
-                Arj <- A$r[[j]]
-                for (i in SeqInc(j, n)) {  # Her blir A$r[[j]] borte også
-                  j_in_i <- A$r[[i]] %in% Arj
+                for (i in SeqInc(j + 1L, n)) {
+                  j_in_i <- A$r[[i]] %in% A$r[[j]]
+                  if (all(j_in_i)) {
+                    A$r[[i]] <- integer(0)
+                    A$x[[i]] <- integer(0)
+                  } else {
                   if (any(j_in_i)) {
                     A$r[[i]] <- A$r[[i]][!j_in_i]
                     A$x[[i]] <- A$x[[i]][!j_in_i]
                   }
+                  }
                 }
                 for (i in seq_len(nB)) {
-                  j_in_i <- B$r[[i]] %in% Arj
+                  j_in_i <- B$r[[i]] %in% A$r[[j]]
                   if (any(j_in_i)) {
                     B$r[[i]] <- B$r[[i]][!j_in_i]
                     B$x[[i]] <- B$x[[i]][!j_in_i]
                   }
                 }
+                A$r[[j]] <- integer(0)
+                A$x[[j]] <- integer(0)  
                 isSecondary <- FALSE
                 reduced <- TRUE
               } else {
@@ -332,13 +338,18 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         Arj <- A$r[[j]][-1L]
         Axj <- A$x[[j]][-1L]
         Axj1 <- A$x[[j]][1L]
-        A$r[[j]] <- NA_integer_
-        A$x[[j]] <- NA_integer_
+        A$r[[j]] <- integer(0) # NA_integer_
+        A$x[[j]] <- integer(0) # NA_integer_
         
         if (length(Arj) == 0L) {
           for (i in which(!is.na(nrA))) {
+            if(length(A$r[[i]]) == 1L){
+              A$r[[i]] <- integer(0)
+              A$x[[i]] <- integer(0)
+            } else {
             A$r[[i]] <- A$r[[i]][-nrA[i]]
             A$x[[i]] <- A$x[[i]][-nrA[i]]
+            }
           }
         } else {
           for (i in which(!is.na(nrA))) {
@@ -556,6 +567,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         nrB[] <- NA_integer_
         ii <- ii + 1L
       } else {
+        A$r[[j]] <- integer(0)
+        A$x[[j]] <- integer(0)
         secondary[j] <- TRUE
       }
     }
@@ -664,4 +677,3 @@ ReduceGreatestDivisor <- function(ab) {
   }
   stop("Something wrong")
 }
-
