@@ -601,6 +601,8 @@ AnyProportionalGaussInt <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
     if (ni) {    # Empty "B-input" not regarded as proportional
       if (ni == n) {
         if (identical(r, rB[[i]])) {
+          if (n==1L)
+            return(TRUE)
           if (identical(x, xB[[i]])) 
             return(TRUE)
           if (identical(-x, xB[[i]])) 
