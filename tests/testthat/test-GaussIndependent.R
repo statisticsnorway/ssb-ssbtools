@@ -29,10 +29,29 @@ set.seed(123)
 sample_k <- sample(k)
 
 test_that("GaussIndependent integer overflow", {
+  skip("time consuming test")
+  
   z3 <- SSBtoolsData("z3")
   x <- SSBtools::ModelMatrix(z3[, 1:6], sparse = FALSE)
   x[k] <- x[sample_k]
   x <- x[, order(crossprod(x,z3$ant), decreasing = TRUE)]
-  expect_error({a <- suppressWarnings(GaussIndependent(x))})
+  
+  x[101:120,] <- 0
+  x[111:120,1001:1350] <- x[201:210,1001:1350]
+  x[101:110,1:1000] <- x[201:210,1:1000]
+  
+  a <- GaussIndependent(x)
+  
+  expect_identical(sum(which(a$rows)), 91240L)      # allNumeric tol-change will change result
+  expect_identical(sum(which(a$columns)), 173266L)  # but rank i preserved 
+
+  expect_identical(sum(a$rows), 420L)  
+  expect_identical(sum(a$columns), 420L)
+  
+  b <- GaussIndependent(t(x))
+  
+  expect_identical(sum(b$rows), 420L)  
+  expect_identical(sum(b$columns), 420L)
+
 })
 
