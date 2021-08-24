@@ -4,6 +4,9 @@
 #'
 #' @param x A (sparse) matrix 
 #' @param printInc Printing "..." to console when `TRUE`
+#' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
+#' @param testMaxInt Parameter for testing: The Integer overflow situation will be forced when testMaxInt is exceeded   
+#' @param allNumeric Parameter for testing: All calculations use numeric algorithm (as integer overflow) when TRUE
 #'
 #' @return List of logical vectors specifying independent rows and columns
 #' @export 
