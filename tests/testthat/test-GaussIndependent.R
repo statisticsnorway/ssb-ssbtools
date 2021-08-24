@@ -20,6 +20,16 @@ test_that("GaussIndependent works", {
   expect_identical(a$rows, b$columns)
   expect_identical(b$rows, a$columns)
   
+  a1 <- GaussIndependent(x, allNumeric = TRUE)
+  b1 <- GaussIndependent(t(x), allNumeric = TRUE)
+  expect_identical(a1,a)
+  expect_identical(b1,b)
+  
+  a1 <- GaussIndependent(x, testMaxInt = 2)
+  b1 <- GaussIndependent(t(x), testMaxInt = 2)
+  expect_identical(a1,a)
+  expect_identical(b1,b)
+  
 })
 
 
