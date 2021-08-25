@@ -88,6 +88,10 @@ GaussIndependent <- function(x, printInc = FALSE, tolGauss = (.Machine$double.ep
         } else {
           A$r[[i]] <- A$r[[i]][-nrA[i]]
           A$x[[i]] <- A$x[[i]][-nrA[i]]
+          if (Scale2one(A$x[[i]])) {
+            A$x[[i]][] <- 1L
+            kk_2_factorsA[i] <- 1
+          }
         }
       }
     } else {
@@ -186,6 +190,10 @@ GaussIndependent <- function(x, printInc = FALSE, tolGauss = (.Machine$double.ep
           r <- order(di)
           A$r[[i]] <- di[r]
           A$x[[i]] <- dx[r]
+          if (Scale2one(A$x[[i]])) {
+            A$x[[i]][] <- 1L
+            kk_2_factorsA[i] <- 1
+          }
         }
       }
     }

@@ -347,8 +347,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               A$r[[i]] <- integer(0)
               A$x[[i]] <- integer(0)
             } else {
-            A$r[[i]] <- A$r[[i]][-nrA[i]]
-            A$x[[i]] <- A$x[[i]][-nrA[i]]
+              A$r[[i]] <- A$r[[i]][-nrA[i]]
+              A$x[[i]] <- A$x[[i]][-nrA[i]]
+              if (Scale2one(A$x[[i]])) {
+                A$x[[i]][] <- 1L
+                kk_2_factorsA[i] <- 1
+              }
             }
           }
         } else {
@@ -447,6 +451,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               r <- order(di)
               A$r[[i]] <- di[r]
               A$x[[i]] <- dx[r]
+              if (Scale2one(A$x[[i]])) {
+                A$x[[i]][] <- 1L
+                kk_2_factorsA[i] <- 1
+              }
             }
           }
         }
@@ -459,6 +467,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           for (i in which(!is.na(nrB))) {
             B$r[[i]] <- B$r[[i]][-nrB[i]]
             B$x[[i]] <- B$x[[i]][-nrB[i]]
+            if (Scale2one(B$x[[i]])) {
+              B$x[[i]][] <- 1L
+              kk_2_factorsB[i] <- 1
+            }
           }
         } else {
           for (i in which(!is.na(nrB))) {
@@ -559,6 +571,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               r <- order(di)
               B$r[[i]] <- di[r]
               B$x[[i]] <- dx[r]
+              if (Scale2one(B$x[[i]])) {
+                B$x[[i]][] <- 1L
+                kk_2_factorsB[i] <- 1
+              }
             }
           }
         }
@@ -677,3 +693,29 @@ ReduceGreatestDivisor <- function(ab) {
   }
   stop("Something wrong")
 }
+
+
+Scale2one <- function(x) {
+  if (!length(x))
+    return(FALSE)
+  if (x[1] == 1L)
+    return(FALSE)
+  if (length(x) == 1L)
+    return(TRUE)
+  identical(min(x), max(x))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
