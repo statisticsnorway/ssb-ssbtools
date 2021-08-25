@@ -109,7 +109,7 @@ FindDisclosiveCells <- function(data,
     
     prim <- !safe_unknowns & !is_unknown & !is_total &
            ((freq > 0 & freq == row_totals) |
-           ((freq > 0 & freq <= coalition) & (row_max >= row_totals - coalition)))
+           (( freq > 0 & freq == row_max) & (coalition >= row_totals - row_max)))
     out[var] <- prim
   }
   out <- as.data.frame(out)
