@@ -19,6 +19,7 @@
 #' `unknown.threshold` percent of the row total.
 #' @param coalition maximum number of units in a possible coalition, default 1
 #' @param ... parameters from main suppression method
+#' @param suppressSmallCells logical variable which determines whether small cells (<= coalition) or large cells should be suppressed. Default FALSE.
 #'
 #' @return list with two named elements, the first ($primary) being a logical vector
 #' marking directly disclosive cells, the second ($numExtra) a data.frame containing
