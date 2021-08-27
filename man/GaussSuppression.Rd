@@ -13,6 +13,7 @@ GaussSuppression(
   singleton = rep(FALSE, NROW(x)),
   singletonMethod = "anySum",
   printInc = TRUE,
+  tolGauss = (.Machine$double.eps)^(1/2),
   ...
 )
 }
@@ -33,6 +34,8 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 \item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"} or \code{"none"} (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
+
+\item{tolGauss}{A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.}
 
 \item{...}{Extra unused parameters}
 }

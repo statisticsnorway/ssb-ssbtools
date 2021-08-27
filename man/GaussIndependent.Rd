@@ -5,7 +5,13 @@
 \alias{GaussRank}
 \title{Linearly independent rows and columns by Gaussian elimination}
 \usage{
-GaussIndependent(x, printInc = FALSE)
+GaussIndependent(
+  x,
+  printInc = FALSE,
+  tolGauss = (.Machine$double.eps)^(1/2),
+  testMaxInt = 0,
+  allNumeric = FALSE
+)
 
 GaussRank(x, printInc = FALSE)
 }
@@ -13,6 +19,12 @@ GaussRank(x, printInc = FALSE)
 \item{x}{A (sparse) matrix}
 
 \item{printInc}{Printing "..." to console when \code{TRUE}}
+
+\item{tolGauss}{A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.}
+
+\item{testMaxInt}{Parameter for testing: The Integer overflow situation will be forced when testMaxInt is exceeded}
+
+\item{allNumeric}{Parameter for testing: All calculations use numeric algorithm (as integer overflow) when TRUE}
 }
 \value{
 List of logical vectors specifying independent rows and columns
