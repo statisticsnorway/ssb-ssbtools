@@ -19,6 +19,7 @@
 #' `unknown.threshold` percent of the row total.
 #' @param coalition maximum number of units in a possible coalition, default 1
 #' @param ... parameters from main suppression method
+#' @param suppressSmallCells logical variable which determines whether small cells (<= coalition) or large cells should be suppressed. Default FALSE.
 #'
 #' @return list with two named elements, the first ($primary) being a logical vector
 #' marking directly disclosive cells, the second ($numExtra) a data.frame containing
@@ -46,6 +47,7 @@ FindDisclosiveCells <- function(data,
                        total = rep("Total", length(primaryDims)),
                        unknown.threshold = 0,
                        coalition = 1,
+                       suppressSmallCells = FALSE,
                        ...) {
   if (!is.numeric(unknown.threshold))
     stop(paste0("Given unknown.threshold: \"", unknown.threshold,
@@ -106,10 +108,15 @@ FindDisclosiveCells <- function(data,
     }
     # maximum freq per row, non-total and non-unknown
     row_max <- find_row_max(freq, crossTable, between, is_total, vars_unknown)
-    
+    if (!suppressSmallCells)
+      disclosive <- (( freq > 0 & freq == row_max) & 
+                     (coalition >= row_totals - row_max))
+    else
+      disclosive <- (( freq > 0 & freq <= coalition) & 
+                       (row_max >= row_totals - coalition))
     prim <- !safe_unknowns & !is_unknown & !is_total &
            ((freq > 0 & freq == row_totals) |
-           ((freq > 0 & freq <= coalition) & (row_max >= row_totals - coalition)))
+           disclosive)
     out[var] <- prim
   }
   out <- as.data.frame(out)
