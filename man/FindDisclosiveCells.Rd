@@ -13,6 +13,7 @@ FindDisclosiveCells(
   total = rep("Total", length(primaryDims)),
   unknown.threshold = 0,
   coalition = 1,
+  suppressSmallCells = FALSE,
   ...
 )
 }
@@ -36,6 +37,8 @@ safety of cells. A cell is "safe" in a row if the number of unknowns exceeds
 \code{unknown.threshold} percent of the row total.}
 
 \item{coalition}{maximum number of units in a possible coalition, default 1}
+
+\item{suppressSmallCells}{logical variable which determines whether small cells (<= coalition) or large cells should be suppressed. Default FALSE.}
 
 \item{...}{parameters from main suppression method}
 }
