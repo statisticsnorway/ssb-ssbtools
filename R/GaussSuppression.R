@@ -115,6 +115,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   }
   
   if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
+    
+    if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
+      warning("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
+    }
+    
     return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...))
   }
   
