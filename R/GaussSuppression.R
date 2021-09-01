@@ -29,6 +29,7 @@
 #' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
+#' @param whenEmptySuppressed Function to be called when empty input is problematic. 
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -68,6 +69,7 @@
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
+                             whenEmptySuppressed = warning, 
                              ...) {
   if (is.logical(primary)) 
     primary <- which(primary) 
@@ -117,7 +119,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
     
     if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
-      warning("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
+      whenEmptySuppressed("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
     }
     
     return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...))
