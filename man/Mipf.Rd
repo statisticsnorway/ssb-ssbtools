@@ -15,8 +15,7 @@ Mipf(
   reduceByColSums = FALSE,
   reduceByLeverage = FALSE,
   returnDetails = FALSE,
-  y = NULL,
-  altSplit = FALSE
+  y = NULL
 )
 }
 \arguments{

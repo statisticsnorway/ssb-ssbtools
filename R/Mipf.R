@@ -183,7 +183,7 @@
 Mipf <- function(x, z = NULL, iter = 100, yStart = matrix(1, nrow(x), 1), eps = 0.01, tol = 1e-10, 
                   reduceBy0 = FALSE, reduceByColSums = FALSE, 
                   reduceByLeverage = FALSE,
-                  returnDetails = FALSE, y = NULL, altSplit = FALSE) {
+                  returnDetails = FALSE, y = NULL) {
   
   if (is.null(z))
     z <- Matrix::crossprod(x, y)
@@ -230,7 +230,6 @@ Mipf <- function(x, z = NULL, iter = 100, yStart = matrix(1, nrow(x), 1), eps = 
   flush.console()
   
   A <- Matrix2listInt(x)
-  
   needAx <- !all(range(unlist(A$x) == 1))
   
   # Run iterative proportional fitting 
