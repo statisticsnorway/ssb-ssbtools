@@ -15,10 +15,7 @@ Mipf(
   reduceByColSums = FALSE,
   reduceByLeverage = FALSE,
   returnDetails = FALSE,
-  y = NULL,
-  startCol = NULL,
-  ordSplit = FALSE,
-  altSplit = FALSE
+  y = NULL
 )
 }
 \arguments{
@@ -43,14 +40,6 @@ Mipf(
 \item{returnDetails}{More output when TRUE.}
 
 \item{y}{It is possible to set \code{z} to NULL and supply original \code{y} instead  (\code{z = t(x) \%*\% y})}
-
-\item{startCol}{Within the algorithm, \code{x} needs to be split into pieces.
-Vector \code{startCol} is the indices of the first column of each piece (first element is always 1).
-When \code{NULL} (default), splitting is performed automatically.}
-
-\item{ordSplit}{Whether to order the pieces of the split x according to a rule}
-
-\item{altSplit}{Whether to try alternative splitting when ordinary not working properly}
 }
 \value{
 \code{yHat}, the estimate of \code{y}
