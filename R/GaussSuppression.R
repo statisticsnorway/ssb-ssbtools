@@ -129,9 +129,10 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...)
     
     if(length(gaussSuppression1) & !is.null(whenEmptyUnsuppressed)){
-      earlyUnsuppressed <- candidates[(!(candidates %in% gaussSuppression1)) & (candidates < max(gaussSuppression1))]
-      if(length(earlyUnsuppressed)){
-        if(min(colSums(abs(x[, earlyUnsuppressed, drop = FALSE]))) == 0){
+      lateUnsuppressed <- candidates[SeqInc(1L + min(match(gaussSuppression1, candidates)), length(candidates))]
+      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% gaussSuppression1)]
+      if(length(lateUnsuppressed)){
+        if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
         }
       }
