@@ -29,6 +29,8 @@
 #' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
+#' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
+#' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -68,6 +70,8 @@
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
+                             whenEmptySuppressed = warning, 
+                             whenEmptyUnsuppressed = message, 
                              ...) {
   if (is.logical(primary)) 
     primary <- which(primary) 
@@ -115,7 +119,26 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   }
   
   if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
-    return(GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...))
+    
+    if(!is.null(whenEmptySuppressed)){
+      if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
+        whenEmptySuppressed("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
+      }
+    }
+    
+    gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...)
+    
+    if(length(gaussSuppression1) & !is.null(whenEmptyUnsuppressed)){
+      lateUnsuppressed <- candidates[SeqInc(1L + min(match(gaussSuppression1, candidates)), length(candidates))]
+      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% gaussSuppression1)]
+      if(length(lateUnsuppressed)){
+        if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
+          whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
+        }
+      }
+    }
+    
+    return(gaussSuppression1)
   }
   
   stop("wrong singletonMethod")

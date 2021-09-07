@@ -14,6 +14,8 @@ GaussSuppression(
   singletonMethod = "anySum",
   printInc = TRUE,
   tolGauss = (.Machine$double.eps)^(1/2),
+  whenEmptySuppressed = warning,
+  whenEmptyUnsuppressed = message,
   ...
 )
 }
@@ -36,6 +38,10 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 \item{printInc}{Printing "..." to console when TRUE}
 
 \item{tolGauss}{A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.}
+
+\item{whenEmptySuppressed}{Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.}
+
+\item{whenEmptyUnsuppressed}{Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.}
 
 \item{...}{Extra unused parameters}
 }
