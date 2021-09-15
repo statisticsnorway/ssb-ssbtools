@@ -180,7 +180,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (singletonNOTprimary) {
       if (singletonMethod != "anySum")
         stop('singletonMethod must be "anySumNOTprimary" when singletons not primary suppressed')
-      warning('singletonMethod is changed to "singletonNOTprimary"')
+      warning('singletonMethod is changed to "anySumNOTprimary"')
     }
   }
   
