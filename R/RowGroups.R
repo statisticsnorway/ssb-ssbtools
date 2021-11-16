@@ -77,6 +77,9 @@ AsFactorInteger <- function(x) {
   a <- hyperN + 1
   b <- hyperN - 1
   
+  if (!is.finite(a - b)) 
+    return(x)
+  
   if (a - b != 2) 
     return(x)
   
