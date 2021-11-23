@@ -278,8 +278,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         cat(dot)
         flush.console()
       }
-    if (ii > m) 
+    if (ii > m){ 
+      if (printInc) {
+        cat("\n")
+        flush.console()
+      }
       return(candidates[secondary])
+    }
     
     if (nForced > 0 & j == 1) {
       is0Br <- sapply(B$r, length) == 0
