@@ -16,6 +16,7 @@ GaussSuppression(
   tolGauss = (.Machine$double.eps)^(1/2),
   whenEmptySuppressed = warning,
   whenEmptyUnsuppressed = message,
+  removeDuplicated = TRUE,
   ...
 )
 }
@@ -42,6 +43,8 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 \item{whenEmptySuppressed}{Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.}
 
 \item{whenEmptyUnsuppressed}{Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.}
+
+\item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
 
 \item{...}{Extra unused parameters}
 }

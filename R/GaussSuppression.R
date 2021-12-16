@@ -31,6 +31,7 @@
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
+#' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -71,7 +72,8 @@
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
-                             whenEmptyUnsuppressed = message, 
+                             whenEmptyUnsuppressed = message,
+                             removeDuplicated = TRUE,
                              ...) {
   if (is.logical(primary)) 
     primary <- which(primary) 
@@ -97,6 +99,24 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
           
   if (length(hidden)) 
     candidates <- candidates[!(candidates %in% hidden)]
+  
+  
+  if (removeDuplicated) {
+    idxDD <- DummyDuplicated(x, idx = TRUE)
+    idxDDunique <- unique(idxDD)
+    
+    idNew <- rep(0L, ncol(x))
+    idNew[idxDDunique] <- seq_len(length(idxDDunique))
+    
+    candidatesOld <- candidates
+    
+    primary <- idNew[unique(idxDD[primary])]
+    candidates <- idNew[unique(idxDD[candidates])]
+    hidden <- idNew[unique(idxDD[hidden])]
+    forced <- idNew[unique(idxDD[forced])]
+    x <- x[, idxDDunique, drop = FALSE]
+  }
+  
   
   candidates <- candidates[!(candidates %in% primary)]
           
@@ -136,6 +156,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
         }
       }
+    }
+    
+    if (removeDuplicated) {
+      ma <- match(idxDD[candidatesOld], idxDDunique[gaussSuppression1])
+      gaussSuppression1 <- candidatesOld[!is.na(ma)]
     }
     
     return(gaussSuppression1)
