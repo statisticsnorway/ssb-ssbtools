@@ -223,7 +223,7 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
     x <- Matrix(x)
   }
   if (rows) {
-    k <- as(as(triu(tcrossprod(x), 1), "dgeMatrix"), "dgTMatrix")
+    k <- as(as(triu(tcrossprod(x), 1), "dgCMatrix"), "dgTMatrix")
     colSums_x <- rowSums(x)
     if (idx) {
       o <- seq_len(nrow(x))
@@ -231,7 +231,7 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
       o <- rep(FALSE, nrow(x))
     }
   } else {
-    k <- as(as(triu(crossprod(x), 1), "dgeMatrix"), "dgTMatrix")
+    k <- as(as(triu(crossprod(x), 1), "dgCMatrix"), "dgTMatrix")
     colSums_x <- colSums(x)
     if (idx) {
       o <- seq_len(ncol(x))
