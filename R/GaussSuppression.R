@@ -109,6 +109,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     idNew[idxDDunique] <- seq_len(length(idxDDunique))
     
     candidatesOld <- candidates
+    primaryOld <- primary
     
     primary <- idNew[unique(idxDD[primary])]
     candidates <- idNew[unique(idxDD[candidates])]
@@ -159,8 +160,9 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
     
     if (removeDuplicated) {
-      ma <- match(idxDD[candidatesOld], idxDDunique[gaussSuppression1])
+      ma <- match(idxDD[candidatesOld], c(idxDDunique[gaussSuppression1], idxDDunique[primary]))
       gaussSuppression1 <- candidatesOld[!is.na(ma)]
+      gaussSuppression1 <- gaussSuppression1[!(gaussSuppression1 %in% primaryOld)]
     }
     
     return(gaussSuppression1)
