@@ -75,6 +75,22 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              whenEmptyUnsuppressed = message,
                              removeDuplicated = TRUE,
                              ...) {
+  
+  if (identical(removeDuplicated, "test")){
+    sysCall <- sys.call()
+    parentFrame <- parent.frame()
+    sysCall["removeDuplicated"] <- TRUE
+    outTRUE <- eval(sysCall, envir = parentFrame)
+    sysCall["removeDuplicated"] <- FALSE
+    outFALSE <- eval(sysCall, envir = parentFrame)
+    if(all.equal(outTRUE, outFALSE)){
+      return(outTRUE)
+    }
+    print(outTRUE)
+    print(outFALSE)
+    stop("removeDuplicated test: Not all equal")
+  }
+  
   if (is.logical(primary)) 
     primary <- which(primary) 
   else 
@@ -105,17 +121,28 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     idxDD <- DummyDuplicated(x, idx = TRUE)
     idxDDunique <- unique(idxDD)
     
-    idNew <- rep(0L, ncol(x))
-    idNew[idxDDunique] <- seq_len(length(idxDDunique))
-    
-    candidatesOld <- candidates
-    primaryOld <- primary
-    
-    primary <- idNew[unique(idxDD[primary])]
-    candidates <- idNew[unique(idxDD[candidates])]
-    hidden <- idNew[unique(idxDD[hidden])]
-    forced <- idNew[unique(idxDD[forced])]
-    x <- x[, idxDDunique, drop = FALSE]
+    if (length(idxDDunique) == length(idxDD)) {
+      removeDuplicated <- FALSE
+    } else {
+      if (length(forced)) { # Needed for warning
+        primary <- primary[!(primary %in% forced)]
+      }
+      
+      idNew <- rep(0L, ncol(x))
+      idNew[idxDDunique] <- seq_len(length(idxDDunique))
+      
+      candidatesOld <- candidates
+      primaryOld <- primary
+      
+      primary <- idNew[unique(idxDD[primary])]
+      candidates <- idNew[unique(idxDD[candidates])]
+      forced <- idNew[unique(idxDD[forced])]
+      x <- x[, idxDDunique, drop = FALSE]
+      
+      if (any(primary %in% forced)) {
+        warning("Forced cells -> All primary cells are not safe (duplicated)")
+      }
+    }
   }
   
   
