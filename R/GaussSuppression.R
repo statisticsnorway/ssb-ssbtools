@@ -118,7 +118,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   
   if (removeDuplicated) {
-    idxDD <- DummyDuplicated(x, idx = TRUE)
+    idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
     idxDDunique <- unique(idxDD)
     
     if (length(idxDDunique) == length(idxDD)) {
