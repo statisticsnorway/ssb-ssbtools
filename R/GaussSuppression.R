@@ -118,7 +118,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   
   if (removeDuplicated) {
-    idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
+    # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
+    idxDD <- DummyDuplicatedSpec(x,  candidates, primary, forced)
     idxDDunique <- unique(idxDD)
     
     if (length(idxDDunique) == length(idxDD)) {
@@ -788,13 +789,29 @@ Scale2one <- function(x) {
 }
 
 
-
-
-
-
-
-
-
+# Special version of DummyDuplicated(x, idx = TRUE, rnd = TRUE)
+# Some 0’s changed to other values 
+DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
+  if (!exists(".Random.seed"))
+    if (runif(1) < 0)
+      stop("Now seed exists")
+  exitSeed <- .Random.seed
+  on.exit(.Random.seed <<- exitSeed)
+  set.seed(123)
+  xtu <- as.vector(crossprod(x, runif(nrow(x))))
+  
+  if(length(primary)) xtu[primary][xtu[primary] == 0] <- 1
+  if(length(forced))  xtu[forced][xtu[forced] == 0] <- 2
+  
+  # to ensure whenEmptyUnsuppressed message as without removeDuplicated
+  cand0 <- candidates[xtu[candidates] == 0]
+  cand0 <- cand0[!(cand0 %in% primary)]
+  cand0 <- cand0[!(cand0 %in% forced)]
+  cand0 <- cand0[length(cand0)]
+  xtu[cand0] <- 3
+  
+  match(xtu, xtu)
+}
 
 
 
