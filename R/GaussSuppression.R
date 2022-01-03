@@ -789,15 +789,31 @@ Scale2one <- function(x) {
 }
 
 
+
+# Special version of DummyDuplicated
+DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
+  a <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 123)
+  b <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 456)
+  if (any(a != b)) {
+    w <- which(a != b)
+    a[w] <- w
+    message("Rare random event occurred. Everything is still fine.")
+    return(a)
+  }
+  return(a)
+}
+
+
 # Special version of DummyDuplicated(x, idx = TRUE, rnd = TRUE)
 # Some 0’s changed to other values 
-DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
+DummyDuplicatedSpec1 <- function(x, candidates, primary, forced, seed) {
+  # runif <- function(x) round(stats::runif(x), 4) # To force "Rare random event ..." (see above) 
   if (!exists(".Random.seed"))
     if (runif(1) < 0)
       stop("Now seed exists")
   exitSeed <- .Random.seed
   on.exit(.Random.seed <<- exitSeed)
-  set.seed(123)
+  set.seed(seed)
   xtu <- as.vector(crossprod(x, runif(nrow(x))))
   
   if(length(primary)) xtu[primary][xtu[primary] == 0] <- 1
