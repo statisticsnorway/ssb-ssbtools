@@ -31,6 +31,7 @@
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
+#' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -71,8 +72,25 @@
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
-                             whenEmptyUnsuppressed = message, 
+                             whenEmptyUnsuppressed = message,
+                             removeDuplicated = TRUE,
                              ...) {
+  
+  if (identical(removeDuplicated, "test")){
+    sysCall <- sys.call()
+    parentFrame <- parent.frame()
+    sysCall["removeDuplicated"] <- TRUE
+    outTRUE <- eval(sysCall, envir = parentFrame)
+    sysCall["removeDuplicated"] <- FALSE
+    outFALSE <- eval(sysCall, envir = parentFrame)
+    if(isTRUE(all.equal(outTRUE, outFALSE))){
+      return(outTRUE)
+    }
+    print(outTRUE)
+    print(outFALSE)
+    stop("removeDuplicated test: Not all equal")
+  }
+  
   if (is.logical(primary)) 
     primary <- which(primary) 
   else 
@@ -97,6 +115,37 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
           
   if (length(hidden)) 
     candidates <- candidates[!(candidates %in% hidden)]
+  
+  
+  if (removeDuplicated) {
+    # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
+    idxDD <- DummyDuplicatedSpec(x,  candidates, primary, forced)
+    idxDDunique <- unique(idxDD)
+    
+    if (length(idxDDunique) == length(idxDD)) {
+      removeDuplicated <- FALSE
+    } else {
+      if (length(forced)) { # Needed for warning
+        primary <- primary[!(primary %in% forced)]
+      }
+      
+      idNew <- rep(0L, ncol(x))
+      idNew[idxDDunique] <- seq_len(length(idxDDunique))
+      
+      candidatesOld <- candidates
+      primaryOld <- primary
+      
+      primary <- idNew[unique(idxDD[primary])]
+      candidates <- idNew[unique(idxDD[candidates])]
+      forced <- idNew[unique(idxDD[forced])]
+      x <- x[, idxDDunique, drop = FALSE]
+      
+      if (any(primary %in% forced)) {
+        warning("Forced cells -> All primary cells are not safe (duplicated)")
+      }
+    }
+  }
+  
   
   candidates <- candidates[!(candidates %in% primary)]
           
@@ -136,6 +185,12 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
         }
       }
+    }
+    
+    if (removeDuplicated) {
+      ma <- match(idxDD[candidatesOld], c(idxDDunique[gaussSuppression1], idxDDunique[primary]))
+      gaussSuppression1 <- candidatesOld[!is.na(ma)]
+      gaussSuppression1 <- gaussSuppression1[!(gaussSuppression1 %in% primaryOld)]
     }
     
     return(gaussSuppression1)
@@ -735,12 +790,44 @@ Scale2one <- function(x) {
 
 
 
+# Special version of DummyDuplicated
+DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
+  a <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 123)
+  b <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 456)
+  if (any(a != b)) {
+    w <- which(a != b)
+    a[w] <- w
+    message("Rare random event occurred. Everything is still fine.")
+    return(a)
+  }
+  return(a)
+}
 
 
-
-
-
-
+# Special version of DummyDuplicated(x, idx = TRUE, rnd = TRUE)
+# Some 0’s changed to other values 
+DummyDuplicatedSpec1 <- function(x, candidates, primary, forced, seed) {
+  # runif <- function(x) round(stats::runif(x), 4) # To force "Rare random event ..." (see above) 
+  if (!exists(".Random.seed"))
+    if (runif(1) < 0)
+      stop("Now seed exists")
+  exitSeed <- .Random.seed
+  on.exit(.Random.seed <<- exitSeed)
+  set.seed(seed)
+  xtu <- as.vector(crossprod(x, runif(nrow(x))))
+  
+  if(length(primary)) xtu[primary][xtu[primary] == 0] <- 1
+  if(length(forced))  xtu[forced][xtu[forced] == 0] <- 2
+  
+  # to ensure whenEmptyUnsuppressed message as without removeDuplicated
+  cand0 <- candidates[xtu[candidates] == 0]
+  cand0 <- cand0[!(cand0 %in% primary)]
+  cand0 <- cand0[!(cand0 %in% forced)]
+  cand0 <- cand0[length(cand0)]
+  xtu[cand0] <- 3
+  
+  match(xtu, xtu)
+}
 
 
 
