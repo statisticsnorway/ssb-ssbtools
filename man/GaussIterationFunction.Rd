@@ -30,5 +30,8 @@ Note that \code{GaussSuppression} passes this parameter via \code{...}.}
 \code{NULL}
 }
 \description{
-An \code{iFunction} argument to \code{\link{GaussSuppression}}
+Use this function as \code{iFunction} or write your own using the same seven first parameters and also using \code{...}.
+}
+\details{
+The number of candidates decided (\code{true} and \code{false}) may differ from the number of candidates processed (\code{i}) due to parameter \code{removeDuplicated}.
 }

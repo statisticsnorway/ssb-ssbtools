@@ -1,5 +1,9 @@
 
 #' An `iFunction` argument to \code{\link{GaussSuppression}}
+#' 
+#' Use this function as `iFunction` or write your own using the same seven first parameters and also using `...`.
+#' 
+#' The number of candidates decided (`true` and `false`) may differ from the number of candidates processed (`i`) due to parameter `removeDuplicated`. 
 #'
 #' @param i Number of candidates processed (columns of `x`)   
 #' @param I Total number of candidates to be processed (columns of `x`)

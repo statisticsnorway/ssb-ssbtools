@@ -189,6 +189,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
                                            singletonMethod = singletonMethod, tolGauss=tolGauss, 
                                            iFunction = iFunction, iWait = iWait,
+                                   main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                            ...)
     
     if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
@@ -222,8 +223,9 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
 
 
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
-                              iFunction, iWait, ...) {
-  
+                              iFunction, iWait, 
+                              main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
+                              ...) {
   
   if (!is.numeric(iWait)) {
     iWait <- Inf
@@ -717,9 +719,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         na_    <- !secondary
         na_[SeqInc(1,j)] <- FALSE
         iFunction(i = j, I = n, j = ii-1L, J = m,
-                  true = candidates[secondary],
-                  false = candidates[false_],
-                  na = candidates[na_],
+                  true =  SecondaryFinal(secondary = candidates[secondary], primary = main_primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld),
+                  false = SecondaryFinal(secondary = candidates[false_],    primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
+                  na =    SecondaryFinal(secondary = candidates[na_],       primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
                   ...)
       }
     }
