@@ -150,6 +150,13 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
+  if (!removeDuplicated) {
+    idxDD <- NULL
+    idxDDunique <- NULL
+    candidatesOld <- NULL
+    primaryOld <- NULL
+  }
+  
   
   candidates <- candidates[!(candidates %in% primary)]
           
@@ -193,18 +200,25 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
         }
       }
     }
-    
-    if (removeDuplicated) {
-      ma <- match(idxDD[candidatesOld], c(idxDDunique[secondary], idxDDunique[primary]))
-      secondary <- candidatesOld[!is.na(ma)]
-      secondary <- secondary[!(secondary %in% primaryOld)]
-    }
+
+    secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
     
     return(secondary)
   }
   
   stop("wrong singletonMethod")
 }
+
+# Function to handle removeDuplicated
+SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld, primaryOld) {
+  if (is.null(idxDD)) {
+    return(secondary)
+  }
+  ma <- match(idxDD[candidatesOld], c(idxDDunique[secondary], idxDDunique[primary]))
+  secondary <- candidatesOld[!is.na(ma)]
+  secondary[!(secondary %in% primaryOld)]
+}
+
 
 
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
