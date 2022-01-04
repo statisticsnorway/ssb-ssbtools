@@ -27,6 +27,7 @@ GaussIterationFunction <- function(i, I, j, J, true, false, na, filename = NULL,
       " -----  ",
       length(na) ," not decided",
       "\n", sep = "")
+  flush.console()
   if (!is.null(filename)) {
     save(file = filename, i, I, j, J, true, false, na)
   }
