@@ -32,6 +32,9 @@
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
 #' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
+#' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
+#' @param iWait The minimum number of seconds between each call to `iFunction`.
+#'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration.    
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -73,7 +76,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
                              whenEmptyUnsuppressed = message,
-                             removeDuplicated = TRUE,
+                             removeDuplicated = TRUE, 
+                             iFunction = GaussIterationFunction, iWait = Inf,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -175,7 +179,10 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       }
     }
     
-    gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...)
+    gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
+                                           singletonMethod = singletonMethod, tolGauss=tolGauss, 
+                                           iFunction = iFunction, iWait = iWait,
+                                           ...)
     
     if(length(gaussSuppression1) & !is.null(whenEmptyUnsuppressed)){
       lateUnsuppressed <- candidates[SeqInc(1L + min(match(gaussSuppression1, candidates)), length(candidates))]
@@ -200,9 +207,22 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
 }
 
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE, ...) {
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
+                              iFunction, iWait, ...) {
   
-
+  
+  if (!is.numeric(iWait)) {
+    iWait <- Inf
+  } else {
+    if (is.na(iWait)) iWait <- Inf
+  }
+  if (!is.function(iFunction)) iWait <- Inf
+  use_iFunction <- iWait < Inf
+  
+  if (use_iFunction) {
+    sys_time <- Sys.time()
+  }
+  
   # testMaxInt is parameter for testing 
   # The Integer overflow situation will be forced when testMaxInt is exceeded   
   DoTestMaxInt = testMaxInt > 0
@@ -669,6 +689,24 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         A$r[[j]] <- integer(0)
         A$x[[j]] <- integer(0)
         secondary[j] <- TRUE
+      }
+    }
+    if (use_iFunction) {
+      sys_time2 <- Sys.time()
+      if (j == n | ii-1L == m) {
+        iWait <- 0
+      }
+      if (as.numeric(difftime(sys_time2, sys_time), units = "secs") >= iWait){
+        sys_time <- sys_time2
+        false_ <- !secondary
+        false_[SeqInc(j+1,n)] <- FALSE
+        na_    <- !secondary
+        na_[SeqInc(1,j)] <- FALSE
+        iFunction(i = j, I = n, j = ii-1L, J = m,
+                  true = candidates[secondary],
+                  false = candidates[false_],
+                  na = candidates[na_],
+                  ...)
       }
     }
   }

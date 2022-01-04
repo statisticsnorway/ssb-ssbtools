@@ -17,6 +17,8 @@ GaussSuppression(
   whenEmptySuppressed = warning,
   whenEmptyUnsuppressed = message,
   removeDuplicated = TRUE,
+  iFunction = GaussIterationFunction,
+  iWait = Inf,
   ...
 )
 }
@@ -45,6 +47,11 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 \item{whenEmptyUnsuppressed}{Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.}
 
 \item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
+
+\item{iFunction}{A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters.}
+
+\item{iWait}{The minimum number of seconds between each call to \code{iFunction}.
+Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last iteration.}
 
 \item{...}{Extra unused parameters}
 }
