@@ -709,16 +709,21 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     if (use_iFunction) {
       sys_time2 <- Sys.time()
-      if (j == n | ii-1L == m) {
+      if (ii-1L == m) {
+        j_ <- n
+      } else {
+        j_ <- j
+      }
+      if (j_ == n) {
         iWait <- 0
       }
       if (as.numeric(difftime(sys_time2, sys_time), units = "secs") >= iWait){
         sys_time <- sys_time2
         false_ <- !secondary
-        false_[SeqInc(j+1,n)] <- FALSE
+        false_[SeqInc(j_+1,n)] <- FALSE
         na_    <- !secondary
-        na_[SeqInc(1,j)] <- FALSE
-        iFunction(i = j, I = n, j = ii-1L, J = m,
+        na_[SeqInc(1,j_)] <- FALSE
+        iFunction(i = j_, I = n, j = ii-1L, J = m,
                   true =  SecondaryFinal(secondary = candidates[secondary], primary = main_primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld),
                   false = SecondaryFinal(secondary = candidates[false_],    primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
                   na =    SecondaryFinal(secondary = candidates[na_],       primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
