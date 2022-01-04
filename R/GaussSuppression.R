@@ -179,14 +179,14 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       }
     }
     
-    gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
+    secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
                                            singletonMethod = singletonMethod, tolGauss=tolGauss, 
                                            iFunction = iFunction, iWait = iWait,
                                            ...)
     
-    if(length(gaussSuppression1) & !is.null(whenEmptyUnsuppressed)){
-      lateUnsuppressed <- candidates[SeqInc(1L + min(match(gaussSuppression1, candidates)), length(candidates))]
-      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% gaussSuppression1)]
+    if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
+      lateUnsuppressed <- candidates[SeqInc(1L + min(match(secondary, candidates)), length(candidates))]
+      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% secondary)]
       if(length(lateUnsuppressed)){
         if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
@@ -195,12 +195,12 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
     
     if (removeDuplicated) {
-      ma <- match(idxDD[candidatesOld], c(idxDDunique[gaussSuppression1], idxDDunique[primary]))
-      gaussSuppression1 <- candidatesOld[!is.na(ma)]
-      gaussSuppression1 <- gaussSuppression1[!(gaussSuppression1 %in% primaryOld)]
+      ma <- match(idxDD[candidatesOld], c(idxDDunique[secondary], idxDDunique[primary]))
+      secondary <- candidatesOld[!is.na(ma)]
+      secondary <- secondary[!(secondary %in% primaryOld)]
     }
     
-    return(gaussSuppression1)
+    return(secondary)
   }
   
   stop("wrong singletonMethod")
