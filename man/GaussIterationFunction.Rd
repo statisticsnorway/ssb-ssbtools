@@ -33,5 +33,6 @@ Note that \code{GaussSuppression} passes this parameter via \code{...}.}
 Use this function as \code{iFunction} or write your own using the same seven first parameters and also using \code{...}.
 }
 \details{
-The number of candidates decided (\code{true} and \code{false}) may differ from the number of candidates processed (\code{i}) due to parameter \code{removeDuplicated}.
+The number of candidates decided (\code{true} and \code{false}) may differ from the number of candidates processed (\code{i}) due to parameter \code{removeDuplicated}
+and because the decision for some unprocessed candidates can be found due to empty columns.
 }
