@@ -32,6 +32,9 @@
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
 #' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
+#' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
+#' @param iWait The minimum number of seconds between each call to `iFunction`.
+#'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration.    
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -73,7 +76,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
                              whenEmptyUnsuppressed = message,
-                             removeDuplicated = TRUE,
+                             removeDuplicated = TRUE, 
+                             iFunction = GaussIterationFunction, iWait = Inf,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -146,6 +150,13 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
+  if (!removeDuplicated) {
+    idxDD <- NULL
+    idxDDunique <- NULL
+    candidatesOld <- NULL
+    primaryOld <- NULL
+  }
+  
   
   candidates <- candidates[!(candidates %in% primary)]
           
@@ -175,34 +186,59 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       }
     }
     
-    gaussSuppression1 <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, singletonMethod = singletonMethod, tolGauss=tolGauss, ...)
+    secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
+                                           singletonMethod = singletonMethod, tolGauss=tolGauss, 
+                                           iFunction = iFunction, iWait = iWait,
+                                   main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
+                                           ...)
     
-    if(length(gaussSuppression1) & !is.null(whenEmptyUnsuppressed)){
-      lateUnsuppressed <- candidates[SeqInc(1L + min(match(gaussSuppression1, candidates)), length(candidates))]
-      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% gaussSuppression1)]
+    if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
+      lateUnsuppressed <- candidates[SeqInc(1L + min(match(secondary, candidates)), length(candidates))]
+      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% secondary)]
       if(length(lateUnsuppressed)){
         if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
         }
       }
     }
+
+    secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
     
-    if (removeDuplicated) {
-      ma <- match(idxDD[candidatesOld], c(idxDDunique[gaussSuppression1], idxDDunique[primary]))
-      gaussSuppression1 <- candidatesOld[!is.na(ma)]
-      gaussSuppression1 <- gaussSuppression1[!(gaussSuppression1 %in% primaryOld)]
-    }
-    
-    return(gaussSuppression1)
+    return(secondary)
   }
   
   stop("wrong singletonMethod")
 }
 
+# Function to handle removeDuplicated
+SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld, primaryOld) {
+  if (is.null(idxDD)) {
+    return(secondary)
+  }
+  ma <- match(idxDD[candidatesOld], c(idxDDunique[secondary], idxDDunique[primary]))
+  secondary <- candidatesOld[!is.na(ma)]
+  secondary[!(secondary %in% primaryOld)]
+}
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE, ...) {
+
+
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
+                              iFunction, iWait, 
+                              main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
+                              ...) {
   
-
+  if (!is.numeric(iWait)) {
+    iWait <- Inf
+  } else {
+    if (is.na(iWait)) iWait <- Inf
+  }
+  if (!is.function(iFunction)) iWait <- Inf
+  use_iFunction <- iWait < Inf
+  
+  if (use_iFunction) {
+    sys_time <- Sys.time()
+  }
+  
   # testMaxInt is parameter for testing 
   # The Integer overflow situation will be forced when testMaxInt is exceeded   
   DoTestMaxInt = testMaxInt > 0
@@ -669,6 +705,37 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         A$r[[j]] <- integer(0)
         A$x[[j]] <- integer(0)
         secondary[j] <- TRUE
+      }
+    }
+    if (use_iFunction) {
+      sys_time2 <- Sys.time()
+      if (ii-1L == m) {
+        j_ <- n
+      } else {
+        j_ <- j
+      }
+      if (j_ == n) {
+        iWait <- 0
+      }
+      if (as.numeric(difftime(sys_time2, sys_time), units = "secs") >= iWait){
+        sys_time <- sys_time2
+        false_ <- !secondary
+        
+        allEmptyDecided <- TRUE 
+        if(allEmptyDecided){
+          false_[SeqInc(j_+1,n)] <- (lengths(A$r) == 0)[SeqInc(j_+1,n)]
+          na_ <- !(secondary | false_)  
+        } else { # old code 
+          false_[SeqInc(j_+1,n)] <- FALSE
+          na_    <- !secondary
+          na_[SeqInc(1,j_)] <- FALSE
+        }
+        
+        iFunction(i = j_, I = n, j = ii-1L, J = m,
+                  true =  SecondaryFinal(secondary = candidates[secondary], primary = main_primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld),
+                  false = SecondaryFinal(secondary = candidates[false_],    primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
+                  na =    SecondaryFinal(secondary = candidates[na_],       primary = integer(0),   idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = integer(0)),
+                  ...)
       }
     }
   }
