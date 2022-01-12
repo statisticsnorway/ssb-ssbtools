@@ -77,6 +77,8 @@ sums within groups, the aim is to handle all possible sums, also across groups. 
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
 All the above methods assume that any published singletons are primary suppressed.
 When this is not the case, \code{"anySumNOTprimary"} must be used.
+The singleton methods within GaussSuppression have been implemented with frequency tables in mind.
+Other methods for magnitude tables will be implemented in the future.
 }
 \examples{
 # Input data
