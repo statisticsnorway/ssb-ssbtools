@@ -290,7 +290,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         pZ <- x * singleton
         colZ <- colSums(pZ) > 1
       }
-      pZ <<- pZ
       if (any(colZ)) {
         pZ <- pZ[, colZ, drop = FALSE]
         nodupl <- which(!duplicated(as.matrix(t(pZ))))     # Possible improvement by DummyDuplicated
