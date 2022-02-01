@@ -2,14 +2,23 @@
 % Please edit documentation in R/HierarchyCompute.R
 \name{DataDummyHierarchy}
 \alias{DataDummyHierarchy}
+\alias{DataDummyHierarchies}
 \title{Create a (signed) dummy matrix for hierarcical mapping of codes in data}
 \usage{
 DataDummyHierarchy(dataVector, dummyHierarchy)
+
+DataDummyHierarchies(data, dummyHierarchies, colNamesFromData = TRUE)
 }
 \arguments{
 \item{dataVector}{A vector of codes in data}
 
-\item{dummyHierarchy}{Output from DummyHierarchy()}
+\item{dummyHierarchy}{Output from \code{\link{DummyHierarchy}}}
+
+\item{data}{data}
+
+\item{dummyHierarchies}{Output from \code{\link{DummyHierarchies}}}
+
+\item{colNamesFromData}{Column names from data when \code{TRUE}}
 }
 \value{
 A sparse matrix.
@@ -19,7 +28,17 @@ the row names of dummyHierarchy.
 \description{
 Create a (signed) dummy matrix for hierarcical mapping of codes in data
 }
+\details{
+\code{DataDummyHierarchies} is a user-friendly wrapper for the original function \code{DataDummyHierarchy}.
+When \code{colNamesFromData} is \code{FALSE}, this function returns
+\verb{mapply(DataDummyHierarchy,} \verb{data[names(dummyHierarchies)],} \verb{dummyHierarchies)}.
+}
+\examples{
+z <- SSBtoolsData("sprt_emp_withEU")[1:9, ]
+hi <- FindHierarchies(z[, c("geo", "eu", "age", "year")])
+dhi <- DummyHierarchies(hi, inputInOutput = TRUE)
+DataDummyHierarchies(z, dhi)
+}
 \author{
 Øyvind Langsrud
 }
-\keyword{internal}
