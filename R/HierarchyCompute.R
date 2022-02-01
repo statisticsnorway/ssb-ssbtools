@@ -1186,7 +1186,7 @@ DataDummyHierarchy <- function(dataVector, dummyHierarchy) {
 
 #' @rdname DataDummyHierarchy
 #' @details `DataDummyHierarchies` is a user-friendly wrapper for the original function `DataDummyHierarchy`.
-#'          When `colNamesFromData` is `FALSE`, this function returns
+#'          When `colNamesFromData` is `FALSE` (default), this function returns
 #'          `mapply(DataDummyHierarchy,` `data[names(dummyHierarchies)],` `dummyHierarchies)`. 
 #'            
 #' @param data data
@@ -1197,8 +1197,8 @@ DataDummyHierarchy <- function(dataVector, dummyHierarchy) {
 #' z <- SSBtoolsData("sprt_emp_withEU")[1:9, ]
 #' hi <- FindHierarchies(z[, c("geo", "eu", "age", "year")])
 #' dhi <- DummyHierarchies(hi, inputInOutput = TRUE)
-#' DataDummyHierarchies(z, dhi)
-DataDummyHierarchies <- function(data, dummyHierarchies,  colNamesFromData = TRUE) {
+#' DataDummyHierarchies(z, dhi, colNamesFromData = TRUE)
+DataDummyHierarchies <- function(data, dummyHierarchies,  colNamesFromData = FALSE) {
   
   if(!colNamesFromData)
     return(mapply(DataDummyHierarchy, data[names(dummyHierarchies)], dummyHierarchies))

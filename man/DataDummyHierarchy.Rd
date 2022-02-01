@@ -7,7 +7,7 @@
 \usage{
 DataDummyHierarchy(dataVector, dummyHierarchy)
 
-DataDummyHierarchies(data, dummyHierarchies, colNamesFromData = TRUE)
+DataDummyHierarchies(data, dummyHierarchies, colNamesFromData = FALSE)
 }
 \arguments{
 \item{dataVector}{A vector of codes in data}
@@ -30,14 +30,14 @@ Create a (signed) dummy matrix for hierarcical mapping of codes in data
 }
 \details{
 \code{DataDummyHierarchies} is a user-friendly wrapper for the original function \code{DataDummyHierarchy}.
-When \code{colNamesFromData} is \code{FALSE}, this function returns
+When \code{colNamesFromData} is \code{FALSE} (default), this function returns
 \verb{mapply(DataDummyHierarchy,} \verb{data[names(dummyHierarchies)],} \verb{dummyHierarchies)}.
 }
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")[1:9, ]
 hi <- FindHierarchies(z[, c("geo", "eu", "age", "year")])
 dhi <- DummyHierarchies(hi, inputInOutput = TRUE)
-DataDummyHierarchies(z, dhi)
+DataDummyHierarchies(z, dhi, colNamesFromData = TRUE)
 }
 \author{
 Øyvind Langsrud
