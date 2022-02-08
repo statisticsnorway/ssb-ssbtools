@@ -12,6 +12,10 @@
 #' @param rows Duplicated rows instead when TRUE
 #' @param rnd Algorithm based on cross product with random numbers when TRUE (dummy matrix not required)  
 #'
+#' @note `DummyDuplicated` calls `XprodRnd` with `123` as seed when `rnd` is `TRUE`.
+#'        `XprodRnd` performs three runs with different random numbers.  
+#'        A warning is produced if one deviates. Error occurs if all three are different.
+#'
 #' @return Logical vectors specifying duplicated columns or vector of indices (first match)
 #' @importFrom stats runif
 #' @export
@@ -37,21 +41,7 @@
 #' which(!DummyDuplicated(t(z), rows = TRUE, rnd = TRUE))
 DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
   if (rnd) {
-    if (!exists(".Random.seed"))
-      if (runif(1) < 0)
-        stop("Now seed exists")
-    exitSeed <- .Random.seed
-    on.exit(.Random.seed <<- exitSeed)
-    set.seed(123)
-    if (rows) {
-      xtu <- as.vector(x %*% runif(ncol(x)))
-    } else {
-      xtu <- as.vector(crossprod(x, runif(nrow(x))))
-    }
-    if (idx) {
-      return(match(xtu, xtu))
-    }
-    return(duplicated(xtu))
+    return(XprodRnd(x = x, idx = idx, rows = rows, seed = 123)) 
   }
   if (class(x)[1] == "matrix") {
     x <- Matrix(x)
@@ -96,3 +86,81 @@ As_dgTMatrix <- function(x) {
   }
   as(as(x, "dgCMatrix"), "dgTMatrix")
 }
+
+
+#' @rdname DummyDuplicated
+#' @param duplic XprodRnd parameter: When `duplic` and `idx` are `FALSE`, this function returns `crossprod(x,u)` or `x%*%u` instead of indices or duplicated.
+#' @param seed XprodRnd parameter: Seed to be used. When NULL the ordinary random value stream in R continues.
+#' @export
+XprodRnd <- function(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL) {
+  if (!is.null(seed)) {
+    if (!exists(".Random.seed"))
+      if (runif(1) < 0)
+        stop("Now seed exists")
+    exitSeed <- .Random.seed
+    on.exit(.Random.seed <<- exitSeed)
+    set.seed(seed)
+  }
+  
+  xtu <- vector("list", 3)
+  ma <- vector("list", 3)
+  
+  return_i <- 1
+  
+  for (i in 1:3) {
+    xtu[[i]] <- XprodRnd1(x = x, rows = rows)
+    ma[[i]] <- match(xtu[[i]], xtu[[i]])
+    if (duplic | idx) {
+      xtu[[i]] <- 0
+    }
+  }
+  
+  if (!identical(ma[[1]], ma[[2]])) {
+    return_i <- 3
+    if (!(identical(ma[[1]], ma[[3]]) | identical(ma[[2]], ma[[3]]))) {
+      warning("Rare random event occurred")
+    } else {
+      stop("Duplicated by random method did not work")
+    }
+  } else {
+    if (!identical(ma[[1]], ma[[3]])) {
+      warning("Rare random event occurred when duplicated by random method")
+    }
+  }
+  if (idx) {
+    return(ma[[return_i]])
+  }
+  
+  if (duplic) {
+    return(ma[[return_i]] != seq_along(ma[[return_i]]))
+  }
+  
+  xtu[[return_i]]
+  
+}
+
+
+
+# Note that u <- runif(n) leads to problems since not perfect uniform distribution  
+#    set.seed(111)
+#    u <- runif(100000)
+#    identical(sum(u[c(604, 3986)]), sum(u[c(78844, 78998)]))
+#    identical(sum(u[c(16136, 18320, 18478)]), u[74159])
+XprodRnd1 <- function(x, rows) {
+  if (rows) {
+    n <- ncol(x)
+  } else {
+    n <- nrow(x)
+  }
+  u <- (runif(n) - 0.5) * (2 + ((1:n)/n))
+  if (rows) {
+    return(as.vector(x %*% u))
+  }
+  as.vector(crossprod(x, u))
+}
+
+
+
+
+
+
