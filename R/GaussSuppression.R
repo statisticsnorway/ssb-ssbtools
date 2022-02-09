@@ -9,6 +9,7 @@
 #' It is possible to specify too many (all) indices as `candidates`. 
 #' Indices specified as `primary` or `hidded` will be removed. 
 #' Hidden indices (not candidates or primary) refer to cells that will not be published, but do not need protection. 
+#' All singleton methods, except `"sub2Sum"`, have been implemented with frequency tables in mind.
 #' The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
 #' within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
 #' linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
@@ -17,8 +18,8 @@
 #'  and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
 #'  All the above methods assume that any published singletons are primary suppressed. 
 #'  When this is not the case, `"anySumNOTprimary"` must be used.
-#'  The singleton methods within GaussSuppression have been implemented with frequency tables in mind. 
-#'  Other methods for magnitude tables will be implemented in the future. 
+#'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
+#'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 #'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
@@ -28,7 +29,7 @@
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
 #' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
@@ -180,7 +181,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   }
   
-  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none")) {
+  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "sub2Sum", "none")) {
     
     if(!is.null(whenEmptySuppressed)){
       if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
@@ -279,22 +280,29 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   
   # make new primary suppressed subSum-cells
-  if (grepl("subSum", singletonMethod)) {
+  if (grepl("subSum", singletonMethod) | singletonMethod == "sub2Sum") {
     if (any(singleton)) {
-      pZ <- x * singleton
-      colZ <- colSums(pZ) > 1
+      if (singletonMethod == "sub2Sum") {
+        pZs <- x * singleton
+        pZ <- x * (rowSums(x[, primary[colSums(x[, primary]) == 1]]) > 0)  #  x * innerprimary
+        colZ <- ((colSums(pZs) > 0) & (colSums(pZ) == 2))
+      } else {
+        pZ <- x * singleton
+        colZ <- colSums(pZ) > 1
+      }
       if (any(colZ)) {
         pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!duplicated(as.matrix(t(pZ))))
+        nodupl <- which(!duplicated(as.matrix(t(pZ))))     # Possible improvement by DummyDuplicated
         pZ <- pZ[, nodupl, drop = FALSE]
         primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
         x <- cbind(x, pZ)
       }
     }
-    if (singletonMethod == "subSum") 
+    if (singletonMethod == "subSum" | singletonMethod == "sub2Sum") 
       singleton <- FALSE
   }
   
+
   
   if (!any(singleton)) 
     singleton <- NULL
@@ -859,31 +867,12 @@ Scale2one <- function(x) {
 
 
 
-# Special version of DummyDuplicated
-DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
-  a <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 123)
-  b <- DummyDuplicatedSpec1(x = x, candidates = candidates, primary = primary, forced = forced, seed = 456)
-  if (any(a != b)) {
-    w <- which(a != b)
-    a[w] <- w
-    message("Rare random event occurred. Everything is still fine.")
-    return(a)
-  }
-  return(a)
-}
-
 
 # Special version of DummyDuplicated(x, idx = TRUE, rnd = TRUE)
 # Some 0’s changed to other values 
-DummyDuplicatedSpec1 <- function(x, candidates, primary, forced, seed) {
-  # runif <- function(x) round(stats::runif(x), 4) # To force "Rare random event ..." (see above) 
-  if (!exists(".Random.seed"))
-    if (runif(1) < 0)
-      stop("Now seed exists")
-  exitSeed <- .Random.seed
-  on.exit(.Random.seed <<- exitSeed)
-  set.seed(seed)
-  xtu <- as.vector(crossprod(x, runif(nrow(x))))
+DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
+  
+  xtu <- XprodRnd(x = x, duplic = FALSE, idx = FALSE, seed = 123)
   
   if(length(primary)) xtu[primary][xtu[primary] == 0] <- 1
   if(length(forced))  xtu[forced][xtu[forced] == 0] <- 2

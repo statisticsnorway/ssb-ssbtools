@@ -36,7 +36,7 @@ GaussSuppression(
 \item{singleton}{Logical vector specifying inner cells for singleton handling.
 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.}
 
-\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"} or \code{"none"} (see details).}
+\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"} or \code{"none"} (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
 
@@ -69,6 +69,7 @@ The singleton problem and the related problem of zeros are also handled.
 It is possible to specify too many (all) indices as \code{candidates}.
 Indices specified as \code{primary} or \code{hidded} will be removed.
 Hidden indices (not candidates or primary) refer to cells that will not be published, but do not need protection.
+All singleton methods, except \code{"sub2Sum"}, have been implemented with frequency tables in mind.
 The singleton method \code{"subSum"} makes new imaginary primary suppressed cells, which are the sum of the singletons
 within each group. The \code{"subSpace"} method is conservative and ignores the singleton dimensions when looking for
 linear dependency. The default method, \code{"anySum"}, is between the other two. Instead of making imaginary cells of
@@ -77,8 +78,8 @@ sums within groups, the aim is to handle all possible sums, also across groups. 
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
 All the above methods assume that any published singletons are primary suppressed.
 When this is not the case, \code{"anySumNOTprimary"} must be used.
-The singleton methods within GaussSuppression have been implemented with frequency tables in mind.
-Other methods for magnitude tables will be implemented in the future.
+The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
+This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 }
 \examples{
 # Input data
