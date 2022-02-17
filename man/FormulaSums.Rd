@@ -17,6 +17,7 @@ FormulaSums(
   sep = "-",
   sepCross = ":",
   avoidHierarchical = FALSE,
+  includeEmpty = FALSE,
   ...
 )
 
