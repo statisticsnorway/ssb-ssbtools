@@ -183,7 +183,9 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
           }
         } 
         ur <- Extend0(ur, freqName = "fRe_Q_u_r", hierarchical = FALSE, varGroups = varGroups)[, names(ur), drop = FALSE]
-        rg1 <- factor(rg1, levels = seq_len(nrow(ur)))
+        uridx <- SortRows(ur, index.return = TRUE)
+        ur <- ur[uridx, , drop = FALSE]
+        rg1 <- factor(rg1, levels = uridx)
       }
       ur <- as.matrix(ur)
       fr <- firstROW[rep(1, NROW(ur)), , drop = FALSE]
