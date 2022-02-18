@@ -18,6 +18,8 @@
 #' @param sep String to separate when creating column names
 #' @param sepCross String to separate when creating column names involving crossing
 #' @param avoidHierarchical Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.  
+#' @param includeEmpty  When `TRUE`, empty columns of the model matrix (only zeros) are included. 
+#'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
 #' @param ... Extra unused parameters
 #'
 #' @return
@@ -65,6 +67,11 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     response <- FALSE 
   else 
     response <- attr(termsFormula, "response") != 0
+  
+  if(response & includeEmpty){
+    stop("'includeEmpty = TRUE' with response is not implemented")
+  }
+  
   
   if (is.null(makeModelMatrix)) 
     makeModelMatrix <- !response
