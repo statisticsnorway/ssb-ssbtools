@@ -22,7 +22,7 @@ FindHierarchies(data, total = "Total")
 
 \item{data}{Matrix or data frame with data containing codes of relevant variables}
 
-\item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}}.}
+\item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.}
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
 
@@ -45,6 +45,11 @@ Then, the hierarchy is created as a simple hierarchy where all codes in data sum
 For consistence with \code{HierarchyCompute},
 the codes \code{"rowFactor"} and \code{"colFactor"} are unchanged.
 An empty string is recoded to  \code{"rowFactor"}.
+
+A special possibility is to include character vector(s) as unnamed list element(s) of \code{hierarchies}.
+Then the elements of the character vector(s) must be variable names within data.
+This will cause hierarchies to be created from selected data columns by running \code{\link{FindDimLists}}.
+Total coded can be specified by parameter \code{total} or by naming the character vector. See examples.
 }
 \examples{
 # First, create different types of input
@@ -66,6 +71,28 @@ identical(h1, h2)
 identical(h3, h4)
 
 FindHierarchies(z[, c("geo", "eu", "age")])
+
+
+### Examples with character vector(s) as unnamed list elements.  
+
+# Same output as FindHierarchies above
+AutoHierarchies(list(c("geo", "eu", "age")), data = z)
+
+# Now combined with a named list element 
+AutoHierarchies(list(year = yearHier, c("geo", "eu", "age")), data = z)
+
+# Total codes by unnamed list element as named character vector 
+AutoHierarchies(list(year = yearHier, c(Europe = "geo", "eu", All = "age")), data = z)
+
+# Two types of year input. Total codes by using the parameter `total`. 
+AutoHierarchies(list("year", year = yearHier, c("geo", "eu", "age")), data = z, 
+                total = c("allYears", "unused", "Tot"))
+
+# Avoid combineHierarchies to see effect of each year input separately 
+# (even earlier return possible with `combineHierarchies = NA`)
+AutoHierarchies(list("year", year = yearHier, c("geo", "eu", "age")), data = z, 
+                total = c("allYears", "unused", "Tot"), combineHierarchies = FALSE)
+
 }
 \seealso{
 \code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}.
