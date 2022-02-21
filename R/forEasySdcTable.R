@@ -286,7 +286,7 @@ DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Tot
 #' @param addName When TRUE the variable name is added to the level names, except for variables with most levels.
 #' @param sep A character string to separate when addName apply.
 #' @param xReturn When TRUE x is also in output, possibly changed according to addName.
-#' @param total String used to name totals.
+#' @param total String used to name totals. A vector of length `ncol(x)` is also possible (see examples).  
 #'
 #' @return Output is a list according to the specifications in sdcTable.
 #'         When xReturn is TRUE output has an extra list level and x is the first element.
@@ -301,8 +301,27 @@ DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Tot
 #'  zy <- paste(z,y,sep='')
 #'  m <- cbind(x,y,z,zy)
 #'  FindDimLists(m)
+#'  FindDimLists(m, total = paste0("A", 1:4))
 FindDimLists <- function(x, groupVarInd = HierarchicalGroups(x = x), addName = FALSE, 
                          sep = ".", xReturn = FALSE, total = "Total") {
+  
+  # Generalization to `length(total)>1` could also have been implemented by changing 
+  # CheckLevels, DimFromHier and DimFromHier1. Making the change here is easier and safer.
+  if (length(total) > 1) {
+    if (length(total) != ncol(x)) {
+      stop("wrong length of total")
+    }
+    dimLists <- FindDimLists(x = x, groupVarInd = groupVarInd, addName = addName, sep = sep, xReturn = xReturn, total = "t_O2T_aL83")
+    tot <- total[match(names(dimLists), colnames(x))]
+    for (i in seq_along(dimLists)) {
+      if (tot[i] %in% dimLists[[i]][, 2, drop = TRUE]) {
+        stop(paste0('"',tot[i], '"', " cannot be total code for ", "'", names(dimLists)[i], "'",  " since already a level name"))
+      }
+      dimLists[[i]][1, 2] <- tot[i]
+    }
+    return(dimLists)
+  }
+  
   hierGr <- GroupNrList(groupVarInd)
   CheckOk <- TRUE
   if (!addName) 
