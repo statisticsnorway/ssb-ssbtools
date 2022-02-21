@@ -52,6 +52,43 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
                             hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
                             combineHierarchies = TRUE, unionComplement = FALSE) {
   total <- rep_len(total, length(hierarchies))
+  
+  if (is.null(names(hierarchies))) {
+    names(hierarchies) <- rep(NA, length(hierarchies))
+  }
+  toFindDimLists <- (names(hierarchies) %in% c(NA, "")) & (sapply(hierarchies, is.character))
+  if (any(toFindDimLists)) {
+    if (is.null(data)) {
+      stop("data input needed")
+    }
+    nHierarchies <- rep(1, length(hierarchies))
+    newDimLists <- vector("list", sum(toFindDimLists))
+    indNewDimLists <- which(toFindDimLists)
+    for (i in seq_along(newDimLists)) {
+      total_i <- total[indNewDimLists[i]]
+      names_i <- names(hierarchies[[indNewDimLists[i]]])
+      if (!is.null(names_i)) {
+        ok_names <- !(names_i %in% c(NA, ""))
+        if (!all(!ok_names)) {
+          total_i <- rep(total_i, length(hierarchies[[indNewDimLists[i]]]))
+          total_i[ok_names] <- names_i[ok_names]
+        }
+      }
+      newDimLists[[i]] <- FindDimLists(data[, hierarchies[[indNewDimLists[i]]], drop = FALSE], total = total_i)
+      nHierarchies[indNewDimLists[i]] <- length(newDimLists[[i]])
+    }
+    indHierarchies <- rep(seq_len(length(hierarchies)), nHierarchies)
+    total <- total[indHierarchies]
+    hierarchies <- hierarchies[indHierarchies]
+    for (i in seq_along(newDimLists)) {
+      hierarchies[indHierarchies == indNewDimLists[i]] <- newDimLists[[i]]
+      names(hierarchies)[indHierarchies == indNewDimLists[i]] <- names(newDimLists[[i]])
+    }
+    if (is.na(combineHierarchies)) {  # Early return hack 
+      return(hierarchies)
+    }
+  }
+  
   namesHierarchies <- names(hierarchies)
   if (is.null(namesHierarchies)) 
     stop("hierarchies must be a named list")
