@@ -55,7 +55,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' @param inputInOutput Logical vector (possibly recycled) for each element of hierarchies.
 #'         TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} or \code{""} are ignored.
 #' @param crossTable Cross table in output when TRUE
-#' @param total Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} 
+#' @param total See \code{\link{AutoHierarchies}}
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
 #' @param unionComplement Logical vector (possibly recycled) for each element of hierarchies.
 #'        When TRUE, sign means union and complement instead of addition or subtraction. 

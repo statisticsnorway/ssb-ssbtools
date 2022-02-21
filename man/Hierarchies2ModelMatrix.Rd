@@ -33,7 +33,7 @@ TRUE means that codes from input are included in output. Values corresponding to
 
 \item{crossTable}{Cross table in output when TRUE}
 
-\item{total}{Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}}}
+\item{total}{See \code{\link{AutoHierarchies}}}
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
 
