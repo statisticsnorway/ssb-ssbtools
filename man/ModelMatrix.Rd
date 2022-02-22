@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelMatrix.R
 \name{ModelMatrix}
 \alias{ModelMatrix}
+\alias{NamesFromModelMatrixInput}
 \title{Model matrix from hierarchies and/or a formula}
 \usage{
 ModelMatrix(
@@ -15,6 +16,14 @@ ModelMatrix(
   total = "Total",
   removeEmpty = FALSE,
   modelMatrix = NULL,
+  dimVar = NULL,
+  ...
+)
+
+NamesFromModelMatrixInput(
+  data = NULL,
+  hierarchies = NULL,
+  formula = NULL,
   dimVar = NULL,
   ...
 )
@@ -52,6 +61,10 @@ A (sparse) model matrix or a list of two elements (model matrix and cross table)
 }
 \description{
 A common interface to \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} and \code{\link{HierarchiesAndFormula2ModelMatrix}}
+}
+\details{
+\code{NamesFromModelMatrixInput} returns the names of the data columns involved in creating the model matrix.
+Note that \code{data} must be non-NULL to convert dimVar as indices to names.
 }
 \examples{
 # Create some input

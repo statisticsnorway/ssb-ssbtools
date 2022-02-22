@@ -4,6 +4,9 @@
 #' 
 #' A common interface to \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} and \code{\link{HierarchiesAndFormula2ModelMatrix}}
 #' 
+#' `NamesFromModelMatrixInput` returns the names of the data columns involved in creating the model matrix.
+#' Note that `data` must be non-NULL to convert dimVar as indices to names. 
+#' 
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param hierarchies List of hierarchies, which can be converted by \code{\link{AutoHierarchies}}.
 #' Thus, the variables can also be coded by \code{"rowFactor"} or \code{""}, which correspond to using the categories in the data.
@@ -204,4 +207,34 @@ Model_Matrix <- function(formula, data = NULL, mf = model.frame(formula, data = 
 
 
 AddEmptyLevel <- function(x) factor(x, levels = c("tu1lnul1", levels(x)))
+
+
+NamesFromHierarchies <- function(hierarchies) {
+  toFindDimLists <- (names(hierarchies) %in% c(NA, "")) & (sapply(hierarchies, is.character))  # toFindDimLists created exactly as in AutoHierarchies
+  unique(c(names(hierarchies[!toFindDimLists]), unlist(hierarchies[toFindDimLists])))
+}
+
+#' @rdname ModelMatrix
+#' @export
+NamesFromModelMatrixInput <- function(data = NULL, hierarchies = NULL, formula = NULL, dimVar = NULL, ...) {
+  if (!is.null(hierarchies)) {
+    return(NamesFromHierarchies(hierarchies))
+  }
+  if (!is.null(formula)) { # copy of code used earlier without errors
+    return(row.names(attr(delete.response(terms(as.formula(formula))), "factors")))
+  }
+  if (length(dimVar)) {
+    if (!is.null(data)) {
+      return(unique(names(data[1, dimVar, drop = FALSE])))
+    }
+    return(unique(dimVar))
+  }
+  unique(names(data))
+}
+
+
+
+
+
+
 
