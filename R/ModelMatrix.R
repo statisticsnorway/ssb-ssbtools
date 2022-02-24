@@ -210,6 +210,7 @@ AddEmptyLevel <- function(x) factor(x, levels = c("tu1lnul1", levels(x)))
 
 
 NamesFromHierarchies <- function(hierarchies) {
+  if (is.null(names(hierarchies))) names(hierarchies) <- rep(NA, length(hierarchies))
   toFindDimLists <- (names(hierarchies) %in% c(NA, "")) & (sapply(hierarchies, is.character))  # toFindDimLists created exactly as in AutoHierarchies
   unique(c(names(hierarchies[!toFindDimLists]), unlist(hierarchies[toFindDimLists])))
 }
