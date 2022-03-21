@@ -20,7 +20,7 @@ Extend0(
 
 \item{hierarchical}{Hierarchical variables treated atomatically when \code{TRUE}}
 
-\item{varGroups}{List of variable groups}
+\item{varGroups}{List of variable groups, possibly with data (see details and examples).}
 
 \item{dimVar}{The dimensional variables}
 
@@ -41,6 +41,10 @@ With \code{varGroups = NULL} and \code{hierarchical = FALSE},
 each dimensional variable forms a separate group (as \code{as.list(dimVar)}).
 Parameter \code{extraVar} can be specified as variable names.
 \code{TRUE} means all remaining variables and \code{FALSE} no variables.
+
+When the contents of \code{varGroups[[i]]} is variable names, the data frame \code{unique(data[varGroups[[i]]])} will be made as a
+building block within the function. A possibility is to supply such a data frame instead of variable names.
+Then, the building block will be \code{unique(varGroups[[i]])}. Names and data frames can be mixed.
 }
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")[c(1, 4:6, 8, 11:15), ]
@@ -54,4 +58,10 @@ Extend0(z, hierarchical = FALSE, dimVar = c("age", "geo", "eu"), extraVar = FALS
 Extend0(z, varGroups = list(c("age", "geo", "year"), "eu"))
 Extend0(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
 Extend0(z, "ths_per")
+
+# varGroups with data frames (same result as with names above)
+Extend0(z, varGroups = list(z[c("age", "geo", "year")], z["eu"]))
+
+# varGroups with both names and data frame
+Extend0(z, varGroups = list(c("year", "geo", "eu"), data.frame(age = c("middle", "old"))))
 }

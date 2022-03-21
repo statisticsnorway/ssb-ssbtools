@@ -1,5 +1,4 @@
 
-
 #' Add zero frequency rows
 #' 
 #' Microdata or tabular frequency data is extended to contain all combinations of unique rows 
@@ -12,11 +11,15 @@
 #' each dimensional variable forms a separate group (as `as.list(dimVar)`). 
 #' Parameter `extraVar` can be specified as variable names. 
 #' `TRUE` means all remaining variables and `FALSE` no variables. 
+#' 
+#' When the contents of `varGroups[[i]]` is variable names, the data frame `unique(data[varGroups[[i]]])` will be made as a 
+#' building block within the function. A possibility is to supply such a data frame instead of variable names.
+#' Then, the building block will be `unique(varGroups[[i]])`. Names and data frames can be mixed. 
 #'
 #' @param data data frame 
 #' @param freqName Name of (existing) frequency variable
 #' @param hierarchical Hierarchical variables treated atomatically when `TRUE`  
-#' @param varGroups List of variable groups
+#' @param varGroups List of variable groups, possibly with data (see details and examples).
 #' @param dimVar The dimensional variables
 #' @param extraVar Extra variables as variable names, TRUE (all remaining) or FALSE (none). 
 #'
@@ -35,8 +38,13 @@
 #' Extend0(z, varGroups = list(c("age", "geo", "year"), "eu"))
 #' Extend0(MakeFreq(z[c(1, 1, 1, 2, 2, 3:10), -4]))
 #' Extend0(z, "ths_per")
+#' 
+#' # varGroups with data frames (same result as with names above)
+#' Extend0(z, varGroups = list(z[c("age", "geo", "year")], z["eu"]))
+#' 
+#' # varGroups with both names and data frame
+#' Extend0(z, varGroups = list(c("year", "geo", "eu"), data.frame(age = c("middle", "old"))))
 Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
-  
   
   if (!is.logical(extraVar)) {
     extraVar <- names(data[1, extraVar, drop = FALSE])
@@ -45,25 +53,48 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     eVar <- character(0)
   }
   
-  if (is.null(dimVar)) {
+  if (is.null(dimVar) & is.null(varGroups)) {
     dimVar <- names(data)
     dimVar <- dimVar[!(dimVar %in% c(freqName, eVar))]
   } else {
-    dimVar <- names(data[1, dimVar, drop = FALSE])
+    if (is.null(varGroups)) {
+      dimVar <- names(data[1, dimVar, drop = FALSE])
+    }
   }
   
+  # Ensure varGroups exists
   if (is.null(varGroups)) {
     if (hierarchical) {
       varGroups <- HierarchicalGroups2(data[dimVar])
     } else {
       varGroups <- as.list(dimVar)
     }
-  } else {
-    dimVar <- dimVar[dimVar %in% unlist(varGroups)]
   }
   
-  if (anyDuplicated(unlist(varGroups))) {
-    stop("Problematic varGroups")
+  # Ensure varGroups exists with data
+  for (i in seq_along(varGroups)) {
+    if (length(nrow(varGroups[[i]]))) {  # One way to check data.frame without checking class
+      varGroups[[i]] <- unique(varGroups[[i]])
+    } else {
+      varGroups[[i]] <- unique(data[varGroups[[i]]])
+    }
+  }
+  
+  # Back to varGroups without data
+  varGroupsNames <- lapply(varGroups, names)
+  
+  dimVarFromVarGroups <- unlist(varGroupsNames)
+  
+  if (anyDuplicated(dimVarFromVarGroups)) {
+    stop("Duplicated names in varGroups.")
+  }
+  
+  if (!is.null(dimVar)) {
+    if (!identical(sort(as.vector(dimVar)), sort(as.vector(dimVarFromVarGroups)))) {
+      stop("Mismatch between input dimVar and VarGroups")
+    }
+  } else {
+    dimVar <- dimVarFromVarGroups
   }
   
   if (is.logical(extraVar)) {
@@ -73,17 +104,16 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     } else {
       extraVar <- character(0)
     }
-  } 
+  }
   
-  z <- unique(data[, varGroups[[1]], drop = FALSE])
+  z <- varGroups[[1]]
   for (i in SeqInc(2, length(varGroups))) {
-    x <- unique(data[, varGroups[[i]], drop = FALSE])
-    z <- CrossCodeFrames(z, x)
+    z <- CrossCodeFrames(z, varGroups[[i]])
   }
   
   if (ncol(z) != length(dimVar)) {
-    stop("Something is wrong")
-  }
+    stop("Mismatch between created output and dimVar.")
+  }  
   
   ma <- Match(data[dimVar], z[dimVar])
   z[freqName] <- 0L
