@@ -5,7 +5,7 @@ test_that("ModelMatrix: dimVar vs formula", {
   z <- z3[sample.int(nrow(z3),50), ]
   
   m1 <- ModelMatrix(z, formula = ~ region*hovedint*mnd + fylke*hovedint*mnd + kostragr*hovedint*mnd + region*hovedint*mnd2 + fylke*hovedint*mnd2 + kostragr*hovedint*mnd2, crossTable = TRUE)
-  m2 <- ModelMatrix(z, formula = ~ region*hovedint*mnd + fylke*hovedint*mnd + kostragr*hovedint*mnd + region*hovedint*mnd2 + fylke*hovedint*mnd2 + kostragr*hovedint*mnd2, crossTable = TRUE, includeEmpty = TRUE)
+  m2 <- ModelMatrix(z, formula = ~ region*hovedint*mnd + fylke*hovedint*mnd + kostragr*hovedint*mnd + region*hovedint*mnd2 + fylke*hovedint*mnd2 + kostragr*hovedint*mnd2, crossTable = TRUE, removeEmpty = FALSE)
   m3 <- ModelMatrix(z, dimVar = 1:6 , crossTable = TRUE)
   m4 <- ModelMatrix(z, dimVar = 1:6, crossTable = TRUE, removeEmpty = TRUE)
   
