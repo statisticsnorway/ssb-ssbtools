@@ -14,7 +14,7 @@ ModelMatrix(
   sparse = TRUE,
   viaOrdinary = FALSE,
   total = "Total",
-  removeEmpty = FALSE,
+  removeEmpty = !is.null(formula) & is.null(hierarchies),
   modelMatrix = NULL,
   dimVar = NULL,
   ...
@@ -48,7 +48,8 @@ Since these functions omit a factor level, an empty factor level is first added.
 
 \item{total}{String(s) used to name totals}
 
-\item{removeEmpty}{When TRUE, empty columns (only zeros) are not included in output (relevant when hierarchies)}
+\item{removeEmpty}{When \code{TRUE}, empty columns (only zeros) are not included in output.
+Default is \code{TRUE} with formula input without hierarchy and otherwise \code{FALSE} (see details).}
 
 \item{modelMatrix}{The model matrix as input (same as output)}
 
@@ -63,6 +64,12 @@ A (sparse) model matrix or a list of two elements (model matrix and cross table)
 A common interface to \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} and \code{\link{HierarchiesAndFormula2ModelMatrix}}
 }
 \details{
+The default value of \code{removeEmpty} corresponds to the default settings of the underlying functions.
+The functions \code{\link{Hierarchies2ModelMatrix}} and \code{\link{HierarchiesAndFormula2ModelMatrix}}
+have \code{removeEmpty} as an explicit parameter with \code{FALSE} as default.
+The function \code{\link{Formula2ModelMatrix}} is a wrapper for \code{\link{FormulaSums}},
+which has a parameter \code{includeEmpty} with \code{FALSE} as default.
+Thus, \code{ModelMatrix} makes a call to \code{Formula2ModelMatrix} with \code{includeEmpty = !removeEmpty}.
 \code{NamesFromModelMatrixInput} returns the names of the data columns involved in creating the model matrix.
 Note that \code{data} must be non-NULL to convert dimVar as indices to names.
 }
