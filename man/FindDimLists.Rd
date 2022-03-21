@@ -25,7 +25,7 @@ FindDimLists(
 
 \item{xReturn}{When TRUE x is also in output, possibly changed according to addName.}
 
-\item{total}{String used to name totals.}
+\item{total}{String used to name totals. A vector of length \code{ncol(x)} is also possible (see examples).}
 }
 \value{
 Output is a list according to the specifications in sdcTable.
@@ -42,6 +42,7 @@ dimList to the function makeProblem in package sdcTable
  zy <- paste(z,y,sep='')
  m <- cbind(x,y,z,zy)
  FindDimLists(m)
+ FindDimLists(m, total = paste0("A", 1:4))
 }
 \author{
 Øyvind Langsrud
