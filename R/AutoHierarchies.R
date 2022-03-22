@@ -24,6 +24,7 @@
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
 #' @param combineHierarchies Whether to combine several hierarchies for same variable into a single hierarchy
 #' @param unionComplement Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined. 
+#' @param ... Extra unused parameters
 #' 
 #' @seealso \code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}.
 #'
@@ -75,7 +76,7 @@
 #' 
 AutoHierarchies <- function(hierarchies, data = NULL, total = "Total", 
                             hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-                            combineHierarchies = TRUE, unionComplement = FALSE) {
+                            combineHierarchies = TRUE, unionComplement = FALSE, ...) {
   total <- rep_len(total, length(hierarchies))
   
   if (is.null(names(hierarchies))) {

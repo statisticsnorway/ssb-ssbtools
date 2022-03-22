@@ -12,7 +12,8 @@ AutoHierarchies(
   hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
     = "level"),
   combineHierarchies = TRUE,
-  unionComplement = FALSE
+  unionComplement = FALSE,
+  ...
 )
 
 FindHierarchies(data, total = "Total")
@@ -29,6 +30,8 @@ FindHierarchies(data, total = "Total")
 \item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy}
 
 \item{unionComplement}{Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined.}
+
+\item{...}{Extra unused parameters}
 }
 \value{
 List of hierarchies
