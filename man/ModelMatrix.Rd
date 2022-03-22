@@ -70,6 +70,7 @@ have \code{removeEmpty} as an explicit parameter with \code{FALSE} as default.
 The function \code{\link{Formula2ModelMatrix}} is a wrapper for \code{\link{FormulaSums}},
 which has a parameter \code{includeEmpty} with \code{FALSE} as default.
 Thus, \code{ModelMatrix} makes a call to \code{Formula2ModelMatrix} with \code{includeEmpty = !removeEmpty}.
+
 \code{NamesFromModelMatrixInput} returns the names of the data columns involved in creating the model matrix.
 Note that \code{data} must be non-NULL to convert dimVar as indices to names.
 }
