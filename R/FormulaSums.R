@@ -18,6 +18,8 @@
 #' @param sep String to separate when creating column names
 #' @param sepCross String to separate when creating column names involving crossing
 #' @param avoidHierarchical Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.  
+#' @param includeEmpty  When `TRUE`, empty columns of the model matrix (only zeros) are included. 
+#'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
 #' @param ... Extra unused parameters
 #'
 #' @return
@@ -44,7 +46,8 @@
 #' attr(m, "startCol")
 FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, total = "Total", printInc = FALSE, 
                         dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", 
-                        avoidHierarchical = FALSE, ...) {
+                        avoidHierarchical = FALSE, 
+                        includeEmpty = FALSE,  ...) {
   
   hg <- NULL  # Possible input in a future version
  
@@ -64,6 +67,11 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     response <- FALSE 
   else 
     response <- attr(termsFormula, "response") != 0
+  
+  if(response & includeEmpty){
+    stop("'includeEmpty = TRUE' with response is not implemented")
+  }
+  
   
   if (is.null(makeModelMatrix)) 
     makeModelMatrix <- !response
@@ -170,18 +178,33 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     }
     
     if (makeNames | crossTable) {
+      rg1 <- rg[[1]]
       ur <- rg[[2]]
-      if (makeModelMatrix) 
-        m <- rbind(m, fac2sparse(rg[[1]]))  # rBind 
       ur <- CharacterDataFrame(ur)
+      hgcolick <- hgcoli[ck]
+      if(includeEmpty){
+        varGroups <- NULL
+        if (any(duplicated(hgcolick))){
+          for (ick in unique(hgcolick)){ 
+            varGroups <- c(varGroups, list(names(ur)[hgcolick == ick]))
+          }
+        } 
+        ur <- Extend0(ur, freqName = "fRe_Q_u_r", hierarchical = FALSE, varGroups = varGroups)[, names(ur), drop = FALSE]
+        uridx <- SortRows(ur, index.return = TRUE)
+        ur <- ur[uridx, , drop = FALSE]
+        rg1 <- factor(rg1, levels = uridx)
+      }
       ur <- as.matrix(ur)
       fr <- firstROW[rep(1, NROW(ur)), , drop = FALSE]
-      hgcolick <- hgcoli[ck]
       if (!any(duplicated(hgcolick))) 
         fr[, hgcoli[ck]] <- ur else {
           for (ick in unique(hgcolick)) fr[, ick] <- MatrixPaste(ur[, hgcolick == ick, drop = FALSE], sep = sepCross)
         }
       allRows <- rbind(allRows, fr)
+      if (makeModelMatrix) {
+        #m <- rbind(m, fac2sparse(rg[[1]])) 
+        m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE)) 
+      }
     } else 
       if (makeModelMatrix) 
         m <- rbind(m, fac2sparse(RowGroups(data[, ck, drop = FALSE], returnGroups = FALSE)))

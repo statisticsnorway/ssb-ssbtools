@@ -17,6 +17,7 @@ FormulaSums(
   sep = "-",
   sepCross = ":",
   avoidHierarchical = FALSE,
+  includeEmpty = FALSE,
   ...
 )
 
@@ -44,6 +45,9 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 \item{sepCross}{String to separate when creating column names involving crossing}
 
 \item{avoidHierarchical}{Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.}
+
+\item{includeEmpty}{When \code{TRUE}, empty columns of the model matrix (only zeros) are included.
+This is not implemented when a response term is included in the formula and \code{dropResponse = FALSE} (error will be produced).}
 
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
