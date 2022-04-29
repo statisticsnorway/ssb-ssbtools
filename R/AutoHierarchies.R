@@ -291,6 +291,16 @@ Hrc2DimList <- function(hrc, total = "Total") {
 #' s <- Hierarchy2Formula(x)
 #' Formula2Hierarchy(s)
 #' 
+#' # Demonstrate Hierarchies2Formulas and problems 
+#' hi <- FindHierarchies(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")])
+#' Hierarchies2Formulas(hi) # problematic formula since minus sign in coding 
+#' AutoHierarchies(Hierarchies2Formulas(hi)) # Not same as hi because of problems 
+#' 
+#' # Change coding to avoid problems 
+#' hi$age$mapsFrom <- gsub("-", "_", hi$age$mapsFrom)
+#' Hierarchies2Formulas(hi)
+#' AutoHierarchies(Hierarchies2Formulas(hi))
+#' 
 Hierarchy2Formula <- function(x, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level")) {
   x <- FixHierarchy(x, hierarchyVarNames)
   mapsTo <- unique(x$mapsTo)
@@ -348,6 +358,13 @@ Formula2Hierarchy <- function(s) {
 }
 
 
+#' @rdname Hierarchy2Formula
+#' @param ... Extra parameters. Only `hierarchyVarNames` is relevant.
+#' @export
+#' @note `Hierarchies2Formulas` is a wrapper for `lapply(x, Hierarchy2Formula, ...)` 
+Hierarchies2Formulas <- function(x, ...) {
+  lapply(x, Hierarchy2Formula, ...)
+}
 
 
 CombineHierarchies <- function(hierarchies, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE, unionComplement = FALSE) {

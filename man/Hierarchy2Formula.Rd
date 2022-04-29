@@ -3,6 +3,7 @@
 \name{Hierarchy2Formula}
 \alias{Hierarchy2Formula}
 \alias{Formula2Hierarchy}
+\alias{Hierarchies2Formulas}
 \title{Hierarchy2Formula}
 \usage{
 Hierarchy2Formula(
@@ -12,6 +13,8 @@ Hierarchy2Formula(
 )
 
 Formula2Hierarchy(s)
+
+Hierarchies2Formulas(x, ...)
 }
 \arguments{
 \item{x}{Data frame with to-from coded hierarchy}
@@ -19,6 +22,8 @@ Formula2Hierarchy(s)
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}.}
 
 \item{s}{Character vector of formulas written with =, - and +.}
+
+\item{...}{Extra parameters. Only \code{hierarchyVarNames} is relevant.}
 }
 \value{
 See Arguments
@@ -26,10 +31,23 @@ See Arguments
 \description{
 Conversion between to-from coded hierarchy and formulas written with =, - and +.
 }
+\note{
+\code{Hierarchies2Formulas} is a wrapper for \code{lapply(x, Hierarchy2Formula, ...)}
+}
 \examples{
 x <- SSBtoolsData("sprt_emp_geoHier")
 s <- Hierarchy2Formula(x)
 Formula2Hierarchy(s)
+
+# Demonstrate Hierarchies2Formulas and problems 
+hi <- FindHierarchies(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")])
+Hierarchies2Formulas(hi) # problematic formula since minus sign in coding 
+AutoHierarchies(Hierarchies2Formulas(hi)) # Not same as hi because of problems 
+
+# Change coding to avoid problems 
+hi$age$mapsFrom <- gsub("-", "_", hi$age$mapsFrom)
+Hierarchies2Formulas(hi)
+AutoHierarchies(Hierarchies2Formulas(hi))
 
 }
 \author{
