@@ -71,6 +71,8 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     }
   }
   
+  FunctionExtend0 <-  attr(varGroups, "FunctionExtend0") 
+  
   # Ensure varGroups exists with data
   for (i in seq_along(varGroups)) {
     if (length(nrow(varGroups[[i]]))) {  # One way to check data.frame without checking class
@@ -106,10 +108,15 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     }
   }
   
-  z <- varGroups[[1]]
-  for (i in SeqInc(2, length(varGroups))) {
-    z <- CrossCodeFrames(z, varGroups[[i]])
+  if (is.null(FunctionExtend0)) {
+    z <- varGroups[[1]]
+    for (i in SeqInc(2, length(varGroups))) {
+      z <- CrossCodeFrames(z, varGroups[[i]])
+    }
+  } else {
+    z <- FunctionExtend0(data = data, varGroups = varGroups)
   }
+  
   
   if (ncol(z) != length(dimVar)) {
     stop("Mismatch between created output and dimVar.")
