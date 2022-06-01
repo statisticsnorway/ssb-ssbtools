@@ -52,4 +52,19 @@ Extend0(z, varGroups = varGroups)
 attr(varGroups, "FunctionExtend0") <- Extend0rnd2
 Extend0(z, varGroups = varGroups)
 
+# To see what's going on internally. Data used only via nrow 
+varGroups <- list(data.frame(ab = rep(c("a", "b"), each = 4), abcd = c("a", "b", "c", "d")), 
+                  data.frame(AB = rep(c("A", "B"), each = 3), ABC = c("A", "B", "C"))) 
+a <- Extend0rnd1(data.frame(1:5), varGroups)
+table(a[[1]], a[[2]])
+table(a[[3]], a[[4]])
+a <- Extend0rnd1b(data.frame(1:5), varGroups)
+table(a[[1]], a[[2]])
+table(a[[3]], a[[4]])
+a <- Extend0rnd2(data.frame(1:5), varGroups[2:1])
+table(a[[1]], a[[2]])
+table(a[[3]], a[[4]])
+a <- Extend0rnd1(data.frame(1:100), varGroups)
+table(a[[1]], a[[2]]) # Maybe smaller numbers than expected since duplicates were removed
+table(a[[3]], a[[4]])
 }

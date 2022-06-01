@@ -34,6 +34,21 @@
 #' attr(varGroups, "FunctionExtend0") <- Extend0rnd2
 #' Extend0(z, varGroups = varGroups)
 #' 
+#' # To see what's going on internally. Data used only via nrow 
+#' varGroups <- list(data.frame(ab = rep(c("a", "b"), each = 4), abcd = c("a", "b", "c", "d")), 
+#'                   data.frame(AB = rep(c("A", "B"), each = 3), ABC = c("A", "B", "C"))) 
+#' a <- Extend0rnd1(data.frame(1:5), varGroups)
+#' table(a[[1]], a[[2]])
+#' table(a[[3]], a[[4]])
+#' a <- Extend0rnd1b(data.frame(1:5), varGroups)
+#' table(a[[1]], a[[2]])
+#' table(a[[3]], a[[4]])
+#' a <- Extend0rnd2(data.frame(1:5), varGroups[2:1])
+#' table(a[[1]], a[[2]])
+#' table(a[[3]], a[[4]])
+#' a <- Extend0rnd1(data.frame(1:100), varGroups)
+#' table(a[[1]], a[[2]]) # Maybe smaller numbers than expected since duplicates were removed
+#' table(a[[3]], a[[4]])
 Extend0rnd1 <- function(data, varGroups, k = 1, rndSeed = 123) {
   if (!is.null(rndSeed)) {
     if (!exists(".Random.seed"))
@@ -50,8 +65,9 @@ Extend0rnd1 <- function(data, varGroups, k = 1, rndSeed = 123) {
   n2 <- nrow(varGroups[[2]])
   
   n1rep <- ceiling(n/n1)
-  n2rep <- ceiling(n1 * n1rep/n2)
-  ind <- cbind(rep(seq_len(n1), n1rep), sample(rep(seq_len(n2), n2rep), n1 * n1rep))
+  n2rep <- floor(n1 * n1rep/n2)
+  ind <- cbind(rep(seq_len(n1), n1rep), 
+               sample(c(rep(seq_len(n2), n2rep), sample.int(n2, n1 * n1rep - n2 * n2rep)))) # sample(rep(seq_len(n2), n2rep), n1 * n1rep))
   ind <- SortRows(unique(ind))
   
   cbind(varGroups[[1]][ind[, 1], , drop = FALSE], varGroups[[2]][ind[, 2], , drop = FALSE])
@@ -65,4 +81,9 @@ Extend0rnd2 <- function(...) Extend0rnd1(..., k = 2)
 #' @rdname Extend0rnd1
 #' @export
 Extend0rnd1b <- function(...) Extend0rnd1(..., k = 1, rndSeed = 1)
+
+
+
+
+
 
