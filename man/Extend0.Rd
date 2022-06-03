@@ -65,3 +65,6 @@ Extend0(z, varGroups = list(z[c("age", "geo", "year")], z["eu"]))
 # varGroups with both names and data frame
 Extend0(z, varGroups = list(c("year", "geo", "eu"), data.frame(age = c("middle", "old"))))
 }
+\seealso{
+Advanced possibilities by varGroups-attribute. See \code{\link{Extend0rnd1}}.
+}

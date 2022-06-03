@@ -25,6 +25,8 @@
 #'
 #' @return Extended data frame
 #' @export
+#' 
+#' @seealso Advanced possibilities by varGroups-attribute. See \code{\link{Extend0rnd1}}.
 #'
 #' @examples
 #' z <- SSBtoolsData("sprt_emp_withEU")[c(1, 4:6, 8, 11:15), ]
