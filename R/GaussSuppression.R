@@ -37,7 +37,8 @@
 #' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
-#'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration.    
+#'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration. 
+#' @param xExtraPrimary Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.               
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -81,6 +82,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              whenEmptyUnsuppressed = message,
                              removeDuplicated = TRUE, 
                              iFunction = GaussIterationFunction, iWait = Inf,
+                             xExtraPrimary = NULL,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -102,6 +104,15 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     primary <- which(primary) 
   else 
     primary <- unique(primary)
+  
+  
+  if (!is.null(xExtraPrimary)) {
+    # primary has already been converted to indexes
+    primary <- c(primary, ncol(x) + seq_len(ncol(xExtraPrimary)))
+    # forced and hidden can be untreated since conversion to indexes below
+    x <- cbind(x, xExtraPrimary)
+  }
+  
     
   if (!length(primary)) 
     return(integer(0))
