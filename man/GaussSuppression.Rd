@@ -19,6 +19,7 @@ GaussSuppression(
   removeDuplicated = TRUE,
   iFunction = GaussIterationFunction,
   iWait = Inf,
+  xExtraPrimary = NULL,
   ...
 )
 }
@@ -52,6 +53,8 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 
 \item{iWait}{The minimum number of seconds between each call to \code{iFunction}.
 Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last iteration.}
+
+\item{xExtraPrimary}{Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.}
 
 \item{...}{Extra unused parameters}
 }
