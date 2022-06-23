@@ -79,7 +79,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
   
   if (!is.null(modelMatrix)) {
     
-    sparseInput <- class(modelMatrix)[1] != "matrix"
+    sparseInput <- !inherits(modelMatrix, "matrix")    # sparseInput <- class(modelMatrix)[1] != "matrix"
     
     if (sparseInput & !sparse) 
       modelMatrix <- as.matrix(modelMatrix)

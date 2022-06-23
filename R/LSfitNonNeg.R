@@ -88,7 +88,7 @@ LSfitNonNeg <- function(x, z, limit = 1e-10, viaQR = FALSE, printInc = TRUE) {
 
 
 QRfitted <- function(qr_x, y, n_qr_col) {
-  if (class(qr_x) != "sparseQR") {
+  if (!inherits(qr_x, "sparseQR")) {    # if (class(qr_x) != 'sparseQR') {
     y <- as.matrix(y)
     drop0 <- function(x) x
   }

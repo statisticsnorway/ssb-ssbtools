@@ -43,7 +43,7 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
   if (rnd) {
     return(XprodRnd(x = x, idx = idx, rows = rows, seed = 123)) 
   }
-  if (class(x)[1] == "matrix") {
+  if (inherits(x, "matrix")) {  #  if (class(x)[1] == "matrix") {
     x <- Matrix(x)
   }
   if (rows) {
