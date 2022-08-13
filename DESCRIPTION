@@ -1,8 +1,8 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 1.3.3
-Date: 2022-06-23
+Version: 1.3.4
+Date: 2022-08-13
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no"),
              person("Daniel", "Lupp", role = c("aut")),        
@@ -14,7 +14,7 @@ License: Apache License 2.0 | file LICENSE
 URL: https://github.com/statisticsnorway/SSBtools
 BugReports: https://github.com/statisticsnorway/SSBtools/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Encoding: UTF-8
 Suggests: 
     testthat
