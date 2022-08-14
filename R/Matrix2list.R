@@ -14,7 +14,7 @@
 #' Matrix2list(m)
 #' Matrix2listInt(m)
 Matrix2list <- function(x) {
-  x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
+  x <- uniqTsparse(As_TsparseMatrix(x)) # x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
   ncolx <- ncol(x) 
   
   if(length(x@j)){
@@ -48,7 +48,7 @@ Matrix2list <- function(x) {
 #' @note \code{Matrix2listInt} convers the values to integers by \code{as.integer} 
 #'     and no checking is performed. Thus, zeros are possible. 
 Matrix2listInt <- function(x) {
-  x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
+  x <- uniqTsparse(As_TsparseMatrix(x)) # x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
   ncolx <- ncol(x)
   
   if(length(x@j)){

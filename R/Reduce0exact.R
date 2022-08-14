@@ -200,7 +200,7 @@ ReduceByColSums <- function(x, z = NULL, y = NULL) {
     stop("z or y must be supplied")
   colSums_1 <- which(colSums(x) == 1)
   x1 <- x[, colSums_1, drop = FALSE]
-  x1dgT <- as(x1, "dgTMatrix")
+  x1dgT <- As_TsparseMatrix(x1) # x1dgT <- as(x1, "dgTMatrix")
   nonDub <- x1dgT@j[x1dgT@x != 0][!duplicated(x1dgT@i[x1dgT@x != 0])] + 1L
   x1 <- x1[, nonDub, drop = FALSE]
   if (!zNULL) 
