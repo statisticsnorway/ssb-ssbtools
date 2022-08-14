@@ -532,7 +532,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
             if(nValueVar>1)
               valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- as.vector(as.matrix(aggData[, valueVar]))
             else
-              valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- aggData[, valueVar]
+              valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- aggData[, valueVar]   # test-HierarchyCompute problem seen here ... i=4 temporarily omitted due to  development version of Matrix 1.4-2 
             rm(aggData)
             if(verbose){
               cat("]")
@@ -546,7 +546,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
         mIntegerColData = rep(integerColData, nValueVar) + rep(nCol*SeqInc(0,nValueVar-1),each = length(integerColData))
         valueMatrix[cbind(idx = rowGroups$idx, mIntegerColData = mIntegerColData)] <-  as.vector(as.matrix(data[, valueVar]))
       } else {
-        valueMatrix[idx_integerColData] <- data[, valueVar, drop = TRUE]
+        valueMatrix[idx_integerColData] <- data[, valueVar, drop = TRUE] # test-HierarchyCompute problem seen here ... j=1 temporarily omitted due to  development version of Matrix 1.4-2
       }
     }
     
