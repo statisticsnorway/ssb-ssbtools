@@ -32,7 +32,12 @@ DummyApply <- function(x, y, FUN = sum) {
   x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
   seq_len_ncol_x <- seq_len(ncol(x))
   colf <- list(factor(x@j + 1L, levels = seq_len_ncol_x))
-  z <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)[[2]]
+  # Fix for aggregate in old R versions (< 3.5.0)
+  z <- seq_len_ncol_x + NA
+  agg <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)
+  z[agg[[1]]] <- agg[[2]] 
+  # end Fix
+  # z <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)[[2]] (without Fix)
   z[!(seq_len_ncol_x %in% (x@j + 1L))] <- FUN(y[integer(0)])  # Better than z[is.na(z)] <- .. 
   z
 }
