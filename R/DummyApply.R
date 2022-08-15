@@ -29,7 +29,7 @@
 #' 
 DummyApply <- function(x, y, FUN = sum) {
   FUNind <- function(ind) FUN(y[ind])
-  x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
+  x <- uniqTsparse(As_TsparseMatrix(x)) # x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
   seq_len_ncol_x <- seq_len(ncol(x))
   colf <- list(factor(x@j + 1L, levels = seq_len_ncol_x))
   # Fix for aggregate in old R versions (< 3.5.0)
