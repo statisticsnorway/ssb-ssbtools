@@ -38,6 +38,9 @@ DummyApply <- function(x, y, FUN = sum) {
   z[agg[[1]]] <- agg[[2]] 
   # end Fix
   # z <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)[[2]] (without Fix)
-  z[!(seq_len_ncol_x %in% (x@j + 1L))] <- FUN(y[integer(0)])  # Better than z[is.na(z)] <- .. 
+  is_na_z <- !(seq_len_ncol_x %in% (x@j + 1L))     # Better than z[is.na(z)] <- ..
+  if (any(is_na_z)) {   # Test to avoid warning. e.g In FUN(y[integer(0)]) : no non-missing arguments to max; returning -Inf
+    z[is_na_z] <- FUN(y[integer(0)]) 
+  }
   z
 }
