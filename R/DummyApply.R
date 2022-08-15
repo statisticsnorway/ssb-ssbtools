@@ -9,7 +9,7 @@
 #' @param y Vector of input values
 #' @param FUN A function
 #' 
-#' @return Vector of output values  
+#' @return Vector of output values or a matrix when multiple outputs from `FUN`  (see examples) 
 #' @importFrom methods as
 #' @importFrom Matrix uniqTsparse drop0
 #' @export
@@ -26,6 +26,8 @@
 #'       sum1 = (t(a$modelMatrix) %*% z$ths_per)[,1],
 #'       sum2 = DummyApply(a$modelMatrix, z$ths_per, sum),
 #'        max = DummyApply(a$modelMatrix, z$ths_per, max))
+#'        
+#' DummyApply(a$modelMatrix, z$ths_per, range)        
 #' 
 DummyApply <- function(x, y, FUN = sum) {
   FUNind <- function(ind) FUN(y[ind])
@@ -35,12 +37,21 @@ DummyApply <- function(x, y, FUN = sum) {
   # Fix for aggregate in old R versions (< 3.5.0)
   z <- seq_len_ncol_x + NA
   agg <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)
-  z[agg[[1]]] <- agg[[2]] 
+  if (is.matrix(agg[[2]])) {
+    z <- matrix(z, nrow = length(z), ncol = ncol(agg[[2]]))
+    z[agg[[1]], ] <- agg[[2]]
+  } else {
+    z[agg[[1]]] <- agg[[2]]
+  }
   # end Fix
   # z <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)[[2]] (without Fix)
   is_na_z <- !(seq_len_ncol_x %in% (x@j + 1L))     # Better than z[is.na(z)] <- ..
   if (any(is_na_z)) {   # Test to avoid warning. e.g In FUN(y[integer(0)]) : no non-missing arguments to max; returning -Inf
-    z[is_na_z] <- FUN(y[integer(0)]) 
+    if (is.matrix(agg[[2]])) {
+      z[is_na_z, ] <- FUN(y[integer(0)])
+    } else {
+      z[is_na_z] <- FUN(y[integer(0)])
+    }
   }
   z
 }

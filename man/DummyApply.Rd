@@ -14,7 +14,7 @@ DummyApply(x, y, FUN = sum)
 \item{FUN}{A function}
 }
 \value{
-Vector of output values
+Vector of output values or a matrix when multiple outputs from \code{FUN}  (see examples)
 }
 \description{
 For each column, \code{i},  of the matrix \code{x} of zeros and ones, the output value is equivalent to \code{FUN(y[x[, i] != 0])}.
@@ -34,5 +34,7 @@ cbind(as.data.frame(a$crossTable),
       sum1 = (t(a$modelMatrix) \%*\% z$ths_per)[,1],
       sum2 = DummyApply(a$modelMatrix, z$ths_per, sum),
        max = DummyApply(a$modelMatrix, z$ths_per, max))
+       
+DummyApply(a$modelMatrix, z$ths_per, range)        
 
 }
