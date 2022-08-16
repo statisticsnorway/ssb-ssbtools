@@ -231,7 +231,7 @@ test_that("miscellaneous", {
     if (i == 3) rows <- 88
     if (i == 4) rows <- integer(0)
     rowSelect <- a[rows, 2:3, drop = FALSE]
-    for (j in c(2, 3, 4)) {   # test-HierarchyCompute problem seen here ... j=1 temporarily omitted due to  development version of Matrix 1.4-2 # for (j in 1:4) {
+    for (j in 1:4) {
       if (j == 1) d <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", rowSelect = rowSelect, selectionByMultiplicationLimit = 0)
       if (j == 2) d <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), y2, rowSelect = rowSelect, selectionByMultiplicationLimit = 0, reduceData = FALSE)
       if (j == 3) d <- HierarchyCompute(x, list(age = ageHier, geo = geoHier, year = "colFactor"), "y", rowSelect = rowSelect, reduceData = FALSE)
@@ -347,7 +347,7 @@ test_that("HierarchyCompute2", {
   # With select
   aS_ = a[round((1:20)*7.2), ]
   aS_ = aS_[aS_$year != "2015", ]
-  for (i in c(1, 2, 3, 5)) {    # test-HierarchyCompute problem seen here ... i=4 temporarily omitted due to  development version of Matrix 1.4-2 # for (i in 1:5) {    
+  for (i in 1:5) {    
     if (i == 1) rows <- 1:15
     if (i == 2) rows <- 1:3
     if (i == 3) rows <- 4
