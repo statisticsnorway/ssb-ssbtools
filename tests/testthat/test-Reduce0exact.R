@@ -29,19 +29,19 @@ test_that("Reduce0exact works", {
   a <- Reduce0exact(x, z, reduceByLeverage = TRUE)
   expect_equivalent(max(abs((y-a$y)[which(a$yKnown)])), 0)
   expect_equivalent(dim(a$x), c(14,11))
-  expect_s4_class(a$x,"dgCMatrix")
-  expect_s4_class(a$y,"dgCMatrix")
+  expect_true(is(a$x,"Matrix"))
+  expect_true(is(a$y,"Matrix"))
   
   b <- Reduce0exact(as.matrix(x), z, y = y, reduceByLeverage = TRUE)
   expect_true(is.matrix(b$x))
-  expect_s4_class(b$y,"dgCMatrix")
+  expect_true(is(b$y,"Matrix"))
   expect_equivalent(as.matrix(a$x), b$x) 
   expect_equivalent(sum(abs((z- t(x) %*% b$y)[which(!b$zSkipped),1, drop=FALSE]-b$z)),0)
   expect_equal(rownames(b$z), colnames(x)[which(!b$zSkipped)])
   
   a <- Reduce0exact(x, y = as.matrix(y), reduceByLeverage = TRUE)
   expect_true(is.matrix(a$y))
-  expect_s4_class(a$x,"dgCMatrix")
+  expect_true(is(a$x,"Matrix"))
   expect_equivalent(as.matrix(a$x), b$x) 
   expect_equivalent(as.matrix(b$y), a$y)
   
