@@ -8,8 +8,10 @@
 #' @param x A (sparse) dummy matrix
 #' @param y Vector of input values
 #' @param FUN A function
+#' @param simplify Parameter to \code{\link{aggregate}}. When `FALSE`, list output is ensured.
 #' 
-#' @return Vector of output values or a matrix when multiple outputs from `FUN`  (see examples) 
+#' @return Vector of output values or a matrix when multiple outputs from `FUN`  (see examples). 
+#'         List output is also possible (ensured when `simplify = FALSE`).  
 #' @importFrom methods as
 #' @importFrom Matrix uniqTsparse drop0
 #' @export
@@ -27,18 +29,30 @@
 #'       sum2 = DummyApply(a$modelMatrix, z$ths_per, sum),
 #'        max = DummyApply(a$modelMatrix, z$ths_per, max))
 #'        
-#' DummyApply(a$modelMatrix, z$ths_per, range)        
+#' DummyApply(a$modelMatrix, z$ths_per, range)
+#' DummyApply(a$modelMatrix, z$ths_per, range, simplify = FALSE)  
 #' 
-DummyApply <- function(x, y, FUN = sum) {
+#' a$modelMatrix[, c(3, 5)] <- 0   # Introduce two empty columns. 
+#' DummyApply(a$modelMatrix, z$ths_per, function(x){ 
+#'   c(min = min(x), 
+#'     max = max(x), 
+#'     mean = mean(x), 
+#'     median = median(x), 
+#'     n = length(x))})   
+#'     
+#' DummyApply(a$modelMatrix, z$ths_per, function(x) x, simplify = FALSE)          
+#' 
+DummyApply <- function(x, y, FUN = sum, simplify = TRUE) {
   FUNind <- function(ind) FUN(y[ind])
   x <- uniqTsparse(As_TsparseMatrix(x)) # x <- uniqTsparse(as(drop0(x), "dgTMatrix"))
   seq_len_ncol_x <- seq_len(ncol(x))
   colf <- list(factor(x@j + 1L, levels = seq_len_ncol_x))
   # Fix for aggregate in old R versions (< 3.5.0)
   z <- seq_len_ncol_x + NA
-  agg <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)
+  agg <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE, simplify = simplify)
   if (is.matrix(agg[[2]])) {
     z <- matrix(z, nrow = length(z), ncol = ncol(agg[[2]]))
+    colnames(z) <- colnames(agg[[2]])
     z[agg[[1]], ] <- agg[[2]]
   } else {
     z[agg[[1]]] <- agg[[2]]
@@ -47,10 +61,14 @@ DummyApply <- function(x, y, FUN = sum) {
   # z <- aggregate(x@i + 1L, by = colf, FUNind, drop = FALSE)[[2]] (without Fix)
   is_na_z <- !(seq_len_ncol_x %in% (x@j + 1L))     # Better than z[is.na(z)] <- ..
   if (any(is_na_z)) {   # Test to avoid warning. e.g In FUN(y[integer(0)]) : no non-missing arguments to max; returning -Inf
-    if (is.matrix(agg[[2]])) {
-      z[is_na_z, ] <- FUN(y[integer(0)])
+    if (is.list(z)) {
+      z[is_na_z] <- list(FUN(y[integer(0)]))
     } else {
-      z[is_na_z] <- FUN(y[integer(0)])
+      if (is.matrix(agg[[2]])) {
+        z[is_na_z, ] <- rep(FUN(y[integer(0)]), each = sum(is_na_z))
+      } else {
+        z[is_na_z] <- FUN(y[integer(0)])
+      }
     }
   }
   z

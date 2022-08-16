@@ -4,7 +4,7 @@
 \alias{DummyApply}
 \title{Apply a function to subsets defined by a dummy matrix}
 \usage{
-DummyApply(x, y, FUN = sum)
+DummyApply(x, y, FUN = sum, simplify = TRUE)
 }
 \arguments{
 \item{x}{A (sparse) dummy matrix}
@@ -12,9 +12,12 @@ DummyApply(x, y, FUN = sum)
 \item{y}{Vector of input values}
 
 \item{FUN}{A function}
+
+\item{simplify}{Parameter to \code{\link{aggregate}}. When \code{FALSE}, list output is ensured.}
 }
 \value{
-Vector of output values or a matrix when multiple outputs from \code{FUN}  (see examples)
+Vector of output values or a matrix when multiple outputs from \code{FUN}  (see examples).
+List output is also possible (ensured when \code{simplify = FALSE}).
 }
 \description{
 For each column, \code{i},  of the matrix \code{x} of zeros and ones, the output value is equivalent to \code{FUN(y[x[, i] != 0])}.
@@ -35,6 +38,17 @@ cbind(as.data.frame(a$crossTable),
       sum2 = DummyApply(a$modelMatrix, z$ths_per, sum),
        max = DummyApply(a$modelMatrix, z$ths_per, max))
        
-DummyApply(a$modelMatrix, z$ths_per, range)        
+DummyApply(a$modelMatrix, z$ths_per, range)
+DummyApply(a$modelMatrix, z$ths_per, range, simplify = FALSE)  
+
+a$modelMatrix[, c(3, 5)] <- 0   # Introduce two empty columns. 
+DummyApply(a$modelMatrix, z$ths_per, function(x){ 
+  c(min = min(x), 
+    max = max(x), 
+    mean = mean(x), 
+    median = median(x), 
+    n = length(x))})   
+    
+DummyApply(a$modelMatrix, z$ths_per, function(x) x, simplify = FALSE)          
 
 }
