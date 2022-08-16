@@ -347,7 +347,7 @@ test_that("HierarchyCompute2", {
   # With select
   aS_ = a[round((1:20)*7.2), ]
   aS_ = aS_[aS_$year != "2015", ]
-  for (i in 1:5) {
+  for (i in 1:5) {    
     if (i == 1) rows <- 1:15
     if (i == 2) rows <- 1:3
     if (i == 3) rows <- 4

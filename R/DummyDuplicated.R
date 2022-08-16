@@ -48,7 +48,7 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
   }
   if (rows) {
     #      k <- as(as(triu(tcrossprod(x), 1), "dgCMatrix"), "dgTMatrix")
-    k <- As_dgTMatrix(triu(tcrossprod(x), 1)) 
+    k <- As_TsparseMatrix(triu(tcrossprod(x), 1)) 
     colSums_x <- rowSums(x)
     if (idx) {
       o <- seq_len(nrow(x))
@@ -57,7 +57,7 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
     }
   } else {
     #      k <- as(as(triu(crossprod(x), 1), "dgCMatrix"), "dgTMatrix")
-    k <- As_dgTMatrix(triu(crossprod(x), 1))
+    k <- As_TsparseMatrix(triu(crossprod(x), 1))
     colSums_x <- colSums(x)
     if (idx) {
       o <- seq_len(ncol(x))
@@ -75,17 +75,17 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
   o
 }
 
-
-As_dgTMatrix <- function(x) {
-  class_x <- class(x)[1]
-  if (class_x %in% c("dgCMatrix", "dgeMatrix")) {
-    return(as(x, "dgTMatrix"))
-  }
-  if (class_x %in% c("dtrMatrix")) {
-    return(as(as(x, "dgeMatrix"), "dgTMatrix"))
-  }
-  as(as(x, "dgCMatrix"), "dgTMatrix")
-}
+# As_TsparseMatrix instead
+# As_dgTMatrix <- function(x) {
+#   class_x <- class(x)[1]
+#   if (class_x %in% c("dgCMatrix", "dgeMatrix")) {
+#     return(as(x, "dgTMatrix"))
+#   }
+#   if (class_x %in% c("dtrMatrix")) {
+#     return(as(as(x, "dgeMatrix"), "dgTMatrix"))
+#   }
+#   as(as(x, "dgCMatrix"), "dgTMatrix")
+# }
 
 
 #' @rdname DummyDuplicated

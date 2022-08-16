@@ -532,7 +532,7 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
             if(nValueVar>1)
               valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- as.vector(as.matrix(aggData[, valueVar]))
             else
-              valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- aggData[, valueVar]
+              valueMatrix[cbind(aggData$idx69_3h4_6kd, mIntegerColData)] <- aggData[, valueVar] 
             rm(aggData)
             if(verbose){
               cat("]")
