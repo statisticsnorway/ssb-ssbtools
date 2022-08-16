@@ -18,6 +18,9 @@ A matrix. Virtual class is \code{TsparseMatrix}. Class \code{dgTMatrix} expected
 To implement adaption needed after Matrix ver. 1.4-2 since
 \code{as(from, "dgTMatrix")} no longer allowed.
 }
+\details{
+This function is made to replace \code{as(from, "dgTMatrix")} and \code{as(drop0(from), "dgTMatrix")} in \code{SSBtools} and related packages.
+}
 \note{
 \code{Matrix:::.as.via.virtual} in development version of package \code{Matrix} (date 2022-08-13) used to generate code.
 }

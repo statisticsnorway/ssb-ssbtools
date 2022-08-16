@@ -5,6 +5,10 @@
 #' 
 #' To implement adaption needed after Matrix ver. 1.4-2 since
 #'  `as(from, "dgTMatrix")` no longer allowed.
+#'  
+#' 
+#' @details
+#' This function is made to replace `as(from, "dgTMatrix")` and `as(drop0(from), "dgTMatrix")` in `SSBtools` and related packages.   
 #'
 #' @param from      A matrix
 #' @param do_drop0  whether to run `drop0`
@@ -36,14 +40,14 @@ As_TsparseMatrix <- function(from, do_drop0 = TRUE) {
     return(as(as(as(from, "dMatrix"), "generalMatrix"), "TsparseMatrix"))  # Matrix:::.as.via.virtual('matrix', 'dgTMatrix')
   }
   
-  as(as(from, "generalMatrix"), "TsparseMatrix")  # Matrix:::.as.via.virtual('dtrMatrix', 'dgTMatrix'); Matrix:::.as.via.virtual('ddiMatrix', 'dgTMatrix'), Matrix:::.as.via.virtual('dsCMatrix', 'dgTMatrix')
+  as(as(from, "generalMatrix"), "TsparseMatrix")  # Matrix:::.as.via.virtual('dtrMatrix', 'dgTMatrix'); Matrix:::.as.via.virtual('ddiMatrix', 'dgTMatrix'); Matrix:::.as.via.virtual('dsCMatrix', 'dgTMatrix')
 }
 
 
 
 # Matrix:::.as.via.virtual in development version of Matrix (date 2022-08-13)
 if(FALSE){
-  as.via.virtual <- function (Class1, Class2, from = quote(from)) 
+  .as.via.virtual <- function (Class1, Class2, from = quote(from)) 
   {
     if (!isClassDef(Class1)) 
       Class1 <- getClassDef(Class1)
