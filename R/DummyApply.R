@@ -18,11 +18,11 @@
 #' 
 #' @examples
 #' 
-#' z <- SSBtools::SSBtoolsData("sprt_emp_withEU")
+#' z <- SSBtoolsData("sprt_emp_withEU")
 #' z$age[z$age == "Y15-29"] <- "young"
 #' z$age[z$age == "Y30-64"] <- "old"
 #' 
-#' a <- SSBtools::ModelMatrix(z, formula = ~age + geo, crossTable = TRUE)
+#' a <- ModelMatrix(z, formula = ~age + geo, crossTable = TRUE)
 #' 
 #' cbind(as.data.frame(a$crossTable), 
 #'       sum1 = (t(a$modelMatrix) %*% z$ths_per)[,1],
