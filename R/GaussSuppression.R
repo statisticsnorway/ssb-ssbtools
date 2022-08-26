@@ -295,7 +295,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (any(singleton)) {
       if (singletonMethod == "sub2Sum") {
         pZs <- x * singleton
-        pZ <- x * (rowSums(x[, primary[colSums(x[, primary]) == 1]]) > 0)  #  x * innerprimary
+        pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         colZ <- ((colSums(pZs) > 0) & (colSums(pZ) == 2))
       } else {
         pZ <- x * singleton
