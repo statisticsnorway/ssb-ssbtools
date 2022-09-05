@@ -8,8 +8,8 @@
 \usage{
 Hierarchy2Formula(
   x,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level")
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level")
 )
 
 Formula2Hierarchy(s)

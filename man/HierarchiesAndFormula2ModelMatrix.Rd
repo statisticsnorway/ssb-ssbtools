@@ -13,8 +13,8 @@ HierarchiesAndFormula2ModelMatrix(
   crossTable = FALSE,
   total = "Total",
   simplify = TRUE,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level"),
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level"),
   unionComplement = FALSE,
   removeEmpty = FALSE,
   reOrder = TRUE,

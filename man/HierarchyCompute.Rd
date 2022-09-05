@@ -18,8 +18,8 @@ HierarchyCompute(
   autoLevel = TRUE,
   unionComplement = FALSE,
   constantsInOutput = NULL,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level"),
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level"),
   selectionByMultiplicationLimit = 10^7,
   colNotInDataWarning = TRUE,
   useMatrixToDataFrame = TRUE,

@@ -10,8 +10,8 @@ Hierarchies2ModelMatrix(
   inputInOutput = TRUE,
   crossTable = FALSE,
   total = "Total",
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level"),
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level"),
   unionComplement = FALSE,
   reOrder = TRUE,
   select = NULL,

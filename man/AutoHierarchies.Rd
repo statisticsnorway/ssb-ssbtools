@@ -9,8 +9,8 @@ AutoHierarchies(
   hierarchies,
   data = NULL,
   total = "Total",
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level"),
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level"),
   combineHierarchies = TRUE,
   unionComplement = FALSE,
   ...

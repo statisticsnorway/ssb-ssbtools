@@ -7,8 +7,8 @@
 \usage{
 HierarchyFix(
   hierarchy,
-  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level
-    = "level"),
+  hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level =
+    "level"),
   autoLevel = TRUE
 )
 }
