@@ -1,6 +1,12 @@
 #' Linearly independent rows and columns by Gaussian elimination
 #' 
-#' The function is written primarily for large sparse matrices 
+#' The function is written primarily for large sparse matrices with integers 
+#' and even more correctly it is primarily written for dummy matrices (0s and 1s in input matrix).
+#' 
+#' @note The main algorithm is based on integers and exact calculations. When integers cannot be used (because of input or overflow), the algorithm switches.  
+#' With `printInc = TRUE` as a parameter, `.....` change to `-----` when switching to numeric algorithm. 
+#' With numeric algorithm, a kind of tolerance for linear dependency is included. 
+#' This tolerance is designed having in mind that the input matrix is a dummy matrix.
 #'
 #' @param x A (sparse) matrix 
 #' @param printInc Printing "..." to console when `TRUE`
