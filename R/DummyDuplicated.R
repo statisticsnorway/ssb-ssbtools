@@ -12,10 +12,6 @@
 #' @param rows Duplicated rows instead when TRUE
 #' @param rnd Algorithm based on cross product with random numbers when TRUE (dummy matrix not required)  
 #'
-#' @note `DummyDuplicated` calls `XprodRnd` with `123` as seed when `rnd` is `TRUE`.
-#'        `XprodRnd` performs three runs with different random numbers.  
-#'        A warning is produced if one deviates. Error occurs if all three are different.
-#'
 #' @return Logical vectors specifying duplicated columns or vector of indices (first match)
 #' @importFrom stats runif
 #' @export
@@ -77,10 +73,12 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
 
 
 
-#' @rdname DummyDuplicated
-#' @param duplic XprodRnd parameter: When `duplic` and `idx` are `FALSE`, this function returns `crossprod(x,u)` or `x%*%u` instead of indices or duplicated.
-#' @param seed XprodRnd parameter: Seed to be used. When NULL the ordinary random value stream in R continues.
-#' @export
+# No longer export XprodRnd
+# @rdname DummyDuplicated
+# @param duplic XprodRnd parameter: When `duplic` and `idx` are `FALSE`, this function returns `crossprod(x,u)` or `x%*%u` instead of indices or duplicated.
+# @param seed XprodRnd parameter: Seed to be used. When NULL the ordinary random value stream in R continues.
+# @export
+
 XprodRnd <- function(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL) {
   if (!is.null(seed)) {
     if (!exists(".Random.seed"))
