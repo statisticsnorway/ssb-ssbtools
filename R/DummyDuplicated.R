@@ -75,17 +75,6 @@ DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
   o
 }
 
-# As_TsparseMatrix instead
-# As_dgTMatrix <- function(x) {
-#   class_x <- class(x)[1]
-#   if (class_x %in% c("dgCMatrix", "dgeMatrix")) {
-#     return(as(x, "dgTMatrix"))
-#   }
-#   if (class_x %in% c("dtrMatrix")) {
-#     return(as(as(x, "dgeMatrix"), "dgTMatrix"))
-#   }
-#   as(as(x, "dgCMatrix"), "dgTMatrix")
-# }
 
 
 #' @rdname DummyDuplicated
@@ -102,62 +91,79 @@ XprodRnd <- function(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL) {
     set.seed(seed)
   }
   
-  xtu <- vector("list", 3)
-  ma <- vector("list", 3)
+  nRep <- 7
+  nClaim <- 3
+  n <- dim(x)[2-rows]
   
-  return_i <- 1
+  ma <- matrix(0L, n, nRep)
   
-  for (i in 1:3) {
-    xtu[[i]] <- XprodRnd1(x = x, rows = rows)
-    ma[[i]] <- match(xtu[[i]], xtu[[i]])
-    if (duplic | idx) {
-      xtu[[i]] <- 0
-    }
+  for (i in 1:nRep) {
+    xtu <- XprodRnd1(x = x, rows = rows)
+    ma[, i] <- match(xtu, xtu)
   }
   
-  if (!identical(ma[[1]], ma[[2]])) {
-    return_i <- 3
-    if (!(identical(ma[[1]], ma[[3]]) | identical(ma[[2]], ma[[3]]))) {
-      warning("Rare random event occurred")
-    } else {
-      stop("Duplicated by random method did not work")
-    }
-  } else {
-    if (!identical(ma[[1]], ma[[3]])) {
-      warning("Rare random event occurred when duplicated by random method")
-    }
+  maMax <- apply(ma, 1, max)  # RowMax
+  
+  min_n_maMax <- min(rowSums(matrix(maMax, n, nRep) == ma))
+  
+  # if (min_n_maMax < 7) cat("min_n_maMax = ", min_n_maMax, "\n")
+  
+  if (min_n_maMax < nClaim) {
+    stop("Duplicated by random method did not work")
   }
+  
   if (idx) {
-    return(ma[[return_i]])
+    return(maMax)
   }
   
   if (duplic) {
-    return(ma[[return_i]] != seq_along(ma[[return_i]]))
+    return(maMax != seq_along(maMax))
   }
   
-  xtu[[return_i]]
+  return(maMax + 0.5)   # Will be removed. This is a temporary version of the function. 
   
 }
 
 
 
-# Note that u <- runif(n) leads to problems since not perfect uniform distribution  
-#    set.seed(111)
-#    u <- runif(100000)
-#    identical(sum(u[c(604, 3986)]), sum(u[c(78844, 78998)]))
-#    identical(sum(u[c(16136, 18320, 18478)]), u[74159])
+#  Now changed to whole numbers by Sample_Symmetric_integer.max
 XprodRnd1 <- function(x, rows) {
   if (rows) {
     n <- ncol(x)
   } else {
     n <- nrow(x)
   }
-  u <- (runif(n) - 0.5) * (2 + ((1:n)/n))
+  u <- Sample_Symmetric_integer.max(size = n)
   if (rows) {
     return(as.vector(x %*% u))
   }
   as.vector(crossprod(x, u))
 }
+
+
+# From uniform dist:  std = 2 * .Machine$integer.max * sqrt(1/12) = 1239850262
+# Std of sum of .Machine$integer.max values = stdMax = std * sqrt(.Machine$integer.max) = 5.745584e+13
+# Number of stdMax to reach 9E15 (largest whole number stored exactly by the numeric data type) 9E15/stdMax = 157
+#    prob reach 157 std = 0, Prob reach 37 std = 2*pnorm(-37) = 1.145114e-299
+# Conclusion: With x dummy, Abs of all values of crossprod(x, u) always exactly calculated when u sampled from this function. 
+# Note: replace = FALSE
+Sample_Symmetric_integer.max <- function(size, replace = FALSE, n = .Machine$integer.max) {
+  a <- sample.int(n = n, size = size, replace = replace)
+  s <- sample(c(-1L, 1L), size = size, replace = TRUE)
+  as.numeric(s * a)
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
