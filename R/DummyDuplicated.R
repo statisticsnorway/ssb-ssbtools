@@ -118,15 +118,14 @@ XprodRnd <- function(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL) {
     return(maMax != seq_along(maMax))
   }
   
-  # Not actually xtu, but this plays the role of xtu in the function that needs it
+  # Not actually xtu, but maMax plays the role of xtu in the function that needs it
   # See DummyDuplicatedSpec used by GaussSuppression
-  xtu <- maMax + 0.5
   if (rows) {
-    xtu[rowSums(x) == 0] <- 0
+    maMax[rowSums(x) == 0] <- 0L
   } else {
-    xtu[colSums(x) == 0] <- 0
+    maMax[colSums(x) == 0] <- 0L
   }
-  xtu
+  maMax
 }
 
 

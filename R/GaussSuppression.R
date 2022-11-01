@@ -885,18 +885,34 @@ DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
   
   xtu <- XprodRnd(x = x, duplic = FALSE, idx = FALSE, seed = 123)
   
-  if(length(primary)) xtu[primary][xtu[primary] == 0] <- 1
-  if(length(forced))  xtu[forced][xtu[forced] == 0] <- 2
+  if(length(primary)) xtu[primary][xtu[primary] == 0] <- -1L   # negative values are unused
+  if(length(forced))  xtu[forced][xtu[forced] == 0] <- -2L
   
   # to ensure whenEmptyUnsuppressed message as without removeDuplicated
   cand0 <- candidates[xtu[candidates] == 0]
   cand0 <- cand0[!(cand0 %in% primary)]
   cand0 <- cand0[!(cand0 %in% forced)]
   cand0 <- cand0[length(cand0)]
-  xtu[cand0] <- 3
+  xtu[cand0] <- -3L
   
   match(xtu, xtu)
 }
+# # Test using GaussSuppression that DummyDuplicatedSpec works as expected
+# library(GaussSuppression)
+# z3 <- SSBtoolsData("z3")
+# set.seed(102)
+# a <- GaussSuppressionFromData(z3[100:300, ], 1:6, 7, candidates = sample(1350), forced = sample(1350, size = 50), primary = sample(1350, size = 300), 
+#                               singletonMethod = "none", whenEmptyUnsuppressed = warning)
+# aw <- length(warnings())
+# set.seed(102)
+# b <- GaussSuppressionFromData(z3[100:300, ], 1:6, 7, candidates = sample(1350), forced = sample(1350, size = 50), primary = sample(1350, size = 300), 
+#                               singletonMethod = "none", whenEmptyUnsuppressed = warning, removeDuplicated = FALSE)
+# bw <- length(warnings())
+# 
+# # TRUE TRUE
+# identical(a, b)
+# identical(c(aw, bw), 4:3)
+
 
 
 
