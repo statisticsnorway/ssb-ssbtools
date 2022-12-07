@@ -2,12 +2,9 @@
 % Please edit documentation in R/DummyDuplicated.R
 \name{DummyDuplicated}
 \alias{DummyDuplicated}
-\alias{XprodRnd}
 \title{Duplicated columns in dummy matrix}
 \usage{
 DummyDuplicated(x, idx = FALSE, rows = FALSE, rnd = FALSE)
-
-XprodRnd(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL)
 }
 \arguments{
 \item{x}{A matrix}
@@ -17,10 +14,6 @@ XprodRnd(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL)
 \item{rows}{Duplicated rows instead when TRUE}
 
 \item{rnd}{Algorithm based on cross product with random numbers when TRUE (dummy matrix not required)}
-
-\item{duplic}{XprodRnd parameter: When \code{duplic} and \code{idx} are \code{FALSE}, this function returns \code{crossprod(x,u)} or \code{x\%*\%u} instead of indices or duplicated.}
-
-\item{seed}{XprodRnd parameter: Seed to be used. When NULL the ordinary random value stream in R continues.}
 }
 \value{
 Logical vectors specifying duplicated columns or vector of indices (first match)
@@ -31,11 +24,6 @@ The algorithm is based on \code{crossprod(x)} or \code{crossprod(x, u)} where \c
 \details{
 The efficiency of the default algorithm depends on the sparsity of \code{crossprod(x)}.
 The random values are generated locally within the function without affecting the random value stream in R.
-}
-\note{
-\code{DummyDuplicated} calls \code{XprodRnd} with \code{123} as seed when \code{rnd} is \code{TRUE}.
-\code{XprodRnd} performs three runs with different random numbers.
-A warning is produced if one deviates. Error occurs if all three are different.
 }
 \examples{
 x <- cbind(1, rbind(diag(2), diag(2)), diag(4)[, 1:2])
