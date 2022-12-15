@@ -80,7 +80,7 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   }
   
   
-  vars <- fix_vars_amf(vars)
+  vars <- fix_vars_amf(vars, multi_sep)
   
   
   output_names <- sapply(vars, function(x) x[[1]] )
@@ -153,10 +153,10 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
           if(!grepl(multi_sep, output_names[i])){
             easy_name = TRUE
           } else {
-            split_names= strsplit(output_names[i], multi_sep)[[1]]
+            split_names= strsplit(output_names[i], multi_sep, fixed = TRUE)[[1]]
             if(length(split_names) != length(out[[i]])){
               easy_name = TRUE
-              warning("warning")
+              warning("Wrong number of strings after multi_sep splitting")
             } else {
               names(out[[i]]) = split_names
               names(out)[i] = ""
@@ -208,6 +208,7 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
 #' Fix `vars` parameter to `aggregate_multiple_fun`
 #'
 #' @param vars vars
+#' @param multi_sep multi_sep
 #'
 #' @return
 #' @export
@@ -240,20 +241,20 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
 #' 
 #' identical(f(v1), f(f(v1)))
 #' identical(f(v1), v4)
-fix_vars_amf  = function(vars){
+fix_vars_amf  = function(vars, multi_sep){
   if (is.null(vars)) {
     stop("non-NULL vars needed")
   }
   vars <- as.list(vars)
   for(i in seq_along(vars)){
-    vars[[i]] = fi_amf(vars[i])
+    vars[[i]] = fi_amf(vars[i], multi_sep)
   }
   names(vars) <- NULL
   vars
 }
 
 
-fi_amf = function(vars_i){
+fi_amf = function(vars_i, multi_sep){
   names_i  = c(names(vars_i), "")[1]
   if(is.na(names_i)){
     names_i <- ""
@@ -310,10 +311,13 @@ fi_amf = function(vars_i){
   if(n_name < 1){
     stop("Output names: something is wrong")
   }
-  c(name = vars_i[["name"]], FUN = vars_i[["FUN"]],  vars_i[!(names(vars_i) %in% c("FUN", "name"))])    # gjøre enklere med indekser 
+  c(name = trim(vars_i[["name"]], multi_sep), FUN = vars_i[["FUN"]],  vars_i[!(names(vars_i) %in% c("FUN", "name"))])    # gjøre enklere med indekser 
 }  
 
-
+# Remove leading/trailing whitespace
+trim <- function(name, multi_sep){
+  paste(trimws(strsplit(name, multi_sep, fixed = TRUE)[[1]]), collapse = multi_sep)
+}
 
 
 

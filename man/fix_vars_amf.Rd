@@ -4,10 +4,12 @@
 \alias{fix_vars_amf}
 \title{Fix \code{vars} parameter to \code{aggregate_multiple_fun}}
 \usage{
-fix_vars_amf(vars)
+fix_vars_amf(vars, multi_sep)
 }
 \arguments{
 \item{vars}{vars}
+
+\item{multi_sep}{multi_sep}
 }
 \description{
 Fix \code{vars} parameter to \code{aggregate_multiple_fun}
