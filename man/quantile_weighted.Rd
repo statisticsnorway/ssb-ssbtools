@@ -27,14 +27,14 @@ quantile_weighted(
 Quantiles as a named numeric vector.
 }
 \description{
+The default method (\code{type=2}) corresponds to weighted percentiles in SAS.
+}
+\details{
 When \code{type=2}, averaging is used in case of equal of probabilities.
 Equal probabilities (\code{p[j]==probs[i]}) is determined by
 \code{abs(1-p[j]/probs[i])<eps}
 with \code{p=cumsum(w)/sum(w)}
 where \code{w=weights[order(x)]}.
-}
-\details{
-The default method (\code{type=2}) corresponds to weighted percentiles in SAS.
 }
 \note{
 Type 2 similar to type 5 in \code{DescTools::Quantile}

@@ -3,7 +3,7 @@
 #' 
 #' The default method (`type=2`) corresponds to weighted percentiles in SAS. 
 #' 
-#' @description 
+#' @details
 #' When `type=2`, averaging is used in case of equal of probabilities. 
 #' Equal probabilities (`p[j]==probs[i]`) is determined by 
 #' `abs(1-p[j]/probs[i])<eps` 
