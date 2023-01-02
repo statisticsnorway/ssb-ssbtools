@@ -11,13 +11,16 @@ fix_vars_amf(vars, multi_sep)
 
 \item{multi_sep}{multi_sep}
 }
+\value{
+vars
+}
 \description{
 Fix \code{vars} parameter to \code{aggregate_multiple_fun}
 }
 \examples{
 f <- fix_vars_amf
 
-f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
+f(c("ant", "y", median = "ant", median = "y", d1 = "ant"), ":")
 
 v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
 v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
@@ -33,12 +36,12 @@ v5 <- list(a_sum = c(fun = "sum", "a"),
            `a:w_q` = c(fun = "q", "a", "w"), 
            `b:w_snitt` = c(fun = "snitt", "b", "w"))
 
-identical(f(v1), f(v2))
-identical(f(v1), f(v3))
-identical(f(v1), f(v4))
-identical(f(v1), f(v5))
+identical(f(v1, ":"), f(v2, ":"))
+identical(f(v1, ":"), f(v3, ":"))
+identical(f(v1, ":"), f(v4, ":"))
+identical(f(v1, ":"), f(v5, ":"))
 
-identical(f(v1), f(f(v1)))
-identical(f(v1), v4)
+identical(f(v1, ":"), f(f(v1, ":"), ":"))
+identical(f(v1, ":"), v4)
 }
 \keyword{internal}
