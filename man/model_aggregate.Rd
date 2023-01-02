@@ -11,8 +11,8 @@ model_aggregate(
   fun = sum,
   hierarchies = NULL,
   formula = NULL,
-  dimVar = NULL,
-  charVar = NULL,
+  dim_var = NULL,
+  char_var = NULL,
   pre_aggregate = TRUE,
   verbose = TRUE,
   ...
@@ -31,9 +31,9 @@ model_aggregate(
 
 \item{formula}{formula}
 
-\item{dimVar}{dimVar}
+\item{dim_var}{dim_var}
 
-\item{charVar}{charVar}
+\item{char_var}{char_var}
 
 \item{pre_aggregate}{pre_aggregate}
 

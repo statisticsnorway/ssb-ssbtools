@@ -8,8 +8,8 @@
 #' @param fun fun
 #' @param hierarchies hierarchies 
 #' @param formula formula 
-#' @param dimVar dimVar 
-#' @param charVar charVar 
+#' @param dim_var dim_var 
+#' @param char_var char_var 
 #' @param pre_aggregate pre_aggregate 
 #' @param verbose verbose 
 #' @param ... dots
@@ -42,8 +42,8 @@ model_aggregate = function(
   fun = sum, 
   hierarchies = NULL,
   formula = NULL,
-  dimVar = NULL,
-  charVar = NULL,
+  dim_var = NULL,
+  char_var = NULL,
   pre_aggregate = TRUE,
   verbose = TRUE, ...) {
   
@@ -64,11 +64,11 @@ model_aggregate = function(
   vars <- lapply(vars, function(x) x[-(1:2)] )
   unique_fun_vars <- unique(unlist(vars)) 
   
-  dimVar <- var_names(dimVar, data)
-  charVar <- var_names(charVar, data)
-  dVar <- unique(NamesFromModelMatrixInput(hierarchies = hierarchies, formula = formula, dimVar = dimVar))
-  if (!length(dVar)) {
-    stop("hierarchies, formula, or dimVar needed ")
+  dim_var <- var_names(dim_var, data)
+  char_var <- var_names(char_var, data)
+  d_var <- unique(NamesFromModelMatrixInput(hierarchies = hierarchies, formula = formula, dimVar = dim_var))
+  if (!length(d_var)) {
+    stop("hierarchies, formula, or dim_var needed ")
   }
   
   if (anyDuplicated(c(sum_vars_noname, fun_vars_noname))) { 
@@ -86,17 +86,17 @@ model_aggregate = function(
       cat("-")
       flush.console()
     }
-    data <- aggregate(data[unique_fun_vars], data[unique(c(dVar, charVar))], function(x) x, simplify = FALSE)
+    data <- aggregate(data[unique_fun_vars], data[unique(c(d_var, char_var))], function(x) x, simplify = FALSE)
     if (verbose) {
       cat(">")
       flush.console()
     }
-    sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(dVar, charVar))], sum, simplify = TRUE)
+    sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, char_var))], sum, simplify = TRUE)
     if (verbose) {
       cat(dim(data)[1])
       flush.console()
     }
-    if (!identical(data[unique(c(dVar, charVar))], sum_data[unique(c(dVar, charVar))])) {
+    if (!identical(data[unique(c(d_var, char_var))], sum_data[unique(c(d_var, char_var))])) {
       stop("Check failed")
     }
     if (verbose) {
@@ -115,7 +115,7 @@ model_aggregate = function(
     cat("[ModelMatrix")
     flush.console()
   }
-  mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dimVar, crossTable = TRUE)
+  mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE)
   if (verbose) {
     cat("] ")
     flush.console()
