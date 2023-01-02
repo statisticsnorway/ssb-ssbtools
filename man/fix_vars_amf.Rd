@@ -4,12 +4,14 @@
 \alias{fix_vars_amf}
 \title{Fix \code{vars} parameter to \code{aggregate_multiple_fun}}
 \usage{
-fix_vars_amf(vars, multi_sep)
+fix_vars_amf(vars, multi_sep, names_data = NULL)
 }
 \arguments{
 \item{vars}{vars}
 
 \item{multi_sep}{multi_sep}
+
+\item{names_data}{\code{names(data)} to convert numeric input (indices)}
 }
 \value{
 vars

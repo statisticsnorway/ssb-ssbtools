@@ -6,12 +6,13 @@
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
-#' @param vars  A named vector or list of variable names in `x`. The elements are named by the names of `fun`.
+#' @param vars  A named vector or list of variable names in `data`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
 #'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
 #'              Thus, function names and also output variable names can be coded in different ways.
 #'              Multiple output variable names can be coded using `multi_sep`. 
 #'              See examples and examples in \code{\link{fix_vars_amf}}.
+#'              Indices instead of variable names are allowed. 
 #'              
 #' @param ind When non-NULL, a data frame of indices. 
 #'            When NULL, this variable will be generated internally as `data.frame(ind = seq_len(nrow(data)))`. 
@@ -80,7 +81,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   }
   
   
-  vars <- fix_vars_amf(vars, multi_sep)
+  vars <- fix_vars_amf(vars, multi_sep, names(data))
   
   
   output_names <- sapply(vars, function(x) x[[1]] )
@@ -209,6 +210,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #'
 #' @param vars vars
 #' @param multi_sep multi_sep
+#' @param names_data `names(data)` to convert numeric input (indices)
 #'
 #' @return vars
 #' @export
@@ -241,20 +243,20 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' 
 #' identical(f(v1, ":"), f(f(v1, ":"), ":"))
 #' identical(f(v1, ":"), v4)
-fix_vars_amf  = function(vars, multi_sep){
+fix_vars_amf  = function(vars, multi_sep, names_data = NULL){
   if (is.null(vars)) {
     stop("non-NULL vars needed")
   }
   vars <- as.list(vars)
   for(i in seq_along(vars)){
-    vars[[i]] = fi_amf(vars[i], multi_sep)
+    vars[[i]] = fi_amf(vars[i], multi_sep, names_data)
   }
   names(vars) <- NULL
   vars
 }
 
 
-fi_amf = function(vars_i, multi_sep){
+fi_amf = function(vars_i, multi_sep, names_data){
   names_i  = c(names(vars_i), "")[1]
   if(is.na(names_i)){
     names_i <- ""
@@ -272,8 +274,14 @@ fi_amf = function(vars_i, multi_sep){
       stop("name needed when list in list")
     }
     vars_i = vars_i[[1]]
+    if (is.numeric(vars_i)) {
+      vars_i <- names_data[vars_i]
+    }
     vars_i = c(name = names_i, fun = names_i2, vars_i) 
   } else {
+    if (is.numeric(vars_i)) {
+      vars_i <- names_data[vars_i]
+    }
     addname = TRUE
     if("fun" %in%  names(vars_i)){
       if(names_i != ""){

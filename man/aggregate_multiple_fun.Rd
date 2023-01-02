@@ -23,12 +23,13 @@ aggregate_multiple_fun(
 
 \item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.}
 
-\item{vars}{A named vector or list of variable names in \code{x}. The elements are named by the names of \code{fun}.
+\item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
 Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
 Thus, function names and also output variable names can be coded in different ways.
 Multiple output variable names can be coded using \code{multi_sep}.
-See examples and examples in \code{\link{fix_vars_amf}}.}
+See examples and examples in \code{\link{fix_vars_amf}}.
+Indices instead of variable names are allowed.}
 
 \item{ind}{When non-NULL, a data frame of indices.
 When NULL, this variable will be generated internally as \code{data.frame(ind = seq_len(nrow(data)))}.
