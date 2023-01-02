@@ -47,8 +47,23 @@ model_aggregate = function(
   pre_aggregate = TRUE,
   verbose = TRUE, ...) {
   
+  
   sum_vars <- var_names(sum_vars, data)
-  fun_vars <- var_names(fun_vars, data)  ####### This is preliminary  ############
+  if (is.null(names(sum_vars))) {
+    names(sum_vars) <- ""
+  }
+  names(sum_vars)[is.na(names(sum_vars))] <- ""
+  sum_vars_noname <- sum_vars[names(sum_vars) == ""]
+  
+  vars <- fix_vars_amf(fun_vars, ..., names_data = names(data))
+  fun_names <- sapply(vars, function(x) x[[2]] )
+  vars_3 <- sapply(vars, function(x) x[[3]] )
+  vars_length <-  sapply(vars, length)
+  fun_vars_noname <- vars_3[vars_length == 3 & fun_names == ""] 
+  
+  vars <- lapply(vars, function(x) x[-(1:2)] )
+  unique_fun_vars <- unique(unlist(vars)) 
+  
   dimVar <- var_names(dimVar, data)
   charVar <- var_names(charVar, data)
   dVar <- unique(NamesFromModelMatrixInput(hierarchies = hierarchies, formula = formula, dimVar = dimVar))
@@ -56,17 +71,8 @@ model_aggregate = function(
     stop("hierarchies, formula, or dimVar needed ")
   }
   
-  if (is.null(names(sum_vars))) {
-    names(sum_vars) <- ""
-  }
-  names(sum_vars)[is.na(names(sum_vars))] <- ""
-  if (is.null(names(fun_vars))) {
-    names(fun_vars) <- ""
-  }
-  names(fun_vars)[is.na(names(fun_vars))] <- ""
-  
-  if (anyDuplicated(c(sum_vars, fun_vars)[names(c(sum_vars, fun_vars)) == ""])) { ####### This is preliminary ############
-    stop("Any duplicates in c(sum_vars, fun_vars) must be uniquely named (name can be omitted for one element).")
+  if (anyDuplicated(c(sum_vars_noname, fun_vars_noname))) { 
+    stop("Any duplicates in (sum_vars, fun_vars) must be uniquely named (name can be omitted for one element).")
   }
   
   
@@ -80,7 +86,7 @@ model_aggregate = function(
       cat("-")
       flush.console()
     }
-    data <- aggregate(data[unique(unlist(fun_vars))], data[unique(c(dVar, charVar))], function(x) x, simplify = FALSE)
+    data <- aggregate(data[unique_fun_vars], data[unique(c(dVar, charVar))], function(x) x, simplify = FALSE)
     if (verbose) {
       cat(">")
       flush.console()
