@@ -5,8 +5,8 @@
 #'
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
-#' @param FUN A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
-#' @param vars  A named vector or list of variable names in `x`. The elements are named by the names of `FUN`.
+#' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
+#' @param vars  A named vector or list of variable names in `x`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
 #'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
 #'              Thus, function names and also output variable names can be coded in different ways.
@@ -35,7 +35,7 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    FUN = c(sum, median = median, d1 = function(x) x[1]),    
+#'    fun = c(sum, median = median, d1 = function(x) x[1]),    
 #'    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant")
 #' )
 #' 
@@ -45,7 +45,7 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    FUN = c(sum, ra = my_range, wmean = weighted.mean),    
+#'    fun = c(sum, ra = my_range, wmean = weighted.mean),    
 #'    vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant"))
 #' )
 #' 
@@ -54,7 +54,7 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    FUN = c(sum, ra = my_range, wmean = weighted.mean),    
+#'    fun = c(sum, ra = my_range, wmean = weighted.mean),    
 #'    vars = list("ant", "y", 
 #'                `antmin,antmax` = list(ra = "ant"), 
 #'                 yWmean  = list(wmean  = c("y", "ant")))
@@ -63,7 +63,7 @@
 #' 
 #' 
 #'  
-aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_sep = "_", multi_sep = ",", print_inc = TRUE) {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", multi_sep = ",", print_inc = TRUE) {
   
   if(is.null(ind)){
     ind = data.frame(ind = seq_len(nrow(data)))
@@ -71,12 +71,12 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   
   names(ind) = "i7N9Qd3"
   
-  if (is.function(FUN)) {
-    FUN <- c(FUN)
-    names(FUN) <- ""
+  if (is.function(fun)) {
+    fun <- c(fun)
+    names(fun) <- ""
   }
-  if (is.null(names(FUN))) {
-    names(FUN) <- ""
+  if (is.null(names(fun))) {
+    names(fun) <- ""
   }
   
   
@@ -84,28 +84,28 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   
   
   output_names <- sapply(vars, function(x) x[[1]] )
-  FUN_names <- sapply(vars, function(x) x[[2]] )
+  fun_names <- sapply(vars, function(x) x[[2]] )
   vars <- lapply(vars, function(x) x[-(1:2)] )
   
-  if (is.null(names(FUN))) {
-    names(FUN) <- ""
+  if (is.null(names(fun))) {
+    names(fun) <- ""
   }
   
-  names(FUN)[is.na(names(FUN))] <- ""
-  if (anyDuplicated(names(FUN))) {
-    stop("FUN must be uniquely named")
+  names(fun)[is.na(names(fun))] <- ""
+  if (anyDuplicated(names(fun))) {
+    stop("fun must be uniquely named")
   }
   
   
   if (!all(unlist(vars) %in% names(data))) {
     stop("All vars must be in names(x)")
   }
-  if (!all(FUN_names %in% names(FUN))) {
-    stop("All FUN names in vars must be in names(FUN)")
+  if (!all(fun_names %in% names(fun))) {
+    stop("All fun names in vars must be in names(fun)")
   }
-  if (!all(names(FUN) %in% FUN_names)) {
-    warning("Not all FUN elements will be used")
-    FUN <- FUN[names(FUN) %in% FUN_names]
+  if (!all(names(fun) %in% fun_names)) {
+    warning("Not all fun elements will be used")
+    fun <- fun[names(fun) %in% fun_names]
   }
   
   
@@ -117,7 +117,7 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   }  
   
   
-  FUN_all <- function(ind, FUN_input, data, vars, output_names, FUN_names, data1 = NULL, fun_all_0 = NULL){
+  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL){
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
@@ -128,18 +128,18 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
         
     out <- vector("list", length(vars))
     for(i in seq_along(out)){
-      j <- match(FUN_names[i], names(FUN_input)) 
+      j <- match(fun_names[i], names(fun_input)) 
       if(length(vars[[i]]) == 1){
-        out[[i]] <- FUN_input[[j]](unlist(data[[vars[[i]]]][ind]))
-        if (names(FUN)[j] == "") {
+        out[[i]] <- fun_input[[j]](unlist(data[[vars[[i]]]][ind]))
+        if (names(fun)[j] == "") {
           names(out)[i] <- vars[[i]]
         } else {
-          names(out)[i] <- paste(vars[[i]], names(FUN)[j], sep = "_")
+          names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = "_")
         }
       } else {
-        if(length(vars[[i]]) == 2)   out[[i]] <- FUN_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
-        if(length(vars[[i]]) == 3)   out[[i]] <- FUN_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]))
-        if(length(vars[[i]]) == 4)   out[[i]] <- FUN_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]), unlist(data[[vars[[i]][4]]][ind]))
+        if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
+        if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]))
+        if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]), unlist(data[[vars[[i]][4]]][ind]))
         if(length(vars[[i]]) > 4){
           stop("Not implemented: length(vars[[i]]) > 4")
         }
@@ -173,12 +173,12 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   
 
   if(min(ind[[1]]) == 0){
-    fun_all_0 = FUN_all(ind = 0L, vars = vars, output_names = output_names, FUN_names = FUN_names, FUN_input = FUN, data = data, data1 = data1) 
+    fun_all_0 = fun_all(ind = 0L, vars = vars, output_names = output_names, fun_names = fun_names, fun_input = fun, data = data, data1 = data1) 
   } else {
     fun_all_0 = NULL # not needed 
   }
   
-  z <- aggregate(x = ind, by = by, FUN = FUN_all, vars = vars, output_names = output_names, FUN_names = FUN_names, FUN_input = FUN, data = data, fun_all_0 = fun_all_0, ...)
+  z <- aggregate(x = ind, by = by, FUN = fun_all, vars = vars, output_names = output_names, fun_names = fun_names, fun_input = fun, data = data, fun_all_0 = fun_all_0, ...)
   
   #Transform  embedded matrix
   z <- unmatrix(z)
@@ -187,10 +187,10 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
   # Fix name when not embedded matrix
   grepind <- grep(names(ind), names(z))
   if(length(grepind)==1){
-    if(length(FUN)==1 & length(vars)==1){
+    if(length(fun)==1 & length(vars)==1){
       names(z)[grepind]  =  output_names[1]
     } else {
-      names(z)[grepind] <- "output_from_FUN"
+      names(z)[grepind] <- "output_from_fun"
       warning("Unusual output")  
     }
   }
@@ -221,18 +221,18 @@ aggregate_multiple_fun <- function(data, by, FUN, vars, ind = NULL, ..., name_se
 #' f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
 #' 
 #' v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
-#' v2 <- list(c(FUN = "sum", "a"), c(FUN = "sum", "w"), c(FUN = "q", "a", "w"), 
-#'            c(FUN = "snitt", "b", "w"))
+#' v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
+#'            c(fun = "snitt", "b", "w"))
 #' v3 <- list(sum = "a", sum = "w", q = c(name = "a:w_q", "a", "w"), 
 #'            `b:w_snitt` = list(snitt = c("b", "w")))
-#' v4 <- list(c(name = "a_sum", FUN = "sum", "a"), 
-#'            c(name = "w_sum", FUN = "sum", "w"), 
-#'            c(name = "a:w_q", FUN = "q", "a", "w"), 
-#'            c(name = "b:w_snitt", FUN = "snitt", "b", "w"))
-#' v5 <- list(a_sum = c(FUN = "sum", "a"), 
-#'            w_sum = c(FUN = "sum", "w"), 
-#'            `a:w_q` = c(FUN = "q", "a", "w"), 
-#'            `b:w_snitt` = c(FUN = "snitt", "b", "w"))
+#' v4 <- list(c(name = "a_sum", fun = "sum", "a"), 
+#'            c(name = "w_sum", fun = "sum", "w"), 
+#'            c(name = "a:w_q", fun = "q", "a", "w"), 
+#'            c(name = "b:w_snitt", fun = "snitt", "b", "w"))
+#' v5 <- list(a_sum = c(fun = "sum", "a"), 
+#'            w_sum = c(fun = "sum", "w"), 
+#'            `a:w_q` = c(fun = "q", "a", "w"), 
+#'            `b:w_snitt` = c(fun = "snitt", "b", "w"))
 #' 
 #' identical(f(v1), f(v2))
 #' identical(f(v1), f(v3))
@@ -272,38 +272,38 @@ fi_amf = function(vars_i, multi_sep){
       stop("name needed when list in list")
     }
     vars_i = vars_i[[1]]
-    vars_i = c(name = names_i, FUN = names_i2, vars_i) 
+    vars_i = c(name = names_i, fun = names_i2, vars_i) 
   } else {
     addname = TRUE
-    if("FUN" %in%  names(vars_i)){
+    if("fun" %in%  names(vars_i)){
       if(names_i != ""){
         vars_i = c(name = names_i, vars_i)
         addname = FALSE
       }
     } else {
-      vars_i = c(FUN = names_i, vars_i)
+      vars_i = c(fun = names_i, vars_i)
     }
     if("name" %in%  names(vars_i)){
       addname = FALSE
     }
     if(addname){
-      FUN_name = vars_i[["FUN"]]
-      vars_i_ = vars_i[names(vars_i) != "FUN"]
-      if (FUN_name == "") {
+      fun_name = vars_i[["fun"]]
+      vars_i_ = vars_i[names(vars_i) != "fun"]
+      if (fun_name == "") {
         name <- paste(vars_i_, collapse = ":")
       } else {
-        name <- paste(paste(vars_i_, collapse = ":"), FUN_name, sep = "_")
+        name <- paste(paste(vars_i_, collapse = ":"), fun_name, sep = "_")
       }
       vars_i = c(name = name, vars_i)
     }
   }
-  n_FUN  = sum(names(vars_i) == "FUN")
+  n_fun  = sum(names(vars_i) == "fun")
   n_name = sum(names(vars_i) == "name")
-  if(n_FUN > 1){
+  if(n_fun > 1){
     stop("Multiple function names found")
   }
-  if(n_FUN < 1){
-    stop("Function names: something is wrong")
+  if(n_fun < 1){
+    stop("function names: something is wrong")
   }
   if(n_name > 1){
     stop("Multiple output names found")
@@ -311,7 +311,7 @@ fi_amf = function(vars_i, multi_sep){
   if(n_name < 1){
     stop("Output names: something is wrong")
   }
-  c(name = trim(vars_i[["name"]], multi_sep), FUN = vars_i[["FUN"]],  vars_i[!(names(vars_i) %in% c("FUN", "name"))])    # gjøre enklere med indekser 
+  c(name = trim(vars_i[["name"]], multi_sep), fun = vars_i[["fun"]],  vars_i[!(names(vars_i) %in% c("fun", "name"))])
 }  
 
 # Remove leading/trailing whitespace

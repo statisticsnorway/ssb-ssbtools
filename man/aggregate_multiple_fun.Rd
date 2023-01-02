@@ -7,7 +7,7 @@
 aggregate_multiple_fun(
   data,
   by,
-  FUN,
+  fun,
   vars,
   ind = NULL,
   ...,
@@ -21,9 +21,9 @@ aggregate_multiple_fun(
 
 \item{by}{A data frame defining grouping}
 
-\item{FUN}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.}
+\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.}
 
-\item{vars}{A named vector or list of variable names in \code{x}. The elements are named by the names of \code{FUN}.
+\item{vars}{A named vector or list of variable names in \code{x}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
 Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
 Thus, function names and also output variable names can be coded in different ways.
@@ -56,7 +56,7 @@ z <- z2[sample.int(nrow(z2), size = 20), ]
 aggregate_multiple_fun(
    data = z, 
    by = z[c("kostragr", "hovedint")], 
-   FUN = c(sum, median = median, d1 = function(x) x[1]),    
+   fun = c(sum, median = median, d1 = function(x) x[1]),    
    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant")
 )
 
@@ -66,7 +66,7 @@ my_range <- function(x) c(min = min(x), max = max(x))
 aggregate_multiple_fun(
    data = z, 
    by = z[c("kostragr", "hovedint")], 
-   FUN = c(sum, ra = my_range, wmean = weighted.mean),    
+   fun = c(sum, ra = my_range, wmean = weighted.mean),    
    vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant"))
 )
 
@@ -75,7 +75,7 @@ my_range <- function(x) c(min = min(x), max = max(x))
 aggregate_multiple_fun(
    data = z, 
    by = z[c("kostragr", "hovedint")], 
-   FUN = c(sum, ra = my_range, wmean = weighted.mean),    
+   fun = c(sum, ra = my_range, wmean = weighted.mean),    
    vars = list("ant", "y", 
                `antmin,antmax` = list(ra = "ant"), 
                 yWmean  = list(wmean  = c("y", "ant")))
