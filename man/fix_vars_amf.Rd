@@ -4,12 +4,22 @@
 \alias{fix_vars_amf}
 \title{Fix \code{vars} parameter to \code{aggregate_multiple_fun}}
 \usage{
-fix_vars_amf(vars, multi_sep, names_data = NULL)
+fix_vars_amf(
+  vars,
+  name_sep = "_",
+  seve_sep = ":",
+  multi_sep = ",",
+  names_data = NULL
+)
 }
 \arguments{
 \item{vars}{vars}
 
-\item{multi_sep}{multi_sep}
+\item{name_sep}{A character string used when output variable names are generated.}
+
+\item{seve_sep}{A character string used when output variable names are generated from functions of several variables.}
+
+\item{multi_sep}{A character string used when multiple output variable names are sent as input.}
 
 \item{names_data}{\code{names(data)} to convert numeric input (indices)}
 }
@@ -22,7 +32,7 @@ Fix \code{vars} parameter to \code{aggregate_multiple_fun}
 \examples{
 f <- fix_vars_amf
 
-f(c("ant", "y", median = "ant", median = "y", d1 = "ant"), ":")
+f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
 
 v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
 v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
@@ -38,12 +48,12 @@ v5 <- list(a_sum = c(fun = "sum", "a"),
            `a:w_q` = c(fun = "q", "a", "w"), 
            `b:w_snitt` = c(fun = "snitt", "b", "w"))
 
-identical(f(v1, ":"), f(v2, ":"))
-identical(f(v1, ":"), f(v3, ":"))
-identical(f(v1, ":"), f(v4, ":"))
-identical(f(v1, ":"), f(v5, ":"))
+identical(f(v1), f(v2))
+identical(f(v1), f(v3))
+identical(f(v1), f(v4))
+identical(f(v1), f(v5))
 
-identical(f(v1, ":"), f(f(v1, ":"), ":"))
-identical(f(v1, ":"), v4)
+identical(f(v1), f(f(v1)))
+identical(f(v1), v4)
 }
 \keyword{internal}

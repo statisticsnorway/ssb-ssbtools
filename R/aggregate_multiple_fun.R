@@ -20,8 +20,9 @@
 #'            
 #'                
 #' @param ... 	Further arguments passed to `aggregate`
-#' @param name_sep A character string used when output variable names are generated. 
-#' @param multi_sep A character string used when output variable names are sent as input. 
+#' @param name_sep  A character string used when output variable names are generated. 
+#' @param seve_sep  A character string used when output variable names are generated from functions of several variables. 
+#' @param multi_sep A character string used when multiple output variable names are sent as input. 
 #' @param print_inc Printing "..." to console when `TRUE` 
 #'
 #' @return A data frame
@@ -64,7 +65,7 @@
 #' 
 #' 
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", multi_sep = ",", print_inc = TRUE) {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", print_inc = TRUE) {
   
   if(is.null(ind)){
     ind = data.frame(ind = seq_len(nrow(data)))
@@ -81,7 +82,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   }
   
   
-  vars <- fix_vars_amf(vars, multi_sep, names(data))
+  vars <- fix_vars_amf(vars, name_sep = name_sep,  seve_sep = seve_sep, multi_sep = multi_sep, names_data = names(data))
   
   
   output_names <- sapply(vars, function(x) x[[1]] )
@@ -135,7 +136,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
         if (names(fun)[j] == "") {
           names(out)[i] <- vars[[i]]
         } else {
-          names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = "_")
+          names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = name_sep)
         }
       } else {
         if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
@@ -182,7 +183,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   z <- aggregate(x = ind, by = by, FUN = fun_all, vars = vars, output_names = output_names, fun_names = fun_names, fun_input = fun, data = data, fun_all_0 = fun_all_0, ...)
   
   #Transform  embedded matrix
-  z <- unmatrix(z)
+  z <- unmatrix(z, sep = name_sep)
   names(z) <- sub(paste0(names(ind), name_sep), "", colnames(z))
   
   # Fix name when not embedded matrix
@@ -209,7 +210,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' Fix `vars` parameter to `aggregate_multiple_fun`
 #'
 #' @param vars vars
-#' @param multi_sep multi_sep
+#' @inheritParams aggregate_multiple_fun
 #' @param names_data `names(data)` to convert numeric input (indices)
 #'
 #' @return vars
@@ -220,7 +221,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' @examples
 #' f <- fix_vars_amf
 #' 
-#' f(c("ant", "y", median = "ant", median = "y", d1 = "ant"), ":")
+#' f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
 #' 
 #' v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
 #' v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
@@ -236,27 +237,27 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #'            `a:w_q` = c(fun = "q", "a", "w"), 
 #'            `b:w_snitt` = c(fun = "snitt", "b", "w"))
 #' 
-#' identical(f(v1, ":"), f(v2, ":"))
-#' identical(f(v1, ":"), f(v3, ":"))
-#' identical(f(v1, ":"), f(v4, ":"))
-#' identical(f(v1, ":"), f(v5, ":"))
+#' identical(f(v1), f(v2))
+#' identical(f(v1), f(v3))
+#' identical(f(v1), f(v4))
+#' identical(f(v1), f(v5))
 #' 
-#' identical(f(v1, ":"), f(f(v1, ":"), ":"))
-#' identical(f(v1, ":"), v4)
-fix_vars_amf  = function(vars, multi_sep, names_data = NULL){
+#' identical(f(v1), f(f(v1)))
+#' identical(f(v1), v4)
+fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL){
   if (is.null(vars)) {
     stop("non-NULL vars needed")
   }
   vars <- as.list(vars)
   for(i in seq_along(vars)){
-    vars[[i]] = fi_amf(vars[i], multi_sep, names_data)
+    vars[[i]] = fi_amf(vars[i], name_sep = name_sep,  seve_sep = seve_sep, multi_sep = multi_sep,  names_data = names_data)
   }
   names(vars) <- NULL
   vars
 }
 
 
-fi_amf = function(vars_i, multi_sep, names_data){
+fi_amf = function(vars_i, name_sep, seve_sep, multi_sep, names_data){
   names_i  = c(names(vars_i), "")[1]
   if(is.na(names_i)){
     names_i <- ""
@@ -298,9 +299,9 @@ fi_amf = function(vars_i, multi_sep, names_data){
       fun_name = vars_i[["fun"]]
       vars_i_ = vars_i[names(vars_i) != "fun"]
       if (fun_name == "") {
-        name <- paste(vars_i_, collapse = ":")
+        name <- paste(vars_i_, collapse = seve_sep)
       } else {
-        name <- paste(paste(vars_i_, collapse = ":"), fun_name, sep = "_")
+        name <- paste(paste(vars_i_, collapse = seve_sep), fun_name, sep = name_sep)
       }
       vars_i = c(name = name, vars_i)
     }
@@ -358,7 +359,7 @@ unmatrix <- function(data, sep = "_") {
   names(data_j) <- paste(name_j, n_j, sep = sep)
   
   data <- cbind(data[SeqInc(1, j - 1)], data_j, data[SeqInc(j + 1, ncol(data))])
-  unmatrix(data)
+  unmatrix(data, sep = sep)
 }
 
 
