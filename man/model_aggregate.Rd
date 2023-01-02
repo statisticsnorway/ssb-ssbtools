@@ -14,6 +14,7 @@ model_aggregate(
   dim_var = NULL,
   char_var = NULL,
   pre_aggregate = TRUE,
+  list_return = FALSE,
   verbose = TRUE,
   ...
 )
@@ -36,6 +37,8 @@ model_aggregate(
 \item{char_var}{char_var}
 
 \item{pre_aggregate}{pre_aggregate}
+
+\item{list_return}{list_return}
 
 \item{verbose}{verbose}
 

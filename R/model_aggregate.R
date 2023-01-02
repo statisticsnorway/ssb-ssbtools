@@ -11,6 +11,7 @@
 #' @param dim_var dim_var 
 #' @param char_var char_var 
 #' @param pre_aggregate pre_aggregate 
+#' @param list_return list_return
 #' @param verbose verbose 
 #' @param ... dots
 #'
@@ -45,6 +46,7 @@ model_aggregate = function(
   dim_var = NULL,
   char_var = NULL,
   pre_aggregate = TRUE,
+  list_return = FALSE,
   verbose = TRUE, ...) {
   
   
@@ -147,6 +149,14 @@ model_aggregate = function(
   if (verbose) {
     cat("] ")
     flush.console()
+  }
+  
+  if (list_return) {
+    if (verbose) {
+      cat("]\n")
+      flush.console()
+    }
+    return(list(cross_table = as.data.frame(mm$crossTable), sum_data = sum_data, fun_data = z, x = mm$modelMatrix))
   }
   
   if (verbose) {
