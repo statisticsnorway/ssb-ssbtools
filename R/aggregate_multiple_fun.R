@@ -23,7 +23,6 @@
 #' @param name_sep  A character string used when output variable names are generated. 
 #' @param seve_sep  A character string used when output variable names are generated from functions of several variables. 
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
-#' @param print_inc Printing "..." to console when `TRUE` 
 #'
 #' @return A data frame
 #' @export
@@ -65,7 +64,7 @@
 #' 
 #' 
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", print_inc = TRUE) {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",") {
   
   if(is.null(ind)){
     ind = data.frame(ind = seq_len(nrow(data)))

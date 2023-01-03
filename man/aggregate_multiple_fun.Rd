@@ -13,8 +13,7 @@ aggregate_multiple_fun(
   ...,
   name_sep = "_",
   seve_sep = ":",
-  multi_sep = ",",
-  print_inc = TRUE
+  multi_sep = ","
 )
 }
 \arguments{
@@ -43,8 +42,6 @@ The parameter is useful for advanced use involving model/dummy matrices.}
 \item{seve_sep}{A character string used when output variable names are generated from functions of several variables.}
 
 \item{multi_sep}{A character string used when multiple output variable names are sent as input.}
-
-\item{print_inc}{Printing "..." to console when \code{TRUE}}
 }
 \value{
 A data frame
