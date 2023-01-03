@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_aggregate.R
 \name{model_aggregate}
 \alias{model_aggregate}
-\title{model_aggregate}
+\title{Hierarchical aggregation via model specification}
 \usage{
 model_aggregate(
   data,
@@ -15,40 +15,47 @@ model_aggregate(
   char_var = NULL,
   pre_aggregate = TRUE,
   list_return = FALSE,
+  pre_return = FALSE,
   verbose = TRUE,
   ...
 )
 }
 \arguments{
-\item{data}{data}
+\item{data}{A data frame containing data to be aggregated}
 
-\item{sum_vars}{sum_vars}
+\item{sum_vars}{Variables to be summed. This will be done via matrix multiplication.}
 
-\item{fun_vars}{fun_vars}
+\item{fun_vars}{Variables to be aggregated by supplied functions.
+This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy_aggregate}} and
+\code{fun_vars} is specified as the parameter \code{vars}.}
 
-\item{fun}{fun}
+\item{fun}{The \code{fun}         parameter to \code{\link{aggregate_multiple_fun}}}
 
-\item{hierarchies}{hierarchies}
+\item{hierarchies}{The \code{hierarchies} parameter to \code{\link{ModelMatrix}}}
 
-\item{formula}{formula}
+\item{formula}{The \code{formula}     parameter to \code{\link{ModelMatrix}}}
 
-\item{dim_var}{dim_var}
+\item{dim_var}{The \code{dimVar}      parameter to \code{\link{ModelMatrix}}}
 
-\item{char_var}{char_var}
+\item{char_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
 
-\item{pre_aggregate}{pre_aggregate}
+\item{pre_aggregate}{Whether to pre-aggregate data to reduce the dimension of the model matrix.
+Note that all original \code{fun_vars} observations are retained in the aggregated dataset and \code{pre_aggregate} does not affect the final result.}
 
-\item{list_return}{list_return}
+\item{list_return}{Whether to return a list of separate components including the model matrix \code{x}.}
 
-\item{verbose}{verbose}
+\item{pre_return}{Whether to return the pre-aggregate data.}
 
-\item{...}{dots}
+\item{verbose}{Whether to print information during calculations.}
+
+\item{...}{Further arguments passed to \code{dummy_aggregate}.}
 }
 \value{
-data frame
+A data frame or a list.
 }
 \description{
-model_aggregate
+Internally a dummy/model matrix is created according to the model specification.
+This model matrix is used in the aggregation process via matrix multiplication and/or the function \code{\link{aggregate_multiple_fun}}.
 }
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")

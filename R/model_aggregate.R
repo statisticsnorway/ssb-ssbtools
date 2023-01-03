@@ -1,21 +1,29 @@
 
 
-#' model_aggregate
+#' Hierarchical aggregation via model specification
+#' 
+#' Internally a dummy/model matrix is created according to the model specification. 
+#' This model matrix is used in the aggregation process via matrix multiplication and/or the function \code{\link{aggregate_multiple_fun}}.
+#' 
 #'
-#' @param data data
-#' @param sum_vars sum_vars 
-#' @param fun_vars fun_vars 
-#' @param fun fun
-#' @param hierarchies hierarchies 
-#' @param formula formula 
-#' @param dim_var dim_var 
-#' @param char_var char_var 
-#' @param pre_aggregate pre_aggregate 
-#' @param list_return list_return
-#' @param verbose verbose 
-#' @param ... dots
+#' @param data A data frame containing data to be aggregated 
+#' @param sum_vars Variables to be summed. This will be done via matrix multiplication. 
+#' @param fun_vars Variables to be aggregated by supplied functions.  
+#'      This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy_aggregate}} and 
+#'      `fun_vars` is specified as the parameter `vars`. 
+#' @param fun         The `fun`         parameter to \code{\link{aggregate_multiple_fun}} 
+#' @param hierarchies The `hierarchies` parameter to \code{\link{ModelMatrix}}
+#' @param formula     The `formula`     parameter to \code{\link{ModelMatrix}} 
+#' @param dim_var     The `dimVar`      parameter to \code{\link{ModelMatrix}}
+#' @param char_var    Extra variables to be used as grouping elements in the pre-aggregate step 
+#' @param pre_aggregate Whether to pre-aggregate data to reduce the dimension of the model matrix. 
+#'                    Note that all original `fun_vars` observations are retained in the aggregated dataset and `pre_aggregate` does not affect the final result.
+#' @param list_return Whether to return a list of separate components including the model matrix `x`.
+#' @param pre_return Whether to return the pre-aggregate data. 
+#' @param verbose     Whether to print information during calculations. 
+#' @param ... Further arguments passed to `dummy_aggregate`.
 #'
-#' @return data frame
+#' @return A data frame or a list. 
 #' @export
 #' @importFrom Matrix crossprod
 #' @importFrom utils flush.console
@@ -47,6 +55,7 @@ model_aggregate = function(
   char_var = NULL,
   pre_aggregate = TRUE,
   list_return = FALSE,
+  pre_return = FALSE,
   verbose = TRUE, ...) {
   
   
@@ -110,6 +119,14 @@ model_aggregate = function(
       cat(dim(data)[2], "] ", sep = "")
       flush.console()
     }
+  }
+  
+  if (pre_return) {
+    if (verbose) {
+      cat("]\n")
+      flush.console()
+    }
+    return(data)
   }
   
   
