@@ -19,7 +19,7 @@
 #' @param pre_aggregate Whether to pre-aggregate data to reduce the dimension of the model matrix. 
 #'                    Note that all original `fun_vars` observations are retained in the aggregated dataset and `pre_aggregate` does not affect the final result.
 #' @param list_return Whether to return a list of separate components including the model matrix `x`.
-#' @param pre_return Whether to return the pre-aggregate data. 
+#' @param pre_return Whether to return the pre-aggregate data as a two-component list. 
 #' @param verbose     Whether to print information during calculations. 
 #' @param ... Further arguments passed to `dummy_aggregate`.
 #'
@@ -114,11 +114,13 @@ model_aggregate = function(
       cat("*")
       flush.console()
     }
-    sum_data <- as.matrix(sum_data[unique(sum_vars)])
+    sum_data <- sum_data[unique(sum_vars)]
     if (verbose) {
-      cat(dim(data)[2], "] ", sep = "")
+      cat(dim(data)[2] + dim(sum_data)[2], "] ", sep = "")
       flush.console()
     }
+  } else {
+    sum_data <- NULL
   }
   
   if (pre_return) {
@@ -126,7 +128,7 @@ model_aggregate = function(
       cat("]\n")
       flush.console()
     }
-    return(data)
+    return(list(data=data, sum_data = sum_data))
   }
   
   
@@ -148,7 +150,7 @@ model_aggregate = function(
   
   
   if (pre_aggregate) {
-    sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, sum_data)))
+    sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(sum_data))))
   } else {
     sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(data[unique(sum_vars)]))))
   }

@@ -44,7 +44,7 @@ Note that all original \code{fun_vars} observations are retained in the aggregat
 
 \item{list_return}{Whether to return a list of separate components including the model matrix \code{x}.}
 
-\item{pre_return}{Whether to return the pre-aggregate data.}
+\item{pre_return}{Whether to return the pre-aggregate data as a two-component list.}
 
 \item{verbose}{Whether to print information during calculations.}
 
