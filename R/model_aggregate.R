@@ -19,7 +19,7 @@
 #' @param pre_aggregate Whether to pre-aggregate data to reduce the dimension of the model matrix. 
 #'                    Note that all original `fun_vars` observations are retained in the aggregated dataset and `pre_aggregate` does not affect the final result.
 #' @param list_return Whether to return a list of separate components including the model matrix `x`.
-#' @param pre_return Whether to return the pre-aggregate data as a two-component list. 
+#' @param pre_return  Whether to return the pre-aggregate data as a two-component list. Can also be combined with `list_return` (see examples). 
 #' @param verbose     Whether to print information during calculations. 
 #' @param ... Further arguments passed to `dummy_aggregate`.
 #'
@@ -44,6 +44,22 @@
 #'    fun = c(sum = sum, mean = mean, med = median, ra = my_range))
 #' 
 #' out
+#' 
+#' # To illustrate list_return and pre_return 
+#' for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {
+#'   cat("\n=======================================\n")
+#'   cat("list_return =", list_return, ", pre_return =", pre_return, "\n\n")
+#'   out <- model_aggregate(z, formula = ~age:year, 
+#'                          sum_vars = c("ths", "y"), 
+#'                          fun_vars = c(mean = "y", ra = "y"), 
+#'                          fun = c(mean = mean, ra = my_range), 
+#'                          list_return = list_return,
+#'                          pre_return = pre_return)
+#'   cat("\n")
+#'   print(out)
+#' }
+#' 
+#' 
 model_aggregate = function(
   data,
   sum_vars,
@@ -125,10 +141,13 @@ model_aggregate = function(
   
   if (pre_return) {
     if (verbose) {
-      cat("]\n")
+      cat("\n")
       flush.console()
     }
-    return(list(data=data, sum_data = sum_data))
+    pre_sum <- sum_data
+    if (!list_return) {
+      return(list(pre_data=data, pre_sum = pre_sum))
+    }
   }
   
   
@@ -172,10 +191,14 @@ model_aggregate = function(
   
   if (list_return) {
     if (verbose) {
-      cat("]\n")
+      cat("\n")
       flush.console()
     }
-    return(list(cross_table = as.data.frame(mm$crossTable), sum_data = sum_data, fun_data = z, x = mm$modelMatrix))
+    out <- list(cross_table = as.data.frame(mm$crossTable), sum_data = sum_data, fun_data = z, x = mm$modelMatrix)
+    if (pre_return) {
+      out <- c(list(pre_data=data, pre_sum = pre_sum), out)
+    }
+    return(out)
   }
   
   if (verbose) {

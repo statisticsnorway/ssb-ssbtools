@@ -44,7 +44,7 @@ Note that all original \code{fun_vars} observations are retained in the aggregat
 
 \item{list_return}{Whether to return a list of separate components including the model matrix \code{x}.}
 
-\item{pre_return}{Whether to return the pre-aggregate data as a two-component list.}
+\item{pre_return}{Whether to return the pre-aggregate data as a two-component list. Can also be combined with \code{list_return} (see examples).}
 
 \item{verbose}{Whether to print information during calculations.}
 
@@ -73,4 +73,20 @@ out <- model_aggregate(z,
    fun = c(sum = sum, mean = mean, med = median, ra = my_range))
 
 out
+
+# To illustrate list_return and pre_return 
+for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {
+  cat("\n=======================================\n")
+  cat("list_return =", list_return, ", pre_return =", pre_return, "\n\n")
+  out <- model_aggregate(z, formula = ~age:year, 
+                         sum_vars = c("ths", "y"), 
+                         fun_vars = c(mean = "y", ra = "y"), 
+                         fun = c(mean = mean, ra = my_range), 
+                         list_return = list_return,
+                         pre_return = pre_return)
+  cat("\n")
+  print(out)
+}
+
+
 }
