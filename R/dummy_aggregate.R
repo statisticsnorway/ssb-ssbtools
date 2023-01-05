@@ -11,6 +11,7 @@
 #'
 #' @param x A (sparse) dummy matrix
 #' @inheritParams aggregate_multiple_fun
+#' @param ... Further arguments passed to `aggregate_multiple_fun`
 #'
 #' @return data frame
 #' @export
@@ -41,7 +42,7 @@
 #'                 yWmean  = list(wmean  = c("y", "ant")))
 #' )
 #' 
-dummy_aggregate <- function(data, x, fun, vars = NULL) {
+dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
   if (is.function(fun)) {
     fun <- c(fun)
     names(fun) <- ""
@@ -72,6 +73,6 @@ dummy_aggregate <- function(data, x, fun, vars = NULL) {
   x_i_1L <- data.frame(B = x_i_1L)
   
   
-  aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, fun = fun, vars = vars)[-1]
+  aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, fun = fun, vars = vars, ...)[-1]
   
 }

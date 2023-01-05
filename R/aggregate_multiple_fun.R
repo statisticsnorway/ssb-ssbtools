@@ -2,6 +2,9 @@
 #' Wrapper to `aggregate` 
 #' 
 #' Wrapper to \code{\link{aggregate}} that allows multiple functions and functions of several variables 
+#' 
+#' A limitation is that the `...` parameters are not forwarded to the supplied functions.
+#' When extra parameters are needed, supply instead wrapper functions where those parameters are fixed.
 #'
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
@@ -27,6 +30,10 @@
 #' @return A data frame
 #' @export
 #' @importFrom stats aggregate
+#' 
+#' @note Note to developers: If `...` is to be handled (see details), this is probably best done by wrapper functions being generated at the start 
+#'       and not by `...` being sent all the way through. This leads to many issues that must be dealt with, 
+#'       there can be time-consuming overhead in the calculations and `R.utils::doCall` is no solution.
 #'
 #' @examples
 #' z2 <- SSBtoolsData("z2")

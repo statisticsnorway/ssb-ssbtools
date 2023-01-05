@@ -49,6 +49,15 @@ A data frame
 \description{
 Wrapper to \code{\link{aggregate}} that allows multiple functions and functions of several variables
 }
+\details{
+A limitation is that the \code{...} parameters are not forwarded to the supplied functions.
+When extra parameters are needed, supply instead wrapper functions where those parameters are fixed.
+}
+\note{
+Note to developers: If \code{...} is to be handled (see details), this is probably best done by wrapper functions being generated at the start
+and not by \code{...} being sent all the way through. This leads to many issues that must be dealt with,
+there can be time-consuming overhead in the calculations and \code{R.utils::doCall} is no solution.
+}
 \examples{
 z2 <- SSBtoolsData("z2")
 set.seed(12)

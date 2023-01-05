@@ -4,7 +4,7 @@
 \alias{dummy_aggregate}
 \title{\code{aggregate_multiple_fun} using a dummy matrix}
 \usage{
-dummy_aggregate(data, x, fun, vars = NULL)
+dummy_aggregate(data, x, fun, vars = NULL, ...)
 }
 \arguments{
 \item{data}{A data frame containing data to be aggregated}
@@ -20,6 +20,8 @@ Thus, function names and also output variable names can be coded in different wa
 Multiple output variable names can be coded using \code{multi_sep}.
 See examples and examples in \code{\link{fix_vars_amf}}.
 Indices instead of variable names are allowed.}
+
+\item{...}{Further arguments passed to \code{aggregate_multiple_fun}}
 }
 \value{
 data frame
