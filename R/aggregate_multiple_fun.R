@@ -9,6 +9,8 @@
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
+#'            A vector of function as strings is also possible. When unnamed, these function names will be used directly. 
+#'            See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert `fun`.
 #' @param vars  A named vector or list of variable names in `data`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
 #'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
@@ -47,6 +49,14 @@
 #'    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant")
 #' )
 #' 
+#' # With functions as strings 
+#' aggregate_multiple_fun(
+#'    data = z, 
+#'    by = z[c("kostragr", "hovedint")], 
+#'    fun = c("sum", "median"),    
+#'    vars = c(sum = "y", median = "ant", median = "y")
+#' )
+#' 
 #' # with multiple outputs (function my_range)
 #' # and with function of two variables (weighted.mean(y, ant))
 #' my_range <- function(x) c(min = min(x), max = max(x))
@@ -79,15 +89,9 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   
   names(ind) = "i7N9Qd3"
   
-  if (is.function(fun)) {
-    fun <- c(fun)
-    names(fun) <- ""
-  }
-  if (is.null(names(fun))) {
-    names(fun) <- ""
-  }
   
-  
+  fun <- fix_fun_amf(fun)
+
   vars <- fix_vars_amf(vars, name_sep = name_sep,  seve_sep = seve_sep, multi_sep = multi_sep, names_data = names(data))
   
   
@@ -370,6 +374,52 @@ unmatrix <- function(data, sep = "_") {
 
 
 
+#' Fix `fun` parameter to `aggregate_multiple_fun`
+#'
+#' @param fun fun
+#'
+#' @return fun
+#' @export
+#' 
+#' @keywords internal
+#'
+#' @examples
+#' identical(fix_fun_amf("median"), c(median = median))
+#' 
+#' identical(fix_fun_amf(c("sum", "median")), c(sum = sum, median = median))
+#' 
+#' ff <- c("sum", "median", "cor")
+#' names(ff) <- c("", NA, "Correlation")
+#' identical(fix_fun_amf(ff), c(sum, median = median, Correlation = cor))
+#' 
+#' identical(fix_fun_amf(structure("median", names = "")), fix_fun_amf(median))
+fix_fun_amf <- function(fun) {
+  if (is.function(fun)) {
+    fun <- c(fun)  # This is a list
+    names(fun) <- ""
+  }
+  if (is.character(fun)) {
+    fun <- as.list(fun)
+  }
+  if (is.null(names(fun))) {
+    names(fun) <- NA
+  }
+  for (i in seq_along(fun)) {
+    if (is.character(fun[[i]])) {
+      fun_i <- fun[[i]]
+      fun[[i]] <- get(fun[[i]])
+      if (is.na(names(fun)[i])) {
+        names(fun)[i] <- fun_i
+      }
+    } else {
+      if (is.na(names(fun)[i])) {
+        names(fun)[i] <- ""
+      }
+    }
+  }
+  
+  fun
+}
 
 
 

@@ -11,7 +11,9 @@ dummy_aggregate(data, x, fun, vars = NULL, ...)
 
 \item{x}{A (sparse) dummy matrix}
 
-\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.}
+\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
+A vector of function as strings is also possible. When unnamed, these function names will be used directly.
+See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert \code{fun}.}
 
 \item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
