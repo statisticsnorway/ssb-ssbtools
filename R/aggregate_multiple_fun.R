@@ -152,8 +152,8 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
         if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
         if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]))
         if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]), unlist(data[[vars[[i]][4]]][ind]))
-        if(length(vars[[i]]) > 4){
-          stop("Not implemented: length(vars[[i]]) > 4")
+        if(length(vars[[i]]) > 4){   # 2,3,4 implemented directly due to speed
+          out[[i]] <- eval(parse(text = paste("fun_input[[j]](", paste("unlist(data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][ind])", sep = "", collapse = ","),")")))
         }
       }
         
