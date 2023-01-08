@@ -99,11 +99,6 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   fun_names <- sapply(vars, function(x) x[[2]] )
   vars <- lapply(vars, function(x) x[-(1:2)] )
   
-  if (is.null(names(fun))) {
-    names(fun) <- ""
-  }
-  
-  names(fun)[is.na(names(fun))] <- ""
   if (anyDuplicated(names(fun))) {
     stop("fun must be uniquely named")
   }
