@@ -3,9 +3,15 @@
 #' 
 #' Wrapper to \code{\link{aggregate}} that allows multiple functions and functions of several variables 
 #' 
-#' A limitation is that the `...` parameters are not forwarded to the supplied functions.
-#' When extra parameters are needed, supply instead wrapper functions where those parameters are fixed.
-#'
+#' One intention of `aggregate_multiple_fun` is to be a true generalization of `aggregate`. 
+#' However, when many functions are involved, passing extra parameters can easily lead to errors. 
+#' Therefore `forward_dots` and `dots2dots` are set to `FALSE` by default.
+#' When `forward_dots = TRUE` and `dots2dots = FALSE`, parameters will be forwarded, 
+#' but only parameters that are explicitly defined in the specific `fun` function.
+#' For the `sum` function, this means that a possible `na.rm` parameter is forwarded but not others.
+#' When `forward_dots = TRUE` and `dots2dots = TRUE`, other parameters will also be forwarded to `fun` functions where `...` is included. 
+#' For the `sum` function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
+#' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
@@ -24,18 +30,18 @@
 #'            The parameter is useful for advanced use involving model/dummy matrices.  
 #'            
 #'                
-#' @param ... 	Further arguments passed to `aggregate`
+#' @param ... 	Further arguments passed to `aggregate` and, 
+#'              depending on `forward_dots`/`dots2dots`, forwarded to the functions in `fun` (see details).
 #' @param name_sep  A character string used when output variable names are generated. 
 #' @param seve_sep  A character string used when output variable names are generated from functions of several variables. 
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
+#' @param forward_dots Logical vector (possibly recycled) for each element of `fun` that determines whether `...` should be forwarded (see details). 
+#' @param dots2dots  Logical vector (possibly recycled) specifying the behavior of the  `forward_dots` (see details).
 #'
 #' @return A data frame
 #' @export
 #' @importFrom stats aggregate
 #' 
-#' @note Note to developers: If `...` is to be handled (see details), this is probably best done by wrapper functions being generated at the start 
-#'       and not by `...` being sent all the way through. This leads to many issues that must be dealt with, 
-#'       there can be time-consuming overhead in the calculations and `R.utils::doCall` is no solution.
 #'
 #' @examples
 #' z2 <- SSBtoolsData("z2")
@@ -79,7 +85,21 @@
 #' )
 #' 
 #' 
-#' 
+#' # To illustrate forward_dots and dots2dots
+#' q <- z[1, ]
+#' q$w <- 100 * rnorm(1)
+#' for (dots2dots in c(FALSE, TRUE)) for (forward_dots in c(FALSE, TRUE)) {
+#'   cat("\n=======================================\n")
+#'   cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
+#'   out <- aggregate_multiple_fun(
+#'     data = q, by = q["kostragr"], 
+#'     fun = c("sum", "round"), vars = c(sum = "ant", round = "w"), 
+#'     digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
+#'   cat("\n")
+#'   print(out)
+#' }
+#' # In last case digits forwarded to sum (as ...) 
+#' # and wrongly included in the summation
 #'  
 aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
   

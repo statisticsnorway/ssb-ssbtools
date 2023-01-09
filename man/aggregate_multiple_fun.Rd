@@ -39,13 +39,18 @@ Indices instead of variable names are allowed.}
 When NULL, this variable will be generated internally as \code{data.frame(ind = seq_len(nrow(data)))}.
 The parameter is useful for advanced use involving model/dummy matrices.}
 
-\item{...}{Further arguments passed to \code{aggregate}}
+\item{...}{Further arguments passed to \code{aggregate} and,
+depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in \code{fun} (see details).}
 
 \item{name_sep}{A character string used when output variable names are generated.}
 
 \item{seve_sep}{A character string used when output variable names are generated from functions of several variables.}
 
 \item{multi_sep}{A character string used when multiple output variable names are sent as input.}
+
+\item{forward_dots}{Logical vector (possibly recycled) for each element of \code{fun} that determines whether \code{...} should be forwarded (see details).}
+
+\item{dots2dots}{Logical vector (possibly recycled) specifying the behavior of the  \code{forward_dots} (see details).}
 }
 \value{
 A data frame
@@ -54,13 +59,14 @@ A data frame
 Wrapper to \code{\link{aggregate}} that allows multiple functions and functions of several variables
 }
 \details{
-A limitation is that the \code{...} parameters are not forwarded to the supplied functions.
-When extra parameters are needed, supply instead wrapper functions where those parameters are fixed.
-}
-\note{
-Note to developers: If \code{...} is to be handled (see details), this is probably best done by wrapper functions being generated at the start
-and not by \code{...} being sent all the way through. This leads to many issues that must be dealt with,
-there can be time-consuming overhead in the calculations and \code{R.utils::doCall} is no solution.
+One intention of \code{aggregate_multiple_fun} is to be a true generalization of \code{aggregate}.
+However, when many functions are involved, passing extra parameters can easily lead to errors.
+Therefore \code{forward_dots} and \code{dots2dots} are set to \code{FALSE} by default.
+When \code{forward_dots = TRUE} and \code{dots2dots = FALSE}, parameters will be forwarded,
+but only parameters that are explicitly defined in the specific \code{fun} function.
+For the \code{sum} function, this means that a possible \code{na.rm} parameter is forwarded but not others.
+When \code{forward_dots = TRUE} and \code{dots2dots = TRUE}, other parameters will also be forwarded to \code{fun} functions where \code{...} is included.
+For the \code{sum} function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
 }
 \examples{
 z2 <- SSBtoolsData("z2")
@@ -104,6 +110,20 @@ aggregate_multiple_fun(
 )
 
 
-
+# To illustrate forward_dots and dots2dots
+q <- z[1, ]
+q$w <- 100 * rnorm(1)
+for (dots2dots in c(FALSE, TRUE)) for (forward_dots in c(FALSE, TRUE)) {
+  cat("\n=======================================\n")
+  cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
+  out <- aggregate_multiple_fun(
+    data = q, by = q["kostragr"], 
+    fun = c("sum", "round"), vars = c(sum = "ant", round = "w"), 
+    digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
+  cat("\n")
+  print(out)
+}
+# In last case digits forwarded to sum (as ...) 
+# and wrongly included in the summation
  
 }
