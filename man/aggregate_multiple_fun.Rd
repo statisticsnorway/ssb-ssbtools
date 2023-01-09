@@ -14,7 +14,8 @@ aggregate_multiple_fun(
   name_sep = "_",
   seve_sep = ":",
   multi_sep = ",",
-  forward_dots = FALSE
+  forward_dots = FALSE,
+  dots2dots = FALSE
 )
 }
 \arguments{

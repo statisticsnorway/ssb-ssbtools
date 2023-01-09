@@ -81,7 +81,7 @@
 #' 
 #' 
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE) {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -130,24 +130,29 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
     fun_input <- fun
     dots_ind <- vector("list", length(fun))
     for (i in which(forward_dots)) {
-      names_i <- names(formals(fun[[i]]))
-      if ("..." %in% names_i) {
-        names_i <- NULL  # NULL when primitive functions
-      }
-      if (is.null(names_i)) {
-        dots_ind[[i]] <- seq_len(length(dots))
-      } else {
-        if (length(names_i) > length(vars[[i]])) {
-          dots_ind[[i]] <- which(dots %in% names_i)
+      ma_fun_names <- fun_names %in% names(fun)[i]
+      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
+      if (any(ma_fun_names)) {
+        if (length(n_vars_fun_i) > 1) {
+          stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
         }
-      }
-      if (length(dots_ind[[i]])) {
-        ma_fun_names <- fun_names %in% names(fun)[i]
-        if (any(ma_fun_names)) {
-          n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
-          if (length(n_vars_fun_i) > 1) {
-            stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
+        if (is.primitive(fun[[i]])) {
+          names_i <- names(formals(args(fun[[i]])))
+        } else {
+          names_i <- names(formals(fun[[i]]))
+        }
+        if ("..." %in% names_i) {
+          if (dots2dots) {
+            dots_ind[[i]] <- seq_len(length(dots))
+          } else {
+            dots_ind[[i]] <- which(dots %in% names_i)
           }
+        } else {
+          if (length(names_i) > n_vars_fun_i) {
+            dots_ind[[i]] <- which(dots %in% names_i)
+          }
+        }
+        if (length(dots_ind[[i]])) {
           do_call_args <- paste("c(list(", paste0("x", seq_len(n_vars_fun_i), collapse = ", "), "),", "dots[dots_ind[[", i, "]]])")
           do_call_what <- paste0("fun_input[[", i, "]]")
           do_call_string <- paste("do.call(", do_call_what, ",", do_call_args, ")")
