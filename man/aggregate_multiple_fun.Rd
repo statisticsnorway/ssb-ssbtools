@@ -13,7 +13,8 @@ aggregate_multiple_fun(
   ...,
   name_sep = "_",
   seve_sep = ":",
-  multi_sep = ","
+  multi_sep = ",",
+  forward_dots = FALSE
 )
 }
 \arguments{

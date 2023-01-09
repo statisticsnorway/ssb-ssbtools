@@ -81,7 +81,15 @@
 #' 
 #' 
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",") {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE) {
+  
+  if (any(forward_dots)) {
+    match_call <- match.call()
+    is_dot <- !(names(match_call)[-1] %in% names(formals(aggregate_multiple_fun)))
+  } else {
+    is_dot <- FALSE
+  }
+  
   
   if(is.null(ind)){
     ind = data.frame(ind = seq_len(nrow(data)))
@@ -114,8 +122,42 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
     warning("Not all fun elements will be used")
     fun <- fun[names(fun) %in% fun_names]
   }
-  
-  
+
+  if (any(is_dot)) {
+    forward_dots <- rep_len(forward_dots, length(fun))
+    dots <- as.list(match_call)[-1][is_dot]
+    dots <- lapply(dots, eval)
+    fun_input <- fun
+    dots_ind <- vector("list", length(fun))
+    for (i in which(forward_dots)) {
+      names_i <- names(formals(fun[[i]]))
+      if ("..." %in% names_i) {
+        names_i <- NULL  # NULL when primitive functions
+      }
+      if (is.null(names_i)) {
+        dots_ind[[i]] <- seq_len(length(dots))
+      } else {
+        if (length(names_i) > length(vars[[i]])) {
+          dots_ind[[i]] <- which(dots %in% names_i)
+        }
+      }
+      if (length(dots_ind[[i]])) {
+        ma_fun_names <- fun_names %in% names(fun)[i]
+        if (any(ma_fun_names)) {
+          n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
+          if (length(n_vars_fun_i) > 1) {
+            stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
+          }
+          do_call_args <- paste("c(list(", paste0("x", seq_len(n_vars_fun_i), collapse = ", "), "),", "dots[dots_ind[[", i, "]]])")
+          do_call_what <- paste0("fun_input[[", i, "]]")
+          do_call_string <- paste("do.call(", do_call_what, ",", do_call_args, ")")
+          fun_i_args <- paste0("x", seq_len(n_vars_fun_i), collapse = ", ")
+          eval(parse(text = paste0("fun[[", i, "]] <- function(", fun_i_args, ") ", do_call_string)))
+        }
+      }
+    }
+  }
+
   data1 = data[1, ]
   for(i in seq_len(ncol(data1))){
     d1 = unlist(data1[1,i])[1]
@@ -124,7 +166,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   }  
   
   
-  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL){
+  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL, ...){
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
