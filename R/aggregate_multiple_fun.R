@@ -125,6 +125,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 
   if (any(is_dot)) {
     forward_dots <- rep_len(forward_dots, length(fun))
+    dots2dots <- rep_len(dots2dots, length(fun))
     dots <- as.list(match_call)[-1][is_dot]
     dots <- lapply(dots, eval)
     fun_input <- fun
@@ -142,14 +143,14 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
           names_i <- names(formals(fun[[i]]))
         }
         if ("..." %in% names_i) {
-          if (dots2dots) {
+          if (dots2dots[i]) {
             dots_ind[[i]] <- seq_len(length(dots))
           } else {
-            dots_ind[[i]] <- which(dots %in% names_i)
+            dots_ind[[i]] <- which(names(dots) %in% names_i)
           }
         } else {
           if (length(names_i) > n_vars_fun_i) {
-            dots_ind[[i]] <- which(dots %in% names_i)
+            dots_ind[[i]] <- which(names(dots) %in% names_i)
           }
         }
         if (length(dots_ind[[i]])) {
