@@ -50,7 +50,7 @@ depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in
 
 \item{forward_dots}{Logical vector (possibly recycled) for each element of \code{fun} that determines whether \code{...} should be forwarded (see details).}
 
-\item{dots2dots}{Logical vector (possibly recycled) specifying the behavior of the  \code{forward_dots} (see details).}
+\item{dots2dots}{Logical vector (possibly recycled) specifying the behavior when \code{forward_dots = TRUE} (see details).}
 }
 \value{
 A data frame

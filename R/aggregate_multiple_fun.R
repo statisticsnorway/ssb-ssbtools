@@ -36,7 +36,7 @@
 #' @param seve_sep  A character string used when output variable names are generated from functions of several variables. 
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
 #' @param forward_dots Logical vector (possibly recycled) for each element of `fun` that determines whether `...` should be forwarded (see details). 
-#' @param dots2dots  Logical vector (possibly recycled) specifying the behavior of the  `forward_dots` (see details).
+#' @param dots2dots  Logical vector (possibly recycled) specifying the behavior when `forward_dots = TRUE` (see details).
 #'
 #' @return A data frame
 #' @export
