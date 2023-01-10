@@ -147,7 +147,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
     forward_dots <- rep_len(forward_dots, length(fun))
     dots2dots <- rep_len(dots2dots, length(fun))
     dots <- as.list(match_call)[-1][is_dot]
-    dots <- lapply(dots, eval)
+    #dots <- lapply(dots, eval)  # not working since need to go all generations back 
     fun_input <- fun
     dots_ind <- vector("list", length(fun))
     for (i in which(forward_dots)) {
