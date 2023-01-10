@@ -285,6 +285,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' @param vars vars
 #' @inheritParams aggregate_multiple_fun
 #' @param names_data `names(data)` to convert numeric input (indices)
+#' @param ... unused parameters
 #'
 #' @return vars
 #' @export
@@ -317,7 +318,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' 
 #' identical(f(v1), f(f(v1)))
 #' identical(f(v1), v4)
-fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL){
+fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL, ...){
   if (is.null(vars)) {
     stop("non-NULL vars needed")
   }
