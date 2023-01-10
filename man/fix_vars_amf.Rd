@@ -9,7 +9,8 @@ fix_vars_amf(
   name_sep = "_",
   seve_sep = ":",
   multi_sep = ",",
-  names_data = NULL
+  names_data = NULL,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fix_vars_amf(
 \item{multi_sep}{A character string used when multiple output variable names are sent as input.}
 
 \item{names_data}{\code{names(data)} to convert numeric input (indices)}
+
+\item{...}{unused parameters}
 }
 \value{
 vars

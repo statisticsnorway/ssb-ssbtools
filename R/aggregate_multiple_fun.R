@@ -3,9 +3,15 @@
 #' 
 #' Wrapper to \code{\link{aggregate}} that allows multiple functions and functions of several variables 
 #' 
-#' A limitation is that the `...` parameters are not forwarded to the supplied functions.
-#' When extra parameters are needed, supply instead wrapper functions where those parameters are fixed.
-#'
+#' One intention of `aggregate_multiple_fun` is to be a true generalization of `aggregate`. 
+#' However, when many functions are involved, passing extra parameters can easily lead to errors. 
+#' Therefore `forward_dots` and `dots2dots` are set to `FALSE` by default.
+#' When `forward_dots = TRUE` and `dots2dots = FALSE`, parameters will be forwarded, 
+#' but only parameters that are explicitly defined in the specific `fun` function.
+#' For the `sum` function, this means that a possible `na.rm` parameter is forwarded but not others.
+#' When `forward_dots = TRUE` and `dots2dots = TRUE`, other parameters will also be forwarded to `fun` functions where `...` is included. 
+#' For the `sum` function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
+#' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
@@ -24,18 +30,18 @@
 #'            The parameter is useful for advanced use involving model/dummy matrices.  
 #'            
 #'                
-#' @param ... 	Further arguments passed to `aggregate`
+#' @param ... 	Further arguments passed to `aggregate` and, 
+#'              depending on `forward_dots`/`dots2dots`, forwarded to the functions in `fun` (see details).
 #' @param name_sep  A character string used when output variable names are generated. 
 #' @param seve_sep  A character string used when output variable names are generated from functions of several variables. 
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
+#' @param forward_dots Logical vector (possibly recycled) for each element of `fun` that determines whether `...` should be forwarded (see details). 
+#' @param dots2dots  Logical vector (possibly recycled) specifying the behavior when `forward_dots = TRUE` (see details).
 #'
 #' @return A data frame
 #' @export
 #' @importFrom stats aggregate
 #' 
-#' @note Note to developers: If `...` is to be handled (see details), this is probably best done by wrapper functions being generated at the start 
-#'       and not by `...` being sent all the way through. This leads to many issues that must be dealt with, 
-#'       there can be time-consuming overhead in the calculations and `R.utils::doCall` is no solution.
 #'
 #' @examples
 #' z2 <- SSBtoolsData("z2")
@@ -79,9 +85,31 @@
 #' )
 #' 
 #' 
-#' 
+#' # To illustrate forward_dots and dots2dots
+#' q <- z[1, ]
+#' q$w <- 100 * rnorm(1)
+#' for (dots2dots in c(FALSE, TRUE)) for (forward_dots in c(FALSE, TRUE)) {
+#'   cat("\n=======================================\n")
+#'   cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
+#'   out <- aggregate_multiple_fun(
+#'     data = q, by = q["kostragr"], 
+#'     fun = c("sum", "round"), vars = c(sum = "ant", round = "w"), 
+#'     digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
+#'   cat("\n")
+#'   print(out)
+#' }
+#' # In last case digits forwarded to sum (as ...) 
+#' # and wrongly included in the summation
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",") {
+aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
+  
+  if (any(forward_dots)) {
+    match_call <- match.call()
+    is_dot <- !(names(match_call)[-1] %in% names(formals(aggregate_multiple_fun)))
+  } else {
+    is_dot <- FALSE
+  }
+  
   
   if(is.null(ind)){
     ind = data.frame(ind = seq_len(nrow(data)))
@@ -114,8 +142,48 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
     warning("Not all fun elements will be used")
     fun <- fun[names(fun) %in% fun_names]
   }
-  
-  
+
+  if (any(is_dot)) {
+    forward_dots <- rep_len(forward_dots, length(fun))
+    dots2dots <- rep_len(dots2dots, length(fun))
+    dots <- as.list(match_call)[-1][is_dot]
+    #dots <- lapply(dots, eval)  # not working since need to go all generations back 
+    fun_input <- fun
+    dots_ind <- vector("list", length(fun))
+    for (i in which(forward_dots)) {
+      ma_fun_names <- fun_names %in% names(fun)[i]
+      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
+      if (any(ma_fun_names)) {
+        if (length(n_vars_fun_i) > 1) {
+          stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
+        }
+        if (is.primitive(fun[[i]])) {
+          names_i <- names(formals(args(fun[[i]])))
+        } else {
+          names_i <- names(formals(fun[[i]]))
+        }
+        if ("..." %in% names_i) {
+          if (dots2dots[i]) {
+            dots_ind[[i]] <- seq_len(length(dots))
+          } else {
+            dots_ind[[i]] <- which(names(dots) %in% names_i)
+          }
+        } else {
+          if (length(names_i) > n_vars_fun_i) {
+            dots_ind[[i]] <- which(names(dots) %in% names_i)
+          }
+        }
+        if (length(dots_ind[[i]])) {
+          do_call_args <- paste("c(list(", paste0("x", seq_len(n_vars_fun_i), collapse = ", "), "),", "dots[dots_ind[[", i, "]]])")
+          do_call_what <- paste0("fun_input[[", i, "]]")
+          do_call_string <- paste("do.call(", do_call_what, ",", do_call_args, ")")
+          fun_i_args <- paste0("x", seq_len(n_vars_fun_i), collapse = ", ")
+          eval(parse(text = paste0("fun[[", i, "]] <- function(", fun_i_args, ") ", do_call_string)))
+        }
+      }
+    }
+  }
+
   data1 = data[1, ]
   for(i in seq_len(ncol(data1))){
     d1 = unlist(data1[1,i])[1]
@@ -124,7 +192,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   }  
   
   
-  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL){
+  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL, ...){
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
@@ -217,6 +285,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' @param vars vars
 #' @inheritParams aggregate_multiple_fun
 #' @param names_data `names(data)` to convert numeric input (indices)
+#' @param ... unused parameters
 #'
 #' @return vars
 #' @export
@@ -249,7 +318,7 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' 
 #' identical(f(v1), f(f(v1)))
 #' identical(f(v1), v4)
-fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL){
+fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL, ...){
   if (is.null(vars)) {
     stop("non-NULL vars needed")
   }
