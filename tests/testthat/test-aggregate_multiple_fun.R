@@ -31,6 +31,7 @@ test_that("model_aggregate and more", {
   expect_equal(ma0, ma())
   expect_equal(ma0, ma(dim_var = c("age", "year"), formula = NULL))
   expect_equal(ma0, ma(formula = ~age * year))
+  expect_equal(ma0, ma(formula = ~age * year,   pre_aggregate = FALSE))
   expect_equal(ma0, ma(do_round = TRUE, mdigits = 3, digits = 4))
   expect_equal(ma30, ma(do_round = TRUE, mdigits = 3, digits = 4, forward_dots = TRUE))
   expect_equal(ma34a, ma(do_round = TRUE, mdigits = 3, digits = 4, forward_dots = TRUE, dots2dots = c(FALSE, TRUE, TRUE)))
@@ -47,4 +48,7 @@ test_that("model_aggregate and more", {
   
   names(out3)[3:4] <- names(out2)[5:6]
   expect_equal(out2[, -c(3:4)], out3)
+  expect_equal(unique(sapply(ma(formula = ~age * year, pre_aggregate = TRUE, pre_return = TRUE, frame_return = TRUE), nrow)), 6)
+  expect_equal(nrow(ma(formula = ~age * year, pre_aggregate = FALSE, pre_return = TRUE, frame_return = TRUE)[[1]]), 18)
+  
 })
