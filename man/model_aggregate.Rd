@@ -57,6 +57,10 @@ A data frame or a list.
 Internally a dummy/model matrix is created according to the model specification.
 This model matrix is used in the aggregation process via matrix multiplication and/or the function \code{\link{aggregate_multiple_fun}}.
 }
+\details{
+With formula input, limited output can be achieved by \code{\link{formula_selection}} (see example).
+An attribute called \code{startCol} has been added to the output data frame to make this functionality work.
+}
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")
 z$age[z$age == "Y15-29"] <- "young"
@@ -73,6 +77,10 @@ out <- model_aggregate(z,
    fun = c(sum = sum, mean = mean, med = median, ra = my_range))
 
 out
+
+# Limited output can be achieved by formula_selection
+formula_selection(out, ~geo)
+
 
 # To illustrate list_return and pre_return 
 for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {

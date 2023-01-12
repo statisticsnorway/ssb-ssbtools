@@ -5,6 +5,9 @@
 #' Internally a dummy/model matrix is created according to the model specification. 
 #' This model matrix is used in the aggregation process via matrix multiplication and/or the function \code{\link{aggregate_multiple_fun}}.
 #' 
+#' With formula input, limited output can be achieved by \code{\link{formula_selection}} (see example). 
+#' An attribute called `startCol` has been added to the output data frame to make this functionality work.
+#' 
 #'
 #' @param data A data frame containing data to be aggregated 
 #' @param sum_vars Variables to be summed. This will be done via matrix multiplication. 
@@ -44,6 +47,10 @@
 #'    fun = c(sum = sum, mean = mean, med = median, ra = my_range))
 #' 
 #' out
+#' 
+#' # Limited output can be achieved by formula_selection
+#' formula_selection(out, ~geo)
+#' 
 #' 
 #' # To illustrate list_return and pre_return 
 #' for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {
@@ -207,6 +214,10 @@ model_aggregate = function(
   }
   z <- cbind(as.data.frame(mm$crossTable), sum_data, z)
   rownames(z) <- NULL
+  startCol <- attr(mm$modelMatrix, "startCol", exact = TRUE)
+  if (!is.null(startCol)) {
+    attr(z, "startRow") <- startCol
+  }
   if (verbose) {
     cat("]\n")
     flush.console()

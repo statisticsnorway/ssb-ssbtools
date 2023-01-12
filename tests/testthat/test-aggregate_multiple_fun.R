@@ -50,5 +50,6 @@ test_that("model_aggregate and more", {
   expect_equal(out2[, -c(3:4)], out3)
   expect_equal(unique(sapply(ma(formula = ~age * year, pre_aggregate = TRUE, pre_return = TRUE, frame_return = TRUE), nrow)), 6)
   expect_equal(nrow(ma(formula = ~age * year, pre_aggregate = FALSE, pre_return = TRUE, frame_return = TRUE)[[1]]), 18)
+  expect_equal(nrow(formula_selection(out1, ~geo)), 3)
   
 })

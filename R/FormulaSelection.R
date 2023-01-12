@@ -68,3 +68,8 @@ OrderedVarNames <- function(x, sep = ":") {
 }
 
 
+
+#' @rdname FormulaSelection
+#' @export
+#' @note `formula_selection` and `FormulaSelection` are identical
+formula_selection <- FormulaSelection
