@@ -43,13 +43,6 @@
 #' )
 #' 
 dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
-  if (is.function(fun)) {
-    fun <- c(fun)
-    names(fun) <- ""
-  }
-  if (is.null(names(fun))) {
-    names(fun) <- ""
-  }
   if (is.null(vars)) {
     vars <- rep("", ncol(data))
   }
