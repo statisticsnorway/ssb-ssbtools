@@ -91,12 +91,7 @@ model_aggregate = function(
   
   
   sum_vars <- var_names(sum_vars, data)
-  if (is.null(names(sum_vars))) {
-    names(sum_vars) <- ""
-  }
-  names(sum_vars)[is.na(names(sum_vars))] <- ""
-  sum_vars_noname <- sum_vars[names(sum_vars) == ""]
-  
+
   vars <- fix_vars_amf(fun_vars, ..., names_data = names(data))
   fun_names <- sapply(vars, function(x) x[[2]] )
   vars_3 <- sapply(vars, function(x) x[[3]] )
@@ -113,8 +108,8 @@ model_aggregate = function(
     stop("hierarchies, formula, or dim_var needed ")
   }
   
-  if (anyDuplicated(c(sum_vars_noname, fun_vars_noname))) { 
-    stop("Any duplicates in (sum_vars, fun_vars) must be uniquely named (name can be omitted for one element).")
+  if (anyDuplicated(c(sum_vars, fun_vars_noname))) { 
+    stop("Unnamed fun_vars also found in sum_vars (name can be omitted for one element not in sum_vars).")
   }
   
   
