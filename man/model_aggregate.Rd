@@ -6,7 +6,7 @@
 \usage{
 model_aggregate(
   data,
-  sum_vars,
+  sum_vars = NULL,
   fun_vars,
   fun = sum,
   hierarchies = NULL,

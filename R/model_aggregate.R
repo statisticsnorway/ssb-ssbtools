@@ -77,7 +77,7 @@
 #' 
 model_aggregate = function(
   data,
-  sum_vars,
+  sum_vars = NULL,
   fun_vars, 
   fun = sum, 
   hierarchies = NULL,
@@ -89,9 +89,13 @@ model_aggregate = function(
   pre_return = FALSE,
   verbose = TRUE, ...) {
   
+  if (!length(sum_vars)) {
+    sum_vars <- NULL
+  }
+  if (!is.null(sum_vars)) {
+    sum_vars <- var_names(sum_vars, data)
+  }
   
-  sum_vars <- var_names(sum_vars, data)
-
   vars <- fix_vars_amf(fun_vars, ..., names_data = names(data))
   fun_names <- sapply(vars, function(x) x[[2]] )
   vars_3 <- sapply(vars, function(x) x[[3]] )
@@ -118,7 +122,11 @@ model_aggregate = function(
       cat("[pre_aggregate ", dim(data)[1], "*", dim(data)[2], sep = "")
       flush.console()
     }
-    sum_data <- data  # input_data 
+    if (!is.null(sum_vars)) {
+      sum_data <- data  # input_data
+    } else {
+      sum_data <- NULL
+    }
     if (verbose) {
       cat("-")
       flush.console()
@@ -128,13 +136,17 @@ model_aggregate = function(
       cat(">")
       flush.console()
     }
-    sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, preagg_var))], sum, simplify = TRUE)
+    if (!is.null(sum_vars)) {
+      sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, preagg_var))], sum, simplify = TRUE)
+    }
     if (verbose) {
       cat(dim(data)[1])
       flush.console()
     }
-    if (!identical(data[unique(c(d_var, preagg_var))], sum_data[unique(c(d_var, preagg_var))])) {
-      stop("Check failed")
+    if (!is.null(sum_vars)) {
+      if (!identical(data[unique(c(d_var, preagg_var))], sum_data[unique(c(d_var, preagg_var))])) {
+        stop("Check failed")
+      }
     }
     if (verbose) {
       cat("*")
@@ -177,11 +189,12 @@ model_aggregate = function(
     flush.console()
   }
   
-  
-  if (pre_aggregate) {
-    sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(sum_data))))
-  } else {
-    sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(data[unique(sum_vars)]))))
+  if (!is.null(sum_vars)) {
+    if (pre_aggregate) {
+      sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(sum_data))))
+    } else {
+      sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(data[unique(sum_vars)]))))
+    }
   }
   if (verbose) {
     cat("] ")
@@ -215,7 +228,11 @@ model_aggregate = function(
     cat("[cbind")
     flush.console()
   }
-  z <- cbind(as.data.frame(mm$crossTable), sum_data, z)
+  if (!is.null(sum_vars)) {
+    z <- cbind(as.data.frame(mm$crossTable), sum_data, z)
+  } else {
+    z <- cbind(as.data.frame(mm$crossTable), z)
+  }
   rownames(z) <- NULL
   startCol <- attr(mm$modelMatrix, "startCol", exact = TRUE)
   if (!is.null(startCol)) {
