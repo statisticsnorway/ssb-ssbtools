@@ -17,6 +17,8 @@
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
 #'            A vector of function as strings is also possible. When unnamed, these function names will be used directly. 
 #'            See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert `fun`.
+#'            Without specifying `fun`, the functions, as strings, are taken from the function names coded in `vars`.    
+#'            
 #' @param vars  A named vector or list of variable names in `data`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
 #'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
@@ -63,6 +65,13 @@
 #'    vars = c(sum = "y", median = "ant", median = "y")
 #' )
 #' 
+#' # Without specifying functions  
+#' aggregate_multiple_fun(
+#'    data = z, 
+#'    by = z[c("kostragr", "hovedint")], 
+#'    vars = c(sum = "y", median = "ant", median = "y")
+#' )
+#' 
 #' # with multiple outputs (function my_range)
 #' # and with function of two variables (weighted.mean(y, ant))
 #' my_range <- function(x) c(min = min(x), max = max(x))
@@ -101,7 +110,7 @@
 #' # In last case digits forwarded to sum (as ...) 
 #' # and wrongly included in the summation
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
+aggregate_multiple_fun <- function(data, by, fun = NULL, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -117,8 +126,6 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   
   names(ind) = "i7N9Qd3"
   
-  
-  fun <- fix_fun_amf(fun)
 
   vars <- fix_vars_amf(vars, name_sep = name_sep,  seve_sep = seve_sep, multi_sep = multi_sep, names_data = names(data))
   
@@ -126,6 +133,11 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   output_names <- sapply(vars, function(x) x[[1]] )
   fun_names <- sapply(vars, function(x) x[[2]] )
   vars <- lapply(vars, function(x) x[-(1:2)] )
+  
+  if (!length(fun)) {
+    fun <- unique(fun_names)
+  }
+  fun <- fix_fun_amf(fun)
   
   if (anyDuplicated(names(fun))) {
     stop("fun must be uniquely named")
