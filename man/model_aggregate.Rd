@@ -12,7 +12,7 @@ model_aggregate(
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
-  char_var = NULL,
+  preagg_var = NULL,
   pre_aggregate = TRUE,
   list_return = FALSE,
   pre_return = FALSE,
@@ -37,7 +37,7 @@ This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy
 
 \item{dim_var}{The \code{dimVar}      parameter to \code{\link{ModelMatrix}}}
 
-\item{char_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
+\item{preagg_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
 
 \item{pre_aggregate}{Whether to pre-aggregate data to reduce the dimension of the model matrix.
 Note that all original \code{fun_vars} observations are retained in the aggregated dataset and \code{pre_aggregate} does not affect the final result.}
@@ -97,12 +97,12 @@ for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {
 }
 
 
-# To illustrate char_var 
+# To illustrate preagg_var 
 model_aggregate(z, formula = ~age:year, 
 sum_vars = c("ths", "y"), 
 fun_vars = c(mean = "y", ra = "y"), 
 fun = c(mean = mean, ra = my_range), 
-char_var = "eu",
+preagg_var = "eu",
 pre_return = TRUE)[["pre_data"]]
 
 }

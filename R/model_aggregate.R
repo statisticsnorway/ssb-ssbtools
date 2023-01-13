@@ -18,7 +18,7 @@
 #' @param hierarchies The `hierarchies` parameter to \code{\link{ModelMatrix}}
 #' @param formula     The `formula`     parameter to \code{\link{ModelMatrix}} 
 #' @param dim_var     The `dimVar`      parameter to \code{\link{ModelMatrix}}
-#' @param char_var    Extra variables to be used as grouping elements in the pre-aggregate step 
+#' @param preagg_var  Extra variables to be used as grouping elements in the pre-aggregate step 
 #' @param pre_aggregate Whether to pre-aggregate data to reduce the dimension of the model matrix. 
 #'                    Note that all original `fun_vars` observations are retained in the aggregated dataset and `pre_aggregate` does not affect the final result.
 #' @param list_return Whether to return a list of separate components including the model matrix `x`.
@@ -67,12 +67,12 @@
 #' }
 #'
 #'
-#' # To illustrate char_var 
+#' # To illustrate preagg_var 
 #' model_aggregate(z, formula = ~age:year, 
 #' sum_vars = c("ths", "y"), 
 #' fun_vars = c(mean = "y", ra = "y"), 
 #' fun = c(mean = mean, ra = my_range), 
-#' char_var = "eu",
+#' preagg_var = "eu",
 #' pre_return = TRUE)[["pre_data"]]
 #' 
 model_aggregate = function(
@@ -83,7 +83,7 @@ model_aggregate = function(
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
-  char_var = NULL,
+  preagg_var = NULL,
   pre_aggregate = TRUE,
   list_return = FALSE,
   pre_return = FALSE,
@@ -107,7 +107,7 @@ model_aggregate = function(
   unique_fun_vars <- unique(unlist(vars)) 
   
   dim_var <- var_names(dim_var, data)
-  char_var <- var_names(char_var, data)
+  preagg_var <- var_names(preagg_var, data)
   d_var <- unique(NamesFromModelMatrixInput(hierarchies = hierarchies, formula = formula, dimVar = dim_var))
   if (!length(d_var)) {
     stop("hierarchies, formula, or dim_var needed ")
@@ -128,17 +128,17 @@ model_aggregate = function(
       cat("-")
       flush.console()
     }
-    data <- aggregate(data[unique_fun_vars], data[unique(c(d_var, char_var))], function(x) x, simplify = FALSE)
+    data <- aggregate(data[unique_fun_vars], data[unique(c(d_var, preagg_var))], function(x) x, simplify = FALSE)
     if (verbose) {
       cat(">")
       flush.console()
     }
-    sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, char_var))], sum, simplify = TRUE)
+    sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, preagg_var))], sum, simplify = TRUE)
     if (verbose) {
       cat(dim(data)[1])
       flush.console()
     }
-    if (!identical(data[unique(c(d_var, char_var))], sum_data[unique(c(d_var, char_var))])) {
+    if (!identical(data[unique(c(d_var, preagg_var))], sum_data[unique(c(d_var, preagg_var))])) {
       stop("Check failed")
     }
     if (verbose) {
