@@ -7,8 +7,8 @@
 model_aggregate(
   data,
   sum_vars = NULL,
-  fun_vars,
-  fun = sum,
+  fun_vars = NULL,
+  fun = NULL,
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,

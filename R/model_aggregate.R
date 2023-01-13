@@ -78,8 +78,8 @@
 model_aggregate = function(
   data,
   sum_vars = NULL,
-  fun_vars, 
-  fun = sum, 
+  fun_vars = NULL, 
+  fun = NULL, 
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
@@ -96,14 +96,25 @@ model_aggregate = function(
     sum_vars <- var_names(sum_vars, data)
   }
   
-  vars <- fix_vars_amf(fun_vars, ..., names_data = names(data))
-  fun_names <- sapply(vars, function(x) x[[2]] )
-  vars_3 <- sapply(vars, function(x) x[[3]] )
-  vars_length <-  sapply(vars, length)
-  fun_vars_noname <- vars_3[vars_length == 3 & fun_names == ""] 
+  if (!length(fun_vars)) {
+    fun_vars <- NULL
+  }
   
-  vars <- lapply(vars, function(x) x[-(1:2)] )
-  unique_fun_vars <- unique(unlist(vars)) 
+  if (is.null(fun_vars) & is.null(sum_vars)) {
+    stop("sum_vars and/or fun_vars must be specified")
+  }
+  
+  if (!is.null(fun_vars)) {
+    vars <- fix_vars_amf(fun_vars, ..., names_data = names(data))
+    fun_names <- sapply(vars, function(x) x[[2]] )
+    vars_3 <- sapply(vars, function(x) x[[3]] )
+    vars_length <-  sapply(vars, length)
+    fun_vars_noname <- vars_3[vars_length == 3 & fun_names == ""] 
+    vars <- lapply(vars, function(x) x[-(1:2)] )
+    unique_fun_vars <- unique(unlist(vars)) 
+  } else {
+    fun_vars_noname <- NULL
+  }
   
   dim_var <- var_names(dim_var, data)
   preagg_var <- var_names(preagg_var, data)
@@ -131,7 +142,9 @@ model_aggregate = function(
       cat("-")
       flush.console()
     }
-    data <- aggregate(data[unique_fun_vars], data[unique(c(d_var, preagg_var))], function(x) x, simplify = FALSE)
+    if (!is.null(fun_vars)) {
+      data <- aggregate(data[unique_fun_vars], data[unique(c(d_var, preagg_var))], function(x) x, simplify = FALSE)
+    }
     if (verbose) {
       cat(">")
       flush.console()
@@ -139,11 +152,14 @@ model_aggregate = function(
     if (!is.null(sum_vars)) {
       sum_data <- aggregate(sum_data[unique(sum_vars)], sum_data[unique(c(d_var, preagg_var))], sum, simplify = TRUE)
     }
+    if (is.null(fun_vars)) {
+      data <- sum_data[unique(c(d_var, preagg_var))]
+    }
     if (verbose) {
       cat(dim(data)[1])
       flush.console()
     }
-    if (!is.null(sum_vars)) {
+    if (!is.null(sum_vars) & !is.null(fun_vars)) {
       if (!identical(data[unique(c(d_var, preagg_var))], sum_data[unique(c(d_var, preagg_var))])) {
         stop("Check failed")
       }
@@ -206,7 +222,12 @@ model_aggregate = function(
     flush.console()
   }
   
-  z <- dummy_aggregate(data = data, x = mm$modelMatrix, fun = fun, vars = fun_vars, ...)
+  
+  if (!is.null(fun_vars)) {
+    z <- dummy_aggregate(data = data, x = mm$modelMatrix, fun = fun, vars = fun_vars, ...)
+  } else {
+    z <- NULL
+  }
   if (verbose) {
     cat("] ")
     flush.console()
@@ -229,7 +250,11 @@ model_aggregate = function(
     flush.console()
   }
   if (!is.null(sum_vars)) {
-    z <- cbind(as.data.frame(mm$crossTable), sum_data, z)
+    if (!is.null(fun_vars)) {
+      z <- cbind(as.data.frame(mm$crossTable), sum_data, z)
+    } else {
+      z <- cbind(as.data.frame(mm$crossTable), sum_data)
+    }
   } else {
     z <- cbind(as.data.frame(mm$crossTable), z)
   }
