@@ -319,8 +319,8 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' identical(f(v1), f(f(v1)))
 #' identical(f(v1), v4)
 fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL, ...){
-  if (is.null(vars)) {
-    stop("non-NULL vars needed")
+  if (!length(vars)) {
+    stop("non-empty vars needed")
   }
   vars <- as.list(vars)
   for(i in seq_along(vars)){
@@ -458,6 +458,9 @@ unmatrix <- function(data, sep = "_") {
 #' 
 #' identical(fix_fun_amf(structure("median", names = "")), fix_fun_amf(median))
 fix_fun_amf <- function(fun) {
+  if (!length(fun)) {
+    stop("non-empty fun needed")
+  }
   if (is.function(fun)) {
     fun <- c(fun)  # This is a list
     names(fun) <- ""
