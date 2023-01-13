@@ -17,8 +17,8 @@ amf <- function(...) {
   as.vector(as.matrix(aggregate_multiple_fun(
     data = zz, 
     by = zz["nr"], 
-    fun = c(ff = function(a1 = 0, a2 = 0, a3 = 0, ...) {f5(a1, a2, a3, ...)}, f5 = f5), # Error within check if ff is not explicit
     vars = list(ff = "c1", f5 = c("c1", "c2", "c3"), f5 = c("c1", "c2", "c4")),
+    fun = c(ff = function(a1 = 0, a2 = 0, a3 = 0, ...) {f5(a1, a2, a3, ...)}, f5 = f5), # Error within check if ff is not explicit
     ...)[2, 2:4]))
 }
 
