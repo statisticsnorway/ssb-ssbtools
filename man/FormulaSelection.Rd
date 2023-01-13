@@ -2,9 +2,12 @@
 % Please edit documentation in R/FormulaSelection.R
 \name{FormulaSelection}
 \alias{FormulaSelection}
+\alias{formula_selection}
 \title{Limit matrix or data frame to selected model terms}
 \usage{
 FormulaSelection(x, formula)
+
+formula_selection(x, formula)
 }
 \arguments{
 \item{x}{Model matrix or a data frame}
@@ -19,6 +22,9 @@ For use with output from \code{\link{ModelMatrix}} or data frames derived from s
 }
 \details{
 The selection is based on \code{startCol} or \code{startRow} attribute in input \code{x}.
+}
+\note{
+\code{formula_selection} and \code{FormulaSelection} are identical
 }
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")
