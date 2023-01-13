@@ -65,7 +65,15 @@
 #'   cat("\n")
 #'   print(out)
 #' }
-#' 
+#'
+#'
+#' # To illustrate char_var 
+#' model_aggregate(z, formula = ~age:year, 
+#' sum_vars = c("ths", "y"), 
+#' fun_vars = c(mean = "y", ra = "y"), 
+#' fun = c(mean = mean, ra = my_range), 
+#' char_var = "eu",
+#' pre_return = TRUE)[["pre_data"]]
 #' 
 model_aggregate = function(
   data,
