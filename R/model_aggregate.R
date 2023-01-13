@@ -170,7 +170,7 @@ model_aggregate = function(
     }
     sum_data <- sum_data[unique(sum_vars)]
     if (verbose) {
-      cat(dim(data)[2] + dim(sum_data)[2], "] ", sep = "")
+      cat(dim(data)[2] + c(dim(sum_data)[2], 0)[1], "] ", sep = "")   # trick for 0 when NULL
       flush.console()
     }
   } else {
@@ -178,12 +178,12 @@ model_aggregate = function(
   }
   
   if (pre_return) {
-    if (verbose) {
-      cat("\n")
-      flush.console()
-    }
     pre_sum <- sum_data
     if (!list_return) {
+      if (verbose) {
+        cat("\n")
+        flush.console()
+      }
       return(list(pre_data=data, pre_sum = pre_sum))
     }
   }
@@ -200,37 +200,35 @@ model_aggregate = function(
   }
   
   
-  if (verbose) {
-    cat("[crossprod")
-    flush.console()
-  }
-  
   if (!is.null(sum_vars)) {
+    if (verbose) {
+      cat("[crossprod")
+      flush.console()
+    }
     if (pre_aggregate) {
       sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(sum_data))))
     } else {
       sum_data <- as.data.frame(as.matrix(crossprod(mm$modelMatrix, as.matrix(data[unique(sum_vars)]))))
     }
-  }
-  if (verbose) {
-    cat("] ")
-    flush.console()
-  }
-  
-  if (verbose) {
-    cat("[dummy_aggregate")
-    flush.console()
+    if (verbose) {
+      cat("] ")
+      flush.console()
+    }
   }
   
   
   if (!is.null(fun_vars)) {
+    if (verbose) {
+      cat("[dummy_aggregate")
+      flush.console()
+    }
     z <- dummy_aggregate(data = data, x = mm$modelMatrix, fun = fun, vars = fun_vars, ...)
+    if (verbose) {
+      cat("] ")
+      flush.console()
+    }
   } else {
     z <- NULL
-  }
-  if (verbose) {
-    cat("] ")
-    flush.console()
   }
   
   if (list_return) {
