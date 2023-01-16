@@ -14,9 +14,7 @@
 #' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
-#' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
-#'            A vector of function as strings is also possible. When unnamed, these function names will be used directly. 
-#'            See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert `fun`.
+#'    
 #' @param vars  A named vector or list of variable names in `data`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
 #'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
@@ -24,6 +22,11 @@
 #'              Multiple output variable names can be coded using `multi_sep`. 
 #'              See examples and examples in \code{\link{fix_vars_amf}}.
 #'              Indices instead of variable names are allowed. 
+#'            
+#' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
+#'            A vector of function as strings is also possible. When unnamed, these function names will be used directly. 
+#'            See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert `fun`.
+#'            Without specifying `fun`, the functions, as strings, are taken from the function names coded in `vars`.
 #'              
 #' @param ind When non-NULL, a data frame of indices. 
 #'            When NULL, this variable will be generated internally as `data.frame(ind = seq_len(nrow(data)))`. 
@@ -51,15 +54,23 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    fun = c(sum, median = median, d1 = function(x) x[1]),    
-#'    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant")
+#'    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant"),
+#'    fun = c(sum, median = median, d1 = function(x) x[1])  
 #' )
 #' 
-#' # With functions as strings 
+#' # With functions as named strings 
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    fun = c("sum", "median"),    
+#'    vars = c(sum = "y", med = "ant", med = "y"),
+#'    fun = c(sum = "sum", med = "median")
+#' )
+#' 
+#' # Without specifying functions 
+#' # - equivalent to `fun = c("sum", "median")` 
+#' aggregate_multiple_fun(
+#'    data = z, 
+#'    by = z[c("kostragr", "hovedint")], 
 #'    vars = c(sum = "y", median = "ant", median = "y")
 #' )
 #' 
@@ -69,8 +80,8 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    fun = c(sum, ra = my_range, wmean = weighted.mean),    
-#'    vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant"))
+#'    vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant")),
+#'    fun = c(sum, ra = my_range, wmean = weighted.mean)
 #' )
 #' 
 #' # with specified output variable names
@@ -78,10 +89,10 @@
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    fun = c(sum, ra = my_range, wmean = weighted.mean),    
 #'    vars = list("ant", "y", 
 #'                `antmin,antmax` = list(ra = "ant"), 
-#'                 yWmean  = list(wmean  = c("y", "ant")))
+#'                 yWmean  = list(wmean  = c("y", "ant"))),
+#'    fun = c(sum, ra = my_range, wmean = weighted.mean)
 #' )
 #' 
 #' 
@@ -93,7 +104,7 @@
 #'   cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
 #'   out <- aggregate_multiple_fun(
 #'     data = q, by = q["kostragr"], 
-#'     fun = c("sum", "round"), vars = c(sum = "ant", round = "w"), 
+#'     vars = c(sum = "ant", round = "w"), fun = c("sum", "round"),  
 #'     digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
 #'   cat("\n")
 #'   print(out)
@@ -101,7 +112,7 @@
 #' # In last case digits forwarded to sum (as ...) 
 #' # and wrongly included in the summation
 #'  
-aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
+aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -117,8 +128,6 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   
   names(ind) = "i7N9Qd3"
   
-  
-  fun <- fix_fun_amf(fun)
 
   vars <- fix_vars_amf(vars, name_sep = name_sep,  seve_sep = seve_sep, multi_sep = multi_sep, names_data = names(data))
   
@@ -126,6 +135,11 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
   output_names <- sapply(vars, function(x) x[[1]] )
   fun_names <- sapply(vars, function(x) x[[2]] )
   vars <- lapply(vars, function(x) x[-(1:2)] )
+  
+  if (!length(fun)) {
+    fun <- unique(fun_names)
+  }
+  fun <- fix_fun_amf(fun)
   
   if (anyDuplicated(names(fun))) {
     stop("fun must be uniquely named")
@@ -319,8 +333,8 @@ aggregate_multiple_fun <- function(data, by, fun, vars, ind = NULL, ..., name_se
 #' identical(f(v1), f(f(v1)))
 #' identical(f(v1), v4)
 fix_vars_amf  = function(vars, name_sep = "_", seve_sep = ":", multi_sep = ",", names_data = NULL, ...){
-  if (is.null(vars)) {
-    stop("non-NULL vars needed")
+  if (!length(vars)) {
+    stop("non-empty vars needed")
   }
   vars <- as.list(vars)
   for(i in seq_along(vars)){
@@ -458,6 +472,9 @@ unmatrix <- function(data, sep = "_") {
 #' 
 #' identical(fix_fun_amf(structure("median", names = "")), fix_fun_amf(median))
 fix_fun_amf <- function(fun) {
+  if (!length(fun)) {
+    stop("non-empty fun needed")
+  }
   if (is.function(fun)) {
     fun <- c(fun)  # This is a list
     names(fun) <- ""

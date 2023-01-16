@@ -43,13 +43,6 @@
 #' )
 #' 
 dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
-  if (is.function(fun)) {
-    fun <- c(fun)
-    names(fun) <- ""
-  }
-  if (is.null(names(fun))) {
-    names(fun) <- ""
-  }
   if (is.null(vars)) {
     vars <- rep("", ncol(data))
   }
@@ -73,6 +66,6 @@ dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
   x_i_1L <- data.frame(B = x_i_1L)
   
   
-  aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, fun = fun, vars = vars, ...)[-1]
+  aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, vars = vars, fun = fun, ...)[-1]
   
 }

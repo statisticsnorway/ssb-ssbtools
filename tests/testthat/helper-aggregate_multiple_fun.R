@@ -17,8 +17,8 @@ amf <- function(...) {
   as.vector(as.matrix(aggregate_multiple_fun(
     data = zz, 
     by = zz["nr"], 
-    fun = c(ff = function(a1 = 0, a2 = 0, a3 = 0, ...) {f5(a1, a2, a3, ...)}, f5 = f5), # Error within check if ff is not explicit
     vars = list(ff = "c1", f5 = c("c1", "c2", "c3"), f5 = c("c1", "c2", "c4")),
+    fun = c(ff = function(a1 = 0, a2 = 0, a3 = 0, ...) {f5(a1, a2, a3, ...)}, f5 = f5), # Error within check if ff is not explicit
     ...)[2, 2:4]))
 }
 
@@ -43,16 +43,20 @@ my_range2 <- function(x, do_round = FALSE, mdigits = 0, ...) {
 }
 
 
-ma <- function(..., dim_var = NULL, formula = ~age:year + geo, frame_return = FALSE) {
+ma <- function(..., dim_var = NULL, formula = ~age:year + geo, frame_return = FALSE,
+               sum_vars = c("y", "ths"),
+               fun_vars = c(sum = "ths", mean = "y", ra = "y")) {
   a <- model_aggregate(za, dim_var = dim_var, formula = formula, 
-                       sum_vars = c("y", "ths"), 
-                       fun_vars = c(sum = "ths", mean = "y", ra = "y"), fun = c(sum = sum, mean = mean, ra = my_range2), 
+                       sum_vars = sum_vars, 
+                       fun_vars = fun_vars, fun = c(sum = sum, mean = mean, ra = my_range2), 
                        verbose = FALSE, ...)
   if (frame_return) {
     return(a)
   }
   
-  b <- a[a$age == "old" & a$year == "2016", c("y", "ths", "ths_sum", "y_mean", "y_ra.min", "y_ra.max")]
+  out_names <- c("y", "ths", "ths_sum", "y_mean", "y_ra.min", "y_ra.max")
+  out_names <- out_names[out_names %in% names(a)]
+  b <- a[a$age == "old" & a$year == "2016", out_names]
   
   as.vector(as.matrix(b))
 }
