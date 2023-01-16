@@ -58,15 +58,16 @@
 #'    fun = c(sum, median = median, d1 = function(x) x[1])  
 #' )
 #' 
-#' # With functions as strings 
+#' # With functions as named strings 
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
-#'    vars = c(sum = "y", median = "ant", median = "y"),
-#'    fun = c("sum", "median")
+#'    vars = c(sum = "y", med = "ant", med = "y"),
+#'    fun = c(sum = "sum", med = "median")
 #' )
 #' 
-#' # Without specifying functions  
+#' # Without specifying functions 
+#' # - equivalent to `fun = c("sum", "median")` 
 #' aggregate_multiple_fun(
 #'    data = z, 
 #'    by = z[c("kostragr", "hovedint")], 
