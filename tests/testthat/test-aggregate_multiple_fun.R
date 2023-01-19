@@ -59,4 +59,8 @@ test_that("model_aggregate and more", {
   expect_true(is.null(ma(formula = ~age * year, pre_aggregate = TRUE, pre_return = TRUE, frame_return = TRUE, sum_vars = NULL)[["pre_sum"]]))
   expect_equal(dim(ma(formula = ~age * year, pre_aggregate = TRUE, pre_return = TRUE, frame_return = TRUE, fun_vars = NULL)[["pre_data"]]), c(6, 2))
   
+  out4 <- ma(formula = ~age * eu + geo, frame_return = TRUE)
+  expect_equal(formula_selection(out4, ~age:eu + age), formula_selection(out4, c("(Intercept)", "age", "age:eu")))
+  expect_equal(formula_selection(out4, ~age * eu - 1), formula_selection(out4, c("eu*age")))
+  expect_equal(formula_selection(out4, ~age * eu), formula_selection(out4, c("1", "age", "eu", "eu:age")))
 })
