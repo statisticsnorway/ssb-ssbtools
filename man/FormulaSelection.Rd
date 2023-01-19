@@ -5,14 +5,18 @@
 \alias{formula_selection}
 \title{Limit matrix or data frame to selected model terms}
 \usage{
-FormulaSelection(x, formula)
+FormulaSelection(x, formula, intercept = NA)
 
-formula_selection(x, formula)
+formula_selection(x, formula, intercept = NA)
 }
 \arguments{
 \item{x}{Model matrix or a data frame}
 
-\item{formula}{Formula representing the limitation}
+\item{formula}{Formula representing the limitation
+or character string(s) to be converted to a formula (see details)}
+
+\item{intercept}{Parameter that specifies whether a possible intercept term (overall total) should be included in the output.
+Default is \code{TRUE} when a formula is input. Otherwise, see details.}
 }
 \value{
 Limited model matrix or a data frame
@@ -22,6 +26,15 @@ For use with output from \code{\link{ModelMatrix}} or data frames derived from s
 }
 \details{
 The selection is based on \code{startCol} or \code{startRow} attribute in input \code{x}.
+
+With \strong{formula as character}:
+\itemize{
+\item \strong{\code{~}} is included:
+Input is converted by \code{as.formula} and default intercept is \code{TRUE}.
+\item \strong{\code{~}} is not included:
+Internally, input data is converted to a formula by adding \code{~} and possibly \code{+}'s when the length is \verb{>1}.
+Default intercept is \code{FALSE} unless \code{"1"} or \code{"(Intercept)"} (is changed internally to \code{"1"}) is included.
+}
 }
 \note{
 \code{formula_selection} and \code{FormulaSelection} are identical
@@ -33,9 +46,16 @@ z$age[z$age == "Y30-64"] <- "old"
 
 x <- ModelMatrix(z, formula = ~age * year)
 
-FormulaSelection(x, ~age)
+FormulaSelection(x, "age")
 FormulaSelection(x, ~year)
 FormulaSelection(x, ~year:age)
+
+# x1, x2, x3, x4 and x4 are identical
+x1 <- FormulaSelection(x, ~age)
+x2 <- FormulaSelection(x, "~age")
+x3 <- FormulaSelection(x, "age", intercept = TRUE)
+x4 <- FormulaSelection(x, c("1", "age"))
+x5 <- FormulaSelection(x, c("(Intercept)", "age"))
 
 
 a <- ModelMatrix(z, formula = ~age * geo + year, crossTable = TRUE)
@@ -47,6 +67,6 @@ rownames(b) <- NULL
 attr(b, "startRow") <- attr(a$modelMatrix, "startCol", exact = TRUE)
 
 FormulaSelection(b, ~geo * age)
-FormulaSelection(b, ~age:geo)
-FormulaSelection(b, ~year)
+FormulaSelection(b, "age:geo")
+FormulaSelection(b, ~year - 1)
 }
