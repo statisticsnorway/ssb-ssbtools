@@ -38,7 +38,8 @@ Without specifying \code{fun}, the functions, as strings, are taken from the fun
 
 \item{ind}{When non-NULL, a data frame of indices.
 When NULL, this variable will be generated internally as \code{data.frame(ind = seq_len(nrow(data)))}.
-The parameter is useful for advanced use involving model/dummy matrices.}
+The parameter is useful for advanced use involving model/dummy matrices.
+For special use (\code{dummy = FALSE} in \code{\link{dummy_aggregate}}) \code{ind} can also be a two-column data frame.}
 
 \item{...}{Further arguments passed to \code{aggregate} and,
 depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in \code{fun} (see details).}

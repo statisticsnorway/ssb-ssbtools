@@ -42,7 +42,8 @@
 #'                 yWmean  = list(wmean  = c("y", "ant")))
 #' )
 #' 
-dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
+dummy_aggregate <- function(data, x, fun, vars = NULL, dummy = TRUE, 
+                            when_non_dummy = warning, ...) {
   if (is.null(vars)) {
     vars <- rep("", ncol(data))
   }
@@ -65,6 +66,17 @@ dummy_aggregate <- function(data, x, fun, vars = NULL, ...) {
   x_j_1L <- data.frame(A = x_j_1L)
   x_i_1L <- data.frame(B = x_i_1L)
   
+  
+  if (dummy) {
+    if (!is.null(when_non_dummy)) {
+      if (min(x@x) < 1 | max(x@x) > 1) {
+        when_non_dummy("All non-0s in x are treated as 1s. Use dummy = FALSE?")
+      }
+    }
+    
+  } else {
+    x_i_1L <- cbind(x_i_1L, x = c(x@x, rep(NA, length(is_na_j1))))
+  }
   
   aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, vars = vars, fun = fun, ...)[-1]
   

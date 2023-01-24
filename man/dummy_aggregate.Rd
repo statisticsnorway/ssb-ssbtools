@@ -4,7 +4,15 @@
 \alias{dummy_aggregate}
 \title{\code{aggregate_multiple_fun} using a dummy matrix}
 \usage{
-dummy_aggregate(data, x, fun, vars = NULL, ...)
+dummy_aggregate(
+  data,
+  x,
+  fun,
+  vars = NULL,
+  dummy = TRUE,
+  when_non_dummy = warning,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame containing data to be aggregated}
