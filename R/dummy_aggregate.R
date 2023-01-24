@@ -5,12 +5,17 @@
 #' `aggregate_multiple_fun` using a dummy matrix 
 #' 
 #' Wrapper to \code{\link{aggregate_multiple_fun}} 
-#' that uses a dummy matrix instead of the `by` parameter
+#' that uses a dummy matrix instead of the `by` parameter.
+#' Functionality for non-dummy  matrices as well.
 #' 
 #' Internally this function make use of the `ind` parameter to `aggregate_multiple_fun`  
 #'
 #' @param x A (sparse) dummy matrix
 #' @inheritParams aggregate_multiple_fun
+#' @param dummy When `TRUE`, only 0s and 1s are assumed in x.
+#'              When `FALSE`, non-0s in `x` are passed as an additional first input parameter to the `fun` functions.
+#'              Thus, the same result as matrix multiplication is achieved with `fun = function(x, y) sum(x * y)`.
+#' @param when_non_dummy Function to be called when `dummy` is `TRUE` and when `x` is non-dummy.  Supply `NULL` to do nothing. 
 #' @param ... Further arguments passed to `aggregate_multiple_fun`
 #'
 #' @return data frame
@@ -42,6 +47,27 @@
 #'                 yWmean  = list(wmean  = c("y", "ant")))
 #' )
 #' 
+#' 
+#' # Make a non-dummy matrix 
+#' x2 <- x
+#' x2[17, 2:5] <- c(-1, 3, 0, 10)
+#' x2[, 4] <- 0
+#' 
+#' # Now warning 
+#' # Result is not same as t(x2) %*% z[["ant"]]
+#' dummy_aggregate(data = z, x = x2, fun = sum, vars = "ant")
+#' 
+#' # Now same as t(x2) %*% z[["ant"]]
+#' dummy_aggregate(data = z, x = x2, 
+#'                 fun = function(x, y) sum(x * y), 
+#'                 vars = "ant", dummy = FALSE)
+#' 
+#' 
+#' # Same as t(x2) %*% z[["ant"]]  + t(x2^2) %*% z[["y"]] 
+#' dummy_aggregate(data = z, x = x2, 
+#'                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)}, 
+#'                 vars = list(c("ant", "y")), dummy = FALSE)
+#'                 
 dummy_aggregate <- function(data, x, fun, vars = NULL, dummy = TRUE, 
                             when_non_dummy = warning, ...) {
   if (is.null(vars)) {

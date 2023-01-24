@@ -32,6 +32,12 @@ Multiple output variable names can be coded using \code{multi_sep}.
 See examples and examples in \code{\link{fix_vars_amf}}.
 Indices instead of variable names are allowed.}
 
+\item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in x.
+When \code{FALSE}, non-0s in \code{x} are passed as an additional first input parameter to the \code{fun} functions.
+Thus, the same result as matrix multiplication is achieved with \code{fun = function(x, y) sum(x * y)}.}
+
+\item{when_non_dummy}{Function to be called when \code{dummy} is \code{TRUE} and when \code{x} is non-dummy.  Supply \code{NULL} to do nothing.}
+
 \item{...}{Further arguments passed to \code{aggregate_multiple_fun}}
 }
 \value{
@@ -39,7 +45,8 @@ data frame
 }
 \description{
 Wrapper to \code{\link{aggregate_multiple_fun}}
-that uses a dummy matrix instead of the \code{by} parameter
+that uses a dummy matrix instead of the \code{by} parameter.
+Functionality for non-dummy  matrices as well.
 }
 \details{
 Internally this function make use of the \code{ind} parameter to \code{aggregate_multiple_fun}
@@ -67,6 +74,27 @@ dummy_aggregate(
                 yWmean  = list(wmean  = c("y", "ant")))
 )
 
+
+# Make a non-dummy matrix 
+x2 <- x
+x2[17, 2:5] <- c(-1, 3, 0, 10)
+x2[, 4] <- 0
+
+# Now warning 
+# Result is not same as t(x2) \%*\% z[["ant"]]
+dummy_aggregate(data = z, x = x2, fun = sum, vars = "ant")
+
+# Now same as t(x2) \%*\% z[["ant"]]
+dummy_aggregate(data = z, x = x2, 
+                fun = function(x, y) sum(x * y), 
+                vars = "ant", dummy = FALSE)
+
+
+# Same as t(x2) \%*\% z[["ant"]]  + t(x2^2) \%*\% z[["y"]] 
+dummy_aggregate(data = z, x = x2, 
+                fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)}, 
+                vars = list(c("ant", "y")), dummy = FALSE)
+                
 }
 \seealso{
 \code{\link{aggregate_multiple_fun}}
