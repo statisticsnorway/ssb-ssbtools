@@ -12,6 +12,12 @@
 #' When `forward_dots = TRUE` and `dots2dots = TRUE`, other parameters will also be forwarded to `fun` functions where `...` is included. 
 #' For the `sum` function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
 #' 
+#' For the function to work with \code{\link{dummy_aggregate}}), 
+#' the data is subject to \code{\link{unlist}}) before the `fun` functions are called.
+#' This does not apply in the special case where `ind` is a two-column data frame.
+#' Then, in the case of list data, the `fun` functions have to handle this themselves.
+#' 
+#' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #'    
@@ -245,20 +251,20 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
             out[[i]] <- eval(parse(text = paste("fun_input[[j]](", paste("unlist(data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][ind])", sep = "", collapse = ","),")")))
           }
         }
-      } else {   # Copy of code above and x_x[ind] included as extra parameter
+      } else {   # Copy of code above + unlist removed  + x_x[ind] included as extra parameter
         if(length(vars[[i]]) == 1){
-          out[[i]] <- fun_input[[j]](x_x[ind], unlist(data[[vars[[i]]]][x_r[ind]]))
+          out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]]]][x_r[ind]])
           if (names(fun)[j] == "") {
             names(out)[i] <- vars[[i]]
           } else {
             names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = name_sep)
           }
         } else {
-          if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]](x_x[ind], unlist(data[[vars[[i]][1]]][x_r[ind]]), unlist(data[[vars[[i]][2]]][x_r[ind]]))
-          if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]](x_x[ind], unlist(data[[vars[[i]][1]]][x_r[ind]]), unlist(data[[vars[[i]][2]]][x_r[ind]]), unlist(data[[vars[[i]][3]]][x_r[ind]]))
-          if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]](x_x[ind], unlist(data[[vars[[i]][1]]][x_r[ind]]), unlist(data[[vars[[i]][2]]][x_r[ind]]), unlist(data[[vars[[i]][3]]][x_r[ind]]), unlist(data[[vars[[i]][4]]][x_r[ind]]))
+          if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]])
+          if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]], data[[vars[[i]][3]]][x_r[ind]])
+          if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]], data[[vars[[i]][3]]][x_r[ind]], data[[vars[[i]][4]]][x_r[ind]])
           if(length(vars[[i]]) > 4){   # 2,3,4 implemented directly due to speed
-            out[[i]] <- eval(parse(text = paste("fun_input[[j]]( x_x[ind], ", paste("unlist(data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][x_r[ind]])", sep = "", collapse = ","),")")))
+            out[[i]] <- eval(parse(text = paste("fun_input[[j]]( x_x[ind], ", paste("data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][x_r[ind]]", sep = "", collapse = ","),")")))
           }
         }
       }
