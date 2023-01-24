@@ -15,6 +15,7 @@
 #' @param dummy When `TRUE`, only 0s and 1s are assumed in x.
 #'              When `FALSE`, non-0s in `x` are passed as an additional first input parameter to the `fun` functions.
 #'              Thus, the same result as matrix multiplication is achieved with `fun = function(x, y) sum(x * y)`.
+#'              In this case, the data will not be subjected to `unlist`. See \code{\link{aggregate_multiple_fun}}. 
 #' @param when_non_dummy Function to be called when `dummy` is `TRUE` and when `x` is non-dummy.  Supply `NULL` to do nothing. 
 #' @param ... Further arguments passed to `aggregate_multiple_fun`
 #'

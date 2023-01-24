@@ -21,8 +21,12 @@
 #' @param preagg_var  Extra variables to be used as grouping elements in the pre-aggregate step 
 #' @param pre_aggregate Whether to pre-aggregate data to reduce the dimension of the model matrix. 
 #'                    Note that all original `fun_vars` observations are retained in the aggregated dataset and `pre_aggregate` does not affect the final result.
+#'                    However, `pre_aggregate` must be set to `FALSE` when the `dummy_aggregate` parameter `dummy` is set to `FALSE` 
+#'                    since then \code{\link{unlist}} will not be run. 
+#'                    An exception to this is if the `fun` functions are written to handle list data. 
 #' @param list_return Whether to return a list of separate components including the model matrix `x`.
-#' @param pre_return  Whether to return the pre-aggregate data as a two-component list. Can also be combined with `list_return` (see examples). 
+#' @param pre_return  Whether to return the pre-aggregate data as a two-component list. Can also be combined with `list_return` (see examples).
+#' 
 #' @param verbose     Whether to print information during calculations. 
 #' @param mm_args     List of further arguments passed to `ModelMatrix`.
 #' @param ... Further arguments passed to `dummy_aggregate`.
@@ -76,6 +80,42 @@
 #' preagg_var = "eu",
 #' pre_return = TRUE)[["pre_data"]]
 #' 
+#' 
+#' # To illustrate hierarchies 
+#' geo_hier <- SSBtoolsData("sprt_emp_geoHier")
+#' model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier), 
+#'                 sum_vars = "y", 
+#'                 fun_vars = c(sum = "y"))
+#' 
+#' ####  Special non-dummy cases illustrated below  ####
+#' 
+#' # Extend the hierarchy to make non-dummy model matrix  
+#' geo_hier2 <- rbind(data.frame(mapsFrom = c("EU", "Spain"), 
+#'                               mapsTo = "EUandSpain", sign = 1), geo_hier[, -4])
+#' 
+#' # Warning since non-dummy
+#' # y and y_sum are different 
+#' model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+#'                 sum_vars = "y", 
+#'                 fun_vars = c(sum = "y"))
+#' 
+#' # No warning since dummy since unionComplement = TRUE (see ?HierarchyCompute)
+#' # y and y_sum are equal   
+#' model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+#'                 sum_vars = "y", 
+#'                 fun_vars = c(sum = "y"),
+#'                 mm_args = list(unionComplement = TRUE))
+#' 
+#' # Non-dummy again, but no warning since dummy = FALSE
+#' # Then pre_aggregate must also be FALSE (otherwise error) 
+#' # fun with extra argument needed (see ?dummy_aggregate)
+#' # y and y_sum2 are equal
+#' model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+#'                 sum_vars = "y", 
+#'                 fun_vars = c(sum2 = "y"),
+#'                 fun = c(sum2 = function(x, y) sum(x * y)),
+#'                 dummy = FALSE, pre_aggregate = FALSE) 
+#'                 
 model_aggregate = function(
   data,
   sum_vars = NULL,

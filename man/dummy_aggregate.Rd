@@ -34,7 +34,8 @@ Indices instead of variable names are allowed.}
 
 \item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in x.
 When \code{FALSE}, non-0s in \code{x} are passed as an additional first input parameter to the \code{fun} functions.
-Thus, the same result as matrix multiplication is achieved with \code{fun = function(x, y) sum(x * y)}.}
+Thus, the same result as matrix multiplication is achieved with \code{fun = function(x, y) sum(x * y)}.
+In this case, the data will not be subjected to \code{unlist}. See \code{\link{aggregate_multiple_fun}}.}
 
 \item{when_non_dummy}{Function to be called when \code{dummy} is \code{TRUE} and when \code{x} is non-dummy.  Supply \code{NULL} to do nothing.}
 
