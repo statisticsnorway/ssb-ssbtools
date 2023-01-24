@@ -17,6 +17,7 @@ model_aggregate(
   list_return = FALSE,
   pre_return = FALSE,
   verbose = TRUE,
+  mm_args = NULL,
   ...
 )
 }
@@ -47,6 +48,8 @@ Note that all original \code{fun_vars} observations are retained in the aggregat
 \item{pre_return}{Whether to return the pre-aggregate data as a two-component list. Can also be combined with \code{list_return} (see examples).}
 
 \item{verbose}{Whether to print information during calculations.}
+
+\item{mm_args}{List of further arguments passed to \code{ModelMatrix}.}
 
 \item{...}{Further arguments passed to \code{dummy_aggregate}.}
 }

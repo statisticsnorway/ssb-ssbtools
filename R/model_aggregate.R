@@ -24,6 +24,7 @@
 #' @param list_return Whether to return a list of separate components including the model matrix `x`.
 #' @param pre_return  Whether to return the pre-aggregate data as a two-component list. Can also be combined with `list_return` (see examples). 
 #' @param verbose     Whether to print information during calculations. 
+#' @param mm_args     List of further arguments passed to `ModelMatrix`.
 #' @param ... Further arguments passed to `dummy_aggregate`.
 #'
 #' @return A data frame or a list. 
@@ -87,7 +88,8 @@ model_aggregate = function(
   pre_aggregate = TRUE,
   list_return = FALSE,
   pre_return = FALSE,
-  verbose = TRUE, ...) {
+  verbose = TRUE,
+  mm_args = NULL, ...) {
   
   if (!length(sum_vars)) {
     sum_vars <- NULL
@@ -193,7 +195,11 @@ model_aggregate = function(
     cat("[ModelMatrix")
     flush.console()
   }
-  mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE)
+  if (is.null(mm_args)) {
+    mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE)
+  } else {
+    mm <- do.call(ModelMatrix, c(list(data = data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE), mm_args))
+  }
   if (verbose) {
     cat("] ")
     flush.console()
