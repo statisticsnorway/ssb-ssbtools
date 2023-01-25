@@ -13,7 +13,8 @@ model_aggregate(
   formula = NULL,
   dim_var = NULL,
   preagg_var = NULL,
-  pre_aggregate = TRUE,
+  dummy = TRUE,
+  pre_aggregate = dummy,
   list_return = FALSE,
   pre_return = FALSE,
   verbose = TRUE,
@@ -39,6 +40,10 @@ This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy
 \item{dim_var}{The \code{dimVar}      parameter to \code{\link{ModelMatrix}}}
 
 \item{preagg_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
+
+\item{dummy}{The \code{dummy}       parameter to \code{\link{dummy_aggregate}}.
+When \code{TRUE}, only 0s and 1s are assumed in the generated model matrix.
+When \code{FALSE}, non-0s in this matrix are passed as an additional first input parameter to the \code{fun} functions.}
 
 \item{pre_aggregate}{Whether to pre-aggregate data to reduce the dimension of the model matrix.
 Note that all original \code{fun_vars} observations are retained in the aggregated dataset and \code{pre_aggregate} does not affect the final result.
@@ -138,13 +143,13 @@ model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2),
                 mm_args = list(unionComplement = TRUE))
 
 # Non-dummy again, but no warning since dummy = FALSE
-# Then pre_aggregate must also be FALSE (otherwise error) 
+# Then pre_aggregate is by default set to FALSE (error when TRUE) 
 # fun with extra argument needed (see ?dummy_aggregate)
 # y and y_sum2 are equal
 model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
                 sum_vars = "y", 
                 fun_vars = c(sum2 = "y"),
                 fun = c(sum2 = function(x, y) sum(x * y)),
-                dummy = FALSE, pre_aggregate = FALSE) 
+                dummy = FALSE) 
                 
 }
