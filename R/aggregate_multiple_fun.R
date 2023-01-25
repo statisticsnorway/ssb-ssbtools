@@ -162,7 +162,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
   
   
   if (!all(unlist(vars) %in% names(data))) {
-    stop("All vars must be in names(x)")
+    stop("All vars must be in names(data)")
   }
   if (!all(fun_names %in% names(fun))) {
     stop("All fun names in vars must be in names(fun)")
