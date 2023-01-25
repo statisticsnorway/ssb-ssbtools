@@ -12,7 +12,7 @@
 #'
 #' @param x A (sparse) dummy matrix
 #' @inheritParams aggregate_multiple_fun
-#' @param dummy When `TRUE`, only 0s and 1s are assumed in x.
+#' @param dummy When `TRUE`, only 0s and 1s are assumed in `x`.
 #'              When `FALSE`, non-0s in `x` are passed as an additional first input parameter to the `fun` functions.
 #'              Thus, the same result as matrix multiplication is achieved with `fun = function(x, y) sum(x * y)`.
 #'              In this case, the data will not be subjected to `unlist`. See \code{\link{aggregate_multiple_fun}}. 

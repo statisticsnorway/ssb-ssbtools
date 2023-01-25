@@ -32,7 +32,7 @@ Multiple output variable names can be coded using \code{multi_sep}.
 See examples and examples in \code{\link{fix_vars_amf}}.
 Indices instead of variable names are allowed.}
 
-\item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in x.
+\item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in \code{x}.
 When \code{FALSE}, non-0s in \code{x} are passed as an additional first input parameter to the \code{fun} functions.
 Thus, the same result as matrix multiplication is achieved with \code{fun = function(x, y) sum(x * y)}.
 In this case, the data will not be subjected to \code{unlist}. See \code{\link{aggregate_multiple_fun}}.}
