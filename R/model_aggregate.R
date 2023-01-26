@@ -272,8 +272,8 @@ model_aggregate = function(
       cat("[dummy_aggregate")
       flush.console()
     }
-    z <- dummy_aggregate(data = data, x = mm$modelMatrix, fun = fun, 
-                         vars = fun_vars, dummy = dummy, ...)
+    z <- dummy_aggregate(data = data, x = mm$modelMatrix, vars = fun_vars, 
+                         fun = fun, dummy = dummy, ...)
     if (verbose) {
       cat("] ")
       flush.console()

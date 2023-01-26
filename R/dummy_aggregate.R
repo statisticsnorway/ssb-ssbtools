@@ -42,11 +42,10 @@
 #' dummy_aggregate(
 #'    data = z, 
 #'    x = x, 
-#'    fun = c(sum, ra = my_range, wmean = weighted.mean),    
 #'    vars = list("ant", "y", 
 #'                `antmin,antmax` = list(ra = "ant"), 
-#'                 yWmean  = list(wmean  = c("y", "ant")))
-#' )
+#'                 yWmean  = list(wmean  = c("y", "ant"))),
+#'    fun = c(sum, ra = my_range, wmean = weighted.mean))
 #' 
 #' 
 #' # Make a non-dummy matrix 
@@ -56,20 +55,20 @@
 #' 
 #' # Now warning 
 #' # Result is not same as t(x2) %*% z[["ant"]]
-#' dummy_aggregate(data = z, x = x2, fun = sum, vars = "ant")
+#' dummy_aggregate(data = z, x = x2, vars = "ant", fun = sum)
 #' 
 #' # Now same as t(x2) %*% z[["ant"]]
 #' dummy_aggregate(data = z, x = x2, 
-#'                 fun = function(x, y) sum(x * y), 
-#'                 vars = "ant", dummy = FALSE)
+#'                 vars = "ant", dummy = FALSE,
+#'                 fun = function(x, y) sum(x * y))
 #' 
 #' 
 #' # Same as t(x2) %*% z[["ant"]]  + t(x2^2) %*% z[["y"]] 
 #' dummy_aggregate(data = z, x = x2, 
-#'                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)}, 
-#'                 vars = list(c("ant", "y")), dummy = FALSE)
+#'                 vars = list(c("ant", "y")), dummy = FALSE,
+#'                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
 #'                 
-dummy_aggregate <- function(data, x, fun, vars = NULL, dummy = TRUE, 
+dummy_aggregate <- function(data, x, vars = NULL, fun = NULL, dummy = TRUE, 
                             when_non_dummy = warning, ...) {
   if (is.null(vars)) {
     vars <- rep("", ncol(data))

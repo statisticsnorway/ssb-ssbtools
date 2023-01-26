@@ -7,8 +7,8 @@
 dummy_aggregate(
   data,
   x,
-  fun,
   vars = NULL,
+  fun = NULL,
   dummy = TRUE,
   when_non_dummy = warning,
   ...
@@ -19,11 +19,6 @@ dummy_aggregate(
 
 \item{x}{A (sparse) dummy matrix}
 
-\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
-A vector of function as strings is also possible. When unnamed, these function names will be used directly.
-See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert \code{fun}.
-Without specifying \code{fun}, the functions, as strings, are taken from the function names coded in \code{vars}.}
-
 \item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
 Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
@@ -31,6 +26,11 @@ Thus, function names and also output variable names can be coded in different wa
 Multiple output variable names can be coded using \code{multi_sep}.
 See examples and examples in \code{\link{fix_vars_amf}}.
 Indices instead of variable names are allowed.}
+
+\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
+A vector of function as strings is also possible. When unnamed, these function names will be used directly.
+See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert \code{fun}.
+Without specifying \code{fun}, the functions, as strings, are taken from the function names coded in \code{vars}.}
 
 \item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in \code{x}.
 When \code{FALSE}, non-0s in \code{x} are passed as an additional first input parameter to the \code{fun} functions.
@@ -69,11 +69,10 @@ my_range <- function(x) c(min = min(x), max = max(x))
 dummy_aggregate(
    data = z, 
    x = x, 
-   fun = c(sum, ra = my_range, wmean = weighted.mean),    
    vars = list("ant", "y", 
                `antmin,antmax` = list(ra = "ant"), 
-                yWmean  = list(wmean  = c("y", "ant")))
-)
+                yWmean  = list(wmean  = c("y", "ant"))),
+   fun = c(sum, ra = my_range, wmean = weighted.mean))
 
 
 # Make a non-dummy matrix 
@@ -83,18 +82,18 @@ x2[, 4] <- 0
 
 # Now warning 
 # Result is not same as t(x2) \%*\% z[["ant"]]
-dummy_aggregate(data = z, x = x2, fun = sum, vars = "ant")
+dummy_aggregate(data = z, x = x2, vars = "ant", fun = sum)
 
 # Now same as t(x2) \%*\% z[["ant"]]
 dummy_aggregate(data = z, x = x2, 
-                fun = function(x, y) sum(x * y), 
-                vars = "ant", dummy = FALSE)
+                vars = "ant", dummy = FALSE,
+                fun = function(x, y) sum(x * y))
 
 
 # Same as t(x2) \%*\% z[["ant"]]  + t(x2^2) \%*\% z[["y"]] 
 dummy_aggregate(data = z, x = x2, 
-                fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)}, 
-                vars = list(c("ant", "y")), dummy = FALSE)
+                vars = list(c("ant", "y")), dummy = FALSE,
+                fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
                 
 }
 \seealso{
