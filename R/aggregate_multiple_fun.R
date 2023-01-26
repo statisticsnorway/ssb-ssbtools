@@ -213,7 +213,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
     }
   }
 
-  data1 = data[1, ]
+  data1 = data[1, ,drop=FALSE]
   for(i in seq_len(ncol(data1))){
     d1 = unlist(data1[1,i])[1]
     if(length(d1)==1)
