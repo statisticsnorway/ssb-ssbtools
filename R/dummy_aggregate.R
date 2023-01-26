@@ -68,16 +68,9 @@
 #'                 vars = list(c("ant", "y")), dummy = FALSE,
 #'                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
 #'                 
-dummy_aggregate <- function(data, x, vars = NULL, fun = NULL, dummy = TRUE, 
+dummy_aggregate <- function(data, x, vars, fun = NULL, dummy = TRUE, 
                             when_non_dummy = warning, ...) {
-  if (is.null(vars)) {
-    vars <- rep("", ncol(data))
-  }
-  if (is.null(names(vars))) {
-    names(vars) <- ""
-  }
-  
-  
+
   x <- uniqTsparse(As_TsparseMatrix(x))
   seq_len_ncol_x <- seq_len(ncol(x))
   

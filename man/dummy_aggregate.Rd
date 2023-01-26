@@ -7,7 +7,7 @@
 dummy_aggregate(
   data,
   x,
-  vars = NULL,
+  vars,
   fun = NULL,
   dummy = TRUE,
   when_non_dummy = warning,
