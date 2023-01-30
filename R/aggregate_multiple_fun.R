@@ -49,6 +49,8 @@
 #' @param dots2dots  Logical vector (possibly recycled) specifying the behavior when `forward_dots = TRUE` (see details).
 #' @param do_unmatrix By default (`TRUE`), the implementation uses \code{\link{unmatrix}} before returning output. 
 #'                    For special use this can be omitted (`FALSE`).
+#' @param do_unlist   By default (`TRUE`), the implementation uses \code{\link{unlist}} to combine output from multiple functions. 
+#'                    For special use this can be omitted (`FALSE`).
 #'
 #' @return A data frame
 #' @export
@@ -123,7 +125,7 @@
 #'  
 aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
        name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, 
-       dots2dots = FALSE, do_unmatrix = TRUE) {
+       dots2dots = FALSE, do_unmatrix = TRUE, do_unlist = TRUE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -226,7 +228,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
   
   
   fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, 
-                      x_r, x_x, data1 = NULL, fun_all_0 = NULL, ...){
+                      x_r, x_x, do_unlist, data1 = NULL, fun_all_0 = NULL, ...){
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
@@ -296,6 +298,9 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
         }
       
     }
+    if(!do_unlist){
+      return(out)
+    }
     unlist(out) 
   }
   
@@ -303,7 +308,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
   if (min(ind[[1]]) == 0) {
     fun_all_0 <- fun_all(ind = 0L, fun_input = fun, data = data, vars = vars, 
                          output_names = output_names, fun_names = fun_names, 
-                         x_r = x_r, x_x = x_x, data1 = data1)
+                         x_r = x_r, x_x = x_x, do_unlist = do_unlist, data1 = data1)
   } else {
     fun_all_0 <- NULL  # not needed 
   } 
@@ -311,7 +316,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
   
   z <- aggregate(x = ind, by = by, FUN = fun_all, fun_input = fun, data = data, 
                  vars = vars, output_names = output_names, fun_names = fun_names, 
-                 x_r = x_r, x_x = x_x, fun_all_0 = fun_all_0, ...)
+                 x_r = x_r, x_x = x_x, do_unlist = do_unlist, fun_all_0 = fun_all_0, ...)
   
   
   if(do_unmatrix){

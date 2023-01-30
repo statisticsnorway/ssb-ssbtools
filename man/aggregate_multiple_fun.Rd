@@ -16,7 +16,8 @@ aggregate_multiple_fun(
   multi_sep = ",",
   forward_dots = FALSE,
   dots2dots = FALSE,
-  do_unmatrix = TRUE
+  do_unmatrix = TRUE,
+  do_unlist = TRUE
 )
 }
 \arguments{
@@ -56,6 +57,9 @@ depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in
 \item{dots2dots}{Logical vector (possibly recycled) specifying the behavior when \code{forward_dots = TRUE} (see details).}
 
 \item{do_unmatrix}{By default (\code{TRUE}), the implementation uses \code{\link{unmatrix}} before returning output.
+For special use this can be omitted (\code{FALSE}).}
+
+\item{do_unlist}{By default (\code{TRUE}), the implementation uses \code{\link{unlist}} to combine output from multiple functions.
 For special use this can be omitted (\code{FALSE}).}
 }
 \value{
