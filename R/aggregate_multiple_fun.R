@@ -47,6 +47,8 @@
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
 #' @param forward_dots Logical vector (possibly recycled) for each element of `fun` that determines whether `...` should be forwarded (see details). 
 #' @param dots2dots  Logical vector (possibly recycled) specifying the behavior when `forward_dots = TRUE` (see details).
+#' @param do_unmatrix By default (`TRUE`), the implementation uses \code{\link{unmatrix}} before returning output. 
+#'                    For special use this can be omitted (`FALSE`).
 #'
 #' @return A data frame
 #' @export
@@ -119,7 +121,9 @@
 #' # In last case digits forwarded to sum (as ...) 
 #' # and wrongly included in the summation
 #'  
-aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
+aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
+       name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, 
+       dots2dots = FALSE, do_unmatrix = TRUE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -309,9 +313,14 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
                  vars = vars, output_names = output_names, fun_names = fun_names, 
                  x_r = x_r, x_x = x_x, fun_all_0 = fun_all_0, ...)
   
-  #Transform  embedded matrix
-  z <- unmatrix(z, sep = name_sep)
-  names(z) <- sub(paste0(names(ind), name_sep), "", colnames(z))
+  
+  if(do_unmatrix){
+    #Transform  embedded matrix
+    z <- unmatrix(z, sep = name_sep)
+    names(z) <- sub(paste0(names(ind), name_sep), "", colnames(z))
+  } else {
+    names(z)[sapply(z, is.matrix)] <- ""
+  }
   
   # Fix name when not embedded matrix
   grepind <- grep(names(ind), names(z))
@@ -468,7 +477,21 @@ trim <- function(name, multi_sep){
 #' @export
 #' 
 #' @keywords internal
-#'
+#' @examples
+#' a <- aggregate(1:6, list(rep(1:3, 2)), range)
+#' b <- unmatrix(a)
+#' 
+#' a
+#' b
+#' 
+#' dim(a)
+#' dim(b)
+#' 
+#' names(a)
+#' names(b)
+#' 
+#' class(a[, 2])
+#' class(b[, 2])
 unmatrix <- function(data, sep = "_") {
   if (!is.data.frame(data)) {
     stop("data must be data.frame")

@@ -17,4 +17,20 @@ data frame
 \description{
 Transform data frame with embedded matrices
 }
+\examples{
+a <- aggregate(1:6, list(rep(1:3, 2)), range)
+b <- unmatrix(a)
+
+a
+b
+
+dim(a)
+dim(b)
+
+names(a)
+names(b)
+
+class(a[, 2])
+class(b[, 2])
+}
 \keyword{internal}

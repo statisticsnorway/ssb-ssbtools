@@ -15,7 +15,8 @@ aggregate_multiple_fun(
   seve_sep = ":",
   multi_sep = ",",
   forward_dots = FALSE,
-  dots2dots = FALSE
+  dots2dots = FALSE,
+  do_unmatrix = TRUE
 )
 }
 \arguments{
@@ -53,6 +54,9 @@ depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in
 \item{forward_dots}{Logical vector (possibly recycled) for each element of \code{fun} that determines whether \code{...} should be forwarded (see details).}
 
 \item{dots2dots}{Logical vector (possibly recycled) specifying the behavior when \code{forward_dots = TRUE} (see details).}
+
+\item{do_unmatrix}{By default (\code{TRUE}), the implementation uses \code{\link{unmatrix}} before returning output.
+For special use this can be omitted (\code{FALSE}).}
 }
 \value{
 A data frame
