@@ -17,6 +17,10 @@
 #' This does not apply in the special case where `ind` is a two-column data frame.
 #' Then, in the case of list data, the `fun` functions have to handle this themselves.
 #' 
+#' A limitation when default output, when `do_unlist = TRUE`, is that variables in output are forced to have the same class. 
+#' This is caused by the \code{\link{unlist}} function being run on the output. This means, for example, 
+#' that all the variables will become numeric when they should have been both integer and numeric.
+#' 
 #' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
