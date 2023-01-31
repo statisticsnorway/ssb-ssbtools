@@ -12,7 +12,7 @@
 #' When `forward_dots = TRUE` and `dots2dots = TRUE`, other parameters will also be forwarded to `fun` functions where `...` is included. 
 #' For the `sum` function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
 #' 
-#' For the function to work with \code{\link{dummy_aggregate}}), 
+#' For the function to work with \code{\link{dummy_aggregate}}, 
 #' the data is subject to \code{\link{unlist}} before the `fun` functions are called.
 #' This does not apply in the special case where `ind` is a two-column data frame.
 #' Then, in the case of list data, the `fun` functions have to handle this themselves.

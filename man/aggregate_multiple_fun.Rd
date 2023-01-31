@@ -78,7 +78,7 @@ For the \code{sum} function, this means that a possible \code{na.rm} parameter i
 When \code{forward_dots = TRUE} and \code{dots2dots = TRUE}, other parameters will also be forwarded to \code{fun} functions where \code{...} is included.
 For the \code{sum} function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
 
-For the function to work with \code{\link{dummy_aggregate}}),
+For the function to work with \code{\link{dummy_aggregate}},
 the data is subject to \code{\link{unlist}} before the \code{fun} functions are called.
 This does not apply in the special case where \code{ind} is a two-column data frame.
 Then, in the case of list data, the \code{fun} functions have to handle this themselves.
