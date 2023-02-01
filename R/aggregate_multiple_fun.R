@@ -191,7 +191,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
     dots_ind <- vector("list", length(fun))
     for (i in which(forward_dots)) {
       ma_fun_names <- fun_names %in% names(fun)[i]
-      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
+      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length)) + as.integer(!is.null(x_r))
       if (any(ma_fun_names)) {
         if (length(n_vars_fun_i) > 1) {
           stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
