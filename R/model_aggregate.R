@@ -273,7 +273,7 @@ model_aggregate = function(
       flush.console()
     }
     z <- dummy_aggregate(data = data, x = mm$modelMatrix, vars = fun_vars, 
-                         fun = fun, dummy = dummy, ...)
+                         fun = fun, dummy = dummy, keep_names = FALSE, ...)
     if (verbose) {
       cat("] ")
       flush.console()

@@ -11,6 +11,7 @@ dummy_aggregate(
   fun = NULL,
   dummy = TRUE,
   when_non_dummy = warning,
+  keep_names = TRUE,
   ...
 )
 }
@@ -38,6 +39,8 @@ Thus, the same result as matrix multiplication is achieved with \code{fun = func
 In this case, the data will not be subjected to \code{unlist}. See \code{\link{aggregate_multiple_fun}}.}
 
 \item{when_non_dummy}{Function to be called when \code{dummy} is \code{TRUE} and when \code{x} is non-dummy.  Supply \code{NULL} to do nothing.}
+
+\item{keep_names}{When \code{TRUE}, output row names are inherited from column names in \code{x}.}
 
 \item{...}{Further arguments passed to \code{aggregate_multiple_fun}}
 }

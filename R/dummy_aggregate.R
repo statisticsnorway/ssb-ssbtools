@@ -17,6 +17,7 @@
 #'              Thus, the same result as matrix multiplication is achieved with `fun = function(x, y) sum(x * y)`.
 #'              In this case, the data will not be subjected to `unlist`. See \code{\link{aggregate_multiple_fun}}. 
 #' @param when_non_dummy Function to be called when `dummy` is `TRUE` and when `x` is non-dummy.  Supply `NULL` to do nothing. 
+#' @param keep_names When `TRUE`, output row names are inherited from column names in `x`. 
 #' @param ... Further arguments passed to `aggregate_multiple_fun`
 #'
 #' @return data frame
@@ -69,7 +70,7 @@
 #'                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
 #'                 
 dummy_aggregate <- function(data, x, vars, fun = NULL, dummy = TRUE, 
-                            when_non_dummy = warning, ...) {
+                            when_non_dummy = warning, keep_names = TRUE, ...) {
 
   x <- uniqTsparse(As_TsparseMatrix(x))
   seq_len_ncol_x <- seq_len(ncol(x))
@@ -97,6 +98,13 @@ dummy_aggregate <- function(data, x, vars, fun = NULL, dummy = TRUE,
     x_i_1L <- cbind(x_i_1L, x = c(x@x, rep(NA, length(is_na_j1))))
   }
   
-  aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, vars = vars, fun = fun, ...)[-1]
-  
+  out <- aggregate_multiple_fun(data = data, ind = x_i_1L, by = x_j_1L, vars = vars, fun = fun, ...)[-1]
+  if (keep_names & !is.null(colnames(x))) {
+    rownames(out) <- colnames(x)
+  }
+  out
 }
+
+
+
+
