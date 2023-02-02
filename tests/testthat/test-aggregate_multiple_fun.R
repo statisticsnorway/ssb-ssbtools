@@ -173,3 +173,20 @@ test_that("1,2,3,4,5,6,7 variables, dummy and non-dummy", {
   
   
 })
+
+
+test_that("application id_bidrag_matrix", {
+  value_matrix <- ind_matrix
+  value_matrix[ind_matrix > 0] <- df_idm[["value"]][ind_matrix]
+  
+  iout <- id_bidrag_matrix(sign_matrix, ind_matrix, df_idm)
+  vout <- matrix(NaN, 6, 5)
+  colnames(vout) <- colnames(iout)
+  rownames(vout) <- rownames(iout)
+  for (i in 1:30) vout[i] <- eval(parse(text = iout[i]))
+  
+  expect_equal(crossprod(sign_matrix, value_matrix), vout)
+})
+
+
+
