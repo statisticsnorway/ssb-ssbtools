@@ -64,3 +64,129 @@ test_that("model_aggregate and more", {
   expect_equal(formula_selection(out4, ~age * eu - 1), formula_selection(out4, c("eu*age")))
   expect_equal(formula_selection(out4, ~age * eu), formula_selection(out4, c("1", "age", "eu", "eu:age")))
 })
+
+
+
+
+test_that("1,2,3,4,5,6,7 variables, dummy and non-dummy", {
+  
+  z2 <- SSBtoolsData("z2")
+  set.seed(12)
+  z2$y <- round(rnorm(nrow(z2)), 2)
+  z <- z2[sample.int(nrow(z2), size = 20), ]
+  z$d <- 1
+  z$e <- 2
+  z$f <- 3
+  z$g <- 4
+  z$h <- 5
+  
+  x <- ModelMatrix(z, formula = ~hovedint:kostragr - 1)
+  
+  s1 <- as.vector(t(x) %*% z[["y"]])
+  
+  expect_equal(s1, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(y) sum(y), 
+                               vars = list(c("y")))$y)
+  expect_equal(s1+1, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, y) sum(y) + max(a1), 
+                               vars = list( y = list(c("d", "y"))))$y)
+  expect_equal(s1+1+2, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, a2, y) sum(y) + max(a1+a2), 
+                               vars = list( y = list(c("d", "e", "y"))))$y)
+  expect_equal(s1+1+2+3, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, a2, a3, y) sum(y) + max(a1+a2+a3), 
+                               vars = list( y = list(c("d", "e", "f", "y"))))$y)  
+  expect_equal(s1+1+2+3+4, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, a2, a3, a4, y) sum(y) + max(a1+a2+a3+a4), 
+                               vars = list( y = list(c("d", "e", "f", "g", "y"))))$y)
+  expect_equal(s1+1+2+3+4+5, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, a2, a3, a4, a5, y) sum(y) + max(a1+a2+a3+a4+a5), 
+                               vars = list( y = list(c("d", "e", "f", "g", "h", "y"))))$y)
+  
+  expect_equal(s1+1+2+3+4+5+3, 
+               dummy_aggregate(data = z, x = x, 
+                               fun = function(a1, a2, a3, a4, a5, a6, y) sum(y) + max(a1+a2+a3+a4+a5+a6), 
+                               vars = list( y = list(c("d", "e", "f", "g", "h", "f", "y"))))$y)
+  
+  
+  
+  # Make a non-dummy matrix 
+  x2 <- x
+  x2[17, 2:5] <- c(-1, 3, 0, 10)
+  x2[, 4] <- 0
+  
+  
+  expect_equal(as.vector(t(x2^2) %*% z[["y"]]), 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, y2) {sum(x^2 * y2)},  
+                               vars = list( y = list(c("y"))))$y)
+  
+  
+  s2 <- as.vector(t(x2) %*% z[["ant"]]  + t(x2^2) %*% z[["y"]])
+  
+  
+  expect_equal(s2, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)},  
+                               vars = list( y = list(c("ant", "y"))))$y)
+  
+  s2[4] <- -Inf # since  max(integer(0)) = -Inf
+  
+  expect_equal(s2+1, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, a1, y1, y2) {
+                                 sum(x * y1) + sum(x^2 * y2) + 
+                                   suppressWarnings(max(a1))},  
+                               vars = list( y = list(c("d", "ant", "y"))))$y)
+  expect_equal(s2+1+2, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, a1, a2, y1, y2) {
+                                 sum(x * y1) + sum(x^2 * y2) + 
+                                   suppressWarnings(max(a1+a2))},  
+                               vars = list( y = list(c("d", "e", "ant", "y"))))$y)
+  expect_equal(s2+1+2+3, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, a1, a2, a3, y1, y2) {
+                                 sum(x * y1) + sum(x^2 * y2) + 
+                                   suppressWarnings(max(a1+a2+a3))},  
+                               vars = list( y = list(c("d", "e", "f", "ant", "y"))))$y)
+  expect_equal(s2+1+2+3+4, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, a1, a2, a3, a4, y1, y2) {
+                                 sum(x * y1) + sum(x^2 * y2) + 
+                                   suppressWarnings(max(a1+a2+a3+a4))},  
+                               vars = list( y = list(c("d", "e", "f", "g", "ant", "y"))))$y)
+  
+  expect_equal(s2+1+2+3+4+5, 
+               dummy_aggregate(data = z, x = x2, dummy = FALSE,
+                               fun = function(x, a1, a2, a3, a4, a5, y1, y2) {
+                                 sum(x * y1) + sum(x^2 * y2) + 
+                                   suppressWarnings(max(a1+a2+a3+a4+a5))},  
+                               vars = list( y = list(c("d", "e", "f", "g", "h", "ant", "y"))))$y)
+  
+  
+  
+})
+
+
+test_that("application id_bidrag_matrix", {
+  value_matrix <- ind_matrix
+  value_matrix[ind_matrix > 0] <- df_idm[["value"]][ind_matrix]
+  
+  iout <- id_bidrag_matrix(sign_matrix, ind_matrix, df_idm)
+  vout <- matrix(NaN, 6, 5)
+  colnames(vout) <- colnames(iout)
+  rownames(vout) <- rownames(iout)
+  for (i in 1:30) vout[i] <- eval(parse(text = iout[i]))
+  
+  expect_equal(crossprod(sign_matrix, value_matrix), vout)
+})
+
+
+

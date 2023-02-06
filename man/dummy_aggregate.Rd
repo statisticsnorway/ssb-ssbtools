@@ -4,17 +4,21 @@
 \alias{dummy_aggregate}
 \title{\code{aggregate_multiple_fun} using a dummy matrix}
 \usage{
-dummy_aggregate(data, x, fun, vars = NULL, ...)
+dummy_aggregate(
+  data,
+  x,
+  vars,
+  fun = NULL,
+  dummy = TRUE,
+  when_non_dummy = warning,
+  keep_names = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame containing data to be aggregated}
 
 \item{x}{A (sparse) dummy matrix}
-
-\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
-A vector of function as strings is also possible. When unnamed, these function names will be used directly.
-See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert \code{fun}.
-Without specifying \code{fun}, the functions, as strings, are taken from the function names coded in \code{vars}.}
 
 \item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
@@ -24,6 +28,20 @@ Multiple output variable names can be coded using \code{multi_sep}.
 See examples and examples in \code{\link{fix_vars_amf}}.
 Indices instead of variable names are allowed.}
 
+\item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
+A vector of function as strings is also possible. When unnamed, these function names will be used directly.
+See the examples of \code{\link{fix_fun_amf}}, which is the function used to convert \code{fun}.
+Without specifying \code{fun}, the functions, as strings, are taken from the function names coded in \code{vars}.}
+
+\item{dummy}{When \code{TRUE}, only 0s and 1s are assumed in \code{x}.
+When \code{FALSE}, non-0s in \code{x} are passed as an additional first input parameter to the \code{fun} functions.
+Thus, the same result as matrix multiplication is achieved with \code{fun = function(x, y) sum(x * y)}.
+In this case, the data will not be subjected to \code{unlist}. See \code{\link{aggregate_multiple_fun}}.}
+
+\item{when_non_dummy}{Function to be called when \code{dummy} is \code{TRUE} and when \code{x} is non-dummy.  Supply \code{NULL} to do nothing.}
+
+\item{keep_names}{When \code{TRUE}, output row names are inherited from column names in \code{x}.}
+
 \item{...}{Further arguments passed to \code{aggregate_multiple_fun}}
 }
 \value{
@@ -31,7 +49,8 @@ data frame
 }
 \description{
 Wrapper to \code{\link{aggregate_multiple_fun}}
-that uses a dummy matrix instead of the \code{by} parameter
+that uses a dummy matrix instead of the \code{by} parameter.
+Functionality for non-dummy  matrices as well.
 }
 \details{
 Internally this function make use of the \code{ind} parameter to \code{aggregate_multiple_fun}
@@ -53,12 +72,32 @@ my_range <- function(x) c(min = min(x), max = max(x))
 dummy_aggregate(
    data = z, 
    x = x, 
-   fun = c(sum, ra = my_range, wmean = weighted.mean),    
    vars = list("ant", "y", 
                `antmin,antmax` = list(ra = "ant"), 
-                yWmean  = list(wmean  = c("y", "ant")))
-)
+                yWmean  = list(wmean  = c("y", "ant"))),
+   fun = c(sum, ra = my_range, wmean = weighted.mean))
 
+
+# Make a non-dummy matrix 
+x2 <- x
+x2[17, 2:5] <- c(-1, 3, 0, 10)
+x2[, 4] <- 0
+
+# Now warning 
+# Result is not same as t(x2) \%*\% z[["ant"]]
+dummy_aggregate(data = z, x = x2, vars = "ant", fun = sum)
+
+# Now same as t(x2) \%*\% z[["ant"]]
+dummy_aggregate(data = z, x = x2, 
+                vars = "ant", dummy = FALSE,
+                fun = function(x, y) sum(x * y))
+
+
+# Same as t(x2) \%*\% z[["ant"]]  + t(x2^2) \%*\% z[["y"]] 
+dummy_aggregate(data = z, x = x2, 
+                vars = list(c("ant", "y")), dummy = FALSE,
+                fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
+                
 }
 \seealso{
 \code{\link{aggregate_multiple_fun}}

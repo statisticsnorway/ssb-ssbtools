@@ -15,7 +15,9 @@ aggregate_multiple_fun(
   seve_sep = ":",
   multi_sep = ",",
   forward_dots = FALSE,
-  dots2dots = FALSE
+  dots2dots = FALSE,
+  do_unmatrix = TRUE,
+  do_unlist = TRUE
 )
 }
 \arguments{
@@ -38,7 +40,8 @@ Without specifying \code{fun}, the functions, as strings, are taken from the fun
 
 \item{ind}{When non-NULL, a data frame of indices.
 When NULL, this variable will be generated internally as \code{data.frame(ind = seq_len(nrow(data)))}.
-The parameter is useful for advanced use involving model/dummy matrices.}
+The parameter is useful for advanced use involving model/dummy matrices.
+For special use (\code{dummy = FALSE} in \code{\link{dummy_aggregate}}) \code{ind} can also be a two-column data frame.}
 
 \item{...}{Further arguments passed to \code{aggregate} and,
 depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in \code{fun} (see details).}
@@ -52,6 +55,12 @@ depending on \code{forward_dots}/\code{dots2dots}, forwarded to the functions in
 \item{forward_dots}{Logical vector (possibly recycled) for each element of \code{fun} that determines whether \code{...} should be forwarded (see details).}
 
 \item{dots2dots}{Logical vector (possibly recycled) specifying the behavior when \code{forward_dots = TRUE} (see details).}
+
+\item{do_unmatrix}{By default (\code{TRUE}), the implementation uses \code{\link{unmatrix}} before returning output.
+For special use this can be omitted (\code{FALSE}).}
+
+\item{do_unlist}{By default (\code{TRUE}), the implementation uses \code{\link{unlist}} to combine output from multiple functions.
+For special use this can be omitted (\code{FALSE}).}
 }
 \value{
 A data frame
@@ -68,6 +77,15 @@ but only parameters that are explicitly defined in the specific \code{fun} funct
 For the \code{sum} function, this means that a possible \code{na.rm} parameter is forwarded but not others.
 When \code{forward_dots = TRUE} and \code{dots2dots = TRUE}, other parameters will also be forwarded to \code{fun} functions where \code{...} is included.
 For the \code{sum} function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
+
+For the function to work with \code{\link{dummy_aggregate}},
+the data is subject to \code{\link{unlist}} before the \code{fun} functions are called.
+This does not apply in the special case where \code{ind} is a two-column data frame.
+Then, in the case of list data, the \code{fun} functions have to handle this themselves.
+
+A limitation when default output, when \code{do_unlist = TRUE}, is that variables in output are forced to have the same class.
+This is caused by the \code{\link{unlist}} function being run on the output. This means, for example,
+that all the variables will become numeric when they should have been both integer and numeric.
 }
 \examples{
 z2 <- SSBtoolsData("z2")

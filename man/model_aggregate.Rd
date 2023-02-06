@@ -13,10 +13,12 @@ model_aggregate(
   formula = NULL,
   dim_var = NULL,
   preagg_var = NULL,
-  pre_aggregate = TRUE,
+  dummy = TRUE,
+  pre_aggregate = dummy,
   list_return = FALSE,
   pre_return = FALSE,
   verbose = TRUE,
+  mm_args = NULL,
   ...
 )
 }
@@ -39,14 +41,23 @@ This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy
 
 \item{preagg_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
 
+\item{dummy}{The \code{dummy}       parameter to \code{\link{dummy_aggregate}}.
+When \code{TRUE}, only 0s and 1s are assumed in the generated model matrix.
+When \code{FALSE}, non-0s in this matrix are passed as an additional first input parameter to the \code{fun} functions.}
+
 \item{pre_aggregate}{Whether to pre-aggregate data to reduce the dimension of the model matrix.
-Note that all original \code{fun_vars} observations are retained in the aggregated dataset and \code{pre_aggregate} does not affect the final result.}
+Note that all original \code{fun_vars} observations are retained in the aggregated dataset and \code{pre_aggregate} does not affect the final result.
+However, \code{pre_aggregate} must be set to \code{FALSE} when the \code{dummy_aggregate} parameter \code{dummy} is set to \code{FALSE}
+since then \code{\link{unlist}} will not be run.
+An exception to this is if the \code{fun} functions are written to handle list data.}
 
 \item{list_return}{Whether to return a list of separate components including the model matrix \code{x}.}
 
 \item{pre_return}{Whether to return the pre-aggregate data as a two-component list. Can also be combined with \code{list_return} (see examples).}
 
 \item{verbose}{Whether to print information during calculations.}
+
+\item{mm_args}{List of further arguments passed to \code{ModelMatrix}.}
 
 \item{...}{Further arguments passed to \code{dummy_aggregate}.}
 }
@@ -105,4 +116,40 @@ fun = c(mean = mean, ra = my_range),
 preagg_var = "eu",
 pre_return = TRUE)[["pre_data"]]
 
+
+# To illustrate hierarchies 
+geo_hier <- SSBtoolsData("sprt_emp_geoHier")
+model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier), 
+                sum_vars = "y", 
+                fun_vars = c(sum = "y"))
+
+####  Special non-dummy cases illustrated below  ####
+
+# Extend the hierarchy to make non-dummy model matrix  
+geo_hier2 <- rbind(data.frame(mapsFrom = c("EU", "Spain"), 
+                              mapsTo = "EUandSpain", sign = 1), geo_hier[, -4])
+
+# Warning since non-dummy
+# y and y_sum are different 
+model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+                sum_vars = "y", 
+                fun_vars = c(sum = "y"))
+
+# No warning since dummy since unionComplement = TRUE (see ?HierarchyCompute)
+# y and y_sum are equal   
+model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+                sum_vars = "y", 
+                fun_vars = c(sum = "y"),
+                mm_args = list(unionComplement = TRUE))
+
+# Non-dummy again, but no warning since dummy = FALSE
+# Then pre_aggregate is by default set to FALSE (error when TRUE) 
+# fun with extra argument needed (see ?dummy_aggregate)
+# y and y_sum2 are equal
+model_aggregate(z, hierarchies = list(age = "All", geo = geo_hier2), 
+                sum_vars = "y", 
+                fun_vars = c(sum2 = "y"),
+                fun = c(sum2 = function(x, y) sum(x * y)),
+                dummy = FALSE) 
+                
 }

@@ -60,3 +60,55 @@ ma <- function(..., dim_var = NULL, formula = ~age:year + geo, frame_return = FA
   
   as.vector(as.matrix(b))
 }
+
+
+####################
+# For test based on application + more complicated 
+# Function id_bidrag in application rewritten to produce mathematical expressions
+# Function id_bidrag_matrix more complicated since fun_vector parameter
+
+
+id_bidrag <- function(ind, sign, data) {
+  if (!sum(ind)) {
+    return(0)
+  }
+  paste0("(", sign[ind > 0], ")*(", data[["value"]][ind], ")", collapse = " + ")
+}
+
+id_bidrag_vector <- function(sign, ind, ind_matrix, data, fun_id_bidrag = id_bidrag) {
+  indm <- ind_matrix[ind, , drop = FALSE]
+  apply(indm, 2, fun_id_bidrag, sign, data)
+}
+
+
+id_bidrag_matrix <- function(sign_matrix, ind_matrix, data, fun_id_bidrag = id_bidrag) {
+  ind_matrix <- as.matrix(ind_matrix)
+  df_seq_len <- data.frame(ind = seq_len(nrow(ind_matrix)))
+  a <- as.matrix(dummy_aggregate(data = df_seq_len, x = sign_matrix, 
+                                 vars = c(ibv = "ind"), 
+                                 fun = c(ibv = function(..., fun_vector, fun_vector_data, fun_id_bidrag)
+                                   fun_vector(..., data = fun_vector_data, 
+                                              fun_id_bidrag = fun_id_bidrag)),
+                                 fun_vector = id_bidrag_vector,
+                                 ind_matrix = as.matrix(ind_matrix), fun_vector_data = data, 
+                                 fun_id_bidrag = fun_id_bidrag, dummy = FALSE, dots2dots = TRUE, 
+                                 forward_dots = TRUE, do_unmatrix = FALSE, keep_names = FALSE)[[1]])
+  colnames(a) <- colnames(ind_matrix)
+  rownames(a) <- colnames(sign_matrix)
+  a
+}
+
+df_idm <- data.frame(value = 11 * 1:9)
+ind_matrix <- structure(c(0, 8, 5, 7, 0, 0, 0, 0, 0, 0, 0, 8, 5, 7, 1, 2, 3, 
+                          4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 9),
+                        dim = c(7L,5L), 
+                        dimnames = list(NULL, c("im1", "im2", "im3", "im4", "im5")))
+
+sign_matrix <- structure(c(0, 1, -1, 2, 0, 0, 0, 0, 0, 0, 0, 1, -1, 2, 1, 0, 
+                           0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 1, 
+                           1, 1, 1, 1, 1, 1), dim = 7:6, 
+                         dimnames = list(NULL, c("sm1", "sm2", "sm3", "sm4", "sm5", "sm6")))
+
+
+
+

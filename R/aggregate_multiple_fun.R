@@ -12,6 +12,16 @@
 #' When `forward_dots = TRUE` and `dots2dots = TRUE`, other parameters will also be forwarded to `fun` functions where `...` is included. 
 #' For the `sum` function, this means that such extra parameters will, probably erroneously, be included in the summation (see examples).
 #' 
+#' For the function to work with \code{\link{dummy_aggregate}}, 
+#' the data is subject to \code{\link{unlist}} before the `fun` functions are called.
+#' This does not apply in the special case where `ind` is a two-column data frame.
+#' Then, in the case of list data, the `fun` functions have to handle this themselves.
+#' 
+#' A limitation when default output, when `do_unlist = TRUE`, is that variables in output are forced to have the same class. 
+#' This is caused by the \code{\link{unlist}} function being run on the output. This means, for example, 
+#' that all the variables will become numeric when they should have been both integer and numeric.
+#' 
+#' 
 #' @param data A data frame containing data to be aggregated 
 #' @param by A data frame defining grouping
 #'    
@@ -30,7 +40,8 @@
 #'              
 #' @param ind When non-NULL, a data frame of indices. 
 #'            When NULL, this variable will be generated internally as `data.frame(ind = seq_len(nrow(data)))`. 
-#'            The parameter is useful for advanced use involving model/dummy matrices.  
+#'            The parameter is useful for advanced use involving model/dummy matrices.
+#'            For special use (`dummy = FALSE` in \code{\link{dummy_aggregate}}) `ind` can also be a two-column data frame.   
 #'            
 #'                
 #' @param ... 	Further arguments passed to `aggregate` and, 
@@ -40,6 +51,10 @@
 #' @param multi_sep A character string used when multiple output variable names are sent as input. 
 #' @param forward_dots Logical vector (possibly recycled) for each element of `fun` that determines whether `...` should be forwarded (see details). 
 #' @param dots2dots  Logical vector (possibly recycled) specifying the behavior when `forward_dots = TRUE` (see details).
+#' @param do_unmatrix By default (`TRUE`), the implementation uses \code{\link{unmatrix}} before returning output. 
+#'                    For special use this can be omitted (`FALSE`).
+#' @param do_unlist   By default (`TRUE`), the implementation uses \code{\link{unlist}} to combine output from multiple functions. 
+#'                    For special use this can be omitted (`FALSE`).
 #'
 #' @return A data frame
 #' @export
@@ -112,7 +127,9 @@
 #' # In last case digits forwarded to sum (as ...) 
 #' # and wrongly included in the summation
 #'  
-aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, dots2dots = FALSE) {
+aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
+       name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, 
+       dots2dots = FALSE, do_unmatrix = TRUE, do_unlist = TRUE) {
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -121,8 +138,16 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
     is_dot <- FALSE
   }
   
-  
-  if(is.null(ind)){
+  x_r <- NULL
+  x_x <- NULL 
+  if (!is.null(ind)) {
+    if (ncol(ind) == 2) {
+      x_r <- ind[[1]]  # matrix row   (x@i + 1L), see SSBtools::As_TsparseMatrix
+      x_x <- ind[[2]]  # matrix value (x@x)      
+      ind <- data.frame(ind = seq_len(length(x_r)))
+      ind[x_r == 0L, ] <- 0L   # for quick fun_all_0 return
+    }
+  } else {
     ind = data.frame(ind = seq_len(nrow(data)))
   }
   
@@ -147,7 +172,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
   
   
   if (!all(unlist(vars) %in% names(data))) {
-    stop("All vars must be in names(x)")
+    stop("All vars must be in names(data)")
   }
   if (!all(fun_names %in% names(fun))) {
     stop("All fun names in vars must be in names(fun)")
@@ -160,13 +185,14 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
   if (any(is_dot)) {
     forward_dots <- rep_len(forward_dots, length(fun))
     dots2dots <- rep_len(dots2dots, length(fun))
-    dots <- as.list(match_call)[-1][is_dot]
-    #dots <- lapply(dots, eval)  # not working since need to go all generations back 
+    dots <- list(...)[names(match_call)[-1][is_dot]]  
+    # dots <- as.list(match_call)[-1][is_dot] # not working in all cases when generations back, depends on parameter order. Interpretation of e.g.: ..3 and ..4 
+    # dots <- lapply(dots, eval)  # not working since need to go all generations back 
     fun_input <- fun
     dots_ind <- vector("list", length(fun))
     for (i in which(forward_dots)) {
       ma_fun_names <- fun_names %in% names(fun)[i]
-      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length))
+      n_vars_fun_i <- unique(sapply(vars[ma_fun_names], length)) + as.integer(!is.null(x_r))
       if (any(ma_fun_names)) {
         if (length(n_vars_fun_i) > 1) {
           stop("NOT IMPLEMENTED: forward_dots combined with different number of variables for the same function")
@@ -198,7 +224,7 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
     }
   }
 
-  data1 = data[1, ]
+  data1 = data[1, ,drop=FALSE]
   for(i in seq_len(ncol(data1))){
     d1 = unlist(data1[1,i])[1]
     if(length(d1)==1)
@@ -206,7 +232,8 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
   }  
   
   
-  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, data1 = NULL, fun_all_0 = NULL, ...){
+  fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, 
+                      x_r, x_x, do_unlist, data1 = NULL, fun_all_0 = NULL, ...){
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
@@ -214,23 +241,42 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
         } else {
           data = data1
         }
+    
         
     out <- vector("list", length(vars))
     for(i in seq_along(out)){
-      j <- match(fun_names[i], names(fun_input)) 
-      if(length(vars[[i]]) == 1){
-        out[[i]] <- fun_input[[j]](unlist(data[[vars[[i]]]][ind]))
-        if (names(fun)[j] == "") {
-          names(out)[i] <- vars[[i]]
+      j <- match(fun_names[i], names(fun_input))
+      if (is.null(x_r)) {
+        if(length(vars[[i]]) == 1){
+          out[[i]] <- fun_input[[j]](unlist(data[[vars[[i]]]][ind]))
+          if (names(fun)[j] == "") {
+            names(out)[i] <- vars[[i]]
+          } else {
+            names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = name_sep)
+          }
         } else {
-          names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = name_sep)
+          if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
+          if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]))
+          if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]), unlist(data[[vars[[i]][4]]][ind]))
+          if(length(vars[[i]]) > 4){   # 2,3,4 implemented directly due to speed
+            out[[i]] <- eval(parse(text = paste("fun_input[[j]](", paste("unlist(data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][ind])", sep = "", collapse = ","),")")))
+          }
         }
-      } else {
-        if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]))
-        if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]))
-        if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]]( unlist(data[[vars[[i]][1]]][ind]), unlist(data[[vars[[i]][2]]][ind]), unlist(data[[vars[[i]][3]]][ind]), unlist(data[[vars[[i]][4]]][ind]))
-        if(length(vars[[i]]) > 4){   # 2,3,4 implemented directly due to speed
-          out[[i]] <- eval(parse(text = paste("fun_input[[j]](", paste("unlist(data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][ind])", sep = "", collapse = ","),")")))
+      } else {   # Copy of code above + unlist removed  + x_x[ind] included as extra parameter
+        if(length(vars[[i]]) == 1){
+          out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]]]][x_r[ind]])
+          if (names(fun)[j] == "") {
+            names(out)[i] <- vars[[i]]
+          } else {
+            names(out)[i] <- paste(vars[[i]], names(fun)[j], sep = name_sep)
+          }
+        } else {
+          if(length(vars[[i]]) == 2)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]])
+          if(length(vars[[i]]) == 3)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]], data[[vars[[i]][3]]][x_r[ind]])
+          if(length(vars[[i]]) == 4)   out[[i]] <- fun_input[[j]](x_x[ind], data[[vars[[i]][1]]][x_r[ind]], data[[vars[[i]][2]]][x_r[ind]], data[[vars[[i]][3]]][x_r[ind]], data[[vars[[i]][4]]][x_r[ind]])
+          if(length(vars[[i]]) > 4){   # 2,3,4 implemented directly due to speed
+            out[[i]] <- eval(parse(text = paste("fun_input[[j]]( x_x[ind], ", paste("data[[vars[[i]][", seq_len(length(vars[[i]])), "]]][x_r[ind]]", sep = "", collapse = ","),")")))
+          }
         }
       }
         
@@ -257,21 +303,34 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
         }
       
     }
+    if(!do_unlist){
+      return(out)
+    }
     unlist(out) 
   }
   
-
-  if(min(ind[[1]]) == 0){
-    fun_all_0 = fun_all(ind = 0L, vars = vars, output_names = output_names, fun_names = fun_names, fun_input = fun, data = data, data1 = data1) 
+  
+  if (min(ind[[1]]) == 0) {
+    fun_all_0 <- fun_all(ind = 0L, fun_input = fun, data = data, vars = vars, 
+                         output_names = output_names, fun_names = fun_names, 
+                         x_r = x_r, x_x = x_x, do_unlist = do_unlist, data1 = data1)
   } else {
-    fun_all_0 = NULL # not needed 
+    fun_all_0 <- NULL  # not needed 
+  } 
+
+  
+  z <- aggregate(x = ind, by = by, FUN = fun_all, fun_input = fun, data = data, 
+                 vars = vars, output_names = output_names, fun_names = fun_names, 
+                 x_r = x_r, x_x = x_x, do_unlist = do_unlist, fun_all_0 = fun_all_0, ...)
+  
+  
+  if(do_unmatrix){
+    #Transform  embedded matrix
+    z <- unmatrix(z, sep = name_sep)
+    names(z) <- sub(paste0(names(ind), name_sep), "", colnames(z))
+  } else {
+    names(z)[sapply(z, is.matrix)] <- ""
   }
-  
-  z <- aggregate(x = ind, by = by, FUN = fun_all, vars = vars, output_names = output_names, fun_names = fun_names, fun_input = fun, data = data, fun_all_0 = fun_all_0, ...)
-  
-  #Transform  embedded matrix
-  z <- unmatrix(z, sep = name_sep)
-  names(z) <- sub(paste0(names(ind), name_sep), "", colnames(z))
   
   # Fix name when not embedded matrix
   grepind <- grep(names(ind), names(z))
@@ -428,7 +487,21 @@ trim <- function(name, multi_sep){
 #' @export
 #' 
 #' @keywords internal
-#'
+#' @examples
+#' a <- aggregate(1:6, list(rep(1:3, 2)), range)
+#' b <- unmatrix(a)
+#' 
+#' a
+#' b
+#' 
+#' dim(a)
+#' dim(b)
+#' 
+#' names(a)
+#' names(b)
+#' 
+#' class(a[, 2])
+#' class(b[, 2])
 unmatrix <- function(data, sep = "_") {
   if (!is.data.frame(data)) {
     stop("data must be data.frame")
