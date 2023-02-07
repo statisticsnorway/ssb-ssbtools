@@ -19,6 +19,8 @@
 #' 
 #' \strong{my_km2:} Fictitious grid data. 
 #' 
+#' \strong{mun_accidents:} Fictitious traffic accident by municipality data.
+#' 
 #' \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 #' 
 #' @export
@@ -74,6 +76,15 @@ SSBtoolsData <- function(dataset) {
     return(x)
   }
   
+  if (dataset == "mun_accidents") {
+    mun <- c("k1", "k2", "k3", "k4", "k5", "k6")
+    inj <- c("serious", "light", "none", "unknown")
+    x <- expand.grid(mun, inj)
+    names(x) <- c("mun", "inj")
+    x$freq <- c(4,5,3,4,1,6,0,0,2,1,0,0,0,1,1,4,0,0,0,0,0,0,0,0)
+    return(x)
+  }
+  
   if (dataset %in% c(if (dataset %in% c("sosialFiktiv", "z1", "z1w", "z2", "z2w", "z3", "z3w", "z3wb")) {
     return(SSBtoolsData_(dataset))
   })) {
@@ -100,8 +111,12 @@ SSBtoolsData_ <- function(dataset) {
 
 #' Fictitious datasets returned by SSBtoolsData()
 #' 
-#' The most comprehensive dataset, \code{sosialFiktiv}, contains three dimensions. The first dimension is 'region' which is grouped in two ways, 'fylke' and  'kostragr'. The other two are 'hovedint' and 'mnd'. In 'mnd2' two of the three categories in 'mnd' are merged.
-#' The other datasets (\code{z1}, \code{z1w}, \code{z2}, \code{z2w}, \code{z3}, \code{z3w}, \code{z3wb}) are smaller subdatasets.
+#' The most comprehensive dataset, \code{sosialFiktiv}, contains three dimensions. 
+#' The first dimension is 'region' which is grouped in two ways, 'fylke' and  
+#' 'kostragr'. The other two are 'hovedint' and 'mnd'. In 'mnd2' two of the 
+#' three categories in 'mnd' are merged.
+#' The other datasets (\code{z1}, \code{z1w}, \code{z2}, \code{z2w}, \code{z3},
+#'  \code{z3w}, \code{z3wb}) are smaller subdatasets.
 #' Datasets marked with '\code{w}' are unstacked and several variables are holding counts.
 #'
 #' @docType data
