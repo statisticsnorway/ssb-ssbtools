@@ -27,7 +27,7 @@
 #' 
 #' @export
 #' @importFrom utils data
-#' @author Øyvind Langsrud
+#' @author Øyvind Langsrud and Daniel Lupp
 #'
 #' @examples
 #' SSBtoolsData("FIFA2018ABCD")
@@ -35,7 +35,7 @@
 #' SSBtoolsData("sprt_emp_geoHier")
 #' SSBtoolsData("sprt_emp_ageHier")
 #' SSBtoolsData("sprt_emp_withEU")
-#' SSBtoolsData("z1w")
+#' SSBtoolsData("d1w")
 SSBtoolsData <- function(dataset) {
   if (dataset == "FIFA2018ABCD") {
     return(data.frame(stringsAsFactors = FALSE, mapsFrom = c("Australia", "Iran", "Saudi Arabia", "Egypt", "Morocco", "Nigeria", "Argentina", "Peru", "Uruguay", "Croatia", "Denmark", "France", "Iceland", "Portugal", "Russia", "Spain", "Iceland", "Russia", "Russia", "Croatia", "Europe", "nonEU", "Europe", "nonSchengen"), 
@@ -74,16 +74,17 @@ SSBtoolsData <- function(dataset) {
                             "15_to_65", "15_to_65", "under_15", "under_15", "15_to_65", "15_to_65", "65_and_over", "65_and_over"),
                     Sex = c("female", "male", "male", "female", "male", "female", "male", "female", "male", "female", "female", "male", "female", "male", 
                             "female", "male", "female", "male"),
-                    freq = c(3, 2, 1, 2, 2, 1, 1, 1, 1, 1, 26, 21, 31, 34, 2, 1, 10, 13))
+                    freq = c(3L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 26L, 21L, 31L, 34L, 2L, 1L, 10L, 13L))
     return(x)
   }
   
   if (dataset == "mun_accidents") {
     mun <- c("k1", "k2", "k3", "k4", "k5", "k6")
     inj <- c("serious", "light", "none", "unknown")
-    x <- expand.grid(mun, inj)
+    x <- expand.grid(mun, inj, stringsAsFactors = FALSE)
     names(x) <- c("mun", "inj")
-    x$freq <- c(4,5,3,4,1,6,0,0,2,1,0,0,0,1,1,4,0,0,0,0,0,0,0,0)
+    x$freq <- c(4L, 5L, 3L, 4L, 1L, 6L, 0L, 0L, 2L, 1L, 0L, 0L, 0L, 1L, 1L, 
+                4L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)
     return(x)
   }
 
@@ -102,6 +103,10 @@ SSBtoolsData <- function(dataset) {
       z$hovedint <- SocialReCode(z$hovedint)
     }
     names(z) <- SocialReCode(names(z)) 
+    for(i in which(sapply(z, is.numeric))){
+      z[[i]] <- as.integer(z[[i]])
+    }
+    row.names(z) <- NULL
     return(z)
   }
 

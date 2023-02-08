@@ -29,6 +29,8 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
 \strong{my_km2:} Fictitious grid data.
 
+\strong{mun_accidents:} Fictitious traffic accident by municipality data.
+
 \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 
 \strong{d4, d1, d1w, d2, d2w, d3, d3w, d3wb:} English translation of the datasets above.
@@ -39,8 +41,8 @@ SSBtoolsData("sprt_emp")
 SSBtoolsData("sprt_emp_geoHier")
 SSBtoolsData("sprt_emp_ageHier")
 SSBtoolsData("sprt_emp_withEU")
-SSBtoolsData("z1w")
+SSBtoolsData("d1w")
 }
 \author{
-Øyvind Langsrud
+Øyvind Langsrud and Daniel Lupp
 }
