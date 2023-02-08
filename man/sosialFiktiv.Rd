@@ -13,8 +13,12 @@
 \alias{z3wb}
 \title{Fictitious datasets returned by SSBtoolsData()}
 \description{
-The most comprehensive dataset, \code{sosialFiktiv}, contains three dimensions. The first dimension is 'region' which is grouped in two ways, 'fylke' and  'kostragr'. The other two are 'hovedint' and 'mnd'. In 'mnd2' two of the three categories in 'mnd' are merged.
-The other datasets (\code{z1}, \code{z1w}, \code{z2}, \code{z2w}, \code{z3}, \code{z3w}, \code{z3wb}) are smaller subdatasets.
+The most comprehensive dataset, \code{sosialFiktiv}, contains three dimensions.
+The first dimension is 'region' which is grouped in two ways, 'fylke' and
+'kostragr'. The other two are 'hovedint' and 'mnd'. In 'mnd2' two of the
+three categories in 'mnd' are merged.
+The other datasets (\code{z1}, \code{z1w}, \code{z2}, \code{z2w}, \code{z3},
+\code{z3w}, \code{z3wb}) are smaller subdatasets.
 Datasets marked with '\code{w}' are unstacked and several variables are holding counts.
 }
 \keyword{datasets}
