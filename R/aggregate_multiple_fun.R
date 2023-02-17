@@ -299,6 +299,11 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
           }
         }
         if(easy_name){
+          if (!is.null(names(out[[i]]))) {
+            if (length(out[[i]]) == 1) {
+              names(out[[i]]) <- NULL
+            }
+          }
           names(out)[i] = output_names[i]
         }
       
