@@ -27,11 +27,15 @@ aggregate_multiple_fun(
 
 \item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
-Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
+\itemize{
+\item Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
 Thus, function names and also output variable names can be coded in different ways.
 Multiple output variable names can be coded using \code{multi_sep}.
-See examples and examples in \code{\link{fix_vars_amf}}.
-Indices instead of variable names are allowed.}
+See examples and examples in \code{\link{fix_vars_amf}}. Indices instead of variable names are allowed.
+\item Omission of (some) names is possible since names can be omitted for one function (see \code{fun} below).
+\item A special possible feature is the combination of a single unnamed variable and all functions named.
+In this case, all functions are run and output variable names will be identical to the function names.
+}}
 
 \item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
 A vector of function as strings is also possible. When unnamed, these function names will be used directly.
@@ -114,6 +118,14 @@ aggregate_multiple_fun(
    by = z[c("kostragr", "hovedint")], 
    vars = c(sum = "y", median = "ant", median = "y")
 )
+
+# The single unnamed variable feature. Also functions as strings. 
+aggregate_multiple_fun(
+   data = z, 
+   by = z[c("kostragr", "hovedint")], 
+   vars = "y",
+   fun = c("sum", "median", "min", "max")
+) 
 
 # with multiple outputs (function my_range)
 # and with function of two variables (weighted.mean(y, ant))

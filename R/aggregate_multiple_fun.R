@@ -27,11 +27,13 @@
 #'    
 #' @param vars  A named vector or list of variable names in `data`. The elements are named by the names of `fun`.
 #'              All the pairs of variable names and function names thus define all the result variables to be generated.
-#'              Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
+#' * Parameter `vars` will converted to an internal standard by the function \code{\link{fix_vars_amf}}. 
 #'              Thus, function names and also output variable names can be coded in different ways.
 #'              Multiple output variable names can be coded using `multi_sep`. 
-#'              See examples and examples in \code{\link{fix_vars_amf}}.
-#'              Indices instead of variable names are allowed. 
+#'              See examples and examples in \code{\link{fix_vars_amf}}. Indices instead of variable names are allowed. 
+#' * Omission of (some) names is possible since names can be omitted for one function (see `fun` below).
+#' * A special possible feature is the combination of a single unnamed variable and all functions named. 
+#'              In this case, all functions are run and output variable names will be identical to the function names.
 #'            
 #' @param fun A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function. 
 #'            A vector of function as strings is also possible. When unnamed, these function names will be used directly. 
@@ -88,6 +90,14 @@
 #'    by = z[c("kostragr", "hovedint")], 
 #'    vars = c(sum = "y", median = "ant", median = "y")
 #' )
+#' 
+#' # The single unnamed variable feature. Also functions as strings. 
+#' aggregate_multiple_fun(
+#'    data = z, 
+#'    by = z[c("kostragr", "hovedint")], 
+#'    vars = "y",
+#'    fun = c("sum", "median", "min", "max")
+#' ) 
 #' 
 #' # with multiple outputs (function my_range)
 #' # and with function of two variables (weighted.mean(y, ant))
@@ -175,7 +185,13 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
     stop("All vars must be in names(data)")
   }
   if (!all(fun_names %in% names(fun))) {
-    stop("All fun names in vars must be in names(fun)")
+    if (identical(fun_names, "") & length(vars[[1]]) == 1) { # then length(vars) is 1
+      output_names <- names(fun)
+      fun_names <- names(fun)
+      vars <- rep(vars, length(fun))
+    } else {
+      stop("All fun names in vars must be in names(fun)")
+    }
   }
   if (!all(names(fun) %in% fun_names)) {
     warning("Not all fun elements will be used")

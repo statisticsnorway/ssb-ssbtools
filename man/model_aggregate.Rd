@@ -93,6 +93,11 @@ out
 formula_selection(out, ~geo)
 
 
+# Using the single unnamed variable feature.
+model_aggregate(z, formula = ~age, fun_vars = "y", 
+                fun = c(sum = sum, mean = mean, med = median, n = length))
+
+
 # To illustrate list_return and pre_return 
 for (pre_return in c(FALSE, TRUE)) for (list_return in c(FALSE, TRUE)) {
   cat("\n=======================================\n")
