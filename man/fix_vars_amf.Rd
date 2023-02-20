@@ -35,21 +35,21 @@ Fix \code{vars} parameter to \code{aggregate_multiple_fun}
 \examples{
 f <- fix_vars_amf
 
-f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
+f(c("freq", "y", median = "freq", median = "y", e1 = "freq"))
 
-v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
+v1 <- list(sum = "a", sum = "w", q = c("a", "w"), mean = c("b", "w"))
 v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
-           c(fun = "snitt", "b", "w"))
+           c(fun = "mean", "b", "w"))
 v3 <- list(sum = "a", sum = "w", q = c(name = "a:w_q", "a", "w"), 
-           `b:w_snitt` = list(snitt = c("b", "w")))
+           `b:w_mean` = list(mean = c("b", "w")))
 v4 <- list(c(name = "a_sum", fun = "sum", "a"), 
            c(name = "w_sum", fun = "sum", "w"), 
            c(name = "a:w_q", fun = "q", "a", "w"), 
-           c(name = "b:w_snitt", fun = "snitt", "b", "w"))
+           c(name = "b:w_mean", fun = "mean", "b", "w"))
 v5 <- list(a_sum = c(fun = "sum", "a"), 
            w_sum = c(fun = "sum", "w"), 
            `a:w_q` = c(fun = "q", "a", "w"), 
-           `b:w_snitt` = c(fun = "snitt", "b", "w"))
+           `b:w_mean` = c(fun = "mean", "b", "w"))
 
 identical(f(v1), f(v2))
 identical(f(v1), f(v3))

@@ -92,72 +92,72 @@ This is caused by the \code{\link{unlist}} function being run on the output. Thi
 that all the variables will become numeric when they should have been both integer and numeric.
 }
 \examples{
-z2 <- SSBtoolsData("z2")
+d2 <- SSBtoolsData("d2")
 set.seed(12)
-z2$y <- round(rnorm(nrow(z2)), 2)
-z <- z2[sample.int(nrow(z2), size = 20), ]
+d2$y <- round(rnorm(nrow(d2)), 2)
+d <- d2[sample.int(nrow(d2), size = 20), ]
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
-   vars = c("ant", "y", median = "ant", median = "y", d1 = "ant"),
-   fun = c(sum, median = median, d1 = function(x) x[1])  
+   data = d, 
+   by = d[c("k_group", "main_income")], 
+   vars = c("freq", "y", median = "freq", median = "y", e1 = "freq"),
+   fun = c(sum, median = median, e1 = function(x) x[1])  
 )
 
 # With functions as named strings 
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
-   vars = c(sum = "y", med = "ant", med = "y"),
+   data = d, 
+   by = d[c("k_group", "main_income")], 
+   vars = c(sum = "y", med = "freq", med = "y"),
    fun = c(sum = "sum", med = "median")
 )
 
 # Without specifying functions 
 # - equivalent to `fun = c("sum", "median")` 
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
-   vars = c(sum = "y", median = "ant", median = "y")
+   data = d, 
+   by = d[c("k_group", "main_income")], 
+   vars = c(sum = "y", median = "freq", median = "y")
 )
 
 # The single unnamed variable feature. Also functions as strings. 
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
+   data = d, 
+   by = d[c("k_group", "main_income")], 
    vars = "y",
    fun = c("sum", "median", "min", "max")
 ) 
 
 # with multiple outputs (function my_range)
-# and with function of two variables (weighted.mean(y, ant))
+# and with function of two variables (weighted.mean(y, freq))
 my_range <- function(x) c(min = min(x), max = max(x))
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
-   vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant")),
+   data = d, 
+   by = d[c("k_group", "main_income")], 
+   vars = list("freq", "y", ra = "freq", wmean  = c("y", "freq")),
    fun = c(sum, ra = my_range, wmean = weighted.mean)
 )
 
 # with specified output variable names
 my_range <- function(x) c(min = min(x), max = max(x))
 aggregate_multiple_fun(
-   data = z, 
-   by = z[c("kostragr", "hovedint")], 
-   vars = list("ant", "y", 
-               `antmin,antmax` = list(ra = "ant"), 
-                yWmean  = list(wmean  = c("y", "ant"))),
+   data = d, 
+   by = d[c("k_group", "main_income")], 
+   vars = list("freq", "y", 
+               `freqmin,freqmax` = list(ra = "freq"), 
+                yWmean  = list(wmean  = c("y", "freq"))),
    fun = c(sum, ra = my_range, wmean = weighted.mean)
 )
 
 
 # To illustrate forward_dots and dots2dots
-q <- z[1, ]
+q <- d[1, ]
 q$w <- 100 * rnorm(1)
 for (dots2dots in c(FALSE, TRUE)) for (forward_dots in c(FALSE, TRUE)) {
   cat("\n=======================================\n")
   cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
   out <- aggregate_multiple_fun(
-    data = q, by = q["kostragr"], 
-    vars = c(sum = "ant", round = "w"), fun = c("sum", "round"),  
+    data = q, by = q["k_group"], 
+    vars = c(sum = "freq", round = "w"), fun = c("sum", "round"),  
     digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
   cat("\n")
   print(out)

@@ -64,72 +64,72 @@
 #' 
 #'
 #' @examples
-#' z2 <- SSBtoolsData("z2")
+#' d2 <- SSBtoolsData("d2")
 #' set.seed(12)
-#' z2$y <- round(rnorm(nrow(z2)), 2)
-#' z <- z2[sample.int(nrow(z2), size = 20), ]
+#' d2$y <- round(rnorm(nrow(d2)), 2)
+#' d <- d2[sample.int(nrow(d2), size = 20), ]
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
-#'    vars = c("ant", "y", median = "ant", median = "y", d1 = "ant"),
-#'    fun = c(sum, median = median, d1 = function(x) x[1])  
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
+#'    vars = c("freq", "y", median = "freq", median = "y", e1 = "freq"),
+#'    fun = c(sum, median = median, e1 = function(x) x[1])  
 #' )
 #' 
 #' # With functions as named strings 
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
-#'    vars = c(sum = "y", med = "ant", med = "y"),
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
+#'    vars = c(sum = "y", med = "freq", med = "y"),
 #'    fun = c(sum = "sum", med = "median")
 #' )
 #' 
 #' # Without specifying functions 
 #' # - equivalent to `fun = c("sum", "median")` 
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
-#'    vars = c(sum = "y", median = "ant", median = "y")
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
+#'    vars = c(sum = "y", median = "freq", median = "y")
 #' )
 #' 
 #' # The single unnamed variable feature. Also functions as strings. 
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
 #'    vars = "y",
 #'    fun = c("sum", "median", "min", "max")
 #' ) 
 #' 
 #' # with multiple outputs (function my_range)
-#' # and with function of two variables (weighted.mean(y, ant))
+#' # and with function of two variables (weighted.mean(y, freq))
 #' my_range <- function(x) c(min = min(x), max = max(x))
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
-#'    vars = list("ant", "y", ra = "ant", wmean  = c("y", "ant")),
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
+#'    vars = list("freq", "y", ra = "freq", wmean  = c("y", "freq")),
 #'    fun = c(sum, ra = my_range, wmean = weighted.mean)
 #' )
 #' 
 #' # with specified output variable names
 #' my_range <- function(x) c(min = min(x), max = max(x))
 #' aggregate_multiple_fun(
-#'    data = z, 
-#'    by = z[c("kostragr", "hovedint")], 
-#'    vars = list("ant", "y", 
-#'                `antmin,antmax` = list(ra = "ant"), 
-#'                 yWmean  = list(wmean  = c("y", "ant"))),
+#'    data = d, 
+#'    by = d[c("k_group", "main_income")], 
+#'    vars = list("freq", "y", 
+#'                `freqmin,freqmax` = list(ra = "freq"), 
+#'                 yWmean  = list(wmean  = c("y", "freq"))),
 #'    fun = c(sum, ra = my_range, wmean = weighted.mean)
 #' )
 #' 
 #' 
 #' # To illustrate forward_dots and dots2dots
-#' q <- z[1, ]
+#' q <- d[1, ]
 #' q$w <- 100 * rnorm(1)
 #' for (dots2dots in c(FALSE, TRUE)) for (forward_dots in c(FALSE, TRUE)) {
 #'   cat("\n=======================================\n")
 #'   cat("forward_dots =", forward_dots, ", dots2dots =", dots2dots)
 #'   out <- aggregate_multiple_fun(
-#'     data = q, by = q["kostragr"], 
-#'     vars = c(sum = "ant", round = "w"), fun = c("sum", "round"),  
+#'     data = q, by = q["k_group"], 
+#'     vars = c(sum = "freq", round = "w"), fun = c("sum", "round"),  
 #'     digits = 3, forward_dots = forward_dots, dots2dots = dots2dots)
 #'   cat("\n")
 #'   print(out)
@@ -389,21 +389,21 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
 #' @examples
 #' f <- fix_vars_amf
 #' 
-#' f(c("ant", "y", median = "ant", median = "y", d1 = "ant"))
+#' f(c("freq", "y", median = "freq", median = "y", e1 = "freq"))
 #' 
-#' v1 <- list(sum = "a", sum = "w", q = c("a", "w"), snitt = c("b", "w"))
+#' v1 <- list(sum = "a", sum = "w", q = c("a", "w"), mean = c("b", "w"))
 #' v2 <- list(c(fun = "sum", "a"), c(fun = "sum", "w"), c(fun = "q", "a", "w"), 
-#'            c(fun = "snitt", "b", "w"))
+#'            c(fun = "mean", "b", "w"))
 #' v3 <- list(sum = "a", sum = "w", q = c(name = "a:w_q", "a", "w"), 
-#'            `b:w_snitt` = list(snitt = c("b", "w")))
+#'            `b:w_mean` = list(mean = c("b", "w")))
 #' v4 <- list(c(name = "a_sum", fun = "sum", "a"), 
 #'            c(name = "w_sum", fun = "sum", "w"), 
 #'            c(name = "a:w_q", fun = "q", "a", "w"), 
-#'            c(name = "b:w_snitt", fun = "snitt", "b", "w"))
+#'            c(name = "b:w_mean", fun = "mean", "b", "w"))
 #' v5 <- list(a_sum = c(fun = "sum", "a"), 
 #'            w_sum = c(fun = "sum", "w"), 
 #'            `a:w_q` = c(fun = "q", "a", "w"), 
-#'            `b:w_snitt` = c(fun = "snitt", "b", "w"))
+#'            `b:w_mean` = c(fun = "mean", "b", "w"))
 #' 
 #' identical(f(v1), f(v2))
 #' identical(f(v1), f(v3))

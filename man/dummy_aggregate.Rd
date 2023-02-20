@@ -64,21 +64,21 @@ Internally this function make use of the \code{ind} parameter to \code{aggregate
 # Code that generates output similar to the 
 # last example in aggregate_multiple_fun
 
-z2 <- SSBtoolsData("z2")
+d2 <- SSBtoolsData("d2")
 set.seed(12)
-z2$y <- round(rnorm(nrow(z2)), 2)
-z <- z2[sample.int(nrow(z2), size = 20), ]
+d2$y <- round(rnorm(nrow(d2)), 2)
+d <- d2[sample.int(nrow(d2), size = 20), ]
 
-x <- ModelMatrix(z, formula = ~hovedint:kostragr - 1)
+x <- ModelMatrix(d, formula = ~main_income:k_group - 1)
 
 # with specified output variable names
 my_range <- function(x) c(min = min(x), max = max(x))
 dummy_aggregate(
-   data = z, 
+   data = d, 
    x = x, 
-   vars = list("ant", "y", 
-               `antmin,antmax` = list(ra = "ant"), 
-                yWmean  = list(wmean  = c("y", "ant"))),
+   vars = list("freq", "y", 
+               `freqmin,freqmax` = list(ra = "freq"), 
+                yWmean  = list(wmean  = c("y", "freq"))),
    fun = c(sum, ra = my_range, wmean = weighted.mean))
 
 
@@ -88,18 +88,18 @@ x2[17, 2:5] <- c(-1, 3, 0, 10)
 x2[, 4] <- 0
 
 # Now warning 
-# Result is not same as t(x2) \%*\% z[["ant"]]
-dummy_aggregate(data = z, x = x2, vars = "ant", fun = sum)
+# Result is not same as t(x2) \%*\% d[["freq"]]
+dummy_aggregate(data = d, x = x2, vars = "freq", fun = sum)
 
-# Now same as t(x2) \%*\% z[["ant"]]
-dummy_aggregate(data = z, x = x2, 
-                vars = "ant", dummy = FALSE,
+# Now same as t(x2) \%*\% d[["freq"]]
+dummy_aggregate(data = d, x = x2, 
+                vars = "freq", dummy = FALSE,
                 fun = function(x, y) sum(x * y))
 
 
-# Same as t(x2) \%*\% z[["ant"]]  + t(x2^2) \%*\% z[["y"]] 
-dummy_aggregate(data = z, x = x2, 
-                vars = list(c("ant", "y")), dummy = FALSE,
+# Same as t(x2) \%*\% d[["freq"]]  + t(x2^2) \%*\% d[["y"]] 
+dummy_aggregate(data = d, x = x2, 
+                vars = list(c("freq", "y")), dummy = FALSE,
                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
                 
 }
