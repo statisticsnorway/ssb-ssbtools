@@ -16,6 +16,7 @@ GaussSuppression(
   tolGauss = (.Machine$double.eps)^(1/2),
   whenEmptySuppressed = warning,
   whenEmptyUnsuppressed = message,
+  whenPrimaryForced = warning,
   removeDuplicated = TRUE,
   iFunction = GaussIterationFunction,
   iWait = Inf,
@@ -30,7 +31,7 @@ GaussSuppression(
 
 \item{primary}{Indices of primary suppressed cells}
 
-\item{forced}{Indices forced to be not suppressed}
+\item{forced}{Indices forced to be not suppressed. \code{forced} has precedence over \code{primary}. See \code{whenPrimaryForced} below.}
 
 \item{hidden}{Indices to be removed from the above \code{candidates} input (see details)}
 
@@ -46,6 +47,8 @@ Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s 
 \item{whenEmptySuppressed}{Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.}
 
 \item{whenEmptyUnsuppressed}{Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.}
+
+\item{whenPrimaryForced}{Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.}
 
 \item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
 
