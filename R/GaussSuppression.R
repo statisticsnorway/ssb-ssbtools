@@ -25,7 +25,7 @@
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
 #' @param candidates Indices of candidates for secondary suppression   
 #' @param primary    Indices of primary suppressed cells
-#' @param forced     Indices forced to be not suppressed 
+#' @param forced     Indices forced to be not suppressed. `forced` has precedence over `primary`. See `whenPrimaryForced` below.
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
 #' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
@@ -34,6 +34,7 @@
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
+#' @param whenPrimaryForced Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
 #' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
@@ -80,6 +81,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
                              whenEmptyUnsuppressed = message,
+                             whenPrimaryForced = warning,
                              removeDuplicated = TRUE, 
                              iFunction = GaussIterationFunction, iWait = Inf,
                              xExtraPrimary = NULL,
@@ -134,6 +136,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   if (length(hidden)) 
     candidates <- candidates[!(candidates %in% hidden)]
   
+  if (!is.null(whenPrimaryForced)) {
+    if (any(primary %in% forced)) {
+      whenPrimaryForced("Primary suppression of forced cells ignored")
+    }
+  }
   
   if (removeDuplicated) {
     # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
