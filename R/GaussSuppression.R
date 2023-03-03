@@ -20,6 +20,7 @@
 #'  When this is not the case, `"anySumNOTprimary"` must be used.
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
+#'  The `"sub2SumUnique"` method is an extension of `"sub2Sum"` that takes into account that the same contributor can appear in several input rows.
 #'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
@@ -29,7 +30,7 @@
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
 #' @param singleton Logical vector specifying inner cells for singleton handling. 
 #'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"sub2SumUnique"` or `"none"` (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
@@ -198,6 +199,9 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   if(is.integer(singleton)){
+    if (min(singleton) < 0) {
+      stop("integer singletons must be nonzero")
+    }
     singleton_integer <- singleton
     singleton <- as.logical(singleton)
   } else {
@@ -214,7 +218,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   }
   
-  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "sub2Sum", "none")) {
+  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "sub2Sum", "sub2SumUnique", "none")) {
     
     if(!is.null(whenEmptySuppressed)){
       if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
@@ -313,12 +317,32 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   
   # make new primary suppressed subSum-cells
-  if (grepl("subSum", singletonMethod) | singletonMethod == "sub2Sum") {
+  if (grepl("subSum", singletonMethod) | grepl("sub2Sum", singletonMethod)) {
     if (any(singleton)) {
-      if (singletonMethod == "sub2Sum") {
+      if (grepl("sub2Sum", singletonMethod)) {
         pZs <- x * singleton
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
-        colZ <- ((colSums(pZs) > 0) & (colSums(pZ) == 2))
+        if (singletonMethod == "sub2SumUnique") {
+          if (is.null(singleton_integer)) {
+            stop("singleton as integer needed when sub2SumUnique")
+          }
+          relevant_unique_index <- -seq_len(nrow(x))  # negative is guaranteed different from singleton_integer
+          relevant_unique_index[singleton] <- singleton_integer[singleton]
+          colSums_pZ_requirement <- (colSums(pZ[!duplicated(relevant_unique_index), , drop = FALSE]) <= 2) & (colSums(pZ) > 1)
+          # colSums(pZ) > 1 since primary already exists when colSums(pZ) == 1
+          # =2 before "&" here similar to =2 in sub2Sum: 
+          #      * two primary suppressed inner cells provided that at least one of them is singleton (colSums(pZs) > 0)
+          #      * Difference is that same singleton counted as 1
+          # =1 before "&" here is extra 
+          #      * All primary suppressed inner cells in group are same singleton and counted as 1 
+          #      * The sum of this group needs protection
+          # =0 before "&" here 
+          #      * will never happen when colSums(pZ) > 1)
+          #
+        } else {  # singletonMethod == "sub2Sum"
+          colSums_pZ_requirement <- colSums(pZ) == 2
+        }
+        colZ <- ((colSums(pZs) > 0) & colSums_pZ_requirement)
       } else {
         pZ <- x * singleton
         colZ <- colSums(pZ) > 1
@@ -331,7 +355,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         x <- cbind(x, pZ)
       }
     }
-    if (singletonMethod == "subSum" | singletonMethod == "sub2Sum") 
+    if (singletonMethod == "subSum" | grepl("sub2Sum", singletonMethod)) 
       singleton <- FALSE
   }
   

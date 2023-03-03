@@ -38,7 +38,7 @@ GaussSuppression(
 \item{singleton}{Logical vector specifying inner cells for singleton handling.
 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.}
 
-\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"} or \code{"none"} (see details).}
+\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"sub2SumUnique"} or \code{"none"} (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
 
@@ -86,6 +86,7 @@ All the above methods assume that any published singletons are primary suppresse
 When this is not the case, \code{"anySumNOTprimary"} must be used.
 The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
 This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
+The \code{"sub2SumUnique"} method is an extension of \code{"sub2Sum"} that takes into account that the same contributor can appear in several input rows.
 }
 \examples{
 # Input data
