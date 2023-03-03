@@ -78,7 +78,7 @@
 #' datF
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
-                             singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
+                             singleton = rep(FALSE, nrow(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
                              whenEmptyUnsuppressed = message,
                              whenPrimaryForced = warning,
@@ -189,10 +189,25 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     candidates <- c(forced, candidates)
   }
   
+  if(is.null(singleton)){
+    singleton <- rep(FALSE, nrow(x))
+  }
+  if (is.logical(singleton)) {
+    if(length(singleton) == 1L){
+      singleton <- rep(singleton, nrow(x))
+    }
+  }
+  if(is.integer(singleton)){
+    singleton_integer <- singleton
+    singleton <- as.logical(singleton)
+  } else {
+    singleton_integer <- NULL
+  }
   if (!is.logical(singleton)) {
-    singletonA <- rep(FALSE, NROW(x))
-    singletonA[singleton] <- TRUE
-    singleton <- singletonA
+    stop("singleton must be logical or integer")
+  }
+  if(length(singleton) != nrow(x)){
+    stop("length(singleton) must be nrow(x)")
   }
   
   if (is.function(singletonMethod)) {   # Alternative function possible

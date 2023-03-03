@@ -10,7 +10,7 @@ GaussSuppression(
   primary = NULL,
   forced = NULL,
   hidden = NULL,
-  singleton = rep(FALSE, NROW(x)),
+  singleton = rep(FALSE, nrow(x)),
   singletonMethod = "anySum",
   printInc = TRUE,
   tolGauss = (.Machine$double.eps)^(1/2),
