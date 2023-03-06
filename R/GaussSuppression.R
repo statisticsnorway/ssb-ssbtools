@@ -227,7 +227,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
     
     secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
-                                           singletonMethod = singletonMethod, tolGauss=tolGauss, 
+                                           singletonMethod = singletonMethod, singleton_integer = singleton_integer, tolGauss=tolGauss, 
                                            iFunction = iFunction, iWait = iWait,
                                    main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                            ...)
@@ -262,7 +262,7 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
 
 
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, singleton_integer, tolGauss, testMaxInt = 0, allNumeric = FALSE,
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ...) {
@@ -322,13 +322,14 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       if (grepl("sub2Sum", singletonMethod)) {
         pZs <- x * singleton
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
+        pZ[ , primary] <- 0  # Not relevant when already suppressed 
         if (singletonMethod == "sub2SumUnique") {
           if (is.null(singleton_integer)) {
             stop("singleton as integer needed when sub2SumUnique")
           }
           relevant_unique_index <- -seq_len(nrow(x))  # negative is guaranteed different from singleton_integer
           relevant_unique_index[singleton] <- singleton_integer[singleton]
-          colSums_pZ_requirement <- (colSums(pZ[!duplicated(relevant_unique_index), , drop = FALSE]) <= 2) & (colSums(pZ) > 1)
+          colSums_pZ_requirement <- (DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) <= 2) & (colSums(pZ) > 1)
           # colSums(pZ) > 1 since primary already exists when colSums(pZ) == 1
           # =2 before "&" here similar to =2 in sub2Sum: 
           #      * two primary suppressed inner cells provided that at least one of them is singleton (colSums(pZs) > 0)
