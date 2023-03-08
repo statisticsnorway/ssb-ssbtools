@@ -87,6 +87,7 @@ When this is not the case, \code{"anySumNOTprimary"} must be used.
 The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
 This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 The \code{"sub2SumUnique"} method is an extension of \code{"sub2Sum"} that takes into account that the same contributor can appear in several input rows.
+NOTE: The name \code{"sub2SumUnique"} will probably be changed.
 }
 \examples{
 # Input data

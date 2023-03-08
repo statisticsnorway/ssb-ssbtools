@@ -21,6 +21,7 @@
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 #'  The `"sub2SumUnique"` method is an extension of `"sub2Sum"` that takes into account that the same contributor can appear in several input rows.
+#'  NOTE: The name `"sub2SumUnique"` will probably be changed.
 #'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
@@ -338,6 +339,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
         if (singletonMethod == "sub2SumUnique") {
+          message("The name sub2SumUnique will probably be changed")
           if (is.null(singleton_integer)) {
             stop("singleton as integer needed when sub2SumUnique")
           }
