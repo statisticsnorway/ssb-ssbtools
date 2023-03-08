@@ -44,7 +44,7 @@
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
-#' @importFrom Matrix colSums t
+#' @importFrom Matrix colSums t Matrix
 #' @export
 #'
 #' @examples
@@ -320,6 +320,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (grepl("subSum", singletonMethod) | grepl("sub2Sum", singletonMethod)) {
     if (any(singleton)) {
       if (grepl("sub2Sum", singletonMethod)) {
+  
+        singletonExtraPrimary <- get0("singletonExtraPrimary", ifnotfound = FALSE)         # provisional
+        if (singletonExtraPrimary) {
+          singletonNotInPublish <- singleton
+          singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
+          if (any(singletonNotInPublish)) {
+            message("singletonExtraPrimary is used")   # provisional
+            pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
+            pZ[cbind(which(singletonNotInPublish), seq_len(sum(singletonNotInPublish)))] <- 1
+            primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))  # same code as below
+            x <- cbind(x, pZ)                                   # ---- // -----
+          }
+        }
+        
         pZs <- x * singleton
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
@@ -329,7 +343,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
           relevant_unique_index <- -seq_len(nrow(x))  # negative is guaranteed different from singleton_integer
           relevant_unique_index[singleton] <- singleton_integer[singleton]
-          colSums_pZ_requirement <- (DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) <= 2) & (colSums(pZ) > 1)
+          colSums_pZ_g_1 <- colSums(pZ) > 1
+          if (any(colSums_pZ_g_1)) { # with this, DummyApply problem when onlys zeros in pZ also avoided
+            colSums_pZ_requirement <- (DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) <= 2) & colSums_pZ_g_1
+          } else {
+            colSums_pZ_requirement <- colSums_pZ_g_1
+          }
           # colSums(pZ) > 1 since primary already exists when colSums(pZ) == 1
           # =2 before "&" here similar to =2 in sub2Sum: 
           #      * two primary suppressed inner cells provided that at least one of them is singleton (colSums(pZs) > 0)
