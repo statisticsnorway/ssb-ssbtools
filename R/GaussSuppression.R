@@ -322,6 +322,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (any(singleton)) {
       if (grepl("sub2Sum", singletonMethod)) {
   
+        singletonHierarchySearch <- get0("singletonHierarchySearch", ifnotfound = FALSE)   # provisional
         singletonExtraPrimary <- get0("singletonExtraPrimary", ifnotfound = FALSE)         # provisional
         if (singletonExtraPrimary) {
           singletonNotInPublish <- singleton
@@ -347,9 +348,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           relevant_unique_index[singleton] <- singleton_integer[singleton]
           colSums_pZ_g_1 <- colSums(pZ) > 1
           if (any(colSums_pZ_g_1)) { # with this, DummyApply problem when onlys zeros in pZ also avoided
-            colSums_pZ_requirement <- (DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) <= 2) & colSums_pZ_g_1
+            cols_g_2 <- DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) > 2
+            colSums_pZ_requirement <- !cols_g_2 & colSums_pZ_g_1
           } else {
             colSums_pZ_requirement <- colSums_pZ_g_1
+            cols_g_2 <- FALSE
           }
           # colSums(pZ) > 1 since primary already exists when colSums(pZ) == 1
           # =2 before "&" here similar to =2 in sub2Sum: 
@@ -363,6 +366,43 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           #
         } else {  # singletonMethod == "sub2Sum"
           colSums_pZ_requirement <- colSums(pZ) == 2
+          if (singletonHierarchySearch) {
+            cols_g_2 <- colSums(pZ) > 2
+          }
+        }
+        if (singletonHierarchySearch) {
+          if (any(cols_g_2)) {
+            cols_g_2 <- which(cols_g_2)
+            diffMatrix <- FindDiffMatrix(x[, primary[colSums(x[, primary, drop = FALSE]) > 1], drop = FALSE], # primary with more than 1, =1 already treated  
+                                         pZ[, cols_g_2, drop = FALSE])  # (x * innerprimary) with more than 2
+            colnames(diffMatrix) <- cols_g_2[as.integer(colnames(diffMatrix))]  # now colnames correspond to pZ columns
+            # Is there any difference column that corresponds to a unique contributor? The code below tries to answer.
+            if (ncol(diffMatrix)) {
+              diffMatrix <- diffMatrix[, colSums(diffMatrix[!singleton, , drop = FALSE]) == 0, drop = FALSE]
+              diffMatrix <- diffMatrix[singleton, , drop = FALSE]
+              if (ncol(diffMatrix)) {
+                colSums_diffMatrix_is1 <- colSums(diffMatrix) == 1
+                if (any(colSums_diffMatrix_is1)) {
+                  message("singletonHierarchySearch is used in the standard way")  # provisional
+                  if (printInc) {
+                    cat("\n   singletonHierarchySearch is used in the standard way:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(colSums_diffMatrix_is1)])], collapse = ", "), "\n")
+                  }
+                  colSums_pZ_requirement[as.integer(colnames(diffMatrix)[colSums_diffMatrix_is1])] <- TRUE
+                  diffMatrix <- diffMatrix[, !colSums_diffMatrix_is1, drop = FALSE]
+                }
+                if (singletonMethod == "sub2SumUnique" & ncol(diffMatrix)) {
+                  cols_eq_1 <- DummyApply(diffMatrix, relevant_unique_index[singleton], function(x) length(unique(x))) == 1
+                  if (any(cols_eq_1)) {
+                    message("singletonExtraPrimary is used in combination with sub2SumUnique")  # provisional
+                    if (printInc) {
+                      cat("\n   singletonExtraPrimary is used in combination with sub2SumUnique:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(cols_eq_1)])], collapse = ", "), "\n")
+                    }
+                    colSums_pZ_requirement[as.integer(colnames(diffMatrix)[cols_eq_1])] <- TRUE
+                  }
+                }
+              }
+            }
+          }
         }
         colZ <- ((colSums(pZs) > 0) & colSums_pZ_requirement)
       } else {
@@ -982,6 +1022,22 @@ DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
 # identical(c(aw, bw), 4:3)
 
 
+
+# Some of the code is similar to GaussSuppression:::FindDifferenceCells
+# Example: mm <- ModelMatrix(SSBtoolsData("sprt_emp_withEU")[1:6, 1:2])
+#          FindDiffMatrix(mm[, 5:6], mm[, c(1, 5)])
+FindDiffMatrix <- function(x, y = x) {
+  xty <- As_TsparseMatrix(crossprod(x, y))
+  # finds children in x and parents in y
+  r <- colSums(x)[xty@i + 1] == xty@x & 
+       colSums(y)[xty@j + 1] != xty@x
+  child <- xty@i[r] + 1L
+  parent <- xty@j[r] + 1L
+  diff_matrix <- y[, parent, drop = FALSE] - 
+                 x[, child, drop = FALSE]
+  colnames(diff_matrix) <- parent
+  diff_matrix
+}
 
 
 
