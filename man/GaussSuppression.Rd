@@ -35,8 +35,10 @@ GaussSuppression(
 
 \item{hidden}{Indices to be removed from the above \code{candidates} input (see details)}
 
-\item{singleton}{Logical vector specifying inner cells for singleton handling.
-Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.}
+\item{singleton}{Logical or integer vector of length \code{nrow(x)} specifying inner cells for singleton handling.
+Normally, for frequency tables, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.
+For some singleton methods, integer values representing the unique magnitude table contributors are needed.
+For all other singleton methods, only the values after conversion with \code{as.logical} matter.}
 
 \item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"sub2SumUnique"} or \code{"none"} (see details).}
 
