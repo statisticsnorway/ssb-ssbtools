@@ -466,17 +466,21 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           # =0 before "&" here 
           #      * will never happen when colSums(pZ) > 1)
           #
+          freq_max_singleton <- max(table(singleton_num[singleton_num_logical]))
         } else {  # not integerUnique
           colSums_pZ_requirement <- colSums(pZ) == 2
           if (hierarchySearch) {
             cols_g_2 <- colSums(pZ) > 2
           }
+          freq_max_singleton <- 1L
         }
         if (hierarchySearch) {
           if (any(cols_g_2)) {
             cols_g_2 <- which(cols_g_2)
+            message(paste("freq_max_singleton for FindDiffMatrix:", freq_max_singleton))
             diffMatrix <- FindDiffMatrix(x[, primary[colSums(x[, primary, drop = FALSE]) > 1], drop = FALSE], # primary with more than 1, =1 already treated  
-                                         pZ[, cols_g_2, drop = FALSE])  # (x * innerprimary) with more than 2
+                                         pZ[, cols_g_2, drop = FALSE],  # (x * innerprimary) with more than 2
+                                         freq_max_singleton)
             colnames(diffMatrix) <- cols_g_2[as.integer(colnames(diffMatrix))]  # now colnames correspond to pZ columns
             # Is there any difference column that corresponds to a unique contributor? The code below tries to answer.
             if (ncol(diffMatrix)) {
@@ -1140,11 +1144,13 @@ DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
 # Some of the code is similar to GaussSuppression:::FindDifferenceCells
 # Example: mm <- ModelMatrix(SSBtoolsData("sprt_emp_withEU")[1:6, 1:2])
 #          FindDiffMatrix(mm[, 5:6], mm[, c(1, 5)])
-FindDiffMatrix <- function(x, y = x) {
+FindDiffMatrix <- function(x, y = x, max_colSums_diff = Inf) {
   xty <- As_TsparseMatrix(crossprod(x, y))
+  colSums_y_xty_j_1 <- colSums(y)[xty@j + 1]
   # finds children in x and parents in y
   r <- colSums(x)[xty@i + 1] == xty@x & 
-       colSums(y)[xty@j + 1] != xty@x
+       colSums_y_xty_j_1     != xty@x & 
+       (colSums_y_xty_j_1 - xty@x) <= max_colSums_diff
   child <- xty@i[r] + 1L
   parent <- xty@j[r] + 1L
   diff_matrix <- y[, parent, drop = FALSE] - 
