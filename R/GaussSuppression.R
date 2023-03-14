@@ -385,6 +385,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
+  ##
+  ##  START extending x based on singleton
+  ##
+  
+  input_ncol_x <- ncol(x)
+  
   # make new primary suppressed subSum-cells
   if (grepl("subSum", singletonMethod)) {
     if (any(singleton)) {
@@ -392,7 +398,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       colZ <- colSums(pZ) > 1
       if (any(colZ)) {                                     # Same code below  
         pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!duplicated(as.matrix(t(pZ))))     # Possible improvement by DummyDuplicated
+        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # which(!duplicated(as.matrix(t(pZ)))) 
         pZ <- pZ[, nodupl, drop = FALSE]
         primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
         x <- cbind(x, pZ)
@@ -495,13 +501,28 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
       if (any(colZ)) {
         pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!duplicated(as.matrix(t(pZ))))     # Possible improvement by DummyDuplicated
+        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # nodupl <- which(!duplicated(as.matrix(t(pZ)))) 
         pZ <- pZ[, nodupl, drop = FALSE]
         primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
         x <- cbind(x, pZ)
       }
     }
   }
+  
+  if (!all(SeqInc(input_ncol_x + 1L, input_ncol_x) %in% primary)) {
+    stop("extending x based on singleton failed")
+  } 
+  
+  ddx <- DummyDuplicated(x, rnd = TRUE)
+  ddx[seq_len(input_ncol_x)] <- FALSE
+  if (any(ddx)) {
+    x <- x[, !ddx]
+    primary <- primary[seq_len(length(primary) - sum(ddx))]
+  }
+  
+  ##
+  ##  END extending x based on singleton
+  ## 
   
   
   if (!any(singleton)) 
