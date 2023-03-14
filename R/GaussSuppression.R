@@ -343,14 +343,25 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     flush.console()
   }
   
-  # list2env works but "no visible binding for global variable" in check
-  # list2env(NumSingleton(singletonMethod_num), envir=environment())
-  # Instead in the manual way: 
   numSingleton <- NumSingleton(singletonMethod_num)
-  singleton2Primary <- numSingleton$singleton2Primary
-  integerUnique <- numSingleton$integerUnique
-  sub2Sum <- numSingleton$sub2Sum
-  hierarchySearch <- numSingleton$hierarchySearch
+  if (numSingleton[["singleton2Primary"]] == "T") {
+    stop("singleton2Primary=T not implemented")
+  }
+  singleton2Primary <- numSingleton[["singleton2Primary"]] == "t"
+  integerUnique <- as.logical(numSingleton[["integerUnique"]])
+  if (is.na(integerUnique)) {  # When 't'
+    integerUnique <- is.integer(singleton_num)
+  }
+  if (integerUnique & !is.integer(singleton_num)) {
+    stop("singleton as integer needed")
+  }
+  sub2Sum <- as.logical(numSingleton[["sum2"]])
+  if (is.na(sub2Sum)) {  # When 'H'
+    sub2Sum <- TRUE
+    hierarchySearch <- TRUE
+  } else {
+    hierarchySearch <- FALSE
+  }
   
   if (singletonMethod == "none") {
     singleton <- FALSE

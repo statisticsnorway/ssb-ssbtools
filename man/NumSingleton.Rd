@@ -10,26 +10,36 @@ NumSingleton(singletonMethod)
 \item{singletonMethod}{String to be decoded}
 }
 \value{
-A list or \code{NULL}
+A character vector or \code{NULL}
 }
 \description{
-A \code{singletonMethod} starting with \code{"num"} is decoded into internal variables
-in \code{\link{GaussSuppression}}
+A \code{\link{GaussSuppression}} \code{singletonMethod} starting with \code{"num"} is decoded into separate characters.
 }
 \details{
-The output variables have the following meaning, when \code{TRUE}:
+Any \code{F} means the feature is turned off.
+Other characters have the following meaning:
+\enumerate{
+\item \code{singleton2Primary} (1st character):
 \itemize{
-\item \code{singleton2Primary} (1st character): Published singletons are forced to be primary suppressed.
-\item \code{integerUnique} (2nd character): Integer values representing the unique contributors are utilized.
-\item \code{sub2Sum} (3rd character, \code{T} or \code{H}): Imaginary primary suppressed cells are made,
+\item \code{T}: All singletons are forced to be primary suppressed.
+\item \code{t}: Non-published singletons are primary suppressed.
+}
+\item \code{integerUnique} (2nd character):
+\itemize{
+\item \code{T}: Integer values representing the unique contributors are utilized.  Error if \code{singleton} not supplied as integer.
+\item \code{t}: As \code{T} above, but instead of error, the feature is turned off  (as \code{F}) if \code{singleton} is not supplied as integer.
+}
+\item \code{sum2} (3rd character):
+\itemize{
+\item \code{T}: Imaginary primary suppressed cells are made,
 which are the sum of some suppressed inner cells and which can be divided into two components.
 At least one component is singleton contributor. The other component may be an inner cell.
-\item \code{hierarchySearch} (3rd character, \code{H}): As \code{sub2Sum} above.
-And in addition, the other component can be any primary suppressed published cell.
+\item \code{H}: As \code{T} above. And in addition, the other component can be any primary suppressed published cell.
+}
 }
 }
 \examples{
-unlist(NumSingleton("numTFF"))
-unlist(NumSingleton("numFTT"))
-unlist(NumSingleton("numTTH"))
+NumSingleton("numTFF")
+NumSingleton("numFTT")
+NumSingleton("numttH")
 }
