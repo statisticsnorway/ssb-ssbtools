@@ -345,9 +345,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   numSingleton <- NumSingleton(singletonMethod_num)
   if (numSingleton[["singleton2Primary"]] == "T") {
-    stop("singleton2Primary=T not implemented")
+    singleton2Primary <- TRUE
+    forceSingleton2Primary <- TRUE
+  } else {
+    singleton2Primary <- numSingleton[["singleton2Primary"]] == "t"
+    forceSingleton2Primary <- FALSE
   }
-  singleton2Primary <- numSingleton[["singleton2Primary"]] == "t"
   integerUnique <- as.logical(numSingleton[["integerUnique"]])
   if (is.na(integerUnique)) {  # When 't'
     integerUnique <- is.integer(singleton_num)
@@ -409,24 +412,32 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   # make new primary suppressed subSum-cells
-  if (sub2Sum) {  
+  if (sub2Sum | singleton2Primary | forceSingleton2Primary) {  
     if (any(singleton_num)) {
-      if (sub2Sum) {
-        singleton_num_logical = as.logical(singleton_num)
-        #hierarchySearch <- get0("hierarchySearch", ifnotfound = FALSE)   # provisional
-        #singleton2Primary <- get0("singleton2Primary", ifnotfound = FALSE)         # provisional
-        if (singleton2Primary) {
-          singletonNotInPublish <- singleton_num_logical
-          singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
-          if (any(singletonNotInPublish)) {
-            message("singleton2Primary is used")   # provisional
-            pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
-            pZ[cbind(which(singletonNotInPublish), seq_len(sum(singletonNotInPublish)))] <- 1
-            primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))  # same code as below
-            x <- cbind(x, pZ)                                   # ---- // -----
-          }
+      singleton_num_logical <- as.logical(singleton_num)
+      if (forceSingleton2Primary) {
+        cS1 <- which(colSums(x) == 1)
+        cS1 <- cS1[!(cS1 %in% primary)]
+        if (length(cS1)) {
+          cS1 <- cS1[colSums(x[singleton_num_logical, cS1, drop = FALSE]) == 1]
         }
-        
+        if (length(cS1)) {
+          primary <- c(primary, cS1)
+          message("forceSingleton2Primary is used")  # provisional
+        }
+      }
+      if (singleton2Primary) {
+        singletonNotInPublish <- singleton_num_logical
+        singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
+        if (any(singletonNotInPublish)) {
+          message("singleton2Primary is used")   # provisional
+          pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
+          pZ[cbind(which(singletonNotInPublish), seq_len(sum(singletonNotInPublish)))] <- 1
+          primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))  # same code as below
+          x <- cbind(x, pZ)                                   # ---- // -----
+        }
+      }
+      if (sub2Sum) {
         pZs <- x * singleton_num_logical
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
@@ -518,6 +529,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (any(ddx)) {
     x <- x[, !ddx]
     primary <- primary[seq_len(length(primary) - sum(ddx))]
+    message("duplicates found")
   }
   
   ##
