@@ -309,6 +309,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ...) {
+  
+  # Trick:  GaussSuppressionPrintInfo <- message
+  PrintInfo <- get0("GaussSuppressionPrintInfo",ifnotfound = function(x) NULL)
 
   if (!is.numeric(iWait)) {
     iWait <- Inf
@@ -423,14 +426,14 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         }
         if (length(cS1)) {
           primary <- c(primary, cS1)
-          message("forceSingleton2Primary is used")  # provisional
+          PrintInfo("forceSingleton2Primary is used")
         }
       }
       if (singleton2Primary) {
         singletonNotInPublish <- singleton_num_logical
         singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
         if (any(singletonNotInPublish)) {
-          message("singleton2Primary is used")   # provisional
+          PrintInfo("singleton2Primary is used")
           pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
           pZ[cbind(which(singletonNotInPublish), seq_len(sum(singletonNotInPublish)))] <- 1
           primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))  # same code as below
@@ -442,7 +445,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
         if (integerUnique) {
-          message("The name sub2SumUnique will probably be changed")
+          PrintInfo("The name sub2SumUnique will probably be changed")
           if (!is.integer(singleton_num)) {
             stop("singleton as integer needed when sub2SumUnique")
           }
@@ -477,7 +480,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         if (hierarchySearch) {
           if (any(cols_g_2)) {
             cols_g_2 <- which(cols_g_2)
-            message(paste("freq_max_singleton for FindDiffMatrix:", freq_max_singleton))
+            PrintInfo(paste("freq_max_singleton for FindDiffMatrix:", freq_max_singleton))
             diffMatrix <- FindDiffMatrix(x[, primary[colSums(x[, primary, drop = FALSE]) > 1], drop = FALSE], # primary with more than 1, =1 already treated  
                                          pZ[, cols_g_2, drop = FALSE],  # (x * innerprimary) with more than 2
                                          freq_max_singleton)
@@ -489,7 +492,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               if (ncol(diffMatrix)) {
                 colSums_diffMatrix_is1 <- colSums(diffMatrix) == 1
                 if (any(colSums_diffMatrix_is1)) {
-                  message("hierarchySearch is used in the standard way")  # provisional
+                  PrintInfo("hierarchySearch is used in the standard way")
                   if (printInc) {
                     cat("\n   hierarchySearch is used in the standard way:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(colSums_diffMatrix_is1)])], collapse = ", "), "\n")
                   }
@@ -499,7 +502,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 if (integerUnique & ncol(diffMatrix)) {
                   cols_eq_1 <- DummyApply(diffMatrix, relevant_unique_index[singleton_num_logical], function(x) length(unique(x))) == 1
                   if (any(cols_eq_1)) {
-                    message("hierarchySearch is used in combination with sub2SumUnique")  # provisional
+                    PrintInfo("hierarchySearch is used in combination with sub2SumUnique")
                     if (printInc) {
                       cat("\n   hierarchySearch is used in combination with sub2SumUnique:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(cols_eq_1)])], collapse = ", "), "\n")
                     }
@@ -533,7 +536,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (any(ddx)) {
     x <- x[, !ddx]
     primary <- primary[seq_len(length(primary) - sum(ddx))]
-    message("duplicates found")
+    PrintInfo("duplicates found")
   }
   
   ##
