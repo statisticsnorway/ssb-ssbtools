@@ -40,7 +40,9 @@ Normally, for frequency tables, this means cells with 1s when 0s are non-suppres
 For some singleton methods, integer values representing the unique magnitude table contributors are needed.
 For all other singleton methods, only the values after conversion with \code{as.logical} matter.}
 
-\item{singletonMethod}{Method for handling the problem of singletons and zeros: \code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"sub2SumUnique"} or \code{"none"} (see details).}
+\item{singletonMethod}{Method for handling the problem of singletons and zeros:
+\code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"none"}
+or a \code{\link{NumSingleton}} method (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
 
@@ -77,7 +79,9 @@ The singleton problem and the related problem of zeros are also handled.
 It is possible to specify too many (all) indices as \code{candidates}.
 Indices specified as \code{primary} or \code{hidded} will be removed.
 Hidden indices (not candidates or primary) refer to cells that will not be published, but do not need protection.
-All singleton methods, except \code{"sub2Sum"}, have been implemented with frequency tables in mind.
+\itemize{
+\item \strong{Singleton methods for frequency tables:}
+All singleton methods, except \code{"sub2Sum"} and the \code{\link{NumSingleton}} methods, have been implemented with frequency tables in mind.
 The singleton method \code{"subSum"} makes new imaginary primary suppressed cells, which are the sum of the singletons
 within each group. The \code{"subSpace"} method is conservative and ignores the singleton dimensions when looking for
 linear dependency. The default method, \code{"anySum"}, is between the other two. Instead of making imaginary cells of
@@ -86,13 +90,17 @@ sums within groups, the aim is to handle all possible sums, also across groups. 
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
 All the above methods assume that any published singletons are primary suppressed.
 When this is not the case, \code{"anySumNOTprimary"} must be used.
+\item \strong{Singleton methods for magnitude tables:}
 The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
 This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
-The \code{"sub2SumUnique"} method is an extension of \code{"sub2Sum"} that takes into account that the same contributor can appear in several input rows.
-NOTE: The name \code{"sub2SumUnique"} will probably be changed.
+This was the first method implemented. Other magnitude methods follow the coding according to \code{\link{NumSingleton}}.
+The \code{"sub2Sum"} method is equivalent to \code{"numFFT"}.
+Also note that \code{"num"}, \code{"numFFF"} and \code{"numFTF"} are equivalent to \code{"none"}.
+\item \strong{Combined:}
 For advanced use, \code{singleton} can be a two-element list with names \code{"freq"} and \code{"num"}.
 Then \code{singletonMethod} must be a corresponding named two-element vector.
 For example: \code{singletonMethod = c(freq = "anySumNOTprimary", num = "sub2Sum")}
+}
 }
 \examples{
 # Input data

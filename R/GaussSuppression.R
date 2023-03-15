@@ -9,19 +9,24 @@
 #' It is possible to specify too many (all) indices as `candidates`. 
 #' Indices specified as `primary` or `hidded` will be removed. 
 #' Hidden indices (not candidates or primary) refer to cells that will not be published, but do not need protection. 
-#' All singleton methods, except `"sub2Sum"`, have been implemented with frequency tables in mind.
-#' The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
-#' within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
-#' linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
-#' sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
-#' `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
-#'  and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
-#'  All the above methods assume that any published singletons are primary suppressed. 
-#'  When this is not the case, `"anySumNOTprimary"` must be used.
+#' 
+#' * **Singleton methods for frequency tables:** 
+#'         All singleton methods, except `"sub2Sum"` and the \code{\link{NumSingleton}} methods, have been implemented with frequency tables in mind.
+#'         The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
+#'         within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
+#'         linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
+#'         sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
+#'         `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
+#'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
+#'         All the above methods assume that any published singletons are primary suppressed. 
+#'         When this is not the case, `"anySumNOTprimary"` must be used.
+#' * **Singleton methods for magnitude tables:**          
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
-#'  The `"sub2SumUnique"` method is an extension of `"sub2Sum"` that takes into account that the same contributor can appear in several input rows.
-#'  NOTE: The name `"sub2SumUnique"` will probably be changed.
+#'  This was the first method implemented. Other magnitude methods follow the coding according to \code{\link{NumSingleton}}.  
+#'  The `"sub2Sum"` method is equivalent to `"numFFT"`.
+#'  Also note that `"num"`, `"numFFF"` and `"numFTF"` are equivalent to `"none"`.   
+#' * **Combined:**  
 #'  For advanced use, `singleton` can be a two-element list with names `"freq"` and `"num"`. 
 #'  Then `singletonMethod` must be a corresponding named two-element vector.
 #'  For example: `singletonMethod = c(freq = "anySumNOTprimary", num = "sub2Sum")`
@@ -36,7 +41,9 @@
 #'            Normally, for frequency tables, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.  
 #'            For some singleton methods, integer values representing the unique magnitude table contributors are needed. 
 #'            For all other singleton methods, only the values after conversion with `as.logical` matter.      
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"sub2SumUnique"` or `"none"` (see details).
+#' @param singletonMethod Method for handling the problem of singletons and zeros: 
+#'             `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
+#'             or a \code{\link{NumSingleton}} method (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
@@ -226,7 +233,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     if (!is.logical(singleton)) {
       stop("singleton must be logical or integer")
     }
-    if (singletonMethod %in% c("sub2Sum", "sub2SumUnique") | !is.null(NumSingleton(singletonMethod))) {
+    if (singletonMethod %in% c("sub2Sum") | !is.null(NumSingleton(singletonMethod))) {
       singletonMethod_num <- singletonMethod
       singletonMethod <- "none"
     } else {
@@ -252,9 +259,9 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   if (singletonMethod_num == "sub2Sum") {
     singletonMethod_num <- "numFFT"
   }
-  if (singletonMethod_num == "sub2SumUnique") {
-    singletonMethod_num <- "numFTT"
-  }
+  #if (singletonMethod_num == "sub2SumUnique") {
+  #  singletonMethod_num <- "numFTT"
+  #}
   if (singletonMethod_num == "none") {
     singletonMethod_num <- "num"
   }
@@ -445,9 +452,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
         if (integerUnique) {
-          PrintInfo("The name sub2SumUnique will probably be changed")
           if (!is.integer(singleton_num)) {
-            stop("singleton as integer needed when sub2SumUnique")
+            stop("singleton as integer needed, but something is wrong since this check has been done earlier")
           }
           relevant_unique_index <- -seq_len(nrow(x))  # negative is guaranteed different from singleton_num
           relevant_unique_index[singleton_num_logical] <- singleton_num[singleton_num_logical]
@@ -493,19 +499,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 colSums_diffMatrix_is1 <- colSums(diffMatrix) == 1
                 if (any(colSums_diffMatrix_is1)) {
                   PrintInfo("hierarchySearch is used in the standard way")
-                  if (printInc) {
-                    cat("\n   hierarchySearch is used in the standard way:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(colSums_diffMatrix_is1)])], collapse = ", "), "\n")
-                  }
                   colSums_pZ_requirement[as.integer(colnames(diffMatrix)[colSums_diffMatrix_is1])] <- TRUE
                   diffMatrix <- diffMatrix[, !colSums_diffMatrix_is1, drop = FALSE]
                 }
                 if (integerUnique & ncol(diffMatrix)) {
                   cols_eq_1 <- DummyApply(diffMatrix, relevant_unique_index[singleton_num_logical], function(x) length(unique(x))) == 1
                   if (any(cols_eq_1)) {
-                    PrintInfo("hierarchySearch is used in combination with sub2SumUnique")
-                    if (printInc) {
-                      cat("\n   hierarchySearch is used in combination with sub2SumUnique:", paste(colnames(pZ)[as.integer(colnames(diffMatrix)[which(cols_eq_1)])], collapse = ", "), "\n")
-                    }
+                    PrintInfo("hierarchySearch is used in combination with integerUnique")
                     colSums_pZ_requirement[as.integer(colnames(diffMatrix)[cols_eq_1])] <- TRUE
                   }
                 }

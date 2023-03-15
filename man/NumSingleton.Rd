@@ -7,7 +7,7 @@
 NumSingleton(singletonMethod)
 }
 \arguments{
-\item{singletonMethod}{String to be decoded}
+\item{singletonMethod}{String to be decoded. If necessary, the input string is extended with \code{F}'s.}
 }
 \value{
 A character vector or \code{NULL}
@@ -35,6 +35,7 @@ Other characters have the following meaning:
 which are the sum of some suppressed inner cells and which can be divided into two components.
 At least one component is singleton contributor. The other component may be an inner cell.
 \item \code{H}: As \code{T} above. And in addition, the other component can be any primary suppressed published cell.
+This method may be computationally demanding for big data.
 }
 }
 }

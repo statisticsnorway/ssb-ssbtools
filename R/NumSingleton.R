@@ -22,10 +22,11 @@
 #'   \item `T`: Imaginary primary suppressed cells are made, 
 #'       which are the sum of some suppressed inner cells and which can be divided into two components.
 #'       At least one component is singleton contributor. The other component may be an inner cell. 
-#'   \item `H`: As `T` above. And in addition, the other component can be any primary suppressed published cell.   
+#'   \item `H`: As `T` above. And in addition, the other component can be any primary suppressed published cell. 
+#'       This method may be computationally demanding for big data.  
 #'   }
 #'
-#' @param singletonMethod String to be decoded 
+#' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
 #'
 #' @return A character vector or `NULL`
 #' @export
