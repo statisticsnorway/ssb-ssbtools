@@ -9,17 +9,27 @@
 #' It is possible to specify too many (all) indices as `candidates`. 
 #' Indices specified as `primary` or `hidded` will be removed. 
 #' Hidden indices (not candidates or primary) refer to cells that will not be published, but do not need protection. 
-#' All singleton methods, except `"sub2Sum"`, have been implemented with frequency tables in mind.
-#' The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
-#' within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
-#' linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
-#' sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
-#' `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
-#'  and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
-#'  All the above methods assume that any published singletons are primary suppressed. 
-#'  When this is not the case, `"anySumNOTprimary"` must be used.
+#' 
+#' * **Singleton methods for frequency tables:** 
+#'         All singleton methods, except `"sub2Sum"` and the \code{\link{NumSingleton}} methods, have been implemented with frequency tables in mind.
+#'         The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
+#'         within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
+#'         linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
+#'         sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
+#'         `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
+#'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
+#'         All the above methods assume that any published singletons are primary suppressed. 
+#'         When this is not the case, `"anySumNOTprimary"` must be used.
+#' * **Singleton methods for magnitude tables:**          
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
+#'  This was the first method implemented. Other magnitude methods follow the coding according to \code{\link{NumSingleton}}.  
+#'  The `"sub2Sum"` method is equivalent to `"numFFT"`.
+#'  Also note that `"num"`, `"numFFF"` and `"numFTF"` are equivalent to `"none"`.   
+#' * **Combined:**  
+#'  For advanced use, `singleton` can be a two-element list with names `"freq"` and `"num"`. 
+#'  Then `singletonMethod` must be a corresponding named two-element vector.
+#'  For example: `singletonMethod = c(freq = "anySumNOTprimary", num = "sub2Sum")`
 #'  
 #'
 #' @param x Matrix that relates cells to be published or suppressed to inner cells. yPublish = crossprod(x,yInner)
@@ -27,9 +37,13 @@
 #' @param primary    Indices of primary suppressed cells
 #' @param forced     Indices forced to be not suppressed. `forced` has precedence over `primary`. See `whenPrimaryForced` below.
 #' @param hidden     Indices to be removed from the above `candidates` input (see details)  
-#' @param singleton Logical vector specifying inner cells for singleton handling. 
-#'                 Normally, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.   
-#' @param singletonMethod Method for handling the problem of singletons and zeros: `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"` or `"none"` (see details).
+#' @param singleton Logical or integer vector of length `nrow(x)` specifying inner cells for singleton handling.
+#'            Normally, for frequency tables, this means cells with 1s when 0s are non-suppressed and cells with 0s when 0s are suppressed.  
+#'            For some singleton methods, integer values representing the unique magnitude table contributors are needed. 
+#'            For all other singleton methods, only the values after conversion with `as.logical` matter.      
+#' @param singletonMethod Method for handling the problem of singletons and zeros: 
+#'             `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
+#'             or a \code{\link{NumSingleton}} method (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
@@ -43,7 +57,7 @@
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
-#' @importFrom Matrix colSums t
+#' @importFrom Matrix colSums t Matrix
 #' @export
 #'
 #' @examples
@@ -78,7 +92,7 @@
 #' datF
 #' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
-                             singleton = rep(FALSE, NROW(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
+                             singleton = rep(FALSE, nrow(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
                              whenEmptyUnsuppressed = message,
                              whenPrimaryForced = warning,
@@ -189,17 +203,72 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     candidates <- c(forced, candidates)
   }
   
-  if (!is.logical(singleton)) {
-    singletonA <- rep(FALSE, NROW(x))
-    singletonA[singleton] <- TRUE
-    singleton <- singletonA
+  if(is.null(singleton)){
+    singleton <- rep(FALSE, nrow(x))
   }
   
-  if (is.function(singletonMethod)) {   # Alternative function possible
-    return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
+  if (is.list(singleton)){
+    if(!identical(as.vector(sort(names(singleton))), c("freq", "num"))){
+      stop('names of singleton when list must be "freq" and "num"')
+    }
+    if(!identical(as.vector(sort(names(singleton))), c("freq", "num"))){
+      stop('names of singletonMethod when several must be "freq" and "num"')
+    }
+    singleton_num <- singleton[["num"]]
+    singleton <- as.logical(singleton[["freq"]])
+    singletonMethod_num <- singletonMethod[["num"]] 
+    singletonMethod <- singletonMethod[["freq"]]
+  } else {
+    if (is.logical(singleton)) {
+      if(length(singleton) == 1L){
+        singleton <- rep(singleton, nrow(x))
+      }
+    }
+    if(is.integer(singleton)){
+      singleton_num <- singleton
+      singleton <- as.logical(singleton)
+    } else {
+      singleton_num <- singleton
+    }
+    if (!is.logical(singleton)) {
+      stop("singleton must be logical or integer")
+    }
+    if (singletonMethod %in% c("sub2Sum") | !is.null(NumSingleton(singletonMethod))) {
+      singletonMethod_num <- singletonMethod
+      singletonMethod <- "none"
+    } else {
+      singletonMethod_num <- "none"
+    }
+  }
+  if (is.integer(singleton_num)) {
+    if (min(singleton_num) < 0) {
+      stop("integer singletons must be nonzero")
+    }
+  }
+  if(length(singleton) != nrow(x) | length(singleton_num) != nrow(x)){
+    stop("length(singleton) must be nrow(x)")
   }
   
-  if (singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "sub2Sum", "none")) {
+  #if (is.function(singletonMethod)) {   # Alternative function possible
+  #  return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
+  #}
+  
+  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
+    stop("wrong singletonMethod")
+  }
+  if (singletonMethod_num == "sub2Sum") {
+    singletonMethod_num <- "numFFT"
+  }
+  #if (singletonMethod_num == "sub2SumUnique") {
+  #  singletonMethod_num <- "numFTT"
+  #}
+  if (singletonMethod_num == "none") {
+    singletonMethod_num <- "num"
+  }
+  if (is.null(NumSingleton(singletonMethod_num))) {
+    stop("wrong singletonMethod")
+  }
+  
     
     if(!is.null(whenEmptySuppressed)){
       if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
@@ -208,7 +277,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
     
     secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
-                                           singletonMethod = singletonMethod, tolGauss=tolGauss, 
+                                           singletonMethod = singletonMethod, singletonMethod_num = singletonMethod_num, singleton_num = singleton_num, tolGauss=tolGauss, 
                                            iFunction = iFunction, iWait = iWait,
                                    main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                            ...)
@@ -226,9 +295,9 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
     
     return(secondary)
-  }
+  #}
   
-  stop("wrong singletonMethod")
+  #stop("wrong singletonMethod")
 }
 
 # Function to handle removeDuplicated
@@ -243,11 +312,14 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
 
 
 
-GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, tolGauss, testMaxInt = 0, allNumeric = FALSE,
+GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, singletonMethod_num, singleton_num, tolGauss, testMaxInt = 0, allNumeric = FALSE,
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ...) {
   
+  # Trick:  GaussSuppressionPrintInfo <- message
+  PrintInfo <- get0("GaussSuppressionPrintInfo",ifnotfound = function(x) NULL)
+
   if (!is.numeric(iWait)) {
     iWait <- Inf
   } else {
@@ -271,8 +343,37 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   if (printInc) {
-    cat(paste0("GaussSuppression_", singletonMethod))
+    singletonMethod_print <- c(singletonMethod, singletonMethod_num)
+    singletonMethod_print <- c(singletonMethod_print[!(singletonMethod_print %in% c("none", "num"))])
+    if (!length(singletonMethod_print)) {
+      singletonMethod_print <- "none"
+    }
+    singletonMethod_print <- paste(singletonMethod_print, collapse = "_")
+    cat(paste0("GaussSuppression_", singletonMethod_print))
     flush.console()
+  }
+  
+  numSingleton <- NumSingleton(singletonMethod_num)
+  if (numSingleton[["singleton2Primary"]] == "T") {
+    singleton2Primary <- TRUE
+    forceSingleton2Primary <- TRUE
+  } else {
+    singleton2Primary <- numSingleton[["singleton2Primary"]] == "t"
+    forceSingleton2Primary <- FALSE
+  }
+  integerUnique <- as.logical(numSingleton[["integerUnique"]])
+  if (is.na(integerUnique)) {  # When 't'
+    integerUnique <- is.integer(singleton_num)
+  }
+  if (integerUnique & !is.integer(singleton_num)) {
+    stop("singleton as integer needed")
+  }
+  sub2Sum <- as.logical(numSingleton[["sum2"]])
+  if (is.na(sub2Sum)) {  # When 'H'
+    sub2Sum <- TRUE
+    hierarchySearch <- TRUE
+  } else {
+    hierarchySearch <- FALSE
   }
   
   if (singletonMethod == "none") {
@@ -297,30 +398,151 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
+  ##
+  ##  START extending x based on singleton
+  ##
+  
+  input_ncol_x <- ncol(x)
+  
   # make new primary suppressed subSum-cells
-  if (grepl("subSum", singletonMethod) | singletonMethod == "sub2Sum") {
+  if (grepl("subSum", singletonMethod)) {
     if (any(singleton)) {
-      if (singletonMethod == "sub2Sum") {
-        pZs <- x * singleton
-        pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
-        colZ <- ((colSums(pZs) > 0) & (colSums(pZ) == 2))
-      } else {
-        pZ <- x * singleton
-        colZ <- colSums(pZ) > 1
-      }
-      if (any(colZ)) {
+      pZ <- x * singleton
+      colZ <- colSums(pZ) > 1
+      if (any(colZ)) {                                     # Same code below  
         pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!duplicated(as.matrix(t(pZ))))     # Possible improvement by DummyDuplicated
+        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # which(!duplicated(as.matrix(t(pZ)))) 
         pZ <- pZ[, nodupl, drop = FALSE]
         primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
         x <- cbind(x, pZ)
       }
     }
-    if (singletonMethod == "subSum" | singletonMethod == "sub2Sum") 
+    if (singletonMethod == "subSum") 
       singleton <- FALSE
   }
   
-
+  # make new primary suppressed subSum-cells
+  if (sub2Sum | singleton2Primary | forceSingleton2Primary) {  
+    if (any(singleton_num)) {
+      singleton_num_logical <- as.logical(singleton_num)
+      if (forceSingleton2Primary) {
+        cS1 <- which(colSums(x) == 1)
+        cS1 <- cS1[!(cS1 %in% primary)]
+        if (length(cS1)) {
+          cS1 <- cS1[colSums(x[singleton_num_logical, cS1, drop = FALSE]) == 1]
+        }
+        if (length(cS1)) {
+          primary <- c(primary, cS1)
+          PrintInfo("forceSingleton2Primary is used")
+        }
+      }
+      if (singleton2Primary) {
+        singletonNotInPublish <- singleton_num_logical
+        singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
+        if (any(singletonNotInPublish)) {
+          PrintInfo("singleton2Primary is used")
+          pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
+          pZ[cbind(which(singletonNotInPublish), seq_len(sum(singletonNotInPublish)))] <- 1
+          primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))  # same code as below
+          x <- cbind(x, pZ)                                   # ---- // -----
+        }
+      }
+      if (sub2Sum) {
+        pZs <- x * singleton_num_logical
+        pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
+        pZ[ , primary] <- 0  # Not relevant when already suppressed 
+        if (integerUnique) {
+          if (!is.integer(singleton_num)) {
+            stop("singleton as integer needed, but something is wrong since this check has been done earlier")
+          }
+          relevant_unique_index <- -seq_len(nrow(x))  # negative is guaranteed different from singleton_num
+          relevant_unique_index[singleton_num_logical] <- singleton_num[singleton_num_logical]
+          colSums_pZ_g_1 <- colSums(pZ) > 1
+          if (any(colSums_pZ_g_1)) { # with this, DummyApply problem when onlys zeros in pZ also avoided
+            cols_g_2 <- DummyApply(pZ, relevant_unique_index, function(x) length(unique(x))) > 2
+            colSums_pZ_requirement <- !cols_g_2 & colSums_pZ_g_1
+          } else {
+            colSums_pZ_requirement <- colSums_pZ_g_1
+            cols_g_2 <- FALSE
+          }
+          # colSums(pZ) > 1 since primary already exists when colSums(pZ) == 1
+          # =2 before "&" here similar to =2 in sub2Sum: 
+          #      * two primary suppressed inner cells provided that at least one of them is singleton (colSums(pZs) > 0)
+          #      * Difference is that same singleton counted as 1
+          # =1 before "&" here is extra 
+          #      * All primary suppressed inner cells in group are same singleton and counted as 1 
+          #      * The sum of this group needs protection
+          # =0 before "&" here 
+          #      * will never happen when colSums(pZ) > 1)
+          #
+          freq_max_singleton <- max(table(singleton_num[singleton_num_logical]))
+        } else {  # not integerUnique
+          colSums_pZ_requirement <- colSums(pZ) == 2
+          if (hierarchySearch) {
+            cols_g_2 <- colSums(pZ) > 2
+          }
+          freq_max_singleton <- 1L
+        }
+        if (hierarchySearch) {
+          if (any(cols_g_2)) {
+            cols_g_2 <- which(cols_g_2)
+            PrintInfo(paste("freq_max_singleton for FindDiffMatrix:", freq_max_singleton))
+            diffMatrix <- FindDiffMatrix(x[, primary[colSums(x[, primary, drop = FALSE]) > 1], drop = FALSE], # primary with more than 1, =1 already treated  
+                                         pZ[, cols_g_2, drop = FALSE],  # (x * innerprimary) with more than 2
+                                         freq_max_singleton)
+            colnames(diffMatrix) <- cols_g_2[as.integer(colnames(diffMatrix))]  # now colnames correspond to pZ columns
+            # Is there any difference column that corresponds to a unique contributor? The code below tries to answer.
+            if (ncol(diffMatrix)) {
+              diffMatrix <- diffMatrix[, colSums(diffMatrix[!singleton_num_logical, , drop = FALSE]) == 0, drop = FALSE]
+              diffMatrix <- diffMatrix[singleton_num_logical, , drop = FALSE]
+              if (ncol(diffMatrix)) {
+                colSums_diffMatrix_is1 <- colSums(diffMatrix) == 1
+                if (any(colSums_diffMatrix_is1)) {
+                  PrintInfo("hierarchySearch is used in the standard way")
+                  colSums_pZ_requirement[as.integer(colnames(diffMatrix)[colSums_diffMatrix_is1])] <- TRUE
+                  diffMatrix <- diffMatrix[, !colSums_diffMatrix_is1, drop = FALSE]
+                }
+                if (integerUnique & ncol(diffMatrix)) {
+                  cols_eq_1 <- DummyApply(diffMatrix, relevant_unique_index[singleton_num_logical], function(x) length(unique(x))) == 1
+                  if (any(cols_eq_1)) {
+                    PrintInfo("hierarchySearch is used in combination with integerUnique")
+                    colSums_pZ_requirement[as.integer(colnames(diffMatrix)[cols_eq_1])] <- TRUE
+                  }
+                }
+              }
+            }
+          }
+        }
+        colZ <- ((colSums(pZs) > 0) & colSums_pZ_requirement)
+      } else {
+        colZ <- FALSE  # This is not logical, but due to code change
+      }
+      if (any(colZ)) {
+        pZ <- pZ[, colZ, drop = FALSE]
+        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # nodupl <- which(!duplicated(as.matrix(t(pZ)))) 
+        pZ <- pZ[, nodupl, drop = FALSE]
+        primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
+        x <- cbind(x, pZ)
+      }
+    }
+  }
+  
+  if (!all(SeqInc(input_ncol_x + 1L, input_ncol_x) %in% primary)) {
+    stop("extending x based on singleton failed")
+  } 
+  
+  ddx <- DummyDuplicated(x, rnd = TRUE)
+  ddx[seq_len(input_ncol_x)] <- FALSE
+  if (any(ddx)) {
+    x <- x[, !ddx]
+    primary <- primary[seq_len(length(primary) - sum(ddx))]
+    PrintInfo("duplicates found")
+  }
+  
+  ##
+  ##  END extending x based on singleton
+  ## 
+  
   
   if (!any(singleton)) 
     singleton <- NULL
@@ -921,6 +1143,24 @@ DummyDuplicatedSpec <- function(x, candidates, primary, forced) {
 # identical(c(aw, bw), 4:3)
 
 
+
+# Some of the code is similar to GaussSuppression:::FindDifferenceCells
+# Example: mm <- ModelMatrix(SSBtoolsData("sprt_emp_withEU")[1:6, 1:2])
+#          FindDiffMatrix(mm[, 5:6], mm[, c(1, 5)])
+FindDiffMatrix <- function(x, y = x, max_colSums_diff = Inf) {
+  xty <- As_TsparseMatrix(crossprod(x, y))
+  colSums_y_xty_j_1 <- colSums(y)[xty@j + 1]
+  # finds children in x and parents in y
+  r <- colSums(x)[xty@i + 1] == xty@x & 
+       colSums_y_xty_j_1     != xty@x & 
+       (colSums_y_xty_j_1 - xty@x) <= max_colSums_diff
+  child <- xty@i[r] + 1L
+  parent <- xty@j[r] + 1L
+  diff_matrix <- y[, parent, drop = FALSE] - 
+                 x[, child, drop = FALSE]
+  colnames(diff_matrix) <- parent
+  diff_matrix
+}
 
 
 
