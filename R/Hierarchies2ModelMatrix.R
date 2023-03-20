@@ -48,12 +48,20 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' and \code{\link{HierarchyCompute}}  via  \code{\link{HierarchyComputeDummy}}.
 #' Since the dummy matrix is transposed in comparison to \code{HierarchyCompute}, the parameter \code{rowSelect} is renamed to \code{select}
 #' and  \code{makeRownames} is renamed to \code{makeColnames}.  
+#' 
+#' The select parameter as a list can be partially specified in the sense that not all hierarchy names have to be included.
+#' The parameter `inputInOutput` will only apply to hierarchies that are not in the `select` list (see note).
+#' 
+#' @note The `select` as a list is run via a special coding of the `inputInOutput` parameter. 
+#' This parameter is converted into a list (`as.list`) and `select` elements are inserted into this list. 
+#' This is also an additional option for users of the function.
 #'
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param hierarchies List of hierarchies, which can be converted by \code{\link{AutoHierarchies}}.
 #' Thus, the variables can also be coded by \code{"rowFactor"} or \code{""}, which correspond to using the categories in the data.
 #' @param inputInOutput Logical vector (possibly recycled) for each element of hierarchies.
 #'         TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} or \code{""} are ignored.
+#'         Also see note.
 #' @param crossTable Cross table in output when TRUE
 #' @param total See \code{\link{AutoHierarchies}}
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
@@ -61,7 +69,8 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #'        When TRUE, sign means union and complement instead of addition or subtraction. 
 #'        Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored. 
 #' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
-#' @param select Data frame specifying variable combinations for output.
+#' @param select Data frame specifying variable combinations for output 
+#'               or a named list specifying code selections for each variable (see details).
 #' @param removeEmpty When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.
 #' @param selectionByMultiplicationLimit With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 #'          the computation is performed by a slower but more memory efficient algorithm. 
@@ -112,7 +121,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' t(m6) %*% ths_per
 #' 
 #' 
-#' # Example using the select parameter
+#' # Example using the select parameter as a data frame
 #' select <- data.frame(age = c("Y15-64", "Y15-29", "Y30-64"), geo = c("EU", "nonEU", "Spain"))
 #' m2a <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), select = select)
 #' 
@@ -120,16 +129,41 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' m2B <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), crossTable = TRUE)
 #' m2b <- m2B$modelMatrix[, Match(select, m2B$crossTable), drop = FALSE]
 #' t(m2b) %*% ths_per
+#' 
+#' # Examples using the select parameter as a list
+#' Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+#'        inputInOutput = FALSE, 
+#'        select = list(geo = c("nonEU", "Portugal")))
+#' Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+#'        select = list(geo = c("nonEU", "Portugal"), age = c("Y15-64", "Y15-29")))
+#' 
 Hierarchies2ModelMatrix <- function(data, hierarchies, inputInOutput = TRUE, crossTable = FALSE, total = "Total", 
                                     hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), 
                                     unionComplement = FALSE, reOrder = TRUE,
                                     select = NULL, removeEmpty = FALSE, 
                                     selectionByMultiplicationLimit = 10^7, 
                                     makeColnames = TRUE, verbose = FALSE, ...) {
+  
+  autoHierarchies <- AutoHierarchies(hierarchies = hierarchies, data = data, total = total, hierarchyVarNames = hierarchyVarNames)
+  
+  if (is.list(select) & !is.data.frame(select)) {
+    inputInOutput <- rep_len(inputInOutput, length(hierarchies))  # similar to inside HierarchyCompute
+    names(inputInOutput) <- names(hierarchies)
+    inputInOutput <- as.list(inputInOutput)
+    if (is.null(names(select))) {
+      stop("select must be named")
+    }
+    if (any(!(names(select) %in% names(inputInOutput)))) {
+      stop("Names of select must match hierarchy names")
+    }
+    inputInOutput[names(select)] <- select
+    select <- NULL
+  }
+  
   if (is.null(select))
     if (removeEmpty)
       select <- "removeEmpty"
-  autoHierarchies <- AutoHierarchies(hierarchies = hierarchies, data = data, total = total, hierarchyVarNames = hierarchyVarNames)
+  
   HierarchyComputeDummy(data = data, hierarchies = autoHierarchies, inputInOutput = inputInOutput, crossTable = crossTable, 
                         unionComplement = unionComplement, reOrder=reOrder, rowSelect = select, 
                         selectionByMultiplicationLimit = selectionByMultiplicationLimit, 
