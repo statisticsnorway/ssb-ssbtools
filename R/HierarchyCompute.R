@@ -1119,6 +1119,22 @@ DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inpu
       else m <- rbind(m, Mult_crossprod(mNew, m)) #rbind(m, crossprod(mNew, m))  # Matrix::rBind(m,  crossprod(mNew,m))
     }
   }
+  if (is.list(inputInOutput)) {   # When list: Extended use of inputInOutput (hack)
+    inputInOutput <- inputInOutput[[1]]
+    if (is.character(inputInOutput)) {
+      ma <- match(inputInOutput, rownames(m))
+      if (anyNA(ma)) {
+        warning(paste("Output codes not found in the hierarchy result in empties:", 
+                      paste(HeadEnd(inputInOutput[is.na(ma)]), collapse = ", ")))
+        m0 <- Matrix(0, sum(is.na(ma)), ncol(m))
+        rownames(m0) <- inputInOutput[is.na(ma)]
+        m <- rbind(m, m0)
+        ma <- match(inputInOutput, rownames(m))
+      }
+      m <- m[ma, , drop = FALSE]
+      return(m)
+    }
+  }
   if (!inputInOutput & length(dropInput) > 0) {
     keepRows <- rownames(m)[!(rownames(m) %in% dropInput)]
     m <- m[keepRows, , drop = FALSE]
