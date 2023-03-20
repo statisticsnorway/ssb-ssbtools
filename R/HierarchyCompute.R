@@ -333,6 +333,23 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       if (hierarchies[[i]] == "rowFactor") {
         dummyHierarchies[[i]] <- fac2sparse(sort(factor(unique(data[, names(hierarchies)[i], drop = TRUE]))))
         colnames(dummyHierarchies[[i]]) <- rownames(dummyHierarchies[[i]])
+        
+        # similar code as in DummyHierarchy
+        if (is.list(inputInOutput)) {   # When list: Extended use of inputInOutput (hack)
+          if (is.character(inputInOutput[[i]])) {
+            ma <- match(inputInOutput[[i]], rownames(dummyHierarchies[[i]]))
+            if (anyNA(ma)) {
+              warning(paste("Output codes not found in the variable result in empties:", 
+                            paste(HeadEnd(inputInOutput[[i]][is.na(ma)]), collapse = ", ")))
+              m0 <- Matrix(0, sum(is.na(ma)), ncol(dummyHierarchies[[i]]))
+              rownames(m0) <- inputInOutput[[i]][is.na(ma)]
+              dummyHierarchies[[i]] <- rbind(dummyHierarchies[[i]], m0)
+              ma <- match(inputInOutput[[i]], rownames(dummyHierarchies[[i]]))
+            }
+            dummyHierarchies[[i]] <- dummyHierarchies[[i]][ma, , drop = FALSE]
+          }
+        }
+        
       }
       
     }
