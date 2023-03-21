@@ -47,7 +47,7 @@ Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 \item{select}{Data frame specifying variable combinations for output
 or a named list specifying code selections for each variable (see details).}
 
-\item{removeEmpty}{When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.}
+\item{removeEmpty}{When TRUE and when \code{select} is not a data frame, empty columns (only zeros) are not included in output.}
 
 \item{selectionByMultiplicationLimit}{With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 the computation is performed by a slower but more memory efficient algorithm.}

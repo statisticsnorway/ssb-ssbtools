@@ -71,7 +71,7 @@ HierarchyComputeDummy <- function(data, hierarchies, inputInOutput = TRUE, cross
 #' @param reOrder When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering. 
 #' @param select Data frame specifying variable combinations for output 
 #'               or a named list specifying code selections for each variable (see details).
-#' @param removeEmpty When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.
+#' @param removeEmpty When TRUE and when \code{select} is not a data frame, empty columns (only zeros) are not included in output.
 #' @param selectionByMultiplicationLimit With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 #'          the computation is performed by a slower but more memory efficient algorithm. 
 #' @param makeColnames Colnames included when TRUE (default).

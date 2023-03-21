@@ -17,6 +17,7 @@ ModelMatrix(
   removeEmpty = !is.null(formula) & is.null(hierarchies),
   modelMatrix = NULL,
   dimVar = NULL,
+  select = NULL,
   ...
 )
 
@@ -55,6 +56,9 @@ Default is \code{TRUE} with formula input without hierarchy and otherwise \code{
 
 \item{dimVar}{The main dimensional variables and additional aggregating variables. This parameter can be  useful when hierarchies and formula are unspecified.}
 
+\item{select}{Data frame specifying variable combinations for output
+or a named list specifying code selections for each variable (see details).}
+
 \item{...}{Further arguments to  \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} or \code{\link{HierarchiesAndFormula2ModelMatrix}}}
 }
 \value{
@@ -73,6 +77,10 @@ Thus, \code{ModelMatrix} makes a call to \code{Formula2ModelMatrix} with \code{i
 
 \code{NamesFromModelMatrixInput} returns the names of the data columns involved in creating the model matrix.
 Note that \code{data} must be non-NULL to convert dimVar as indices to names.
+
+The \code{select} parameter is forwarded to \code{Hierarchies2ModelMatrix} unless \code{removeEmpty = TRUE} is combined with \code{select} as a data frame.
+In all other cases, \code{select} is handled outside the underlying functions by making selections in the result.
+Empty columns can be added to the model matrix when \code{removeEmpty = FALSE} (with warning).
 }
 \examples{
 # Create some input
@@ -111,6 +119,19 @@ ModelMatrix(z, list(age = ageHier, geo = geoDimList, year = ""), formula = ~age 
 # via Hierarchies2ModelMatrix() using unnamed list element. See AutoHierarchies.             
 colnames(ModelMatrix(z, list(age = ageHier, c(Europe = "geo", Allyears = "year", "eu"))))
 colnames(ModelMatrix(z, list(age = ageHier, c("geo", "year", "eu")), total = c("t1", "t2")))
+
+# Example using the select parameter as a data frame
+select <- data.frame(age = c("Total", "young", "old"), geo = c("EU", "nonEU", "Spain"))
+ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+            select = select, crossTable = TRUE)$crossTable
+            
+# Examples using the select parameter as a list
+ModelMatrix(z, list(age = ageHier, geo = geoDimList), inputInOutput = FALSE, 
+            select = list(geo = c("nonEU", "Portugal")), crossTable = TRUE)$crossTable
+ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+            select = list(geo = c("nonEU", "Portugal"), age = c("Total", "young")), 
+            crossTable = TRUE)$crossTable
+
 }
 \author{
 Øyvind Langsrud

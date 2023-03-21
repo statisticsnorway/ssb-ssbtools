@@ -14,6 +14,10 @@
 #' `NamesFromModelMatrixInput` returns the names of the data columns involved in creating the model matrix.
 #' Note that `data` must be non-NULL to convert dimVar as indices to names. 
 #' 
+#' The `select` parameter is forwarded to `Hierarchies2ModelMatrix` unless `removeEmpty = TRUE` is combined with `select` as a data frame.
+#' In all other cases, `select` is handled outside the underlying functions by making selections in the result.
+#' Empty columns can be added to the model matrix when `removeEmpty = FALSE` (with warning).
+#' 
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param hierarchies List of hierarchies, which can be converted by \code{\link{AutoHierarchies}}.
 #' Thus, the variables can also be coded by \code{"rowFactor"} or \code{""}, which correspond to using the categories in the data.
@@ -29,6 +33,8 @@
 #'                    Default is `TRUE` with formula input without hierarchy and otherwise `FALSE` (see details).      
 #' @param modelMatrix The model matrix as input (same as output)
 #' @param dimVar The main dimensional variables and additional aggregating variables. This parameter can be  useful when hierarchies and formula are unspecified.   
+#' @param select Data frame specifying variable combinations for output 
+#'               or a named list specifying code selections for each variable (see details). 
 #' @param ... Further arguments to  \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} or \code{\link{HierarchiesAndFormula2ModelMatrix}}    
 #'
 #' @return A (sparse) model matrix or a list of two elements (model matrix and cross table)
@@ -72,10 +78,23 @@
 #' # via Hierarchies2ModelMatrix() using unnamed list element. See AutoHierarchies.             
 #' colnames(ModelMatrix(z, list(age = ageHier, c(Europe = "geo", Allyears = "year", "eu"))))
 #' colnames(ModelMatrix(z, list(age = ageHier, c("geo", "year", "eu")), total = c("t1", "t2")))
+#' 
+#' # Example using the select parameter as a data frame
+#' select <- data.frame(age = c("Total", "young", "old"), geo = c("EU", "nonEU", "Spain"))
+#' ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+#'             select = select, crossTable = TRUE)$crossTable
+#'             
+#' # Examples using the select parameter as a list
+#' ModelMatrix(z, list(age = ageHier, geo = geoDimList), inputInOutput = FALSE, 
+#'             select = list(geo = c("nonEU", "Portugal")), crossTable = TRUE)$crossTable
+#' ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+#'             select = list(geo = c("nonEU", "Portugal"), age = c("Total", "young")), 
+#'             crossTable = TRUE)$crossTable
+#' 
 ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput = TRUE, crossTable = FALSE, 
                         sparse = TRUE, viaOrdinary = FALSE, total = "Total", 
                         removeEmpty = !is.null(formula) & is.null(hierarchies), 
-                        modelMatrix = NULL, dimVar = NULL, ...) {
+                        modelMatrix = NULL, dimVar = NULL, select = NULL, ...) {
   
   if (!is.null(modelMatrix)) {
     
@@ -112,7 +131,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
     a <- ModelMatrixOld(data = data, hierarchies = hierarchies, formula = formula, 
                         inputInOutput = inputInOutput, crossTable = crossTable, 
                         sparse = sparse, viaOrdinary = viaOrdinary, 
-                        total = total, removeEmpty = removeEmpty, ...)
+                        total = total, removeEmpty = removeEmpty, select = select, ...)
     if (is.list(a)) {
       if (anyNA(a$modelMatrix)) 
         a$modelMatrix[is.na(a$modelMatrix)] <- 0
@@ -125,7 +144,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
   ModelMatrixOld(data = data, hierarchies = hierarchies, formula = formula, 
                  inputInOutput = inputInOutput, crossTable = crossTable, 
                  sparse = sparse, viaOrdinary = viaOrdinary, 
-                 total = total, removeEmpty = removeEmpty, ...)
+                 total = total, removeEmpty = removeEmpty, select = select, ...)
 }
 
 
@@ -138,6 +157,7 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
                         viaOrdinary = FALSE,
                         total = "Total",
                         removeEmpty = FALSE,
+                        select,
                            ...) {
   
   if (is.null(formula) & is.null(hierarchies)) {
@@ -145,19 +165,77 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
   }
   
   if(viaOrdinary){
-    if(!is.null(hierarchies) | crossTable){
+    if(!is.null(hierarchies) | crossTable | !is.null(select)){
       warning("viaOrdinary ignorded")
     } else {
       return(Model_Matrix(formula = formula, data = data, sparse = sparse)) 
     }
   }
   
+  if (is.data.frame(select)) {
+    ma <- Match(select, select)
+    if (anyDuplicated(ma)) {
+      ma <- ma[unique(ma)]
+      warning("duplicate select rows removed")
+      select <- select[ma, , drop = FALSE]  # Similar in Hierarchies2ModelMatrix without warning
+    }
+  }
+  
+  if (!is.null(select) &      # This is about handling select when this is not handled within the algorithm
+      (!is.null(formula) |    # HierarchiesAndFormula2ModelMatrix or Formula2ModelMatrix
+       (removeEmpty & is.data.frame(select)))) {   # Hierarchies2ModelMatrix ignores removeEmpty in this case 
+    out <- ModelMatrixOld(data = data, hierarchies = hierarchies, formula = formula, 
+                          inputInOutput = inputInOutput, 
+                          crossTable = TRUE, 
+                          sparse = sparse, 
+                          viaOrdinary = FALSE, 
+                          total = total,
+                          removeEmpty = removeEmpty, 
+                          select = NULL)
+    if (is.data.frame(select)) {
+      ma <- Match(select, out$crossTable)
+      if (anyNA(ma)) {
+        if (removeEmpty) {
+          ma <- ma[!is.na(ma)]
+        } else {
+          m0 <- Matrix(0, nrow(out$modelMatrix), sum(is.na(ma)))
+          colnames(m0) <- MatrixPaste(select[is.na(ma), , drop = FALSE], sep = "-")
+          out$modelMatrix <- cbind(out$modelMatrix, m0)
+          out$crossTable <- rbind(out$crossTable, select[is.na(ma), , drop = FALSE])
+          ma <- Match(select, out$crossTable)
+          warning("Non-matching select rows result in empties. Use removeEmpty=TRUE?")
+        }
+      }
+    } else {
+      selectNames <- names(select)
+      if (any(!(selectNames %in% names(out$crossTable)))) {
+        stop("Names of select must match crossTable names")
+      }
+      rows <- rep(TRUE, nrow(out$crossTable))
+      for (i in seq_along(select)) {
+        rows <- rows & (out$crossTable[[selectNames[i]]] %in% select[[i]])
+        if (any(!(select[[i]] %in% out$crossTable[[selectNames[i]]]))) {
+          warning("non-matching select codes ignored")
+        }
+      }
+      ma <- which(rows)
+    }
+    out$modelMatrix <- out$modelMatrix[, ma, drop = FALSE]
+    if (!crossTable) {
+      return(out$modelMatrix)
+    }
+    out$crossTable <- out$crossTable[ma, , drop = FALSE]
+    rownames(out$crossTable) <- NULL
+    return(out)
+  }
+  
+  
   if (!is.null(formula) & !is.null(hierarchies)) {
     a <- HierarchiesAndFormula2ModelMatrix(data = data, hierarchies = hierarchies, formula = formula, inputInOutput = inputInOutput, crossTable = crossTable, total = total, removeEmpty = removeEmpty, ...)
   }
   
   if (is.null(formula) & !is.null(hierarchies)) {
-    a <- Hierarchies2ModelMatrix(data = data, hierarchies = hierarchies, inputInOutput = inputInOutput, crossTable = crossTable, total = total, removeEmpty = removeEmpty,  ...)
+    a <- Hierarchies2ModelMatrix(data = data, hierarchies = hierarchies, inputInOutput = inputInOutput, crossTable = crossTable, total = total, removeEmpty = removeEmpty, select = select,  ...)
   }
   
   if (!is.null(formula) & is.null(hierarchies)) {
