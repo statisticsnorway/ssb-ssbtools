@@ -29,7 +29,8 @@ Hierarchies2ModelMatrix(
 Thus, the variables can also be coded by \code{"rowFactor"} or \code{""}, which correspond to using the categories in the data.}
 
 \item{inputInOutput}{Logical vector (possibly recycled) for each element of hierarchies.
-TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} or \code{""} are ignored.}
+TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} or \code{""} are ignored.
+Also see note.}
 
 \item{crossTable}{Cross table in output when TRUE}
 
@@ -43,9 +44,10 @@ Values corresponding to \code{"rowFactor"} and \code{"colFactor"} are ignored.}
 
 \item{reOrder}{When TRUE (default) output codes are ordered in a way similar to a usual model matrix ordering.}
 
-\item{select}{Data frame specifying variable combinations for output.}
+\item{select}{Data frame specifying variable combinations for output
+or a named list specifying code selections for each variable (see details).}
 
-\item{removeEmpty}{When TRUE and when \code{select=NULL}, empty columns (only zeros) are not included in output.}
+\item{removeEmpty}{When TRUE and when \code{select} is not a data frame, empty columns (only zeros) are not included in output.}
 
 \item{selectionByMultiplicationLimit}{With non-NULL \code{select} and when the number of elements in the model matrix exceeds this limit,
 the computation is performed by a slower but more memory efficient algorithm.}
@@ -69,6 +71,14 @@ This function makes use of \code{\link{AutoHierarchies}}
 and \code{\link{HierarchyCompute}}  via  \code{\link{HierarchyComputeDummy}}.
 Since the dummy matrix is transposed in comparison to \code{HierarchyCompute}, the parameter \code{rowSelect} is renamed to \code{select}
 and  \code{makeRownames} is renamed to \code{makeColnames}.
+
+The select parameter as a list can be partially specified in the sense that not all hierarchy names have to be included.
+The parameter \code{inputInOutput} will only apply to hierarchies that are not in the \code{select} list (see note).
+}
+\note{
+The \code{select} as a list is run via a special coding of the \code{inputInOutput} parameter.
+This parameter is converted into a list (\code{as.list}) and \code{select} elements are inserted into this list.
+This is also an additional option for users of the function.
 }
 \examples{
 # Create some input
@@ -108,7 +118,7 @@ t(m5) \%*\% ths_per
 t(m6) \%*\% ths_per
 
 
-# Example using the select parameter
+# Example using the select parameter as a data frame
 select <- data.frame(age = c("Y15-64", "Y15-29", "Y30-64"), geo = c("EU", "nonEU", "Spain"))
 m2a <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), select = select)
 
@@ -116,6 +126,14 @@ m2a <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), select 
 m2B <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), crossTable = TRUE)
 m2b <- m2B$modelMatrix[, Match(select, m2B$crossTable), drop = FALSE]
 t(m2b) \%*\% ths_per
+
+# Examples using the select parameter as a list
+Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+       inputInOutput = FALSE, 
+       select = list(geo = c("nonEU", "Portugal")))
+Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), 
+       select = list(geo = c("nonEU", "Portugal"), age = c("Y15-64", "Y15-29")))
+
 }
 \seealso{
 \code{\link{ModelMatrix}}, \code{\link{HierarchiesAndFormula2ModelMatrix}}

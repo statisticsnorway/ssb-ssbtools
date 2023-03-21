@@ -333,6 +333,23 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
       if (hierarchies[[i]] == "rowFactor") {
         dummyHierarchies[[i]] <- fac2sparse(sort(factor(unique(data[, names(hierarchies)[i], drop = TRUE]))))
         colnames(dummyHierarchies[[i]]) <- rownames(dummyHierarchies[[i]])
+        
+        # similar code as in DummyHierarchy
+        if (is.list(inputInOutput)) {   # When list: Extended use of inputInOutput (hack)
+          if (is.character(inputInOutput[[i]])) {
+            ma <- match(inputInOutput[[i]], rownames(dummyHierarchies[[i]]))
+            if (anyNA(ma)) {
+              warning(paste("Output codes not found in the variable result in empties:", 
+                            paste(HeadEnd(inputInOutput[[i]][is.na(ma)]), collapse = ", ")))
+              m0 <- Matrix(0, sum(is.na(ma)), ncol(dummyHierarchies[[i]]))
+              rownames(m0) <- inputInOutput[[i]][is.na(ma)]
+              dummyHierarchies[[i]] <- rbind(dummyHierarchies[[i]], m0)
+              ma <- match(inputInOutput[[i]], rownames(dummyHierarchies[[i]]))
+            }
+            dummyHierarchies[[i]] <- dummyHierarchies[[i]][ma, , drop = FALSE]
+          }
+        }
+        
       }
       
     }
@@ -1117,6 +1134,22 @@ DummyHierarchy <- function(mapsFrom, mapsTo, sign, level, mapsInput = NULL, inpu
       if (unionComplement) 
         m <- rbind(m, CrossprodUnionComplement(mNew, m))  # Matrix::rBind(m,  CrossprodUnionComplement(mNew,m))
       else m <- rbind(m, Mult_crossprod(mNew, m)) #rbind(m, crossprod(mNew, m))  # Matrix::rBind(m,  crossprod(mNew,m))
+    }
+  }
+  if (is.list(inputInOutput)) {   # When list: Extended use of inputInOutput (hack)
+    inputInOutput <- inputInOutput[[1]]
+    if (is.character(inputInOutput)) {
+      ma <- match(inputInOutput, rownames(m))
+      if (anyNA(ma)) {
+        warning(paste("Output codes not found in the hierarchy result in empties:", 
+                      paste(HeadEnd(inputInOutput[is.na(ma)]), collapse = ", ")))
+        m0 <- Matrix(0, sum(is.na(ma)), ncol(m))
+        rownames(m0) <- inputInOutput[is.na(ma)]
+        m <- rbind(m, m0)
+        ma <- match(inputInOutput, rownames(m))
+      }
+      m <- m[ma, , drop = FALSE]
+      return(m)
     }
   }
   if (!inputInOutput & length(dropInput) > 0) {
