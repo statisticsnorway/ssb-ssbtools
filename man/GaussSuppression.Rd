@@ -21,6 +21,7 @@ GaussSuppression(
   iFunction = GaussIterationFunction,
   iWait = Inf,
   xExtraPrimary = NULL,
+  unsafeAsNegative = FALSE,
   ...
 )
 }
@@ -63,6 +64,8 @@ Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last itera
 
 \item{xExtraPrimary}{Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.}
 
+\item{unsafeAsNegative}{When \code{TRUE}, unsafe primary cells due to forced cells are included in the output vector as negative indices.}
+
 \item{...}{Extra unused parameters}
 }
 \value{
@@ -86,8 +89,9 @@ The singleton method \code{"subSum"} makes new imaginary primary suppressed cell
 within each group. The \code{"subSpace"} method is conservative and ignores the singleton dimensions when looking for
 linear dependency. The default method, \code{"anySum"}, is between the other two. Instead of making imaginary cells of
 sums within groups, the aim is to handle all possible sums, also across groups. In addition, \code{"subSumSpace"}  and
-\code{"subSumAny"} are possible methods, primarily for testing These methods are similar to \code{"subSpace"} and \code{"anySum"},
+\code{"subSumAny"} are possible methods, primarily for testing. These methods are similar to \code{"subSpace"} and \code{"anySum"},
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
+Note that in order to give information about unsafe cells, \code{"anySum"}  is internally changed to \code{"subSumAny"} when there are forced cells.
 All the above methods assume that any published singletons are primary suppressed.
 When this is not the case, \code{"anySumNOTprimary"} must be used.
 \item \strong{Singleton methods for magnitude tables:}
