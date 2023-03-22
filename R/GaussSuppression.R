@@ -572,7 +572,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     maxInd2 <- maxInd
     
     # Removes cells that are handled by anySum/subSpace anyway
-    if (!singletonNOTprimary) {
+    # In order to give correct information about unsafe cells, do not remove when there are forced cells.
+    if (!singletonNOTprimary & nForced == 0) {
       if (!grepl("subSum", singletonMethod)) {
         primary <- primary[colSums(x[ordyB, primary, drop = FALSE]) != 0]
       }
