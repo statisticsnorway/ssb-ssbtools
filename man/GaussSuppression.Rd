@@ -21,6 +21,7 @@ GaussSuppression(
   iFunction = GaussIterationFunction,
   iWait = Inf,
   xExtraPrimary = NULL,
+  unsafeAsNegative = FALSE,
   ...
 )
 }
@@ -62,6 +63,8 @@ or a \code{\link{NumSingleton}} method (see details).}
 Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last iteration.}
 
 \item{xExtraPrimary}{Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.}
+
+\item{unsafeAsNegative}{When \code{TRUE}, unsafe primary cells due to forced cells are included in the output vector as negative indices.}
 
 \item{...}{Extra unused parameters}
 }

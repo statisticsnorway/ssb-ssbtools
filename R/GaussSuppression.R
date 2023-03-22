@@ -54,7 +54,8 @@
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
 #'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration. 
-#' @param xExtraPrimary Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.               
+#' @param xExtraPrimary Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.  
+#' @param unsafeAsNegative  When `TRUE`, unsafe primary cells due to forced cells are included in the output vector as negative indices.              
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -100,6 +101,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              removeDuplicated = TRUE, 
                              iFunction = GaussIterationFunction, iWait = Inf,
                              xExtraPrimary = NULL,
+                             unsafeAsNegative = FALSE,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -123,13 +125,14 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     primary <- unique(primary)
   
   
+  ncol_x_input <- ncol(x)
   if (!is.null(xExtraPrimary)) {
     # primary has already been converted to indexes
     primary <- c(primary, ncol(x) + seq_len(ncol(xExtraPrimary)))
     # forced and hidden can be untreated since conversion to indexes below
     x <- cbind(x, xExtraPrimary)
   }
-  
+  ncol_x_with_xExtraPrimary <- ncol(x)
     
   if (!length(primary)) 
     return(integer(0))
@@ -157,6 +160,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
+  unsafePrimary <- integer(0)
+  
   if (removeDuplicated) {
     # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
     idxDD <- DummyDuplicatedSpec(x,  candidates, primary, forced)
@@ -181,7 +186,18 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       x <- x[, idxDDunique, drop = FALSE]
       
       if (any(primary %in% forced)) {
-        warning("Forced cells -> All primary cells are not safe (duplicated)")
+        unsafePrimary <- c(unsafePrimary, primary[primary %in% forced])  # c(... since maybe future extension 
+        unsafePrimaryAsFinal <- -SecondaryFinal(secondary = -unsafePrimary, primary = integer(0), idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
+        
+        unsafeOrinary <- unsafePrimaryAsFinal[unsafePrimaryAsFinal <= ncol_x_input]
+        unsafeExtra <- unsafePrimaryAsFinal[unsafePrimaryAsFinal > ncol_x_input]
+        
+        if (length(unsafeExtra)) {
+          s <- paste0(length(unsafePrimaryAsFinal), " (", length(unsafeOrinary), " ordinary, ", length(unsafeExtra), " extra)")
+        } else {
+          s <- length(unsafeOrinary)
+        }
+        warning(paste(s, "unsafe primary cells due to forced cells when evaluating duplicates"))  # Forced cells -> All primary cells are not safe (duplicated)
       }
     }
   }
@@ -281,7 +297,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                            singletonMethod = singletonMethod, singletonMethod_num = singletonMethod_num, singleton_num = singleton_num, tolGauss=tolGauss, 
                                            iFunction = iFunction, iWait = iWait,
                                    main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
+                                   ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
                                            ...)
+    
+    unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
+    secondary <- secondary[secondary > 0]
     
     if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
       lateUnsuppressed <- candidates[SeqInc(1L + min(match(secondary, candidates)), length(candidates))]
@@ -291,6 +311,10 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
           whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
         }
       }
+    }
+    
+    if(unsafeAsNegative){
+      secondary <- c(secondary, -unsafePrimary)
     }
 
     secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
@@ -306,9 +330,27 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
   if (is.null(idxDD)) {
     return(secondary)
   }
+  unsafePrimary <- -secondary[secondary < 0]
+  secondary <- secondary[secondary > 0]
+  
   ma <- match(idxDD[candidatesOld], c(idxDDunique[secondary], idxDDunique[primary]))
   secondary <- candidatesOld[!is.na(ma)]
-  secondary[!(secondary %in% primaryOld)]
+  secondary <- secondary[!(secondary %in% primaryOld)]
+  
+  if (!length(unsafePrimary)) {
+    return(secondary)
+  }
+  
+  unsafePrimaryA <- unsafePrimary[unsafePrimary <= length(idxDDunique)]
+  unsafePrimaryB <- unsafePrimary[unsafePrimary > length(idxDDunique)]
+  
+  ma <- match(idxDD[primaryOld], idxDDunique[unsafePrimaryA])
+  unsafePrimaryA <- primaryOld[!is.na(ma)]
+  unsafePrimaryB <- unsafePrimaryB - length(idxDDunique) + length(idxDD)
+  unsafePrimary <- c(unsafePrimaryA, unsafePrimaryB)
+  
+  c(secondary, -unsafePrimary)
+  
 }
 
 
@@ -316,6 +358,7 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, singletonMethod_num, singleton_num, tolGauss, testMaxInt = 0, allNumeric = FALSE,
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
+                              ncol_x_input, ncol_x_with_xExtraPrimary, 
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -332,6 +375,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (use_iFunction) {
     sys_time <- Sys.time()
   }
+  
+  unsafePrimary <- integer(0)
   
   # testMaxInt is parameter for testing 
   # The Integer overflow situation will be forced when testMaxInt is exceeded   
@@ -626,23 +671,39 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         cat(dot)
         flush.console()
       }
+    
+    if (nForced > 0 & j == 1) {
+      is0Br <- sapply(B$r, length) == 0
+    }
+    if (nForced > 0 & ((j == (nForced + 1)) | (ii > m))) {
+      is0Br_ <- sapply(B$r, length) == 0
+      if (any(is0Br != is0Br_)) {
+        unsafePrimary <- c(unsafePrimary, primary[is0Br != is0Br_]) # c(... since maybe future extension 
+        
+        unsafePrimaryAsFinal <- -SecondaryFinal(secondary = -unsafePrimary, primary = integer(0), idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
+        
+        unsafeOrinary <- unsafePrimaryAsFinal[unsafePrimaryAsFinal <= ncol_x_input]
+        unsafeExtra <- unsafePrimaryAsFinal[unsafePrimaryAsFinal > ncol_x_input  & unsafePrimaryAsFinal <= ncol_x_with_xExtraPrimary]
+        unsafeSingleton <- unsafePrimaryAsFinal[unsafePrimaryAsFinal > ncol_x_with_xExtraPrimary]
+        
+        if (length(unsafeExtra)+length(unsafeSingleton)) {
+          s <- paste0(length(unsafePrimaryAsFinal), " (", length(unsafeOrinary), " ordinary, ", length(unsafeExtra), " extra, ", length(unsafeSingleton), " singleton)")
+        } else {
+          s <- length(unsafeOrinary)
+        }
+        warning(paste(s, "unsafe primary cells due to forced cells"))  #  Forced cells -> All primary cells are not safe
+        
+        
+      }
+    }
     if (ii > m){ 
       if (printInc) {
         cat("\n")
         flush.console()
       }
-      return(candidates[secondary])
+      return(c(candidates[secondary], -unsafePrimary))
     }
     
-    if (nForced > 0 & j == 1) {
-      is0Br <- sapply(B$r, length) == 0
-    }
-    if (nForced > 0 & j == (nForced + 1)) {
-      is0Br_ <- sapply(B$r, length) == 0
-      if (any(is0Br != is0Br_)) {
-        warning("Forced cells -> All primary cells are not safe")
-      }
-    }
     if (length(A$r[[j]])) {
       reduced <- FALSE
       if (j > nForced) {
@@ -1007,7 +1068,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     cat("\n")
     flush.console()
   }
-  candidates[secondary]
+  c(candidates[secondary], -unsafePrimary)
 }
 
 
