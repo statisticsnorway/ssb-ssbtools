@@ -105,10 +105,12 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              ...) {
   
   if (identical(removeDuplicated, "test")){
-    sysCall <- sys.call()
+    sysCall <- match.call()
     parentFrame <- parent.frame()
+    cat("\n ----------------   removeDuplicated = TRUE  --------------------------\n")
     sysCall["removeDuplicated"] <- TRUE
     outTRUE <- eval(sysCall, envir = parentFrame)
+    cat("\n ----------------   removeDuplicated = FALSE  --------------------------\n")
     sysCall["removeDuplicated"] <- FALSE
     outFALSE <- eval(sysCall, envir = parentFrame)
     if(isTRUE(all.equal(outTRUE, outFALSE))){
