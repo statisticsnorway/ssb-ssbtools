@@ -289,7 +289,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   }
   
     
-    if(!is.null(whenEmptySuppressed)){
+    if(length(primary) &!is.null(whenEmptySuppressed)){
       if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
         whenEmptySuppressed("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
       }
