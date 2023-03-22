@@ -677,7 +677,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (nForced > 0 & j == 1) {
       is0Br <- sapply(B$r, length) == 0
     }
-    if (nForced > 0 & ((j == (nForced + 1)) | (ii > m))) {
+    if (nForced > 0 & ((j == (nForced + 1)) |((ii > m) & (j <= nForced)))) {
       is0Br_ <- sapply(B$r, length) == 0
       if (any(is0Br != is0Br_)) {
         unsafePrimary <- c(unsafePrimary, primary[is0Br != is0Br_]) # c(... since maybe future extension 
@@ -694,8 +694,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           s <- length(unsafeOrinary)
         }
         warning(paste(s, "unsafe primary cells due to forced cells"))  #  Forced cells -> All primary cells are not safe
-        
-        
       }
     }
     if (ii > m){ 
