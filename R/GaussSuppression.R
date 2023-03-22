@@ -16,8 +16,9 @@
 #'         within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
 #'         linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
 #'         sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
-#'         `"subSumAny"` are possible methods, primarily for testing These methods are similar to `"subSpace"` and `"anySum"`,
+#'         `"subSumAny"` are possible methods, primarily for testing. These methods are similar to `"subSpace"` and `"anySum"`,
 #'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
+#'         Note that in order to give information about unsafe cells, `"anySum"`  is internally changed to `"subSumAny"` when there are forced cells. 
 #'         All the above methods assume that any published singletons are primary suppressed. 
 #'         When this is not the case, `"anySumNOTprimary"` must be used.
 #' * **Singleton methods for magnitude tables:**          
@@ -397,6 +398,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
   }
   
+  
+  # In order to give information about unsafe cells, "anySum" is internally changed to "subSumAny" when there are forced cells.
+  if (!singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
+    singletonMethod <- "subSumAny"
+  }
   
   ##
   ##  START extending x based on singleton
