@@ -50,6 +50,7 @@
 #' @param whenEmptySuppressed Function to be called when empty input to primary suppressed cells is problematic. Supply NULL to do nothing.
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
 #' @param whenPrimaryForced Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
+#'            The same function will also be called when there are forced cells marked as singletons (will be ignored).
 #' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
@@ -300,6 +301,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                            iFunction = iFunction, iWait = iWait,
                                    main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                    ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
+                                   whenPrimaryForced = whenPrimaryForced, 
                                            ...)
     
     unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -360,7 +362,7 @@ SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld
 GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForced, singletonMethod, singletonMethod_num, singleton_num, tolGauss, testMaxInt = 0, allNumeric = FALSE,
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
-                              ncol_x_input, ncol_x_with_xExtraPrimary, 
+                              ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -427,6 +429,35 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (singletonMethod == "none") {
     singleton <- FALSE
   }
+  if (singletonMethod_num %in% c("none", "num")) {
+    singleton_num <- FALSE
+  }
+  
+  forceForcedNotSingletonNum <- (nForced > 0) & any(singleton_num)
+  forceForcedNotSingletonFreq <- (nForced > 0) & any(singleton)
+  
+  
+  if (forceForcedNotSingletonNum | forceForcedNotSingletonFreq) {
+    cS1 <- which(colSums(x) == 1)
+    cS1 <- cS1[cS1 %in% candidates[seq_len(nForced)]]
+    if (length(cS1)) {
+      cS1rS <- rowSums(x[, cS1, drop = FALSE]) > 0
+      if (forceForcedNotSingletonNum & any(singleton_num & cS1rS)) {
+        if (!is.null(whenPrimaryForced)) {
+          whenPrimaryForced("Singleton marking of forced cells ignored (num)")
+        }
+        singleton_num[cS1rS] <- FALSE  # this is ok when integer: -> 0L 
+      }
+      if (forceForcedNotSingletonFreq & any(singleton & cS1rS)) {
+        if (!is.null(whenPrimaryForced)) {
+          whenPrimaryForced("Singleton marking of forced cells ignored (freq)")
+        }
+        singleton[cS1rS] <- FALSE
+      }
+    }
+  }
+  
+  
   if (singletonMethod == "anySumNOTprimary") {
     singletonMethod <- "anySum"
     singletonNOTprimary <- TRUE
