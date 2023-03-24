@@ -22,11 +22,15 @@ dummy_aggregate(
 
 \item{vars}{A named vector or list of variable names in \code{data}. The elements are named by the names of \code{fun}.
 All the pairs of variable names and function names thus define all the result variables to be generated.
-Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
+\itemize{
+\item Parameter \code{vars} will converted to an internal standard by the function \code{\link{fix_vars_amf}}.
 Thus, function names and also output variable names can be coded in different ways.
 Multiple output variable names can be coded using \code{multi_sep}.
-See examples and examples in \code{\link{fix_vars_amf}}.
-Indices instead of variable names are allowed.}
+See examples and examples in \code{\link{fix_vars_amf}}. Indices instead of variable names are allowed.
+\item Omission of (some) names is possible since names can be omitted for one function (see \code{fun} below).
+\item A special possible feature is the combination of a single unnamed variable and all functions named.
+In this case, all functions are run and output variable names will be identical to the function names.
+}}
 
 \item{fun}{A named list of functions. These names will be used as suffixes in output variable names. Name can be omitted for one function.
 A vector of function as strings is also possible. When unnamed, these function names will be used directly.
@@ -60,21 +64,21 @@ Internally this function make use of the \code{ind} parameter to \code{aggregate
 # Code that generates output similar to the 
 # last example in aggregate_multiple_fun
 
-z2 <- SSBtoolsData("z2")
+d2 <- SSBtoolsData("d2")
 set.seed(12)
-z2$y <- round(rnorm(nrow(z2)), 2)
-z <- z2[sample.int(nrow(z2), size = 20), ]
+d2$y <- round(rnorm(nrow(d2)), 2)
+d <- d2[sample.int(nrow(d2), size = 20), ]
 
-x <- ModelMatrix(z, formula = ~hovedint:kostragr - 1)
+x <- ModelMatrix(d, formula = ~main_income:k_group - 1)
 
 # with specified output variable names
 my_range <- function(x) c(min = min(x), max = max(x))
 dummy_aggregate(
-   data = z, 
+   data = d, 
    x = x, 
-   vars = list("ant", "y", 
-               `antmin,antmax` = list(ra = "ant"), 
-                yWmean  = list(wmean  = c("y", "ant"))),
+   vars = list("freq", "y", 
+               `freqmin,freqmax` = list(ra = "freq"), 
+                yWmean  = list(wmean  = c("y", "freq"))),
    fun = c(sum, ra = my_range, wmean = weighted.mean))
 
 
@@ -84,18 +88,18 @@ x2[17, 2:5] <- c(-1, 3, 0, 10)
 x2[, 4] <- 0
 
 # Now warning 
-# Result is not same as t(x2) \%*\% z[["ant"]]
-dummy_aggregate(data = z, x = x2, vars = "ant", fun = sum)
+# Result is not same as t(x2) \%*\% d[["freq"]]
+dummy_aggregate(data = d, x = x2, vars = "freq", fun = sum)
 
-# Now same as t(x2) \%*\% z[["ant"]]
-dummy_aggregate(data = z, x = x2, 
-                vars = "ant", dummy = FALSE,
+# Now same as t(x2) \%*\% d[["freq"]]
+dummy_aggregate(data = d, x = x2, 
+                vars = "freq", dummy = FALSE,
                 fun = function(x, y) sum(x * y))
 
 
-# Same as t(x2) \%*\% z[["ant"]]  + t(x2^2) \%*\% z[["y"]] 
-dummy_aggregate(data = z, x = x2, 
-                vars = list(c("ant", "y")), dummy = FALSE,
+# Same as t(x2) \%*\% d[["freq"]]  + t(x2^2) \%*\% d[["y"]] 
+dummy_aggregate(data = d, x = x2, 
+                vars = list(c("freq", "y")), dummy = FALSE,
                 fun = function(x, y1, y2) {sum(x * y1) + sum(x^2 * y2)})
                 
 }
