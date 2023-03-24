@@ -53,7 +53,8 @@ or a \code{\link{NumSingleton}} method (see details).}
 
 \item{whenEmptyUnsuppressed}{Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.}
 
-\item{whenPrimaryForced}{Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.}
+\item{whenPrimaryForced}{Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
+The same function will also be called when there are forced cells marked as singletons (will be ignored).}
 
 \item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
 
