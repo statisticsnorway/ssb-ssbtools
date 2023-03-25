@@ -47,10 +47,21 @@ quantile_weighted <- function(x, probs = (0:4)/4, weights = rep(1, length(x)), t
   n <- length(probs)
   length_x <- length(x)
   
-  
   ox <- order(x)
   x <- x[ox]
-  w <- as.numeric(weights[ox])
+  
+  if(x[1] == x[length_x]){   # All zero weights combinded with all equal x included here 
+    x <- x[1]
+    w <- 1
+    length_x <- 1
+  } else {
+    w <- as.numeric(weights[ox])
+  }
+  if (!w[1]) if (!max(w)) if (!min(w)) {  # All zero weights combinded with NOT all equal x -> NA's 
+    empty <- TRUE
+    x <- 0
+    w <- 1
+  }
   
   p <- cumsum(w)/sum(w)
   
