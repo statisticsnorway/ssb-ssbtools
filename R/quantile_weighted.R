@@ -9,6 +9,11 @@
 #' `abs(1-p[j]/probs[i])<eps` 
 #' with `p=cumsum(w)/sum(w)`
 #' where `w=weights[order(x)]`.
+#' 
+#' With zero length of `x`, `NA`s are returned.
+#' 
+#' When all weights are zero and when when all `x`'s are not equal, 
+#' `NaN`s are returned except for the 0% and 100% quantiles.
 #'
 #' @param x 	Numeric vector 
 #' @param probs Numeric vector of probabilities
@@ -47,10 +52,24 @@ quantile_weighted <- function(x, probs = (0:4)/4, weights = rep(1, length(x)), t
   n <- length(probs)
   length_x <- length(x)
   
-  
   ox <- order(x)
   x <- x[ox]
-  w <- as.numeric(weights[ox])
+  
+  if(x[1] == x[length_x]){   # All zero weights combinded with all equal x included here 
+    x <- x[1]
+    w <- 1
+    length_x <- 1L
+  } else {
+    w <- as.numeric(weights[ox])
+  }
+  
+  weights0 <- FALSE
+  if (!w[1]) if (!max(w)) if (!min(w)) {  # All zero weights combinded with NOT all equal x -> NA's 
+    weights0 <- TRUE
+    x <- x[c(1, length_x)]
+    w <- c(1, 1)
+    length_x <- 2L
+  }
   
   p <- cumsum(w)/sum(w)
   
@@ -99,6 +118,9 @@ quantile_weighted <- function(x, probs = (0:4)/4, weights = rep(1, length(x)), t
   
   if (empty)
     out <- out + NA
+  
+  if (weights0)
+    out[!(probs %in% c(0, 1))] <- NaN
   
   names(out) <- paste0(round(100 * probs, 5), "%")
   out

@@ -35,6 +35,11 @@ Equal probabilities (\code{p[j]==probs[i]}) is determined by
 \code{abs(1-p[j]/probs[i])<eps}
 with \code{p=cumsum(w)/sum(w)}
 where \code{w=weights[order(x)]}.
+
+With zero length of \code{x}, \code{NA}s are returned.
+
+When all weights are zero and when when all \code{x}'s are not equal,
+\code{NaN}s are returned except for the 0\% and 100\% quantiles.
 }
 \note{
 Type 2 similar to type 5 in \code{DescTools::Quantile}
