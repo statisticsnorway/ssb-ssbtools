@@ -57,6 +57,9 @@
 #'                    For special use this can be omitted (`FALSE`).
 #' @param do_unlist   By default (`TRUE`), the implementation uses \code{\link{unlist}} to combine output from multiple functions. 
 #'                    For special use this can be omitted (`FALSE`).
+#' @param inc_progress logigal, `NULL` (same as `FALSE`) or a  progress indicator function taking two parameters (i and n). 
+#'                     `TRUE` means the same as \code{\link{inc_default}}. Note that this feature is implemented in a 
+#'                     hacky manner as internal/hidden variables are grabbed from \code{\link{aggregate}}.
 #'
 #' @return A data frame
 #' @export
@@ -139,7 +142,16 @@
 #'  
 aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ..., 
        name_sep = "_", seve_sep = ":", multi_sep = ",", forward_dots = FALSE, 
-       dots2dots = FALSE, do_unmatrix = TRUE, do_unlist = TRUE) {
+       dots2dots = FALSE, do_unmatrix = TRUE, do_unlist = TRUE, 
+       inc_progress = FALSE) {
+  
+  if (is.logical(inc_progress)) {
+    if (inc_progress) {
+      inc_progress <- inc_default
+    } else {
+      inc_progress <- NULL
+    }
+  }
   
   if (any(forward_dots)) {
     match_call <- match.call()
@@ -249,7 +261,20 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
   
   
   fun_all <- function(ind, fun_input, data, vars, output_names, fun_names, 
-                      x_r, x_x, do_unlist, data1 = NULL, fun_all_0 = NULL, ...){
+                      x_r, x_x, do_unlist, data1 = NULL, fun_all_0 = NULL, 
+                      inc_progress = NULL, ...){
+    
+    if (!is.null(inc_progress)) {
+      pf <- parent.frame()
+      i <- pf$i
+      if (is.integer(i)) {
+        n <- length(pf$X)
+        if (n) {
+          inc_progress(i, n)
+        }
+      }
+    }
+    
     if(length(ind)==1)
       if(ind==0)
         if(!is.null(fun_all_0)){
@@ -342,7 +367,8 @@ aggregate_multiple_fun <- function(data, by, vars, fun = NULL, ind = NULL, ...,
   
   z <- aggregate(x = ind, by = by, FUN = fun_all, fun_input = fun, data = data, 
                  vars = vars, output_names = output_names, fun_names = fun_names, 
-                 x_r = x_r, x_x = x_x, do_unlist = do_unlist, fun_all_0 = fun_all_0, ...)
+                 x_r = x_r, x_x = x_x, do_unlist = do_unlist, fun_all_0 = fun_all_0, 
+                 inc_progress = inc_progress, ...)
   
   
   if(do_unmatrix){

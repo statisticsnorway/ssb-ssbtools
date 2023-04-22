@@ -274,6 +274,9 @@ model_aggregate = function(
   
   if (!is.null(fun_vars)) {
     if (verbose) {
+      if (hasArg("inc_progress")) {
+        cat("\n")
+      }
       cat("[dummy_aggregate")
       flush.console()
     }
