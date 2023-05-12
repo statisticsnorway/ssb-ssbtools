@@ -613,14 +613,27 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   if (!all(SeqInc(input_ncol_x + 1L, input_ncol_x) %in% primary)) {
     stop("extending x based on singleton failed")
-  } 
+  }
   
-  ddx <- DummyDuplicated(x, rnd = TRUE)
-  ddx[seq_len(input_ncol_x)] <- FALSE
-  if (any(ddx)) {
-    x <- x[, !ddx]
-    primary <- primary[seq_len(length(primary) - sum(ddx))]
-    PrintInfo("duplicates found")
+  keep_all_singleton_primary <- TRUE
+  
+  if (keep_all_singleton_primary) {
+    ddx <- rep(FALSE, ncol(x))
+    ddx[primary] <- DummyDuplicated(x[, primary, drop = FALSE], rnd = TRUE)
+    ddx[seq_len(input_ncol_x)] <- FALSE
+    if (any(ddx)) {
+      x <- x[, !ddx]
+      primary <- primary[seq_len(length(primary) - sum(ddx))]
+      PrintInfo("duplicates found")
+    }
+  } else {
+    ddx <- DummyDuplicated(x, rnd = TRUE)
+    ddx[seq_len(input_ncol_x)] <- FALSE
+    if (any(ddx)) {
+      x <- x[, !ddx]
+      primary <- primary[seq_len(length(primary) - sum(ddx))]
+      PrintInfo("duplicates found")
+    }
   }
   
   ##
