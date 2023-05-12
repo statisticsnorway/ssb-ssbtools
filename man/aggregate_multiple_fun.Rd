@@ -17,7 +17,8 @@ aggregate_multiple_fun(
   forward_dots = FALSE,
   dots2dots = FALSE,
   do_unmatrix = TRUE,
-  do_unlist = TRUE
+  do_unlist = TRUE,
+  inc_progress = FALSE
 )
 }
 \arguments{
@@ -65,6 +66,10 @@ For special use this can be omitted (\code{FALSE}).}
 
 \item{do_unlist}{By default (\code{TRUE}), the implementation uses \code{\link{unlist}} to combine output from multiple functions.
 For special use this can be omitted (\code{FALSE}).}
+
+\item{inc_progress}{logigal, \code{NULL} (same as \code{FALSE}) or a  progress indicator function taking two parameters (i and n).
+\code{TRUE} means the same as \code{\link{inc_default}}. Note that this feature is implemented in a
+hacky manner as internal/hidden variables are grabbed from \code{\link{aggregate}}.}
 }
 \value{
 A data frame
