@@ -6,7 +6,6 @@
 #' 
 #' Input can be to-from coded hierarchies, hierarchies/dimList as in sdcTable, TauArgus coded hierarchies or formulas. 
 #' Automatic coding from data is also supported. Output is on a from ready for input to \code{\link{HierarchyCompute}}.
-#' \code{FindHierarchies} wraps \code{\link{FindDimLists}} and \code{AutoHierarchies} into a single function.
 #' A single string as hierarchy input is assumed to be a total code. 
 #' Then, the hierarchy is created as a simple hierarchy where all codes in data sum up to this total.
 #' For consistence with \code{HierarchyCompute}, 
@@ -26,7 +25,7 @@
 #' @param unionComplement Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined. 
 #' @param ... Extra unused parameters
 #' 
-#' @seealso \code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}.
+#' @seealso \code{\link{FindHierarchies}}, \code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}}, \code{\link{Hierarchy2Formula}}.
 #'
 #' @return List of hierarchies
 #' @export

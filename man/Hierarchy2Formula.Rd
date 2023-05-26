@@ -37,18 +37,24 @@ Conversion between to-from coded hierarchy and formulas written with =, - and +.
 \examples{
 x <- SSBtoolsData("sprt_emp_geoHier")
 s <- Hierarchy2Formula(x)
+s
 Formula2Hierarchy(s)
 
 # Demonstrate Hierarchies2Formulas and problems 
 hi <- FindHierarchies(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")])
+hi
 Hierarchies2Formulas(hi) # problematic formula since minus sign in coding 
 AutoHierarchies(Hierarchies2Formulas(hi)) # Not same as hi because of problems 
 
 # Change coding to avoid problems 
 hi$age$mapsFrom <- gsub("-", "_", hi$age$mapsFrom)
+hi
 Hierarchies2Formulas(hi)
 AutoHierarchies(Hierarchies2Formulas(hi))
 
+}
+\seealso{
+\code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}}, \code{\link{AutoHierarchies}}.
 }
 \author{
 Øyvind Langsrud

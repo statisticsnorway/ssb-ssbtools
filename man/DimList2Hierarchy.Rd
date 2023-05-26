@@ -18,9 +18,13 @@ From hierarchy/dimList as in sdcTable to to-from coded hierarchy
 \examples{
 # First generate a dimList element 
 x <- FindDimLists(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu")], , total = "Europe")[[1]]
+x
 
 DimList2Hierarchy(x)
 
+}
+\seealso{
+\code{\link{DimList2Hrc}}, \code{\link{Hierarchy2Formula}}, \code{\link{AutoHierarchies}}.
 }
 \author{
 Øyvind Langsrud

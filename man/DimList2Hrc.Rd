@@ -25,9 +25,14 @@ Conversion between hierarchies/dimList as in sdcTable and TauArgus coded hierarc
 \examples{
 # First generate dimList
 dimList <- FindDimLists(SSBtoolsData("sprt_emp_withEU")[, c("geo", "eu", "age")])
+dimList
 hrc <- DimList2Hrc(dimList)
+hrc
 dimList2 <- Hrc2DimList(hrc)
 identical(dimList, dimList2)
+}
+\seealso{
+\code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}, \code{\link{AutoHierarchies}}.
 }
 \author{
 Øyvind Langsrud
