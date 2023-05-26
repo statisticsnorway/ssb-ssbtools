@@ -2,7 +2,6 @@
 % Please edit documentation in R/AutoHierarchies.R
 \name{AutoHierarchies}
 \alias{AutoHierarchies}
-\alias{FindHierarchies}
 \title{Ensure standardized coding of hierarchies}
 \usage{
 AutoHierarchies(
@@ -15,8 +14,6 @@ AutoHierarchies(
   unionComplement = FALSE,
   ...
 )
-
-FindHierarchies(data, total = "Total")
 }
 \arguments{
 \item{hierarchies}{List of hierarchies}

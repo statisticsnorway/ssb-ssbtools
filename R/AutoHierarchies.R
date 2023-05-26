@@ -137,11 +137,6 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
   hierarchies
 }
 
-#' @rdname AutoHierarchies
-#' @export
-FindHierarchies <- function(data, total = "Total") {
-  AutoHierarchies(FindDimLists(data, total = total))
-}
 
 
 AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
