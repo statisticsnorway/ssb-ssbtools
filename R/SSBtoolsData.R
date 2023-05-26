@@ -17,7 +17,9 @@
 #' 
 #' \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 #' 
-#' \strong{example1} Example data similar to `sprt_emp_withEU`.
+#' \strong{sp_emp_withEU:} As `sprt_emp_withEU`, but coded differently.
+#' 
+#' \strong{example1} Example data similar to `sp_emp_withEU`.
 #' 
 #' \strong{magnitude1:} Example data for magnitude tabulation. Same countries as above.  
 #' 
@@ -69,6 +71,13 @@ SSBtoolsData <- function(dataset) {
   if (dataset == "sprt_emp_withEU") {
     x <- SSBtoolsData("sprt_emp")
     x$eu = with(x, c("EU", "nonEU")[1+(geo=="Iceland")]) 
+    return(x)
+  }
+  if (dataset == "sp_emp_withEU") {
+    x <- SSBtoolsData("sprt_emp_withEU")[,c(1,2,5,3,4)] 
+    names(x)[5] <- "value"
+    x$age[x$age == "Y15-29"] <- "young"
+    x$age[x$age == "Y30-64"] <- "old"
     return(x)
   }
    
