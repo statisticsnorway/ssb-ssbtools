@@ -19,7 +19,7 @@ HierarchicalGroups(
 
 \item{eachName}{When TRUE variable names in output instead of indices.}
 
-\item{fCorr}{When non-null x is not needed as input.}
+\item{fCorr}{When non-null, x is not needed as input.}
 }
 \value{
 Output is a list containing the groups. First variable has most levels.
@@ -28,6 +28,13 @@ Output is a list containing the groups. First variable has most levels.
 According to the (factor) levels of the variables
 }
 \examples{
+dataset <- SSBtoolsData("example1")
+HierarchicalGroups(dataset[1:2], eachName = TRUE)
+HierarchicalGroups(dataset[2:3])
+HierarchicalGroups(dataset[1:4], eachName = TRUE)
+
+HierarchicalGroups(SSBtoolsData("magnitude1")[1:4])
+
  x <- rep(c("A","B","C"),3)
  y <- rep(c(11,22,11),3)
  z <- c(1,1,1,2,2,2,3,3,3)
