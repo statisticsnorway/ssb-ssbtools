@@ -149,8 +149,7 @@ DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Tot
       }
       
   }
-  rbind(r1, data.frame(levels = symbols[matlabColon(1, k)], codes = codes[matlabColon(1, 
-                                                                                      k)], stringsAsFactors = FALSE))
+  rbind(r1, data.frame(levels = symbols[matlabColon(1, k)], codes = codes[matlabColon(1, k)], stringsAsFactors = FALSE))
 }
 
 
