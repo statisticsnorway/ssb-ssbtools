@@ -152,3 +152,37 @@ DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Tot
   rbind(r1, data.frame(levels = symbols[matlabColon(1, k)], codes = codes[matlabColon(1, 
                                                                                       k)], stringsAsFactors = FALSE))
 }
+
+
+
+# Setter sammen grupper hvis de har noe felles
+GroupNrList <- function(x) {
+  n <- length(x)
+  z <- vector("list", n)
+  z[[1]] <- x[[1]]
+  k <- 1
+  for (i in matlabColon(2, n)) {
+    a <- x[[i]]
+    jj <- 0
+    for (j in seq_len(k)) {
+      if (any(x[[i]] %in% z[[j]])) 
+        jj <- j
+    }
+    if (jj == 0) {
+      k <- k + 1
+      z[[k]] <- x[[i]]
+    } else {
+      z[[jj]] <- unique(c(z[[jj]], x[[i]]))
+    }
+  }
+  z[seq_len(k)]
+}
+
+CrossLevels <- function(x) {
+  SortRows(unique(x, MARGIN = 1))
+}
+
+
+
+
+
