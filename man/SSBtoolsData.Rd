@@ -27,6 +27,10 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
 \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 
+\strong{example1} Example data similar to \code{sprt_emp_withEU}.
+
+\strong{magnitude1:} Example data for magnitude tabulation. Same countries as above.
+
 \strong{my_km2:} Fictitious grid data.
 
 \strong{mun_accidents:} Fictitious traffic accident by municipality data.
@@ -34,6 +38,8 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 
 \strong{d4, d1, d1w, d2, d2w, d3, d3w, d3wb:} English translation of the datasets above.
+
+\strong{d2s, d2ws:} \code{d2} and \code{d2w} modified to smaller/easier data.
 }
 \examples{
 SSBtoolsData("FIFA2018ABCD")

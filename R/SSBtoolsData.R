@@ -17,6 +17,10 @@
 #' 
 #' \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 #' 
+#' \strong{example1} Example data similar to `sprt_emp_withEU`.
+#' 
+#' \strong{magnitude1:} Example data for magnitude tabulation. Same countries as above.  
+#' 
 #' \strong{my_km2:} Fictitious grid data. 
 #' 
 #' \strong{mun_accidents:} Fictitious traffic accident by municipality data.
@@ -24,6 +28,8 @@
 #' \strong{sosialFiktiv, z1, z1w, z2, z2w, z3, z3w, z3wb:} See \code{\link{sosialFiktiv}}.
 #' 
 #' \strong{d4, d1, d1w, d2, d2w, d3, d3w, d3wb:} English translation of the datasets above.
+#' 
+#' \strong{d2s, d2ws:} `d2` and `d2w` modified to smaller/easier data.
 #' 
 #' @export
 #' @importFrom utils data
@@ -110,7 +116,60 @@ SSBtoolsData <- function(dataset) {
     return(z)
   }
 
+  if (dataset == "d2s") {
+    return(Make_d2small(SSBtoolsData("d2")))
+  }
+  if (dataset == "d2ws") {
+    return(Make_d2small(SSBtoolsData("d2w"), freq = "other"))
+  }
+  
+  if (dataset == "magnitude1") {
+    q <- data.frame(geo = rep(c("Iceland", "Portugal", "Spain"), each = 4), 
+                    eu = "EU", 
+                    sector4 = c("Agriculture", "Entertainment", "Governmental", "Industry"), 
+                    sector2 = "private")[-c(1, 3), ]
+    q$eu[1:2] <- "nonEU"
+    q$sector2[c(5, 9)] <- "public"
+    q <- q[c(2, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9, 9, 10), ]
+    q$company <- c("B", "B", "C", "D", "A", "B", "B", "D", "B", "D", 
+                   "B", "D", "A", "B", "A", "B", "C", "C", "D", "C")
+    
+    q$value <- c(9.6, 16.8, 8.8, 1.9, 75.9, 24.5, 7.1, 2.3, 21.6, 2, 
+                 25.7, 3.4, 96.6, 43.2, 77.4, 11.5, 16.4, 6.5, 2.7, 8.4)
+    q <- SortRows(q[c(3, 4, 1, 2, 5, 6)])
+    rownames(q) <- NULL
+    return(q)
+  }
+  
+  if (dataset == "example1") {
+    q <- SSBtoolsData("sprt_emp_withEU")[, c(1, 2, 5, 3)]
+    q$age[q$age == "Y15-29"] <- "young"
+    q$age[q$age == "Y30-64"] <- "old"
+    q$freq <- c(5, 2, 0, 6, 3, 4, 5, 0, 0, 6, 3, 4, 7, 1, 1, 5, 4, 3)
+    rownames(q) <- NULL
+    return(q)
+  }
+  
   stop(paste("No data with dataset =", dataset))
+}
+
+
+Make_d2small <- function(data, freq = "freq") {  # Modify to smaller/easier data
+  sreg <- c("A", "B", "C", "I", "J", "K")
+  data <- data[data$region %in% sreg, ]
+  names(data)[names(data) == "k_group"] <- "size"
+  data$size[data$size == "300"] <- "BIG"
+  data$size[data$size == "400"] <- "small"
+  data$county[data$county == 1] <- "county-1"
+  data$county[data$county == 4] <- "county-2"
+  data$county[data$county == 5] <- "county-2"
+  data$county[data$county == 10] <- "county-3"
+  data$region[data$region == "I"] <- "D"
+  data$region[data$region == "J"] <- "E"
+  data$region[data$region == "K"] <- "F"
+  data[[freq]][1:2] <- 2:3
+  rownames(data) <- NULL
+  data
 }
 
 
