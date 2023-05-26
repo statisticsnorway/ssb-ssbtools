@@ -36,6 +36,14 @@ Finding lists of level-hierarchy as needed for the input parameter
 dimList to the function makeProblem in package sdcTable
 }
 \examples{
+dataset <- SSBtoolsData("example1")
+FindDimLists(dataset[1:2])
+FindDimLists(dataset[2:3])
+FindDimLists(dataset[1:4])
+
+FindDimLists(SSBtoolsData("magnitude1")[1:4], 
+                total = c("TOTAL", "unused1", "Europe", "unused2"))
+                
  x <- rep(c('A','B','C'),3)
  y <- rep(c(11,22,11),3)
  z <- c(1,1,1,2,2,2,3,3,3)
