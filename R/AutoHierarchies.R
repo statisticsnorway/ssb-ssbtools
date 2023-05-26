@@ -51,6 +51,11 @@
 #' identical(h1, h2)
 #' identical(h3, h4)
 #' 
+#' # Print the resulting hierarchies
+#' h1 # = h2
+#' h3 # = h4
+#' h5
+#' 
 #' FindHierarchies(z[, c("geo", "eu", "age")])
 #' 
 #' 
