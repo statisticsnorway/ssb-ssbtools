@@ -84,20 +84,20 @@ Empty columns can be added to the model matrix when \code{removeEmpty = FALSE} (
 }
 \examples{
 # Create some input
-z <- SSBtoolsData("sprt_emp_withEU")
-z$age[z$age == "Y15-29"] <- "young"
-z$age[z$age == "Y30-64"] <- "old"
+z <- SSBtoolsData("sp_emp_withEU")
 ageHier <- data.frame(mapsFrom = c("young", "old"), mapsTo = "Total", sign = 1)
 geoDimList <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
 
 # Small dataset example. Two dimensions.
 s <- z[z$geo == "Spain" & z$year != 2016, ]
+rownames(s) <- NULL
+s
 
 # via Hierarchies2ModelMatrix() and converted to ordinary matrix (not sparse)
 ModelMatrix(s, list(age = ageHier, year = ""), sparse = FALSE)
 
 # Hierarchies generated automatically. Then via Hierarchies2ModelMatrix()
-ModelMatrix(s[, c(1, 3)])
+ModelMatrix(s[, c(1, 4)])
 
 # via Formula2ModelMatrix()
 ModelMatrix(s, formula = ~age + year)
