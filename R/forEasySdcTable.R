@@ -60,47 +60,6 @@ FindTableGroup <- function(x = NULL, findLinked = FALSE, mainName = TRUE, fCorr 
 
 
 
-DimFromHier <- function(x, hier, addName = FALSE, total = "Total") {
-  for (i in matlabColon(1, length(hier))) hier[[i]] <- DimFromHier1(x, hier[[i]], 
-                                                                    addName = addName, total = total)
-  hier
-}
-
-# addName here use '.' as separator
-DimFromHier1 <- function(x, indHier = 1:dim(x)[2], addName = FALSE, total = "Total") {
-  start <- "@@"
-  add <- "@"
-  r1 <- data.frame(levels = "@", codes = total, stringsAsFactors = FALSE)
-  
-  b <- CrossLevels(x[, rev(indHier), drop = FALSE])
-  
-  m <- NCOL(b)
-  n <- NROW(b)
-  symbol <- start
-  for (i in matlabColon(2, m)) symbol <- c(symbol, paste(symbol[i - 1], add, sep = ""))
-  
-  symbols <- rep(" ", m * n)
-  codes <- rep(" ", m * n)
-  k <- 0
-  bb <- b[1, , drop = FALSE]
-  for (i in matlabColon(1, n)) for (j in matlabColon(1, m)) {
-    newrow <- FALSE
-    if (i == 1) 
-      newrow <- TRUE else if (bb[1, j] != b[i, j]) 
-        newrow <- TRUE
-      if (newrow) {
-        k <- k + 1
-        bb[1, j] <- b[i, j]
-        symbols[k] <- symbol[j]
-        if (addName) 
-          codes[k] <- paste(colnames(b)[j], as.character(b[i, j]), sep = ".") else codes[k] <- as.character(b[i, j])
-      }
-      
-  }
-  rbind(r1, data.frame(levels = symbols[matlabColon(1, k)], codes = codes[matlabColon(1, 
-                                                                                      k)], stringsAsFactors = FALSE))
-}
-
 
 
 
