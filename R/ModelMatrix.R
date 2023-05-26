@@ -264,7 +264,13 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
 #' Overparameterized model matrix
 #'
 #' All factor levels included
-#'
+#' 
+#' Example:
+#' 
+#' `z <- SSBtoolsData("sp_emp_withEU")`
+#' 
+#' `SSBtools:::Model_Matrix(~age*year + geo, z)`
+#'   
 #' @param formula formula
 #' @param data data frame
 #' @param mf model frame (alternative input instead of data)
@@ -274,12 +280,9 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
 #' @return model matrix created via model.matrix() or sparse.model.matrix()
 #' @importFrom stats model.frame model.matrix
 #' @importFrom Matrix sparse.model.matrix
-#' @export
+#' 
 #' @keywords internal
 #'
-#' @examples
-#'   z <- SSBtoolsData("sprt_emp_withEU")
-#'   Model_Matrix(~age*year + geo, z)
 Model_Matrix <- function(formula, data = NULL, mf = model.frame(formula, data = data), allFactor = TRUE, sparse = FALSE)  {
   
   for (i in 1:length(mf)) {
