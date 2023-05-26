@@ -94,17 +94,6 @@ AsFactorInteger <- function(x) {
 
 
 
-# match er mye raskere
-MatchYTreg <- function(x, y) {
-  a <- factor(x)
-  b <- factor(y, levels = levels(a))
-  k <- b[!is.na(b)]
-  d <- seq_len(length(y))[!is.na(b)]
-  z <- rep(0, length(x))
-  z[k] <- d
-  z
-}
-
 
 #' Matching rows in data frames
 #' 
@@ -226,32 +215,5 @@ Match <- function(x, y) {
   rm(y)
   Match(X, Y)
 }
-
-
-
-
-
-
-
-# Title UniqueIntegerSortMatrix
-UniqueIntegerSortMatrix <- function(x) {
-  if (!is.integer(x)) 
-    stop("x must be integer")
-  m <- Matrix(0, max(x), 1)
-  m[x, 1] <- x
-  m[m > 0]
-}
-
-
-
-# Raskere enn sort, men bruker mer minne
-UniqueIntegerSort <- function(x) {
-  if (!is.integer(x) | min(x) <= 0) 
-    stop("x must be integer")
-  m <- rep(0, max(x))
-  m[x] <- x
-  m[m > 0]
-}
-
 
 
