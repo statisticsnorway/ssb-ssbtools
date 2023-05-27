@@ -24,7 +24,7 @@ AutoHierarchies(
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
 
-\item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy}
+\item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy (see examples).}
 
 \item{unionComplement}{Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined.}
 
@@ -77,7 +77,38 @@ h5
 FindHierarchies(z[, c("geo", "eu", "age")])
 
 
-### Examples with character vector(s) as unnamed list elements.  
+# ===================================================================== 
+#   Examples illustrating the combineHierarchies parameter
+# =====================================================================
+
+# First, create data
+d <- SSBtoolsData("d2ws")[1:3]
+d$isCounty1 <- "NO"
+d$isCounty1[d$county == "county-1"] <- "YES"
+d
+
+# sdcTable coding showing two tree-shaped hierarchies
+dimList <- FindDimLists(d)
+dimList
+
+# Two tree-shaped hierarchies can still be seen 
+# Hierarchies with three and two levels
+hA <- AutoHierarchies(dimList, combineHierarchies = FALSE)
+hA
+
+# A single hierarchy with only one level 
+# Contains the information needed to create a dummy matrix
+hB <- AutoHierarchies(dimList)
+hB
+
+# Dummy matrices from the hierarchies
+DummyHierarchies(hA)
+DummyHierarchies(hB)
+
+
+# ===================================================================== 
+#   Special examples with character vector(s) as unnamed list elements
+# =====================================================================
 
 # Same output as FindHierarchies above
 AutoHierarchies(list(c("geo", "eu", "age")), data = z)
@@ -99,7 +130,8 @@ AutoHierarchies(list("year", year = yearHier, c("geo", "eu", "age")), data = z,
 
 }
 \seealso{
-\code{\link{FindHierarchies}}, \code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}}, \code{\link{Hierarchy2Formula}}.
+\code{\link{FindHierarchies}}, \code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}},
+\code{\link{Hierarchy2Formula}}, \code{\link{DummyHierarchies}}.
 }
 \author{
 Øyvind Langsrud
