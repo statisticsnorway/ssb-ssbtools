@@ -1,43 +1,4 @@
 
-#' Finding hierarchical variable groups
-#'
-#' As HierarchicalGroups() with eachName = TRUE, but output belonging to same mainName are combined.
-#'
-#' @param x Matrix or data frame containing the variables
-#'
-#' @return  List containing the groups.
-#' @keywords internal
-#' @export
-#' @author Øyvind Langsrud
-#'
-HierarchicalGroups2 <- function(x) {
-  a <- HierarchicalGroups(x, eachName = TRUE)
-  b <- a[!duplicated(names(a))]
-  for (i in 1:length(b)) 
-    b[[i]] <- unique(unlist(a[names(a) == names(b)[i]]))
-  b
-}
-
-#' Finding hierarchical variable groups
-#'
-#' As HierarchicalGroups() with eachName = FALSE, but output belonging to same mainName are combined.
-#'
-#' @param x Matrix or data frame containing the variables
-#'
-#' @return  List containing the groups.
-#' @keywords internal
-#' @export
-#' @author Øyvind Langsrud
-#'
-HierarchicalGroups3 <- function(x) {
-  a <- HierarchicalGroups(x, eachName = FALSE)
-  b <- a[!duplicated(names(a))]
-  for (i in 1:length(b)) 
-    b[[i]] <- unique(unlist(a[names(a) == names(b)[i]]))
-  b
-}
-
-
 #' Make model formula from data taking into account hierarchical variables
 #'
 #' @encoding UTF8
@@ -109,4 +70,5 @@ AllNCombinations <- function(x = c(3, 1, 2), n = 0, returnSorted = TRUE, returnL
     return(m[order(rS), , drop = FALSE])
   m
 }
+
 

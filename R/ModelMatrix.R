@@ -43,20 +43,20 @@
 #' 
 #' @examples
 #' # Create some input
-#' z <- SSBtoolsData("sprt_emp_withEU")
-#' z$age[z$age == "Y15-29"] <- "young"
-#' z$age[z$age == "Y30-64"] <- "old"
+#' z <- SSBtoolsData("sp_emp_withEU")
 #' ageHier <- data.frame(mapsFrom = c("young", "old"), mapsTo = "Total", sign = 1)
 #' geoDimList <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
 #' 
 #' # Small dataset example. Two dimensions.
 #' s <- z[z$geo == "Spain" & z$year != 2016, ]
+#' rownames(s) <- NULL
+#' s
 #' 
 #' # via Hierarchies2ModelMatrix() and converted to ordinary matrix (not sparse)
 #' ModelMatrix(s, list(age = ageHier, year = ""), sparse = FALSE)
 #' 
 #' # Hierarchies generated automatically. Then via Hierarchies2ModelMatrix()
-#' ModelMatrix(s[, c(1, 3)])
+#' ModelMatrix(s[, c(1, 4)])
 #' 
 #' # via Formula2ModelMatrix()
 #' ModelMatrix(s, formula = ~age + year)
@@ -264,7 +264,13 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
 #' Overparameterized model matrix
 #'
 #' All factor levels included
-#'
+#' 
+#' Example:
+#' 
+#' `z <- SSBtoolsData("sp_emp_withEU")`
+#' 
+#' `SSBtools:::Model_Matrix(~age*year + geo, z)`
+#'   
 #' @param formula formula
 #' @param data data frame
 #' @param mf model frame (alternative input instead of data)
@@ -274,12 +280,9 @@ ModelMatrixOld <- function(data, hierarchies = NULL, formula = NULL,
 #' @return model matrix created via model.matrix() or sparse.model.matrix()
 #' @importFrom stats model.frame model.matrix
 #' @importFrom Matrix sparse.model.matrix
-#' @export
+#' 
 #' @keywords internal
 #'
-#' @examples
-#'   z <- SSBtoolsData("sprt_emp_withEU")
-#'   Model_Matrix(~age*year + geo, z)
 Model_Matrix <- function(formula, data = NULL, mf = model.frame(formula, data = data), allFactor = TRUE, sparse = FALSE)  {
   
   for (i in 1:length(mf)) {

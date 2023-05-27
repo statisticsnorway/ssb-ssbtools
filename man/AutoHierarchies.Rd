@@ -2,7 +2,6 @@
 % Please edit documentation in R/AutoHierarchies.R
 \name{AutoHierarchies}
 \alias{AutoHierarchies}
-\alias{FindHierarchies}
 \title{Ensure standardized coding of hierarchies}
 \usage{
 AutoHierarchies(
@@ -15,8 +14,6 @@ AutoHierarchies(
   unionComplement = FALSE,
   ...
 )
-
-FindHierarchies(data, total = "Total")
 }
 \arguments{
 \item{hierarchies}{List of hierarchies}
@@ -27,7 +24,7 @@ FindHierarchies(data, total = "Total")
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
 
-\item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy}
+\item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy (see examples).}
 
 \item{unionComplement}{Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined.}
 
@@ -42,7 +39,6 @@ Automatic convert list of hierarchies coded in different ways to standardized to
 \details{
 Input can be to-from coded hierarchies, hierarchies/dimList as in sdcTable, TauArgus coded hierarchies or formulas.
 Automatic coding from data is also supported. Output is on a from ready for input to \code{\link{HierarchyCompute}}.
-\code{FindHierarchies} wraps \code{\link{FindDimLists}} and \code{AutoHierarchies} into a single function.
 A single string as hierarchy input is assumed to be a total code.
 Then, the hierarchy is created as a simple hierarchy where all codes in data sum up to this total.
 For consistence with \code{HierarchyCompute},
@@ -73,10 +69,46 @@ h5 <- AutoHierarchies(list(age = "Total", geo = "", year = "colFactor"), data = 
 identical(h1, h2)
 identical(h3, h4)
 
+# Print the resulting hierarchies
+h1 # = h2
+h3 # = h4
+h5
+
 FindHierarchies(z[, c("geo", "eu", "age")])
 
 
-### Examples with character vector(s) as unnamed list elements.  
+# ===================================================================== 
+#   Examples illustrating the combineHierarchies parameter
+# =====================================================================
+
+# First, create data
+d <- SSBtoolsData("d2ws")[1:3]
+d$isCounty1 <- "NO"
+d$isCounty1[d$county == "county-1"] <- "YES"
+d
+
+# sdcTable coding showing two tree-shaped hierarchies
+dimList <- FindDimLists(d)
+dimList
+
+# Two tree-shaped hierarchies can still be seen 
+# Hierarchies with three and two levels
+hA <- AutoHierarchies(dimList, combineHierarchies = FALSE)
+hA
+
+# A single hierarchy with only one level 
+# Contains the information needed to create a dummy matrix
+hB <- AutoHierarchies(dimList)
+hB
+
+# Dummy matrices from the hierarchies
+DummyHierarchies(hA)
+DummyHierarchies(hB)
+
+
+# ===================================================================== 
+#   Special examples with character vector(s) as unnamed list elements
+# =====================================================================
 
 # Same output as FindHierarchies above
 AutoHierarchies(list(c("geo", "eu", "age")), data = z)
@@ -98,7 +130,8 @@ AutoHierarchies(list("year", year = yearHier, c("geo", "eu", "age")), data = z,
 
 }
 \seealso{
-\code{\link{DimList2Hierarchy}}, \code{\link{Hierarchy2Formula}}.
+\code{\link{FindHierarchies}}, \code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}},
+\code{\link{Hierarchy2Formula}}, \code{\link{DummyHierarchies}}.
 }
 \author{
 Øyvind Langsrud

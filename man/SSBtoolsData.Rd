@@ -27,7 +27,9 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
 \strong{sprt_emp_withEU:} The data set sprt_emp extended with a EU variable.
 
-\strong{example1} Example data similar to \code{sprt_emp_withEU}.
+\strong{sp_emp_withEU:} As \code{sprt_emp_withEU}, but coded differently.
+
+\strong{example1} Example data similar to \code{sp_emp_withEU}.
 
 \strong{magnitude1:} Example data for magnitude tabulation. Same countries as above.
 

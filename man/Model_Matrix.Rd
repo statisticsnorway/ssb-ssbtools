@@ -29,8 +29,11 @@ model matrix created via model.matrix() or sparse.model.matrix()
 \description{
 All factor levels included
 }
-\examples{
-  z <- SSBtoolsData("sprt_emp_withEU")
-  Model_Matrix(~age*year + geo, z)
+\details{
+Example:
+
+\code{z <- SSBtoolsData("sp_emp_withEU")}
+
+\code{SSBtools:::Model_Matrix(~age*year + geo, z)}
 }
 \keyword{internal}
