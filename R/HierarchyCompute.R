@@ -1,50 +1,5 @@
 
 
-#' Change the hierarchy table to follow the standard
-#'
-#' Make sure that variable names and sign coding follow an internal standard. Level may be computed automatically
-#'
-#' @encoding UTF8
-#'
-#' @param hierarchy data frame with hierarchy table
-#' @param hierarchyVarNames variable names
-#' @param autoLevel When TRUE, level is computed by automatic method
-#'
-#' @return data frame with hierarchy table
-#' @export
-#' @author Øyvind Langsrud
-#'
-#' @examples
-#' # Make input data by changing variable names and sign coding.
-#' h <- SSBtoolsData("FIFA2018ABCD")[, 1:3]
-#' names(h)[1:2] <- c("from", "to")
-#' minus <- h$sign < 0
-#' h$sign <- "+"
-#' h$sign[minus] <- "-"
-#'
-#' # Run HierarchyFix - Two levels created
-#' HierarchyFix(h, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
-#'
-#' # Extend the hierarchy table
-#' h2 <- rbind(data.frame(from = c("Oceania", "Asia", "Africa", "America", "Europe"),
-#'                        to = "World", sign = "+"),
-#'            data.frame(from = c("World", "Europe"),
-#'                       to = "nonEurope", sign = c("+", "-")), h)
-#'
-#' # Run HierarchyFix - Three levels created
-#' HierarchyFix(h2, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
-#'
-HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE) {
-  h <- FixHierarchy(hierarchy, hierarchyVarNames)
-  if (autoLevel) 
-    h <- AutoLevel(h)
-  h
-}
-
-
-
-
-
 #' Hierarchical Computations
 #'
 #' This function computes aggregates by crossing several hierarchical specifications and factorial variables.
@@ -728,6 +683,51 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   w
 }
 
+
+
+
+
+#' Change the hierarchy table to follow the standard
+#'
+#' Make sure that variable names and sign coding follow an internal standard. Level may be computed automatically
+#'
+#' @encoding UTF8
+#'
+#' @param hierarchy data frame with hierarchy table
+#' @param hierarchyVarNames variable names
+#' @param autoLevel When TRUE, level is computed by automatic method
+#'
+#' @return data frame with hierarchy table
+#' @keywords internal
+#' @export
+#' @author Øyvind Langsrud
+#'
+#' @examples
+#' # Make input data by changing variable names and sign coding.
+#' h <- SSBtoolsData("FIFA2018ABCD")[, 1:3]
+#' names(h)[1:2] <- c("from", "to")
+#' minus <- h$sign < 0
+#' h$sign <- "+"
+#' h$sign[minus] <- "-"
+#'
+#' # Run HierarchyFix - Two levels created
+#' HierarchyFix(h, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
+#'
+#' # Extend the hierarchy table
+#' h2 <- rbind(data.frame(from = c("Oceania", "Asia", "Africa", "America", "Europe"),
+#'                        to = "World", sign = "+"),
+#'            data.frame(from = c("World", "Europe"),
+#'                       to = "nonEurope", sign = c("+", "-")), h)
+#'
+#' # Run HierarchyFix - Three levels created
+#' HierarchyFix(h2, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
+#'
+HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"), autoLevel = TRUE) {
+  h <- FixHierarchy(hierarchy, hierarchyVarNames)
+  if (autoLevel) 
+    h <- AutoLevel(h)
+  h
+}
 
 
 

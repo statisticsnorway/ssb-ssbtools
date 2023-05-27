@@ -49,3 +49,4 @@ HierarchyFix(h2, c(mapsFrom = "from", mapsTo = "to", sign = "sign"))
 \author{
 Øyvind Langsrud
 }
+\keyword{internal}
