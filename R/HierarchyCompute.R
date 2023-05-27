@@ -730,16 +730,6 @@ HierarchyFix <- function(hierarchy, hierarchyVarNames = c(mapsFrom = "mapsFrom",
 }
 
 
-
-#' AddMapsInput
-#'
-#' Brukes til å generere feil
-#'
-#' @param hierarchies hierarchies
-#' @param data data
-#'
-#' @keywords internal
-#'
 AddMapsInput <- function(hierarchies, data = NULL) {
   for (i in length(hierarchies)) {
     if (is.list(hierarchies[[i]])) {
@@ -761,14 +751,6 @@ AddMapsInput <- function(hierarchies, data = NULL) {
 
 
 
-#' AddNonExistingCode
-#'
-#' @param hierarchies hierarchies
-#' @param data data
-#' @param rowSelect rowSelect
-#'
-#' @keywords internal
-#'
 AddNonExistingCode <- function(hierarchies, rowSelect = NULL, inputInOutput = TRUE) {
   if (is.null(rowSelect)) 
     return(hierarchies)
@@ -799,16 +781,6 @@ AddNonExistingCode <- function(hierarchies, rowSelect = NULL, inputInOutput = TR
 
 
 
-
-#' CrossDataDummyHierarchies
-#'
-#' @param dataDummyHierarchies dataDummyHierarchies
-#' @param codeFrames codeFrames
-#' @param makeDimnames makeDimnames
-#' @param removeEmpty removeEmpty
-#' @param verbose Whether to print information during calculations. FALSE is default.
-#' @keywords internal
-#'
 CrossDataDummyHierarchies <- function(dataDummyHierarchies, codeFrames = NULL, makeDimnames = FALSE, useMatrixToDataFrame = TRUE, 
                                       removeEmpty = FALSE, verbose = FALSE, reOrder = FALSE) {
   
@@ -1047,18 +1019,6 @@ AutoLevel <- function(x) {
 
 
 
-
-
-#' CrossDataDummyHierarchy
-#'
-#' @param dataDummyHierarchy1 dataDummyHierarchy1
-#' @param dataDummyHierarchy2 dataDummyHierarchy2
-#' @param codeFrame1 codeFrame1
-#' @param codeFrame2 codeFrame2
-#' @param makeDimnames makeDimnames
-#'
-#' @keywords internal
-#'
 CrossDataDummyHierarchy <- function(dataDummyHierarchy1, dataDummyHierarchy2 = NULL, codeFrame1 = NULL, codeFrame2 = NULL, makeDimnames = FALSE, useMatrixToDataFrame = TRUE) {
   if (is.null(dataDummyHierarchy2)) {
     if (is.null(codeFrame1)) 
@@ -1121,8 +1081,6 @@ GetFirstStringInList <- function(x) {
   }
   z
 }
-
-
 
 
 KhatriRaoReOrder = function(x,y,make.dimnames = FALSE){
