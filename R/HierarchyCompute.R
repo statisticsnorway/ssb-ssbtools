@@ -367,8 +367,10 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
   
   if(noColVar & noRowGroupsWhenNoColVar){
     rowGroups <- list(idx = seq_len(NROW(data)), groups = data[, hierarchyNames, drop = FALSE])
+    rowGroups_seq_len <- TRUE
   } else {
     rowGroups <- RowGroups(data[, hierarchyNames, drop = FALSE], returnGroups = TRUE)
+    rowGroups_seq_len <- FALSE
   }  
   
   if(verbose){
@@ -463,10 +465,24 @@ HierarchyCompute <- function(data, hierarchies, valueVar,
         }
       }
     if(!readyValueMatrix){
-      if (nValueVar>1){
-        valueMatrix[rowGroups$idx,  ] <- as.matrix(data[, valueVar])
+      if (rowGroups_seq_len) {  # This may improve computing time
+        colnames_valueMatrix <- colnames(valueMatrix)
+        nrow_valueMatrix <- nrow(valueMatrix)
+        if (nValueVar > 1) {
+          valueMatrix <- Matrix(as.matrix(data[, valueVar]))
+        } else {
+          valueMatrix <- Matrix(data[, valueVar, drop = TRUE], ncol = 1)
+        }
+        colnames(valueMatrix) <- colnames_valueMatrix
+        if (nrow_valueMatrix != nrow(valueMatrix)) {
+          stop("Making valueMatrix failed ")
+        }
       } else {
-        valueMatrix[rowGroups$idx, 1] <- data[, valueVar, drop = TRUE]
+        if (nValueVar>1){
+          valueMatrix[rowGroups$idx,  ] <- as.matrix(data[, valueVar])
+        } else {
+          valueMatrix[rowGroups$idx, 1] <- data[, valueVar, drop = TRUE]
+        }
       }
     }
   } else {
