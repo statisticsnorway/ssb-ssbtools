@@ -42,6 +42,9 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 \strong{d4, d1, d1w, d2, d2w, d3, d3w, d3wb:} English translation of the datasets above.
 
 \strong{d2s, d2ws:} \code{d2} and \code{d2w} modified to smaller/easier data.
+
+\strong{power10to1, power10to2, \eqn{\ldots}:} \code{power10to}\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns.
+Tip: Try \code{FindDimLists(SSBtoolsData("power10to3"))}
 }
 \examples{
 SSBtoolsData("FIFA2018ABCD")
