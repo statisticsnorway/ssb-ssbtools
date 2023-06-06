@@ -121,7 +121,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
   }
   
   if (!is.null(dimVar) & is.null(hierarchies) & is.null(formula)) {
-    data <- data[, dimVar]
+    data <- data[, dimVar, drop=FALSE]
   }
   
   if (viaOrdinary) {

@@ -33,6 +33,9 @@
 #' 
 #' \strong{d2s, d2ws:} `d2` and `d2w` modified to smaller/easier data.
 #' 
+#' \strong{power10to1, power10to2, \eqn{\ldots}:} `power10to`\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns. 
+#'         Tip: Try `FindDimLists(SSBtoolsData("power10to3"))`  
+#' 
 #' @export
 #' @importFrom utils data
 #' @author Øyvind Langsrud and Daniel Lupp
@@ -159,7 +162,32 @@ SSBtoolsData <- function(dataset) {
     return(q)
   }
   
+  if (substr(dataset, 1, 9) == "power10to") {
+    n <- as.integer(substr(dataset, 10, 20))
+    if (n > 26) {
+      stop("Not enough letters for coding")
+    }
+    return(Power10toN(n))
+  }
+  
   stop(paste("No data with dataset =", dataset))
+}
+
+P10 <- function(nam = c("a", "A")) {
+  z <- data.frame(1:10, c(100, 100, 200, 200, 200, rep(300, 5)))
+  names(z) <- nam
+  for (i in seq_along(z)) {
+    z[[i]] <- paste0(names(z)[i], z[[i]])
+  }
+  z
+}
+
+Power10toN <- function(n) {
+  z <- P10()
+  for (i in SeqInc(2, n)) {
+    z <- CrossCodeFrames(z, P10(c(letters[i], LETTERS[i])))
+  }
+  z
 }
 
 
