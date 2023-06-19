@@ -15,7 +15,7 @@ FindHierarchies(data, total = "Total")
 List of hierarchies
 }
 \description{
-\code{\link{FindDimLists}} and \code{AutoHierarchies} wrapped into a single function.
+\code{\link{FindDimLists}} and \code{\link{AutoHierarchies}} wrapped into a single function.
 }
 \examples{
 dataset <- SSBtoolsData("example1")
