@@ -10,15 +10,15 @@
 #'
 #' @return Output is a sort of correlation matrix.
 #'
-#'         Here we refer to ni as the number of present levels of variable i (the number of unique elements) and we refer to nij as the number
+#'         Here we refer to ni as the number of present levels of variable i (the number of unique elements) and we refer to mij as the number
 #'         of present levels obtained by crossing variable i and variable j (the number unique rows of x[,c(i,j)]).
 #'
 #'         The diagonal elements of the output matrix contains the number of present levels of each variable (=ni).
 #'
 #'         The absolute values of off-diagonal elements:
-#'         \item{0}{when nij = ni*nj}
-#'         \item{1}{when nij = max(ni,nj)}
-#'         \item{Other values}{Computed as (ni*nj-nij)/(ni*nj-max(ni,nj))}
+#'         \item{0}{when mij = ni*nj}
+#'         \item{1}{when mij = max(ni,nj)}
+#'         \item{Other values}{Computed as (ni*nj-mij)/(ni*nj-max(ni,nj))}
 #'
 #'         So 0 means that all possible level combinations exist in the data and 1 means that the two variables are
 #'         hierarchically related.
@@ -52,7 +52,7 @@ FactorLevCorr <- function(x) {
   for (i in matlabColon(1, n)) for (j in matlabColon(i + 1, n)) {
     ni <- nLevels[i]
     nj <- nLevels[j]
-    nij <- Nlevels(x[, c(i, j)])
+    nij <- Nlevels(x[, c(i, j)])   # nij changed to mij in documentation, but the code remains unchanged 
     multij <- ni * nj
     maxij <- max(ni, nj)
     if (ni <= nj) 

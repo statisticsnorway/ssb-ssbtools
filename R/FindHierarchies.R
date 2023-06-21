@@ -1,7 +1,7 @@
 
 #' Finding hierarchies automatically from data 
 #' 
-#' \code{\link{FindDimLists}} and \code{AutoHierarchies} wrapped into a single function.
+#' \code{\link{FindDimLists}} and \code{\link{AutoHierarchies}} wrapped into a single function.
 #'
 #' @param data Matrix or data frame containing the variables (micro data or cell counts data).
 #' @param total String used to name totals. A vector of length `ncol(data)` is also possible (see examples).  
