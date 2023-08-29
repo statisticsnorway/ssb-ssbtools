@@ -418,6 +418,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (integerUnique & !is.integer(singleton_num)) {
     stop("singleton as integer needed")
   }
+  
+  numSingletonElimination <- as.logical(numSingleton[["elimination"]])
+  if (numSingletonElimination & !integerUnique) {
+    stop("singleton as integer needed when numSingletonElimination")
+  }
+  
+  
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
     sub2Sum <- TRUE
@@ -638,12 +645,25 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   ##
   ##  END extending x based on singleton
-  ## 
+  ##
+  
+  n_orig_primary <- sum(primary <= input_ncol_x)
   
   
   if (!any(singleton)) 
     singleton <- NULL
   
+  
+  if (numSingletonElimination) {
+    order_singleton_num <- order(singleton_num)
+    x <- x[order_singleton_num,  , drop = FALSE]
+    singleton_num <- singleton_num[order_singleton_num]
+    if (!is.null(singleton)) {
+      singleton <- singleton[order_singleton_num]
+    }
+  }
+  
+  order_singleton_num  <- NULL
   
   if (!is.null(singleton)) {
     ordSingleton <- order(singleton)
@@ -673,15 +693,25 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     A <- Matrix2listInt(x[ordSingleton, candidates, drop = FALSE])
     if (grepl("Space", singletonMethod)) {
       B <- Matrix2listInt(x[ordyB, primary, drop = FALSE])
+      order_singleton_num  <- ordyB
     } else {
       B <- Matrix2listInt(x[ordSingleton, primary, drop = FALSE])
       maxInd <- nrow(x)
+      order_singleton_num  <- ordSingleton
     }
   } else {
     A <- Matrix2listInt(x[, candidates, drop = FALSE])
     B <- Matrix2listInt(x[, primary, drop = FALSE])
     maxInd <- nrow(x)
   }
+  
+  
+  if (numSingletonElimination) {
+    if (!is.null(order_singleton_num)) {
+      singleton_num <- singleton_num[order_singleton_num]
+    }
+  }
+  
   
   m <- nrow(x)
   n <- length(A$r)
@@ -707,6 +737,145 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   dot <- "."
   # dot will change to "-" when integer overflow occur (then numeric algorithm)  
+  
+  
+  
+  ###################################################################################################
+  # START - define AnyProportionalGaussInt
+  #         when !numSingletonElimination: 
+  #                         old function outside this function is used (see below)
+  #   Since function defined inside, it is possible to "cheat" and avoid extra input-parameters.
+  #   Now  singleton_num and numSingletonElimination avoided
+  #
+  #  This function reuses code from old branch “Feature/safety-range”. 
+  #  Comments about rangeValues/rangeLimits are from this old code. 
+  #  It is possible to further develop this within this new function.
+  #####################################################################################################
+   
+  AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB) {
+    n <- length(r)
+    if (!n) {
+      return(TRUE)  # Empty 'A-input' regarded as proportional
+    }
+    for (i in seq_along(rB)) {
+      numSingletonEliminationCheck <- numSingletonElimination
+      if(i > n_orig_primary){
+        numSingletonEliminationCheck <- FALSE
+      }
+      ni <- length(xB[[i]])
+      if (ni) { # Empty 'B-input' not regarded as proportional
+        doCheck <- FALSE
+        if (ni == n) {
+          if (identical(r, rB[[i]])) {        # Same as in old function 
+            doCheck <- TRUE
+            x_here <- x
+            xBi_here <- xB[[i]]
+            if (numSingletonEliminationCheck) {
+              #restLimit <- rangeLimits[i]     # This is new
+              s_unique <- integer(0)
+              r_in_rB <- rep(TRUE, length(r))
+              rB_in_r <- r_in_rB 
+            } else {
+              #restLimit <- 0
+            }
+          }
+        }
+        if (!doCheck) {
+          if (numSingletonEliminationCheck) {
+            if (r[1] %in% rB[[i]]) {         # No gauss elimination if r[1] not in rB[[i]]
+              r_in_rB <- r %in% rB[[i]]
+              rB_in_r <- rB[[i]] %in% r
+              rdiff <- c(r[!r_in_rB], rB[[i]][!rB_in_r])  # elements not common 
+              # sum_rdiff <- sum(rangeValues[rdiff])
+              s_unique <- unique(singleton_num[rdiff])
+              x_here <- x[r_in_rB]                        # x reduced to common elements 
+              xBi_here <- xB[[i]][rB_in_r]                # xB[[i]] reduced to common elements
+              #restLimit <- rangeLimits[i] - sum_rdiff     
+              #doCheck <- restLimit >= 0   # New when non-NULL rangeLimits
+              doCheck <- (length(s_unique) <= 1) & (min(s_unique) > 0)
+            }
+          }
+        }
+        if (doCheck) {
+          if (n == 1L)
+            return(TRUE)
+          if (identical(x_here, xBi_here))
+            return(TRUE)
+          if (identical(-x_here, xBi_here))
+            return(TRUE)
+          
+          cx1xBi1 <- c(x_here[1], xBi_here[1])
+          if (is.integer(cx1xBi1)) {
+            kk <- ReduceGreatestDivisor(cx1xBi1)
+            suppressWarnings({
+              kk_2_x <- kk[2] * x_here
+              kk_1_xB_i <- kk[1] * xBi_here
+            })
+            if (anyNA(kk_2_x) | anyNA(kk_1_xB_i)) {
+              kk <- as.numeric(kk)
+              kk_2_x <- kk[2] * x_here
+              kk_1_xB_i <- kk[1] * xBi_here
+              
+            }
+            if (identical(kk_2_x, kk_1_xB_i))
+              return(TRUE)
+            if (is.numeric(kk)) {
+              if (all(abs(xBi_here - kk_2_x/kk[1]) < tolGauss))
+                return(TRUE)
+            }
+            if (numSingletonEliminationCheck) { #if (restLimit) {  # Same logical vectors again when TRUE not returned and when rangeLimits used (simplification possible)
+              if (!is.numeric(kk)) {  
+                rrest <- (r[r_in_rB])[kk_2_x != kk_1_xB_i]
+              } else {
+                rrest <- (r[r_in_rB])[!(abs(xBi_here - kk_2_x/kk[1]) < tolGauss)]
+              }
+              s_unique <- unique(c(s_unique, singleton_num[rrest]))
+              if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+                return(TRUE) # New possible TRUE-return caused by rangeLimits
+              }
+            }
+            
+          } else {
+            #  Possible code here to look at distribution of numeric computing errors  
+            #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
+            #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
+            if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i])))
+              return(TRUE)
+            if (numSingletonEliminationCheck) {# if (restLimit) {
+              rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i]))]
+              s_unique <- unique(c(s_unique, singleton_num[rrest]))
+              # if (sum(rangeValues[rrest]) < restLimit) {
+              if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+                return(TRUE) # New possible TRUE-return caused by rangeLimits (as above)
+              }
+            }
+          }
+        }
+      }
+    }
+    FALSE
+  }
+  
+  if (numSingletonElimination) {
+    AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
+  } else {
+    if (get0("testAnyProportionalGaussInt", ifnotfound = FALSE)) {
+      AnyProportionalGaussInt <- function(...) {
+        apgiOLD <- AnyProportionalGaussInt_OLD(...)
+        apgiNEW <- AnyProportionalGaussInt_NEW(...)
+        if (apgiOLD != apgiNEW) {
+          stop("AnyProportionalGaussInt NEW/OLD problem")
+        } 
+        apgiOLD
+      }
+    } else {
+      AnyProportionalGaussInt <- AnyProportionalGaussInt_OLD
+    }
+  }
+  
+  #####################################################################
+  # END - define AnyProportionalGaussInt
+  #####################################################################
   
   
   # The main Gaussian elimination loop 
@@ -1132,7 +1301,7 @@ Any0GaussInt <- function(r, rB) {
 
 
 
-AnyProportionalGaussInt <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
+AnyProportionalGaussInt_OLD <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
   n <- length(r)
   if(!n){
     return(TRUE) # Empty "A-input" regarded as proportional

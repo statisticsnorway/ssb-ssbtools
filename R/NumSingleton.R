@@ -25,6 +25,10 @@
 #'   \item `H`: As `T` above. And in addition, the other component can be any primary suppressed published cell. 
 #'       This method may be computationally demanding for big data.  
 #'   }
+#' 4. `elimination` (4th character): 
+#'   \itemize{
+#'   \item `T`: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+#'   }
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
 #'
@@ -35,17 +39,19 @@
 #' NumSingleton("numTFF")
 #' NumSingleton("numFTT")
 #' NumSingleton("numttH")
+#' NumSingleton("numTTFT")
 NumSingleton <- function(singletonMethod) {
   if (substring(singletonMethod, 1, 3) != "num") {
     return(NULL)
   }
   singletonMethod <- paste0(singletonMethod, "FFFFF")
-  s <- strsplit(substring(singletonMethod, 4, 6), split = "")[[1]]
+  s <- strsplit(substring(singletonMethod, 4, 7), split = "")[[1]]
   
   CheckChar(s[1], "1st", "FTt")
   CheckChar(s[2], "2nd", "FTt")
   CheckChar(s[3], "3rd", "FTH")
-  names(s) <- c("singleton2Primary", "integerUnique", "sum2")
+  CheckChar(s[4], "4th", "FT")
+  names(s) <- c("singleton2Primary", "integerUnique", "sum2", "elimination")
   s
 }
   

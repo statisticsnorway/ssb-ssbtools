@@ -37,10 +37,15 @@ At least one component is singleton contributor. The other component may be an i
 \item \code{H}: As \code{T} above. And in addition, the other component can be any primary suppressed published cell.
 This method may be computationally demanding for big data.
 }
+\item \code{elimination} (4th character):
+\itemize{
+\item \code{T}: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+}
 }
 }
 \examples{
 NumSingleton("numTFF")
 NumSingleton("numFTT")
 NumSingleton("numttH")
+NumSingleton("numTTFT")
 }
