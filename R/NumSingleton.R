@@ -28,6 +28,10 @@
 #' 4. `elimination` (4th character): 
 #'   \itemize{
 #'   \item `T`: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+#'   \item `M`: As `T` above. And in addition, a message will be printed to inform about eliminated singleton rows.
+#'       The algorithm is not perfect since the elimination of rows may case problems. 
+#'       Such problems can be a reason not to switch off `sum2`.
+#'   \item `W`: As `M` above, but `warning` instead of `message`.     
 #'   }
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
@@ -50,7 +54,7 @@ NumSingleton <- function(singletonMethod) {
   CheckChar(s[1], "1st", "FTt")
   CheckChar(s[2], "2nd", "FTt")
   CheckChar(s[3], "3rd", "FTH")
-  CheckChar(s[4], "4th", "FT")
+  CheckChar(s[4], "4th", "FTMW")
   names(s) <- c("singleton2Primary", "integerUnique", "sum2", "elimination")
   s
 }

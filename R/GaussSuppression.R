@@ -419,11 +419,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     stop("singleton as integer needed")
   }
   
-  numSingletonElimination <- as.logical(numSingleton[["elimination"]])
+  numSingletonElimination <- numSingleton[["elimination"]] != "F"
+  WhenEliminatedRowsSingleton <- NULL
+  if (numSingleton[["elimination"]] == "M") WhenEliminatedRowsSingleton <- message
+  if (numSingleton[["elimination"]] == "W") WhenEliminatedRowsSingleton <- warning
   if (numSingletonElimination & !integerUnique) {
     stop("singleton as integer needed when numSingletonElimination")
   }
-  
   
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
@@ -877,6 +879,18 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   # END - define AnyProportionalGaussInt
   #####################################################################
   
+  eliminatedRows <- rep(FALSE, m) 
+  
+  MessageEliminatedRowsSingleton <- function() {   # internal function since used twice below
+    if (!is.null(WhenEliminatedRowsSingleton) & numSingletonElimination) {
+      eliminatedRowsSingleton <- eliminatedRows & as.logical(singleton_num)
+      if (any(eliminatedRowsSingleton)) {
+        WhenEliminatedRowsSingleton(paste(sum(eliminatedRowsSingleton), "out of", sum(as.logical(singleton_num)), "singleton rows eliminated."))
+      }
+    }
+    NULL
+  }
+  
   
   # The main Gaussian elimination loop 
   # Code made for speed, not readability
@@ -914,6 +928,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         cat("\n")
         flush.console()
       }
+      MessageEliminatedRowsSingleton()
       return(c(candidates[secondary], -unsafePrimary))
     }
     
@@ -964,6 +979,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 A$r[[j]] <- integer(0)
                 A$x[[j]] <- integer(0)  
                 isSecondary <- FALSE
+                eliminatedRows[A$r[[j]]] <- TRUE
                 reduced <- TRUE
               } else {
                 isSecondary <- TRUE
@@ -980,6 +996,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       if (!isSecondary) {
        if (!reduced) { 
         ind <- A$r[[j]][1]
+        eliminatedRows[ind] <- TRUE
         for (i in SeqInc(j + 1L, n)) 
           nrA[i] <- match(ind, A$r[[i]])
         for (i in seq_len(nB)) 
@@ -1281,6 +1298,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     cat("\n")
     flush.console()
   }
+  MessageEliminatedRowsSingleton()
   c(candidates[secondary], -unsafePrimary)
 }
 
