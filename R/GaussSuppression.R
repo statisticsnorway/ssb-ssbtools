@@ -423,9 +423,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   WhenEliminatedRowsSingleton <- NULL
   if (numSingleton[["elimination"]] == "M") WhenEliminatedRowsSingleton <- message
   if (numSingleton[["elimination"]] == "W") WhenEliminatedRowsSingleton <- warning
-  if (numSingletonElimination & !integerUnique) {
-    stop("singleton as integer needed when numSingletonElimination")
-  }
   
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
@@ -655,6 +652,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (!any(singleton)) 
     singleton <- NULL
   
+  # Change to unique integers. Other uses of singleton_num are finished  
+  if (numSingletonElimination & is.logical(singleton_num)) {
+    singleton_num[singleton_num] <- seq_len(sum(singleton_num))
+  }
   
   if (numSingletonElimination) {
     order_singleton_num <- order(singleton_num)
