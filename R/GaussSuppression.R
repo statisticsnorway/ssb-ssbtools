@@ -657,7 +657,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singleton_num[singleton_num] <- seq_len(sum(singleton_num))
   }
   
+  
+  
   if (numSingletonElimination) {
+    
+    # singleton_num as rows, primary as columns
+    sspp <- fac2sparse(singleton_num[singleton_num > 0]) %*% x[singleton_num > 0, primary[seq_len(n_orig_primary)], drop = FALSE]
+    
+    # Indices of primary originated from unique singleton
+    uniqueSingletonPrimary <- which(colSums(sign(sspp)) == 1)
+    
     order_singleton_num <- order(singleton_num)
     x <- x[order_singleton_num,  , drop = FALSE]
     singleton_num <- singleton_num[order_singleton_num]
@@ -710,6 +719,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   
   if (numSingletonElimination) {
+    
+    #singleton-integer-value when primary originated from unique singleton
+    primarySingletonNum <- rep(0, length(primary))
+    for (i in uniqueSingletonPrimary) {
+      primarySingletonNum[i] <- singleton_num[B$r[[i]][1]]
+    }
+    
     if (!is.null(order_singleton_num)) {
       singleton_num <- singleton_num[order_singleton_num]
     }
@@ -748,12 +764,29 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   #         when !numSingletonElimination: 
   #                         old function outside this function is used (see below)
   #   Since function defined inside, it is possible to "cheat" and avoid extra input-parameters.
-  #   Now  singleton_num and numSingletonElimination avoided
+  #   Now  primarySingletonNum, singleton_num and numSingletonElimination avoided
   #
   #  This function reuses code from old branch “Feature/safety-range”. 
   #  Comments about rangeValues/rangeLimits are from this old code. 
   #  It is possible to further develop this within this new function.
   #####################################################################################################
+  
+  
+  Check_s_unique <- function(s_unique, i) {
+    if (length(s_unique) > 1) {
+      return(FALSE)
+    }
+    if (length(s_unique) == 0) {
+      return(TRUE)
+    }
+    if (s_unique == 0) {
+      return(FALSE)
+    }
+    if (s_unique == primarySingletonNum[i]) {
+      return(FALSE)
+    }
+    TRUE
+  }
    
   AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB) {
     n <- length(r)
@@ -795,7 +828,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               xBi_here <- xB[[i]][rB_in_r]                # xB[[i]] reduced to common elements
               #restLimit <- rangeLimits[i] - sum_rdiff     
               #doCheck <- restLimit >= 0   # New when non-NULL rangeLimits
-              doCheck <- (length(s_unique) <= 1) & (min(s_unique) > 0)
+              #doCheck <- (length(s_unique) <= 1) & (min(s_unique) > 0)
+              doCheck <- Check_s_unique(s_unique, i)
             }
           }
         }
@@ -833,7 +867,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 rrest <- (r[r_in_rB])[!(abs(xBi_here - kk_2_x/kk[1]) < tolGauss)]
               }
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
-              if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+              if (Check_s_unique(s_unique, i)) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
                 return(TRUE) # New possible TRUE-return caused by rangeLimits
               }
             }
@@ -848,7 +882,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i]))]
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
               # if (sum(rangeValues[rrest]) < restLimit) {
-              if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+              if (Check_s_unique(s_unique, i)) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
                 return(TRUE) # New possible TRUE-return caused by rangeLimits (as above)
               }
             }
