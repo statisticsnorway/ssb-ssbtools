@@ -418,6 +418,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (integerUnique & !is.integer(singleton_num)) {
     stop("singleton as integer needed")
   }
+  if (!integerUnique & is.integer(singleton_num)) {
+    singleton_num <- as.logical(singleton_num)
+  }
   
   numSingleton_elimination_ <- numSingleton[["elimination"]]
   allow_GAUSS_DUPLICATES <- numSingleton_elimination_ %in% LETTERS
