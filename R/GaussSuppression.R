@@ -947,9 +947,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   MessageEliminatedRowsSingleton <- function() {   # internal function since used twice below
     if (!is.null(WhenEliminatedRowsSingleton) & numSingletonElimination) {
-      eliminatedRowsSingleton <- eliminatedRows & as.logical(singleton_num)
-      if (any(eliminatedRowsSingleton)) {
-        WhenEliminatedRowsSingleton(paste(sum(eliminatedRowsSingleton), "out of", sum(as.logical(singleton_num)), "singleton rows eliminated."))
+      rowsP <- which(eliminatedRows & as.logical(singleton_num))
+      singleP <- singleton_num[rowsP]
+      if (N_GAUSS_DUPLICATES == 2) {
+        rows2 <- DUPLICATE_order_singleton_num[which(eliminatedRows_DUPLICATE & as.logical(singleton_num_DUPLICATE))]
+        rowsP <- rowsP[rowsP %in% rows2]
+        singleP <- singleP[singleP %in% singleton_num[rows2]]
+      }
+      n_unique <- length(unique(singleton_num[as.logical(singleton_num)]))
+      if (length(rowsP)) {
+        WhenEliminatedRowsSingleton(paste(length(rowsP), "out of", sum(as.logical(singleton_num)), "singleton rows eliminated.", length(singleP), "out of", n_unique, "unique singletons problematic."))
+      } else {
+        if (length(singleP)) {
+          WhenEliminatedRowsSingleton(paste(length(singleP), "out of", n_unique, "unique singletons problematic although no rows eliminated in both parallels."))
+        }
       }
     }
     NULL
