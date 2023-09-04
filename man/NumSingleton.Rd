@@ -39,17 +39,20 @@ This method may be computationally demanding for big data.
 }
 \item \code{elimination} (4th character):
 \itemize{
-\item \code{T}: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
-\item \code{M}: As \code{T} above. And in addition, a message will be printed to inform about eliminated singleton rows.
+\item \code{t}: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+\item \code{m}: As \code{t} above. And in addition, a message will be printed to inform about eliminated singleton rows.
 The algorithm is not perfect since the elimination of rows may case problems.
 Such problems can be a reason not to switch off \code{sum2}.
-\item \code{W}: As \code{M} above, but \code{warning} instead of \code{message}.
+\item \code{w}: As \code{m} above, but \code{warning} instead of \code{message}.
+\item \code{T}, \code{M} and \code{W}: As \code{t}, \code{m} and \code{w} above.
+In addition, the gauss elimination routine is allowed to run in parallel with different sortings
+so that the problem of eliminated singleton rows is reduced.
 }
 }
 }
 \examples{
 NumSingleton("numTFF")
-NumSingleton("numFTT")
+NumSingleton("numFTt")
 NumSingleton("numttH")
 NumSingleton("numTTFT")
 }

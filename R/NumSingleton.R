@@ -27,11 +27,14 @@
 #'   }
 #' 4. `elimination` (4th character): 
 #'   \itemize{
-#'   \item `T`: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
-#'   \item `M`: As `T` above. And in addition, a message will be printed to inform about eliminated singleton rows.
+#'   \item `t`: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+#'   \item `m`: As `t` above. And in addition, a message will be printed to inform about eliminated singleton rows.
 #'       The algorithm is not perfect since the elimination of rows may case problems. 
 #'       Such problems can be a reason not to switch off `sum2`.
-#'   \item `W`: As `M` above, but `warning` instead of `message`.     
+#'   \item `w`: As `m` above, but `warning` instead of `message`.
+#'   \item `T`, `M` and `W`: As `t`, `m` and `w` above. 
+#'       In addition, the gauss elimination routine is allowed to run in parallel with different sortings 
+#'      so that the problem of eliminated singleton rows is reduced.        
 #'   }
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
@@ -41,7 +44,7 @@
 #'
 #' @examples
 #' NumSingleton("numTFF")
-#' NumSingleton("numFTT")
+#' NumSingleton("numFTt")
 #' NumSingleton("numttH")
 #' NumSingleton("numTTFT")
 NumSingleton <- function(singletonMethod) {
@@ -54,7 +57,7 @@ NumSingleton <- function(singletonMethod) {
   CheckChar(s[1], "1st", "FTt")
   CheckChar(s[2], "2nd", "FTt")
   CheckChar(s[3], "3rd", "FTH")
-  CheckChar(s[4], "4th", "FTMW")
+  CheckChar(s[4], "4th", "FTMWftmw")
   names(s) <- c("singleton2Primary", "integerUnique", "sum2", "elimination")
   s
 }

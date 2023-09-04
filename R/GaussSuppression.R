@@ -419,10 +419,14 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     stop("singleton as integer needed")
   }
   
-  numSingletonElimination <- numSingleton[["elimination"]] != "F"
+  numSingleton_elimination_ <- numSingleton[["elimination"]]
+  allow_GAUSS_DUPLICATES <- numSingleton_elimination_ %in% LETTERS
+  numSingleton_elimination_ <- toupper(numSingleton_elimination_)
+  
+  numSingletonElimination <- numSingleton_elimination_ != "F"
   WhenEliminatedRowsSingleton <- NULL
-  if (numSingleton[["elimination"]] == "M") WhenEliminatedRowsSingleton <- message
-  if (numSingleton[["elimination"]] == "W") WhenEliminatedRowsSingleton <- warning
+  if (numSingleton_elimination_ == "M") WhenEliminatedRowsSingleton <- message
+  if (numSingleton_elimination_ == "W") WhenEliminatedRowsSingleton <- warning
   
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
@@ -1083,7 +1087,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
         ind <- A$r[[j]][1]
         
 if(numSingletonElimination)
-  if(singleton_num[ind] | force_GAUSS_DUPLICATES)
+  if((allow_GAUSS_DUPLICATES & singleton_num[ind]) | force_GAUSS_DUPLICATES)
     if(N_GAUSS_DUPLICATES==1){
       A_DUPLICATE <- A
       B_DUPLICATE <- B
