@@ -893,6 +893,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     FALSE
   }
   
+  force_GAUSS_DUPLICATES <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  info_GAUSS_DUPLICATES  <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  
+  if (force_GAUSS_DUPLICATES) {
+    if (!numSingletonElimination) {
+      singleton_num <- rep(0L, m)
+      numSingletonElimination <- TRUE
+    }
+  }
+  
   if (numSingletonElimination) {
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
@@ -901,6 +911,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         return(any1)
       }
       any2 <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE)
+      if(info_GAUSS_DUPLICATES) 
+        if(any1 != any2){
+          message("any1 != any2")
+        }
       any1 | any2
     }
     
@@ -1067,7 +1081,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
         ind <- A$r[[j]][1]
         
 if(numSingletonElimination)
-  if(singleton_num[ind])
+  if(singleton_num[ind] | force_GAUSS_DUPLICATES)
     if(N_GAUSS_DUPLICATES==1){
       A_DUPLICATE <- A
       B_DUPLICATE <- B
@@ -1082,11 +1096,15 @@ if(numSingletonElimination)
       above_maxInd[SeqInc(maxInd + 1, m)] <- TRUE
       DUPLICATE_order_singleton_num[singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[singleton_logical & above_maxInd])
       DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd])
+      if (force_GAUSS_DUPLICATES) {   # reverse other cells as well 
+        DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd])
+        DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd])
+      }
       singleton_num_DUPLICATE <- singleton_num[DUPLICATE_order_singleton_num] 
       
       A_DUPLICATE <- A
       for(i in SeqInc(j, n)){
-        if(any( singleton_logical[A$r[[i]]])){
+        if(any( singleton_logical[A$r[[i]]]) | force_GAUSS_DUPLICATES){
           A_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[A$r[[i]]]
           r <- order(A_DUPLICATE$r[[i]])
           A_DUPLICATE$r[[i]] <- A_DUPLICATE$r[[i]][r]
@@ -1095,7 +1113,7 @@ if(numSingletonElimination)
       }
       B_DUPLICATE <- B
       for(i in seq_len(nB)){
-        if(any( singleton_logical[B$r[[i]]])){
+        if(any( singleton_logical[B$r[[i]]]) | force_GAUSS_DUPLICATES){
           B_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[B$r[[i]]]
           r <- order(B_DUPLICATE$r[[i]])
           B_DUPLICATE$r[[i]] <- B_DUPLICATE$r[[i]][r]
