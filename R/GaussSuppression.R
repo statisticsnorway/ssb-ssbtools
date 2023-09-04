@@ -894,7 +894,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   if (numSingletonElimination) {
-    AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
+    #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
+    AnyProportionalGaussInt <- function(...){
+      any1 <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB) 
+      if(N_GAUSS_DUPLICATES==1){
+        return(any1)
+      }
+      any2 <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE)
+      any1 | any2
+    }
+    
   } else {
     if (get0("testAnyProportionalGaussInt", ifnotfound = FALSE)) {
       AnyProportionalGaussInt <- function(...) {
@@ -926,6 +935,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     NULL
   }
   
+  N_GAUSS_DUPLICATES <- 1
   
   # The main Gaussian elimination loop 
   # Code made for speed, not readability
@@ -991,6 +1001,18 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
             if (subSubSec & singletonNOTprimary) {
               if (!Any0GaussInt(A$r[[j]], B$r)) {
+for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
+  if(I_GAUSS_DUPLICATES == 2){
+    A_TEMP <- A
+    B_TEMP <- B
+    eliminatedRows_TEMP <- eliminatedRows
+    singleton_num_TEMP <- singleton_num
+    
+    A <- A_DUPLICATE
+    B <- B_DUPLICATE
+    eliminatedRows <- eliminatedRows_DUPLICATE
+    singleton_num <- singleton_num_DUPLICATE
+  }
                 subSubSec <- FALSE
                 for (i in SeqInc(j + 1L, n)) {
                   j_in_i <- A$r[[i]] %in% A$r[[j]]
@@ -1015,6 +1037,18 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 A$x[[j]] <- integer(0)  
                 isSecondary <- FALSE
                 eliminatedRows[A$r[[j]]] <- TRUE
+  if(I_GAUSS_DUPLICATES == 2){
+    A_DUPLICATE <- A 
+    B_DUPLICATE <- B 
+    eliminatedRows_DUPLICATE <- eliminatedRows
+    singleton_num_DUPLICATE <- singleton_num
+    
+    A <- A_TEMP
+    B <- B_TEMP
+    eliminatedRows <- eliminatedRows_TEMP
+    singleton_num <- singleton_num_TEMP
+  }
+} # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
                 reduced <- TRUE
               } else {
                 isSecondary <- TRUE
@@ -1031,7 +1065,66 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       if (!isSecondary) {
        if (!reduced) { 
         ind <- A$r[[j]][1]
-        eliminatedRows[ind] <- TRUE
+        
+if(numSingletonElimination)
+  if(singleton_num[ind])
+    if(N_GAUSS_DUPLICATES==1){
+      A_DUPLICATE <- A
+      B_DUPLICATE <- B
+      eliminatedRows_DUPLICATE <- eliminatedRows
+      kk_2_factorsA_DUPLICATE <- kk_2_factorsA
+      kk_2_factorsB_DUPLICATE <- kk_2_factorsB
+      eliminatedRows_DUPLICATE <- eliminatedRows
+      
+      DUPLICATE_order_singleton_num <- seq_len(m)
+      singleton_logical <- as.logical(singleton_num)
+      above_maxInd <- rep(FALSE, m)
+      above_maxInd[SeqInc(maxInd + 1, m)] <- TRUE
+      DUPLICATE_order_singleton_num[singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[singleton_logical & above_maxInd])
+      DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd])
+      singleton_num_DUPLICATE <- singleton_num[DUPLICATE_order_singleton_num] 
+      
+      A_DUPLICATE <- A
+      for(i in SeqInc(j, n)){
+        if(any( singleton_logical[A$r[[i]]])){
+          A_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[A$r[[i]]]
+          r <- order(A_DUPLICATE$r[[i]])
+          A_DUPLICATE$r[[i]] <- A_DUPLICATE$r[[i]][r]
+          A_DUPLICATE$x[[i]] <- A_DUPLICATE$x[[i]][r]
+        }
+      }
+      B_DUPLICATE <- B
+      for(i in seq_len(nB)){
+        if(any( singleton_logical[B$r[[i]]])){
+          B_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[B$r[[i]]]
+          r <- order(B_DUPLICATE$r[[i]])
+          B_DUPLICATE$r[[i]] <- B_DUPLICATE$r[[i]][r]
+          B_DUPLICATE$x[[i]] <- B_DUPLICATE$x[[i]][r]
+        }
+      }
+      
+      N_GAUSS_DUPLICATES <- 2
+    }
+eliminatedRows[ind] <- TRUE        
+for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
+  if(I_GAUSS_DUPLICATES == 2){
+    A_TEMP <- A
+    B_TEMP <- B
+    eliminatedRows_TEMP <- eliminatedRows
+    singleton_num_TEMP <- singleton_num
+    kk_2_factorsA_TEMP <- kk_2_factorsA
+    kk_2_factorsB_TEMP <- kk_2_factorsB
+    
+    A <- A_DUPLICATE
+    B <- B_DUPLICATE
+    eliminatedRows <- eliminatedRows_DUPLICATE
+    singleton_num <- singleton_num_DUPLICATE
+    kk_2_factorsA <- kk_2_factorsA_DUPLICATE
+    kk_2_factorsB <- kk_2_factorsB_DUPLICATE
+    
+    ind <- A$r[[j]][1]
+    eliminatedRows[ind] <- TRUE
+  }
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
         for (i in SeqInc(j + 1L, n)) 
@@ -1282,6 +1375,22 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
         }
+  if(I_GAUSS_DUPLICATES == 2){
+    A_DUPLICATE <- A 
+    B_DUPLICATE <- B 
+    eliminatedRows_DUPLICATE <- eliminatedRows
+    singleton_num_DUPLICATE <- singleton_num
+    kk_2_factorsA_DUPLICATE <- kk_2_factorsA
+    kk_2_factorsB_DUPLICATE <- kk_2_factorsB
+    
+    A <- A_TEMP
+    B <- B_TEMP
+    eliminatedRows <- eliminatedRows_TEMP
+    singleton_num <- singleton_num_TEMP
+    kk_2_factorsA <- kk_2_factorsA_TEMP
+    kk_2_factorsB <- kk_2_factorsB_TEMP
+  }          
+} # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){           
        }  
         ii <- ii + 1L
       } else {
