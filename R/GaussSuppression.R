@@ -756,6 +756,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   dot <- "."
   # dot will change to "-" when integer overflow occur (then numeric algorithm)  
+  dash <- c("-", "=")   # dot <- dash[N_GAUSS_DUPLICATES]
+  # when  N_GAUSS_DUPLICATES==2  dot will change to ":" or "=" (integer overflow) 
   
   
   
@@ -1122,6 +1124,11 @@ if(numSingletonElimination)
       }
       
       N_GAUSS_DUPLICATES <- 2
+      if (dot == ".") {
+        dot <- ":"
+      } else {
+        dot <- dash[N_GAUSS_DUPLICATES]
+      }
     }
 eliminatedRows[ind] <- TRUE        
 for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
@@ -1204,7 +1211,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                 
                 if (anyNA(dx)) 
                 {
-                  dot <- "-"
+                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
                   if (A$x[[i]][nrA[i]] == Axj1) {
                     dx <- as.numeric(c(A$x[[i]][-nrA[i]], -Axj[isnama]))
                     dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
@@ -1241,7 +1248,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                 })
                 if (anyNA(dx)) 
                 {
-                  dot <- "-"
+                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
                   kk <- as.numeric(kk)
                   dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
                   dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
@@ -1320,7 +1327,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                 })
                 if (anyNA(dx)) 
                 {
-                  dot <- "-"
+                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
                   if (B$x[[i]][nrB[i]] == Axj1) {
                     dx <- as.numeric(c(B$x[[i]][-nrB[i]], -Axj[isnama]))
                     dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
@@ -1358,7 +1365,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                 })
                 if (anyNA(dx)) 
                 {
-                  dot <- "-"
+                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
                   kk <- as.numeric(kk)
                   dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
                   dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
