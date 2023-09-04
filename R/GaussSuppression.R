@@ -1032,6 +1032,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
        if (!reduced) { 
         ind <- A$r[[j]][1]
         eliminatedRows[ind] <- TRUE
+        nrA[] <- NA_integer_
+        nrB[] <- NA_integer_
         for (i in SeqInc(j + 1L, n)) 
           nrA[i] <- match(ind, A$r[[i]])
         for (i in seq_len(nB)) 
@@ -1281,8 +1283,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
         }
        }  
-        nrA[] <- NA_integer_
-        nrB[] <- NA_integer_
         ii <- ii + 1L
       } else {
         A$r[[j]] <- integer(0)
