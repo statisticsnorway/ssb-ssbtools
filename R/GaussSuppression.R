@@ -960,6 +960,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         singleP <- singleP[singleP %in% singleton_num[rows2]]
       }
       n_unique <- length(unique(singleton_num[as.logical(singleton_num)]))
+      singleP <- unique(singleP)
       if (length(rowsP)) {
         WhenEliminatedRowsSingleton(paste(length(rowsP), "out of", sum(as.logical(singleton_num)), "singleton rows eliminated.", length(singleP), "out of", n_unique, "unique singletons problematic."))
       } else {
