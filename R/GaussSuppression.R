@@ -904,6 +904,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   force_GAUSS_DUPLICATES <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
   info_GAUSS_DUPLICATES  <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  change_GAUSS_DUPLICATES  <- get0("info_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  
   
   if (force_GAUSS_DUPLICATES) {
     if (!numSingletonElimination) {
@@ -946,7 +948,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   # END - define AnyProportionalGaussInt
   #####################################################################
   
-  eliminatedRows <- rep(FALSE, m) 
+  eliminatedRows <- rep(FALSE, m)
   
   MessageEliminatedRowsSingleton <- function() {   # internal function since used twice below
     if (!is.null(WhenEliminatedRowsSingleton) & numSingletonElimination) {
@@ -1148,7 +1150,7 @@ if(numSingletonElimination)
         dot <- dash[N_GAUSS_DUPLICATES]
       }
     }
-eliminatedRows[ind] <- TRUE        
+#eliminatedRows[ind] <- TRUE        
 for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
   if(I_GAUSS_DUPLICATES == 2){
     A_TEMP <- A
@@ -1166,8 +1168,39 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
     kk_2_factorsB <- kk_2_factorsB_DUPLICATE
     
     ind <- A$r[[j]][1]
-    eliminatedRows[ind] <- TRUE
+    #eliminatedRows[ind] <- TRUE
+  } else {
+    if (N_GAUSS_DUPLICATES == 2) {
+      eliminatedRows_TEMP <- eliminatedRows_DUPLICATE
+      singleton_num_TEMP <- singleton_num_DUPLICATE
+    }
   }
+ 
+  if (change_GAUSS_DUPLICATES & N_GAUSS_DUPLICATES == 2) {
+    singleton_num_ind <- singleton_num[ind]
+    if (singleton_num_ind) {
+      eliminated_singleton_TEMP <- singleton_num_TEMP[eliminatedRows_TEMP & as.logical(singleton_num_TEMP)]
+      if (singleton_num_ind %in% eliminated_singleton_TEMP) {
+        if(info_GAUSS_DUPLICATES) message(paste("problem", I_GAUSS_DUPLICATES, singleton_num_ind))
+        which_ind <- which(!(singleton_num[A$r[[j]]] %in% eliminated_singleton_TEMP))
+        if (length(which_ind)) {
+          r <- seq_len(length(A$r[[j]]))
+          r <- c(which_ind[1], r[-which_ind[1]])
+          A$r[[j]] <- A$r[[j]][r]
+          A$x[[j]] <- A$x[[j]][r]
+          ind <- A$r[[j]][1]
+          if(info_GAUSS_DUPLICATES) message("problem solved")
+        } else {
+          if(info_GAUSS_DUPLICATES) message("problem not solved")
+        }
+      }
+    }
+  }
+  
+  
+  eliminatedRows[ind] <- TRUE
+  
+  
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
         for (i in SeqInc(j + 1L, n)) 
