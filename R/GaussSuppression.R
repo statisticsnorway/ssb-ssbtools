@@ -902,9 +902,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     FALSE
   }
   
-  force_GAUSS_DUPLICATES <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
-  info_GAUSS_DUPLICATES  <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
-  change_GAUSS_DUPLICATES  <- get0("info_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  info_GAUSS_DUPLICATES     <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  change_GAUSS_DUPLICATES   <- get0("change_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  swap_GAUSS_DUPLICATES     <- get0("swap_GAUSS_DUPLICATES", ifnotfound = TRUE)
   
   
   if (force_GAUSS_DUPLICATES) {
@@ -1201,6 +1202,26 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
   
   eliminatedRows[ind] <- TRUE
   
+  if (swap_GAUSS_DUPLICATES) {
+    whichSingletonPrimary <- 0L
+    if (numSingletonElimination) {
+      if (singleton_num[ind]) {
+        whichPrimary <- which(primarySingletonNum == singleton_num[ind])
+        if (length(whichPrimary)) {
+          for (i in whichPrimary) {
+            if (!whichSingletonPrimary)
+              if (length(B$r[[i]]) == 1) {
+                if (B$r[[i]][1] == ind) {
+                  whichSingletonPrimary <- i
+                }
+              }
+          }
+        }
+      }
+    }
+  }
+    
+  
   
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
@@ -1452,7 +1473,18 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
             }
           }
         }
-  if(I_GAUSS_DUPLICATES == 2){
+ 
+        if(swap_GAUSS_DUPLICATES){
+          if (whichSingletonPrimary) {
+            if (length(B$r[[whichSingletonPrimary]]) == 1) {
+              singleton_num[B$r[[whichSingletonPrimary]][1]] <- singleton_num[ind]
+              singleton_num[ind] <- 0
+              if(info_GAUSS_DUPLICATES) message("swapped")
+            }
+          }
+        }
+ 
+if(I_GAUSS_DUPLICATES == 2){
     A_DUPLICATE <- A 
     B_DUPLICATE <- B 
     eliminatedRows_DUPLICATE <- eliminatedRows
@@ -1466,7 +1498,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
     singleton_num <- singleton_num_TEMP
     kk_2_factorsA <- kk_2_factorsA_TEMP
     kk_2_factorsB <- kk_2_factorsB_TEMP
-  }          
+  }
 } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){           
        }  
         ii <- ii + 1L
