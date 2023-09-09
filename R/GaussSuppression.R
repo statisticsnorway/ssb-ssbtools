@@ -664,7 +664,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singleton_num[singleton_num] <- seq_len(sum(singleton_num))
   }
   
-  
+  force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  info_GAUSS_DUPLICATES     <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
+  change_GAUSS_DUPLICATES   <- get0("change_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  swap_GAUSS_DUPLICATES     <- get0("swap_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  order_GAUSS_DUPLICATES    <- get0("order_GAUSS_DUPLICATES", ifnotfound = TRUE)
   
   if (numSingletonElimination) {
     
@@ -673,8 +677,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     
     # Indices of primary originated from unique singleton
     uniqueSingletonPrimary <- which(colSums(sign(sspp)) == 1)
-    
-    order_singleton_num <- order(singleton_num)
+    if (order_GAUSS_DUPLICATES) {
+      order_singleton_num <- Order_singleton_num(singleton_num)
+    } else {
+      order_singleton_num <- order(singleton_num)
+    }
     x <- x[order_singleton_num,  , drop = FALSE]
     singleton_num <- singleton_num[order_singleton_num]
     if (!is.null(singleton)) {
@@ -901,11 +908,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     FALSE
   }
-  
-  force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
-  info_GAUSS_DUPLICATES     <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
-  change_GAUSS_DUPLICATES   <- get0("change_GAUSS_DUPLICATES", ifnotfound = TRUE)
-  swap_GAUSS_DUPLICATES     <- get0("swap_GAUSS_DUPLICATES", ifnotfound = TRUE)
   
   
   if (force_GAUSS_DUPLICATES) {
@@ -1716,5 +1718,12 @@ FindDiffMatrix <- function(x, y = x, max_colSums_diff = Inf) {
 
 
 
-
+#High frequency unique values ordered last 
+Order_singleton_num <- function(x) {
+  y <- x[x > 0]
+  tt <- table(y)
+  z <- rep(0, length(x))
+  z[x > 0] <- tt[as.character(y)]
+  order(z, x)
+}
 
