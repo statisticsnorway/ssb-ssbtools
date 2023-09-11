@@ -9,8 +9,9 @@ AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singlet
   nrA <- rep(NA_integer_, n)
   nrB <- rep(NA_integer_, nB)
   
-  for (j in seq_len(n-1)) {               # Code in this for loop is copied from the main elimination loop in GaussSuppression
-    ind <- A$r[[j]][1]                    # No function call in the main elimination loop due to speed/memory
+  for (j in seq_len(n-1)) {             # Code in this for loop is copied from the main elimination loop in GaussSuppression  
+if (length(A$r[[j]])) {                                  # extra for special case 
+    ind <- A$r[[j]][1]                  # No function call in the main elimination loop due to speed/memory
     nrA[] <- NA_integer_
     nrB[] <- NA_integer_
     for (i in SeqInc(j + 1L, n)) 
@@ -267,5 +268,9 @@ AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singlet
       }
     }
   }
-  AnyProportionalGaussInt_OLD(A$r[[n]], A$x[[n]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+}
+  if (length(A$r[[n]])) {
+    return(AnyProportionalGaussInt_OLD(A$r[[n]], A$x[[n]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+  }
+  FALSE
 }
