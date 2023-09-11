@@ -780,7 +780,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   #         when !numSingletonElimination: 
   #                         old function outside this function is used (see below)
   #   Since function defined inside, it is possible to "cheat" and avoid extra input-parameters.
-  #   Now  primarySingletonNum, singleton_num and numSingletonElimination avoided
+  #   Now  primarySingletonNum and numSingletonElimination avoided
   #
   #  This function reuses code from old branch “Feature/safety-range”. 
   #  Comments about rangeValues/rangeLimits are from this old code. 
@@ -804,7 +804,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     TRUE
   }
    
-  AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB) {
+  AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB, singleton_num = NULL) {
     n <- length(r)
     if (!n) {
       return(TRUE)  # Empty 'A-input' regarded as proportional
@@ -920,11 +920,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (numSingletonElimination) {
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
-      any1 <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB) 
+      any1 <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
       if(N_GAUSS_DUPLICATES==1){
         return(any1)
       }
-      any2 <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE)
+      any2 <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
       if(info_GAUSS_DUPLICATES) 
         if(any1 != any2){
           message("any1 != any2")
