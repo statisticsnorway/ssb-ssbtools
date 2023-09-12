@@ -655,7 +655,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   ##  END extending x based on singleton
   ##
   
-  n_orig_primary <- sum(primary <= relevant_ncol_x)
+  n_relevant_primary <- sum(primary <= relevant_ncol_x)
   
   
   if (!any(singleton)) 
@@ -673,7 +673,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (numSingletonElimination) {
     
     # singleton_num as rows, primary as columns
-    sspp <- fac2sparse(singleton_num[singleton_num > 0]) %*% x[singleton_num > 0, primary[seq_len(n_orig_primary)], drop = FALSE]
+    sspp <- fac2sparse(singleton_num[singleton_num > 0]) %*% x[singleton_num > 0, primary[seq_len(n_relevant_primary)], drop = FALSE]
     
     # Indices of primary originated from unique singleton
     uniqueSingletonPrimary <- which(colSums(sign(sspp)) == 1)
@@ -811,7 +811,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     for (i in seq_along(rB)) {
       numSingletonEliminationCheck <- numSingletonElimination
-      if(i > n_orig_primary){
+      if(i > n_relevant_primary){
         numSingletonEliminationCheck <- FALSE
       }
       ni <- length(xB[[i]])
@@ -980,15 +980,15 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
       if (length(singleP)) {
         eliminatedBySingleton <- rep(FALSE, length(singleP))
-        for (i in seq_len(n_orig_primary)) {
+        for (i in seq_len(n_relevant_primary)) {
           if (!length(B$r[[i]])) {     # Avoid special situation
             primarySingletonNum[i] <- 0
           }
         }
-        B$r <- B$r[seq_len(n_orig_primary)]
-        B$x <- B$x[seq_len(n_orig_primary)]
-        primarySingletonNum <- primarySingletonNum[seq_len(n_orig_primary)]
-        kk_2_factorsB <- kk_2_factorsB[seq_len(n_orig_primary)]
+        B$r <- B$r[seq_len(n_relevant_primary)]
+        B$x <- B$x[seq_len(n_relevant_primary)]
+        primarySingletonNum <- primarySingletonNum[seq_len(n_relevant_primary)]
+        kk_2_factorsB <- kk_2_factorsB[seq_len(n_relevant_primary)]
         for (i in seq_along(singleP)) {
           p <- primarySingletonNum == singleP[i]
           eliminatedBySingleton[i] <- AnyEliminatedBySingleton(list(r = B$r[p], x = B$x[p]), 
