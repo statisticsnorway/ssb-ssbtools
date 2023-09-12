@@ -920,10 +920,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     AnyProportionalGaussInt <- function(...){
       anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
       if (anyP) return(TRUE)
+      if (singleton_num[A$r[[j]]][1] & length(A$r[[j]]) > 1) {   # More may be seen since A$r[[j]]][1] used in AnyProportionalGaussInt_NEW (elimination)
+        r <- c(SeqInc(2, length(A$r[[j]])), 1L)                  # length(A$r[[j]]) > 1  should be unnecessary
+        anyP <- AnyProportionalGaussInt_NEW(A$r[[j]][r], A$x[[j]][r], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num)
+      }
+      if (anyP) return(TRUE)
       if (N_GAUSS_DUPLICATES == 1) {
         return(anyP)
       }
       anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
+      if (anyP) return(TRUE)
+      if (singleton_num[A_DUPLICATE$r[[j]]][1] & length(A_DUPLICATE$r[[j]]) > 1) {
+        r <- c(SeqInc(2, length(A_DUPLICATE$r[[j]])), 1L)
+        anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]][r], A_DUPLICATE$x[[j]][r], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
+      }
       anyP
     }
     
