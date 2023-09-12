@@ -918,16 +918,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (numSingletonElimination) {
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
-      any1 <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
-      if(N_GAUSS_DUPLICATES==1){
-        return(any1)
+      anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
+      if (anyP) return(TRUE)
+      if (N_GAUSS_DUPLICATES == 1) {
+        return(anyP)
       }
-      any2 <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
-      if(info_GAUSS_DUPLICATES) 
-        if(any1 != any2){
-          message("any1 != any2")
-        }
-      any1 | any2
+      anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
+      anyP
     }
     
   } else {
@@ -1450,15 +1447,6 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
           }
         }
  
-        if(swap_GAUSS_DUPLICATES){
-          if (whichSingletonPrimary) {
-            if (length(B$r[[whichSingletonPrimary]]) == 1) {
-              singleton_num[B$r[[whichSingletonPrimary]][1]] <- singleton_num[ind]
-              singleton_num[ind] <- 0
-              if(info_GAUSS_DUPLICATES) message("swapped")
-            }
-          }
-        }
  
 if(I_GAUSS_DUPLICATES == 2){
     A_DUPLICATE <- A 
