@@ -5,6 +5,9 @@
 #
 AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss){
   n <- length(A$r)
+  if (!n) {
+    return(FALSE)
+  }
   nB <- length(B$r)
   nrA <- rep(NA_integer_, n)
   nrB <- rep(NA_integer_, nB)
