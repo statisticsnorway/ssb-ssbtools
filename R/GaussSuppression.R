@@ -500,23 +500,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   ##
   
   input_ncol_x <- ncol(x)
-  
-  # make new primary suppressed subSum-cells
-  if (grepl("subSum", singletonMethod)) {
-    if (any(singleton)) {
-      pZ <- x * singleton
-      colZ <- colSums(pZ) > 1
-      if (any(colZ)) {                                     # Same code below  
-        pZ <- pZ[, colZ, drop = FALSE]
-        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # which(!duplicated(as.matrix(t(pZ)))) 
-        pZ <- pZ[, nodupl, drop = FALSE]
-        primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
-        x <- cbind(x, pZ)
-      }
-    }
-    if (singletonMethod == "subSum") 
-      singleton <- FALSE
-  }
+  relevant_ncol_x <- ncol(x)
   
   # make new primary suppressed subSum-cells
   if (sub2Sum | singleton2Primary | forceSingleton2Primary) {  
@@ -544,6 +528,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           x <- cbind(x, pZ)                                   # ---- // -----
         }
       }
+      relevant_ncol_x <- ncol(x)
       if (sub2Sum) {
         pZs <- x * singleton_num_logical
         pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
@@ -628,6 +613,23 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     stop("extending x based on singleton failed")
   }
   
+  # make new primary suppressed subSum-cells
+  if (grepl("subSum", singletonMethod)) {
+    if (any(singleton)) {
+      pZ <- x * singleton
+      colZ <- colSums(pZ) > 1
+      if (any(colZ)) {                                     # Same code below  
+        pZ <- pZ[, colZ, drop = FALSE]
+        nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # which(!duplicated(as.matrix(t(pZ)))) 
+        pZ <- pZ[, nodupl, drop = FALSE]
+        primary <- c(primary, NCOL(x) + seq_len(NCOL(pZ)))
+        x <- cbind(x, pZ)
+      }
+    }
+    if (singletonMethod == "subSum") 
+      singleton <- FALSE
+  }
+  
   keep_all_singleton_primary <- TRUE
   
   if (keep_all_singleton_primary) {
@@ -653,7 +655,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   ##  END extending x based on singleton
   ##
   
-  n_orig_primary <- sum(primary <= input_ncol_x)
+  n_orig_primary <- sum(primary <= relevant_ncol_x)
   
   
   if (!any(singleton)) 
