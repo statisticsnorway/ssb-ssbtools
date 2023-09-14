@@ -506,15 +506,19 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (sub2Sum | singleton2Primary | forceSingleton2Primary) {  
     if (any(singleton_num)) {
       singleton_num_logical <- as.logical(singleton_num)
-      if (forceSingleton2Primary) {
+      if (TRUE) {   # Change from if(forceSingleton2Primary)  
         cS1 <- which(colSums(x) == 1)
         cS1 <- cS1[!(cS1 %in% primary)]
         if (length(cS1)) {
           cS1 <- cS1[colSums(x[singleton_num_logical, cS1, drop = FALSE]) == 1]
         }
         if (length(cS1)) {
-          primary <- c(primary, cS1)
-          PrintInfo("forceSingleton2Primary is used")
+          if (forceSingleton2Primary) {   # Now forceSingleton2Primary used instead of above
+            primary <- c(primary, cS1)
+            PrintInfo("forceSingleton2Primary is used")
+          }
+        } else {
+          forceSingleton2Primary <- TRUE  # When known that forceSingleton2Primary=TRUE give same result as FALSE (useful later)
         }
       }
       if (singleton2Primary) {
