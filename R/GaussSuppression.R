@@ -997,7 +997,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                                  list(r = B$r[!p], x = B$x[!p]), 
                                                                  kk_2_factorsB[p], kk_2_factorsB[!p], 
                                                                  singleton = singleton,
-                                                                 DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss)
+                                                                 DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                                                 N_GAUSS_DUPLICATES = N_GAUSS_DUPLICATES, dash = dash,
+                                                                 maxInd = maxInd, testMaxInt = testMaxInt)
           }
           if (sum(eliminatedBySingleton)) { 
             WhenProblematicSingletons(paste(sum(eliminatedBySingleton), "out of", n_unique, "unique singletons can reveal primary cells."))

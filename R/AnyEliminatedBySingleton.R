@@ -3,7 +3,8 @@
 # In a separate file for easiness and to avoid misunderstandings.
 # When this code is used, both A and B internally in the function are parts of the original B
 #
-AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss){
+AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss,
+                                     N_GAUSS_DUPLICATES, dash, maxInd, testMaxInt){
   n <- length(A$r)
   if (!n) {
     return(FALSE)
