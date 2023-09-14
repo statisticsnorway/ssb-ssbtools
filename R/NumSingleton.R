@@ -46,7 +46,7 @@
 #'
 #' @examples
 #' NumSingleton("numTFF")
-#' NumSingleton("numFTt")
+#' NumSingleton("numFtT")
 #' NumSingleton("numttH")
 #' NumSingleton("numTTFT")
 NumSingleton <- function(singletonMethod) {

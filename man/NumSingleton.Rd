@@ -54,7 +54,7 @@ so that the problem of eliminated singleton rows is reduced.
 }
 \examples{
 NumSingleton("numTFF")
-NumSingleton("numFTt")
+NumSingleton("numFtT")
 NumSingleton("numttH")
 NumSingleton("numTTFT")
 }
