@@ -667,7 +667,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
-  info_GAUSS_DUPLICATES     <- get0("info_GAUSS_DUPLICATES", ifnotfound = FALSE)
   order_GAUSS_DUPLICATES    <- get0("order_GAUSS_DUPLICATES", ifnotfound = TRUE)
   
   if (numSingletonElimination) {
