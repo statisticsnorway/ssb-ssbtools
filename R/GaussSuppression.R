@@ -427,9 +427,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   numSingleton_elimination_ <- toupper(numSingleton_elimination_)
   
   numSingletonElimination <- numSingleton_elimination_ != "F"
-  WhenEliminatedRowsSingleton <- NULL
-  if (numSingleton_elimination_ == "M") WhenEliminatedRowsSingleton <- message
-  if (numSingleton_elimination_ == "W") WhenEliminatedRowsSingleton <- warning
+  WhenProblematicSingletons <- NULL
+  if (numSingleton_elimination_ == "M") WhenProblematicSingletons <- message
+  if (numSingleton_elimination_ == "W") WhenProblematicSingletons <- warning
   
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
@@ -963,8 +963,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   eliminatedRows <- rep(FALSE, m)
   
-  MessageEliminatedRowsSingleton <- function() {   # internal function since used twice below
-    if (!is.null(WhenEliminatedRowsSingleton) & numSingletonElimination) {
+  MessageProblematicSingletons <- function() {   # internal function since used twice below
+    if (!is.null(WhenProblematicSingletons) & numSingletonElimination) {
       rowsP <- which(eliminatedRows & as.logical(singleton_num))
       singleP <- singleton_num[rowsP]
       if (N_GAUSS_DUPLICATES == 2) {
@@ -976,7 +976,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       singleP <- unique(singleP)
       if (!forceSingleton2Primary) {
         if (length(singleP)) {
-          WhenEliminatedRowsSingleton(paste(sum(length(singleP)), "out of", n_unique, "unique singletons problematic. Whether reveals exist is not calculated."))
+          WhenProblematicSingletons(paste(sum(length(singleP)), "out of", n_unique, "unique singletons problematic. Whether reveals exist is not calculated."))
         } 
       }
       if (forceSingleton2Primary) {
@@ -1000,7 +1000,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                                  DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss)
           }
           if (sum(eliminatedBySingleton)) { 
-            WhenEliminatedRowsSingleton(paste(sum(eliminatedBySingleton), "out of", n_unique, "unique singletons can reveal primary cells."))
+            WhenProblematicSingletons(paste(sum(eliminatedBySingleton), "out of", n_unique, "unique singletons can reveal primary cells."))
           }
         }
       }  
@@ -1046,7 +1046,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         cat("\n")
         flush.console()
       }
-      MessageEliminatedRowsSingleton()
+      MessageProblematicSingletons()
       return(c(candidates[secondary], -unsafePrimary))
     }
     
@@ -1532,7 +1532,7 @@ if(I_GAUSS_DUPLICATES == 2){
     cat("\n")
     flush.console()
   }
-  MessageEliminatedRowsSingleton()
+  MessageProblematicSingletons()
   c(candidates[secondary], -unsafePrimary)
 }
 
