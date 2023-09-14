@@ -40,8 +40,10 @@ This method may be computationally demanding for big data.
 \item \code{elimination} (4th character):
 \itemize{
 \item \code{t}: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
-\item \code{m}: As \code{t} above. And in addition, a message will be printed to inform about eliminated singleton rows.
-The algorithm is not perfect since the elimination of rows may case problems.
+\item \code{m}: As \code{t} above. And in addition, a message will be printed to inform about problematic singletons.
+Actual reveals will be calculated when \code{singleton2Primary = T} (1st character)
+and when \code{singleton2Primary = t} yield the same result as \code{singleton2Primary = T}.
+Problematic singletons can appear since the algorithm is not perfect in the sense that the elimination of rows may cause problems.
 Such problems can be a reason not to switch off \code{sum2}.
 \item \code{w}: As \code{m} above, but \code{warning} instead of \code{message}.
 \item \code{T}, \code{M} and \code{W}: As \code{t}, \code{m} and \code{w} above.

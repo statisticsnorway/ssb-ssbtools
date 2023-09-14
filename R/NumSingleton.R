@@ -28,8 +28,10 @@
 #' 4. `elimination` (4th character): 
 #'   \itemize{
 #'   \item `t`: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
-#'   \item `m`: As `t` above. And in addition, a message will be printed to inform about eliminated singleton rows.
-#'       The algorithm is not perfect since the elimination of rows may case problems. 
+#'   \item `m`: As `t` above. And in addition, a message will be printed to inform about problematic singletons.
+#'       Actual reveals will be calculated when `singleton2Primary = T` (1st character) 
+#'       and when `singleton2Primary = t` yield the same result as `singleton2Primary = T`.
+#'       Problematic singletons can appear since the algorithm is not perfect in the sense that the elimination of rows may cause problems. 
 #'       Such problems can be a reason not to switch off `sum2`.
 #'   \item `w`: As `m` above, but `warning` instead of `message`.
 #'   \item `T`, `M` and `W`: As `t`, `m` and `w` above. 
