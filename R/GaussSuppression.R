@@ -971,13 +971,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       n_unique <- length(unique(singleton_num[as.logical(singleton_num)]))
       singleP <- unique(singleP)
       if (!forceSingleton2Primary) {
-        if (length(rowsP)) {
-          WhenEliminatedRowsSingleton(paste(length(rowsP), "out of", sum(as.logical(singleton_num)), "singleton rows eliminated.", length(singleP), "out of", n_unique, "unique singletons problematic."))
-        } else {
-          if (length(singleP)) {
-            WhenEliminatedRowsSingleton(paste(length(singleP), "out of", n_unique, "unique singletons problematic although no rows eliminated in both parallels."))
-          }
-        }
+        if (length(singleP)) {
+          WhenEliminatedRowsSingleton(paste(sum(length(singleP)), "out of", n_unique, "unique singletons problematic. Whether reveals exist is not calculated."))
+        } 
       }
       if (forceSingleton2Primary) {
         if (length(singleP)) {
@@ -999,7 +995,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                                  singleton = singleton,
                                                                  DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss)
           }
-          WhenEliminatedRowsSingleton(paste(sum(eliminatedBySingleton), "out of", n_unique, "unique singletons can reveal primary cells."))
+          if (sum(eliminatedBySingleton)) { 
+            WhenEliminatedRowsSingleton(paste(sum(eliminatedBySingleton), "out of", n_unique, "unique singletons can reveal primary cells."))
+          }
         }
       }  
     }
