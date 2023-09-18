@@ -971,20 +971,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   MessageProblematicSingletons <- function() {   # internal function since used twice below
     if (!is.null(WhenProblematicSingletons) & (numSingletonElimination|numRevealsMessage)) {
       if (!numRevealsMessage) {
-      rowsP <- which(eliminatedRows & as.logical(singleton_num))
-      singleP <- singleton_num[rowsP]
-      if (N_GAUSS_DUPLICATES == 2) {
-        rows2 <- DUPLICATE_order_singleton_num[which(eliminatedRows_DUPLICATE & as.logical(singleton_num_DUPLICATE))]
-        rowsP <- rowsP[rowsP %in% rows2]
-        singleP <- singleP[singleP %in% singleton_num[rows2]]
-      }
-      n_unique <- length(unique(singleton_num[as.logical(singleton_num)]))
-      singleP <- unique(singleP)
-      if (!forceSingleton2Primary) {
-        if (length(singleP)) {
-          WhenProblematicSingletons(paste(sum(length(singleP)), "out of", n_unique, "unique singletons problematic. Whether reveals exist is not calculated."))
-        } 
-      }
+        rowsP <- which(eliminatedRows & as.logical(singleton_num))
+        singleP <- singleton_num[rowsP]
+        if (N_GAUSS_DUPLICATES == 2) {
+          rows2 <- DUPLICATE_order_singleton_num[which(eliminatedRows_DUPLICATE & as.logical(singleton_num_DUPLICATE))]
+          rowsP <- rowsP[rowsP %in% rows2]
+          singleP <- singleP[singleP %in% singleton_num[rows2]]
+        }
+        n_unique <- length(unique(singleton_num[as.logical(singleton_num)]))
+        singleP <- unique(singleP)
+        if (!forceSingleton2Primary) {
+          if (length(singleP)) {
+            WhenProblematicSingletons(paste(sum(length(singleP)), "out of", n_unique, "unique singletons problematic. Whether reveals exist is not calculated."))
+          } 
+        }
       } else {
         if (!forceSingleton2Primary) {
           message('Actual reveals cannot be calculated. See ?NumSingleton. Try T as "1st character"?')
