@@ -49,6 +49,8 @@ Such problems can be a reason not to switch off \code{sum2}.
 \item \code{T}, \code{M} and \code{W}: As \code{t}, \code{m} and \code{w} above.
 In addition, the gauss elimination routine is allowed to run in parallel with different sortings
 so that the problem of eliminated singleton rows is reduced.
+\item \code{f}: As \code{F}, which means that the elimination feature is turned off.
+However, when possible, a message will provide information about actual reveals, similar to \code{m} above.
 }
 }
 }

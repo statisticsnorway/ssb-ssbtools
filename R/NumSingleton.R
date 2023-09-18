@@ -36,7 +36,9 @@
 #'   \item `w`: As `m` above, but `warning` instead of `message`.
 #'   \item `T`, `M` and `W`: As `t`, `m` and `w` above. 
 #'       In addition, the gauss elimination routine is allowed to run in parallel with different sortings 
-#'      so that the problem of eliminated singleton rows is reduced.        
+#'      so that the problem of eliminated singleton rows is reduced.  
+#'   \item `f`: As `F`, which means that the elimination feature is turned off. 
+#'      However, when possible, a message will provide information about actual reveals, similar to `m` above.                  
 #'   }
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
