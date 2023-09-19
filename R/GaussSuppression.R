@@ -1106,7 +1106,12 @@ if(numSingletonElimination)
       singleton_num_DUPLICATE <- singleton_num[DUPLICATE_order_singleton_num] 
       
       A_DUPLICATE <- A
-      for(i in SeqInc(j, n)){
+      if (n2e) {
+        j_here <- j
+      } else {
+        j_here <- 1L
+      }
+      for(i in SeqInc(j_here, n)){
         if(any( singleton_logical[A$r[[i]]]) | force_GAUSS_DUPLICATES){
           A_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[A$r[[i]]]
           r <- order(A_DUPLICATE$r[[i]])
