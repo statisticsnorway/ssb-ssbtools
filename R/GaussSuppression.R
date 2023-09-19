@@ -367,6 +367,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   # Trick:  GaussSuppressionPrintInfo <- message
   PrintInfo <- get0("GaussSuppressionPrintInfo",ifnotfound = function(x) NULL)
+  
+  gaussSave2enVirOnmEnt <- get0("gaussSave2enVirOnmEnt", ifnotfound = NULL) 
+  if (!is.environment(gaussSave2enVirOnmEnt)) {
+    gaussSave2enVirOnmEnt <- NULL
+  }
+  n2e <- is.null(gaussSave2enVirOnmEnt)
+  
 
   if (!is.numeric(iWait)) {
     iWait <- Inf
@@ -969,6 +976,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   eliminatedRows <- rep(FALSE, m)
   
   MessageProblematicSingletons <- function() {   # internal function since used twice below
+    if (!n2e) {
+      gaussenv <- as.list(parent.frame())
+      list2env(list(gaussenv = gaussenv), envir = gaussSave2enVirOnmEnt)
+    }
     if (!is.null(WhenProblematicSingletons) & (numSingletonElimination|numRevealsMessage)) {
       if (!numRevealsMessage) {
         rowsP <- which(eliminatedRows & as.logical(singleton_num))
@@ -1025,6 +1036,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   N_GAUSS_DUPLICATES <- 1
+  
+  if (!n2e) {
+    startA <- A
+    startB <- B
+  }
   
   # The main Gaussian elimination loop 
   # Code made for speed, not readability
@@ -1171,8 +1187,10 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                     B$x[[i]] <- B$x[[i]][!j_in_i]
                   }
                 }
-                A$r[[j]] <- integer(0)
-                A$x[[j]] <- integer(0)  
+                if (n2e) {
+                  A$r[[j]] <- integer(0)
+                  A$x[[j]] <- integer(0)
+                }   
                 isSecondary <- FALSE
                 eliminatedRows[A$r[[j]]] <- TRUE
   if(I_GAUSS_DUPLICATES == 2){
@@ -1239,8 +1257,10 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
         Arj <- A$r[[j]][-1L]
         Axj <- A$x[[j]][-1L]
         Axj1 <- A$x[[j]][1L]
-        A$r[[j]] <- integer(0) # NA_integer_
-        A$x[[j]] <- integer(0) # NA_integer_
+        if (n2e) {
+          A$r[[j]] <- integer(0) # NA_integer_
+          A$x[[j]] <- integer(0) # NA_integer_
+        }
         
         if (length(Arj) == 0L) {
           for (i in which(!is.na(nrA))) {
