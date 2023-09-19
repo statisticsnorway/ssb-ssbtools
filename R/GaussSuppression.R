@@ -1527,6 +1527,10 @@ if(I_GAUSS_DUPLICATES == 2){
       } else {
         A$r[[j]] <- integer(0)
         A$x[[j]] <- integer(0)
+        if (N_GAUSS_DUPLICATES == 2) {
+          A_DUPLICATE$r[[j]] <- integer(0)
+          A_DUPLICATE$x[[j]] <- integer(0)
+        }
         secondary[j] <- TRUE
       }
     }
