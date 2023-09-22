@@ -819,19 +819,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     TRUE
   }
    
-  AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB, singleton_num = NULL, anyEliminatedSingletons = FALSE) {
+  AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB, singleton_num = NULL) {
     n <- length(r)
     if (!n) {
       return(TRUE)  # Empty 'A-input' regarded as proportional
     }
     if (get0("doProtectSingletonCombinations", ifnotfound = FALSE)) {
       if (numSingletonElimination) {
-        if (!anyEliminatedSingletons) {
-          s_unique <- unique(singleton_num[r])
-          if (length(s_unique) <= 2) {
-            if (min(s_unique) > 0) {
-              return(TRUE)
-            }
+        s_unique <- unique(singleton_num[r])
+        if (length(s_unique) <= 2) {
+          if (min(s_unique) > 0) {
+            return(TRUE)
           }
         }
       }
@@ -947,27 +945,21 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (numSingletonElimination) {
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
-      anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, 
-                                          singleton_num = singleton_num, anyEliminatedSingletons = anyEliminatedSingletons[1]) 
+      anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
       if (anyP) return(TRUE)
       if (singleton_num[A$r[[j]]][1] & length(A$r[[j]]) > 1) {   # More may be seen since A$r[[j]]][1] used in AnyProportionalGaussInt_NEW (elimination)
         r <- c(SeqInc(2, length(A$r[[j]])), 1L)                  # length(A$r[[j]]) > 1  should be unnecessary
-        anyP <- AnyProportionalGaussInt_NEW(A$r[[j]][r], A$x[[j]][r], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, 
-                                            singleton_num = singleton_num, anyEliminatedSingletons = anyEliminatedSingletons[1])
+        anyP <- AnyProportionalGaussInt_NEW(A$r[[j]][r], A$x[[j]][r], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num)
       }
       if (anyP) return(TRUE)
       if (N_GAUSS_DUPLICATES == 1) {
         return(anyP)
       }
-      anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, 
-                                          kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE,
-                                          anyEliminatedSingletons = anyEliminatedSingletons[2])
+      anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
       if (anyP) return(TRUE)
       if (singleton_num[A_DUPLICATE$r[[j]]][1] & length(A_DUPLICATE$r[[j]]) > 1) {
         r <- c(SeqInc(2, length(A_DUPLICATE$r[[j]])), 1L)
-        anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]][r], A_DUPLICATE$x[[j]][r], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, 
-                                            kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE,
-                                            anyEliminatedSingletons = anyEliminatedSingletons[2])
+        anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]][r], A_DUPLICATE$x[[j]][r], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
       }
       anyP
     }
@@ -1054,7 +1046,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   N_GAUSS_DUPLICATES <- 1
-  anyEliminatedSingletons <- c(FALSE, FALSE)
   
   if (!n2e) {
     startA <- A
@@ -1217,11 +1208,6 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
                 }   
                 isSecondary <- FALSE
                 eliminatedRows[A$r[[j]]] <- TRUE
-                if (numSingletonElimination) {
-                  if (singleton_num[A$r[[j]]]) {
-                    anyEliminatedSingletons[I_GAUSS_DUPLICATES] <- TRUE
-                  }
-                }
   if(I_GAUSS_DUPLICATES == 2){
     A_DUPLICATE <- A 
     B_DUPLICATE <- B 
@@ -1274,11 +1260,7 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
   }
  
   eliminatedRows[ind] <- TRUE
-  if (numSingletonElimination) {
-    if (singleton_num[ind]) {
-      anyEliminatedSingletons[I_GAUSS_DUPLICATES] <- TRUE
-    }
-  }
+  
   
         nrA[] <- NA_integer_
         nrB[] <- NA_integer_
