@@ -52,11 +52,23 @@ so that the problem of eliminated singleton rows is reduced.
 \item \code{f}: As \code{F}, which means that the elimination feature is turned off.
 However, when possible, a message will provide information about actual reveals, similar to \code{m} above.
 }
+\item \code{combinations} (5th character):
+\itemize{
+\item \code{T}: This is a sort of extension of \code{singleton2Primary} which is relevant when both \code{integerUnique} and \code{elimination} are used.
+For each unique singleton contributor, the method seeks to protect all linear combinations of singleton cells from the unique contributor.
+Instead of construction new primary cells, protection is achieved as a part of the elimination procedure.
+Technically this is implemented by extending the above \code{elimination} method.
+It cannot be guaranteed that all problems are solved, and this is a reason not to turn off \code{singleton2Primary}.
+Best performance is achieved when \code{elimination} is \code{T}, \code{M} or \code{W}.
+\item \code{t}:  As \code{T}, but without the added singleton protection.
+This means that protected linear combinations cannot be calculated linearly from non-suppressed cells.
+However, other contributors may still be able to recalculate these combinations using their own suppressed values.
+}
 }
 }
 \examples{
 NumSingleton("numTFF")
 NumSingleton("numFtT")
 NumSingleton("numttH")
-NumSingleton("numTTFT")
+NumSingleton("numTTFTT")
 }

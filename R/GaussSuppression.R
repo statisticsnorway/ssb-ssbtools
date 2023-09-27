@@ -443,6 +443,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (numSingleton_elimination_ == "W") WhenProblematicSingletons <- warning
   if (numRevealsMessage) WhenProblematicSingletons <- message
   
+  # F -> 0, t -> 1, T -> 2
+  numSingleton_combinations <- 2L * as.integer(as.logical(numSingleton[["combinations"]]))
+  if (is.na(numSingleton_combinations)) {
+    numSingleton_combinations <- 1L
+  }
+  
+  if (!numSingletonElimination & numSingleton_combinations) {
+    warning('No effect of "combinations" (5th character) whithout "elimination" (4th character).') 
+  }
+  
   sub2Sum <- as.logical(numSingleton[["sum2"]])
   if (is.na(sub2Sum)) {  # When 'H'
     sub2Sum <- TRUE
@@ -824,10 +834,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (!n) {
       return(TRUE)  # Empty 'A-input' regarded as proportional
     }
-    if (get0("doProtectSingletonCombinations", ifnotfound = FALSE)) {
+    if (numSingleton_combinations) {
       if (numSingletonElimination) {
         s_unique <- unique(singleton_num[r])
-        if (length(s_unique) <= 2) {
+        if (length(s_unique) <= numSingleton_combinations) {
           if (min(s_unique) > 0) {
             return(TRUE)
           }

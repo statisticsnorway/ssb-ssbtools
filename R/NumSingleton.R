@@ -40,6 +40,18 @@
 #'   \item `f`: As `F`, which means that the elimination feature is turned off. 
 #'      However, when possible, a message will provide information about actual reveals, similar to `m` above.                  
 #'   }
+#' 5. `combinations` (5th character): 
+#'   \itemize{
+#'   \item `T`: This is a sort of extension of `singleton2Primary` which is relevant when both `integerUnique` and `elimination` are used. 
+#'      For each unique singleton contributor, the method seeks to protect all linear combinations of singleton cells from the unique contributor.
+#'      Instead of construction new primary cells, protection is achieved as a part of the elimination procedure. 
+#'      Technically this is implemented by extending the above `elimination` method.  
+#'      It cannot be guaranteed that all problems are solved, and this is a reason not to turn off `singleton2Primary`. 
+#'      Best performance is achieved when `elimination` is `T`, `M` or `W`. 
+#'   \item `t`:  As `T`, but without the added singleton protection. 
+#'      This means that protected linear combinations cannot be calculated linearly from non-suppressed cells. 
+#'      However, other contributors may still be able to recalculate these combinations using their own suppressed values.
+#'   }
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
 #'
@@ -50,19 +62,20 @@
 #' NumSingleton("numTFF")
 #' NumSingleton("numFtT")
 #' NumSingleton("numttH")
-#' NumSingleton("numTTFT")
+#' NumSingleton("numTTFTT")
 NumSingleton <- function(singletonMethod) {
   if (substring(singletonMethod, 1, 3) != "num") {
     return(NULL)
   }
   singletonMethod <- paste0(singletonMethod, "FFFFF")
-  s <- strsplit(substring(singletonMethod, 4, 7), split = "")[[1]]
+  s <- strsplit(substring(singletonMethod, 4, 8), split = "")[[1]]
   
   CheckChar(s[1], "1st", "FTt")
   CheckChar(s[2], "2nd", "FTt")
   CheckChar(s[3], "3rd", "FTH")
   CheckChar(s[4], "4th", "FTMWftmw")
-  names(s) <- c("singleton2Primary", "integerUnique", "sum2", "elimination")
+  CheckChar(s[5], "5th", "FTt")
+  names(s) <- c("singleton2Primary", "integerUnique", "sum2", "elimination", "combinations")
   s
 }
   
