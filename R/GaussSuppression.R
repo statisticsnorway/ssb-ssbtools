@@ -1564,6 +1564,17 @@ if(I_GAUSS_DUPLICATES == 2){
        }  
         ii <- ii + 1L
       } else {
+        if (TRUE) {
+          B$r <- c(B$r, A$r[j])
+          B$x <- c(B$x, A$x[j])
+          kk_2_factorsB <- c(kk_2_factorsB, kk_2_factorsA[j])
+          if (N_GAUSS_DUPLICATES == 2) {
+            B_DUPLICATE$r <- c(B_DUPLICATE$r, A_DUPLICATE$r[j])
+            B_DUPLICATE$x <- c(B_DUPLICATE$x, A_DUPLICATE$x[j])
+            kk_2_factorsB_DUPLICATE <- c(kk_2_factorsB_DUPLICATE, kk_2_factorsA_DUPLICATE[j])
+          }
+          nB <- nB + 1L
+        }
         A$r[[j]] <- integer(0)
         A$x[[j]] <- integer(0)
         if (N_GAUSS_DUPLICATES == 2) {
