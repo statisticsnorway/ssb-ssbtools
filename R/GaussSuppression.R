@@ -695,6 +695,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
   order_GAUSS_DUPLICATES    <- get0("order_GAUSS_DUPLICATES", ifnotfound = TRUE)
   
+  if (!n2e) {
+    orderA <- seq_len(nrow(x))
+  }
+  
   if (numSingletonElimination|numRevealsMessage) {
     
     # singleton_num as rows, primary as columns
@@ -711,6 +715,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singleton_num <- singleton_num[order_singleton_num]
     if (!is.null(singleton)) {
       singleton <- singleton[order_singleton_num]
+    }
+    if (!n2e) {
+      orderA <- order_singleton_num
     }
   }
   
@@ -742,18 +749,30 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     
     A <- Matrix2listInt(x[ordSingleton, candidates, drop = FALSE])
+    if (!n2e) {
+      orderA <- orderA[ordSingleton]
+    }
     if (grepl("Space", singletonMethod)) {
       B <- Matrix2listInt(x[ordyB, primary, drop = FALSE])
       order_singleton_num  <- ordyB
+      if (!n2e) {
+        orderB <- orderA[ordyB]
+      }
     } else {
       B <- Matrix2listInt(x[ordSingleton, primary, drop = FALSE])
       maxInd <- nrow(x)
       order_singleton_num  <- ordSingleton
+      if (!n2e) {
+        orderB <- orderA[ordSingleton]
+      }
     }
   } else {
     A <- Matrix2listInt(x[, candidates, drop = FALSE])
     B <- Matrix2listInt(x[, primary, drop = FALSE])
     maxInd <- nrow(x)
+    if (!n2e) {
+      orderB <- orderA
+    }
   }
   
   
