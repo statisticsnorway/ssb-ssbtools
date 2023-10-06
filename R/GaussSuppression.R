@@ -845,7 +845,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (s_unique == primarySingletonNum[i]) {
       return(FALSE)
     }
-    TRUE
+    1L
   }
    
   AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB, singleton_num = NULL) {
@@ -858,7 +858,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         s_unique <- unique(singleton_num[r])
         if (length(s_unique) <= numSingleton_combinations) {
           if (min(s_unique) > 0) {
-            return(TRUE)
+            return(1L)
           }
         }
       }
@@ -905,11 +905,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         }
         if (doCheck) {
           if (n == 1L)
-            return(TRUE)
+            return(doCheck)
           if (identical(x_here, xBi_here))
-            return(TRUE)
+            return(doCheck)
           if (identical(-x_here, xBi_here))
-            return(TRUE)
+            return(doCheck)
           
           cx1xBi1 <- c(x_here[1], xBi_here[1])
           if (is.integer(cx1xBi1)) {
@@ -937,8 +937,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 rrest <- (r[r_in_rB])[!(abs(xBi_here - kk_2_x/kk[1]) < tolGauss)]
               }
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
-              if (Check_s_unique(s_unique, i)) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
-                return(TRUE) # New possible TRUE-return caused by rangeLimits
+              check_s_unique <- Check_s_unique(s_unique, i)
+              if (check_s_unique) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+                return(check_s_unique) # New possible TRUE-return caused by rangeLimits
               }
             }
             
@@ -952,8 +953,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i]))]
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
               # if (sum(rangeValues[rrest]) < restLimit) {
-              if (Check_s_unique(s_unique, i)) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
-                return(TRUE) # New possible TRUE-return caused by rangeLimits (as above)
+              check_s_unique <- Check_s_unique(s_unique, i)
+              if (check_s_unique) { #if ((length(s_unique) <= 1) & (min(s_unique) > 0)) {
+                return(check_s_unique) # New possible TRUE-return caused by rangeLimits (as above)
               }
             }
           }
@@ -975,17 +977,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
       anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
-      if (anyP) return(TRUE)
+      if (anyP) return(anyP)
       if (singleton_num[A$r[[j]]][1] & length(A$r[[j]]) > 1) {   # More may be seen since A$r[[j]]][1] used in AnyProportionalGaussInt_NEW (elimination)
         r <- c(SeqInc(2, length(A$r[[j]])), 1L)                  # length(A$r[[j]]) > 1  should be unnecessary
         anyP <- AnyProportionalGaussInt_NEW(A$r[[j]][r], A$x[[j]][r], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num)
       }
-      if (anyP) return(TRUE)
+      if (anyP) return(anyP)
       if (N_GAUSS_DUPLICATES == 1) {
         return(anyP)
       }
       anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]], A_DUPLICATE$x[[j]], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
-      if (anyP) return(TRUE)
+      if (anyP) return(anyP)
       if (singleton_num[A_DUPLICATE$r[[j]]][1] & length(A_DUPLICATE$r[[j]]) > 1) {
         r <- c(SeqInc(2, length(A_DUPLICATE$r[[j]])), 1L)
         anyP <- AnyProportionalGaussInt_NEW(A_DUPLICATE$r[[j]][r], A_DUPLICATE$x[[j]][r], B_DUPLICATE$r, B_DUPLICATE$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB_DUPLICATE, singleton_num = singleton_num_DUPLICATE)
@@ -1184,7 +1186,11 @@ if(numSingletonElimination)
           subSubSec <- A$r[[j]][1] > maxInd2
           if (grepl("Space", singletonMethod)) {
             okArj <- A$r[[j]] <= maxInd
-            isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+            #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+            isSecondary <- subSubSec 
+            if (!isSecondary) { 
+              isSecondary <- AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+            }
           } else {
             if (subSubSec) {
               if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
@@ -1255,7 +1261,11 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
               }
               
             } else {
-              isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+              #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+              isSecondary <- subSubSec
+              if (!isSecondary) {
+                isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+              }
             }
           }
         }
@@ -1564,7 +1574,7 @@ if(I_GAUSS_DUPLICATES == 2){
        }  
         ii <- ii + 1L
       } else {
-        if (TRUE) {
+        if (!is.logical(isSecondary)) {   #  Special AnyProportionalGaussInt output
           B$r <- c(B$r, A$r[j])
           B$x <- c(B$x, A$x[j])
           kk_2_factorsB <- c(kk_2_factorsB, kk_2_factorsA[j])
