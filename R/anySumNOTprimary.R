@@ -25,17 +25,15 @@ Any0GaussInt <- function(r, rB) {
 
 
 
-FindDiffMatrix <- function(x, y = x, max_colSums_diff = Inf) {
-  xty <- As_TsparseMatrix(crossprod(x, y))
-  colSums_y_xty_j_1 <- colSums(y)[xty@j + 1]
-  # finds children in x and parents in y
-  r <- colSums(x)[xty@i + 1] == xty@x & 
-    colSums_y_xty_j_1     != xty@x & 
-    (colSums_y_xty_j_1 - xty@x) <= max_colSums_diff
-  child <- xty@i[r] + 1L
-  parent <- xty@j[r] + 1L
-  diff_matrix <- y[, parent, drop = FALSE] - 
-    x[, child, drop = FALSE]
-  colnames(diff_matrix) <- parent
-  diff_matrix
+# Some of the code is similar to GaussSuppression:::FindDifferenceCells
+# The code is based on SSBtools:::FindDiffMatrix (in file GaussSuppression.R)
+# Example: mm <- ModelMatrix(SSBtoolsData("sprt_emp_withEU")[1:6, 1:2])
+#          FindParentChild(mm[, c(1, 5, 6)])
+FindParentChild <- function(x) {
+  xtx <- As_TsparseMatrix(crossprod(x))
+  colSums_x_xtx_j_1 <- colSums(x)[xtx@j + 1]
+  r <- colSums(x)[xtx@i + 1] == xtx@x & colSums_x_xtx_j_1 != xtx@x 
+  child <- xtx@i[r] + 1L
+  parent <- xtx@j[r] + 1L
+  list(parent = parent, child = child)
 }
