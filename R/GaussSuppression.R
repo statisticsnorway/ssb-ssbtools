@@ -136,24 +136,24 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     x <- cbind(x, xExtraPrimary)
   }
   ncol_x_with_xExtraPrimary <- ncol(x)
-    
+  
   if (!length(primary)) 
     return(integer(0))
-    
+  
   if (is.logical(candidates)) 
     candidates <- which(candidates) 
   else 
     candidates <- unique(candidates)
-      
+  
   if (is.logical(hidden)) 
     hidden <- which(hidden) 
   else 
     hidden <- unique(hidden)
-        
+  
   if (is.logical(forced)) 
     forced <- which(forced) 
   else forced <- unique(forced)
-          
+  
   if (length(hidden)) 
     candidates <- candidates[!(candidates %in% hidden)]
   
@@ -214,7 +214,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   
   candidates <- candidates[!(candidates %in% primary)]
-          
+  
   nForced <- length(forced)
   
   if (nForced) {
@@ -289,41 +289,41 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     stop("wrong singletonMethod")
   }
   
-    
-    if(length(primary) &!is.null(whenEmptySuppressed)){
-      if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
-        whenEmptySuppressed("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
+  
+  if(length(primary) &!is.null(whenEmptySuppressed)){
+    if(min(colSums(abs(x[, primary, drop = FALSE]))) == 0){
+      whenEmptySuppressed("Suppressed cells with empty input will not be protected. Extend input data with zeros?")
+    }
+  }
+  
+  secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
+                                 singletonMethod = singletonMethod, singletonMethod_num = singletonMethod_num, singleton_num = singleton_num, tolGauss=tolGauss, 
+                                 iFunction = iFunction, iWait = iWait,
+                                 main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
+                                 ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
+                                 whenPrimaryForced = whenPrimaryForced, 
+                                 ...)
+  
+  unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
+  secondary <- secondary[secondary > 0]
+  
+  if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
+    lateUnsuppressed <- candidates[SeqInc(1L + min(match(secondary, candidates)), length(candidates))]
+    lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% secondary)]
+    if(length(lateUnsuppressed)){
+      if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
+        whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
       }
     }
-    
-    secondary <- GaussSuppression1(x, candidates, primary, printInc, singleton = singleton, nForced = nForced, 
-                                           singletonMethod = singletonMethod, singletonMethod_num = singletonMethod_num, singleton_num = singleton_num, tolGauss=tolGauss, 
-                                           iFunction = iFunction, iWait = iWait,
-                                   main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
-                                   ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
-                                   whenPrimaryForced = whenPrimaryForced, 
-                                           ...)
-    
-    unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
-    secondary <- secondary[secondary > 0]
-    
-    if(length(secondary) & !is.null(whenEmptyUnsuppressed)){
-      lateUnsuppressed <- candidates[SeqInc(1L + min(match(secondary, candidates)), length(candidates))]
-      lateUnsuppressed <- lateUnsuppressed[!(lateUnsuppressed %in% secondary)]
-      if(length(lateUnsuppressed)){
-        if(min(colSums(abs(x[, lateUnsuppressed, drop = FALSE]))) == 0){
-          whenEmptyUnsuppressed("Cells with empty input will never be secondary suppressed. Extend input data with zeros?")
-        }
-      }
-    }
-    
-    if(unsafeAsNegative){
-      secondary <- c(secondary, -unsafePrimary)
-    }
-
-    secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
-    
-    return(secondary)
+  }
+  
+  if(unsafeAsNegative){
+    secondary <- c(secondary, -unsafePrimary)
+  }
+  
+  secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
+  
+  return(secondary)
   #}
   
   #stop("wrong singletonMethod")
@@ -374,7 +374,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   n2e <- is.null(gaussSave2enVirOnmEnt)
   
-
+  
   if (!is.numeric(iWait)) {
     iWait <- Inf
   } else {
@@ -847,7 +847,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     1L
   }
-   
+  
   AnyProportionalGaussInt_NEW <- function(r, x, rB, xB, tolGauss, kk_2_factorsB, singleton_num = NULL) {
     n <- length(r)
     if (!n) {
@@ -1124,59 +1124,59 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     
     if (length(A$r[[j]])) {
-if(numSingletonElimination)
-  if((allow_GAUSS_DUPLICATES & singleton_num[A$r[[j]][1]]) | force_GAUSS_DUPLICATES)
-    if(N_GAUSS_DUPLICATES==1){
-      A_DUPLICATE <- A
-      B_DUPLICATE <- B
-      eliminatedRows_DUPLICATE <- eliminatedRows
-      kk_2_factorsA_DUPLICATE <- kk_2_factorsA
-      kk_2_factorsB_DUPLICATE <- kk_2_factorsB
-      eliminatedRows_DUPLICATE <- eliminatedRows
-      
-      DUPLICATE_order_singleton_num <- seq_len(m)
-      singleton_logical <- as.logical(singleton_num)
-      above_maxInd <- rep(FALSE, m)
-      above_maxInd[SeqInc(maxInd + 1, m)] <- TRUE
-      DUPLICATE_order_singleton_num[singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[singleton_logical & above_maxInd])
-      DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd])
-      if (force_GAUSS_DUPLICATES) {   # reverse other cells as well 
-        DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd])
-        DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd])
-      }
-      singleton_num_DUPLICATE <- singleton_num[DUPLICATE_order_singleton_num] 
-      
-      A_DUPLICATE <- A
-      if (n2e) {
-        j_here <- j
-      } else {
-        j_here <- 1L
-      }
-      for(i in SeqInc(j_here, n)){
-        if(any( singleton_logical[A$r[[i]]]) | force_GAUSS_DUPLICATES){
-          A_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[A$r[[i]]]
-          r <- order(A_DUPLICATE$r[[i]])
-          A_DUPLICATE$r[[i]] <- A_DUPLICATE$r[[i]][r]
-          A_DUPLICATE$x[[i]] <- A_DUPLICATE$x[[i]][r]
-        }
-      }
-      B_DUPLICATE <- B
-      for(i in seq_len(nB)){
-        if(any( singleton_logical[B$r[[i]]]) | force_GAUSS_DUPLICATES){
-          B_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[B$r[[i]]]
-          r <- order(B_DUPLICATE$r[[i]])
-          B_DUPLICATE$r[[i]] <- B_DUPLICATE$r[[i]][r]
-          B_DUPLICATE$x[[i]] <- B_DUPLICATE$x[[i]][r]
-        }
-      }
-      
-      N_GAUSS_DUPLICATES <- 2
-      if (dot == ".") {
-        dot <- ":"
-      } else {
-        dot <- dash[N_GAUSS_DUPLICATES]
-      }
-    }      
+      if(numSingletonElimination)
+        if((allow_GAUSS_DUPLICATES & singleton_num[A$r[[j]][1]]) | force_GAUSS_DUPLICATES)
+          if(N_GAUSS_DUPLICATES==1){
+            A_DUPLICATE <- A
+            B_DUPLICATE <- B
+            eliminatedRows_DUPLICATE <- eliminatedRows
+            kk_2_factorsA_DUPLICATE <- kk_2_factorsA
+            kk_2_factorsB_DUPLICATE <- kk_2_factorsB
+            eliminatedRows_DUPLICATE <- eliminatedRows
+            
+            DUPLICATE_order_singleton_num <- seq_len(m)
+            singleton_logical <- as.logical(singleton_num)
+            above_maxInd <- rep(FALSE, m)
+            above_maxInd[SeqInc(maxInd + 1, m)] <- TRUE
+            DUPLICATE_order_singleton_num[singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[singleton_logical & above_maxInd])
+            DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[singleton_logical & !above_maxInd])
+            if (force_GAUSS_DUPLICATES) {   # reverse other cells as well 
+              DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd]  <- rev(DUPLICATE_order_singleton_num[!singleton_logical & above_maxInd])
+              DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd] <- rev(DUPLICATE_order_singleton_num[!singleton_logical & !above_maxInd])
+            }
+            singleton_num_DUPLICATE <- singleton_num[DUPLICATE_order_singleton_num] 
+            
+            A_DUPLICATE <- A
+            if (n2e) {
+              j_here <- j
+            } else {
+              j_here <- 1L
+            }
+            for(i in SeqInc(j_here, n)){
+              if(any( singleton_logical[A$r[[i]]]) | force_GAUSS_DUPLICATES){
+                A_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[A$r[[i]]]
+                r <- order(A_DUPLICATE$r[[i]])
+                A_DUPLICATE$r[[i]] <- A_DUPLICATE$r[[i]][r]
+                A_DUPLICATE$x[[i]] <- A_DUPLICATE$x[[i]][r]
+              }
+            }
+            B_DUPLICATE <- B
+            for(i in seq_len(nB)){
+              if(any( singleton_logical[B$r[[i]]]) | force_GAUSS_DUPLICATES){
+                B_DUPLICATE$r[[i]] <- DUPLICATE_order_singleton_num[B$r[[i]]]
+                r <- order(B_DUPLICATE$r[[i]])
+                B_DUPLICATE$r[[i]] <- B_DUPLICATE$r[[i]][r]
+                B_DUPLICATE$x[[i]] <- B_DUPLICATE$x[[i]][r]
+              }
+            }
+            
+            N_GAUSS_DUPLICATES <- 2
+            if (dot == ".") {
+              dot <- ":"
+            } else {
+              dot <- dash[N_GAUSS_DUPLICATES]
+            }
+          }      
       
       reduced <- FALSE
       if (j > nForced) {
@@ -1205,56 +1205,56 @@ if(numSingletonElimination)
             }
             if (subSubSec & singletonNOTprimary) {
               if (!Any0GaussInt(A$r[[j]], B$r)) {
-for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
-  if(I_GAUSS_DUPLICATES == 2){
-    A_TEMP <- A
-    B_TEMP <- B
-    eliminatedRows_TEMP <- eliminatedRows
-    singleton_num_TEMP <- singleton_num
-    
-    A <- A_DUPLICATE
-    B <- B_DUPLICATE
-    eliminatedRows <- eliminatedRows_DUPLICATE
-    singleton_num <- singleton_num_DUPLICATE
-  }
-                subSubSec <- FALSE
-                for (i in SeqInc(j + 1L, n)) {
-                  j_in_i <- A$r[[i]] %in% A$r[[j]]
-                  if (all(j_in_i)) {
-                    A$r[[i]] <- integer(0)
-                    A$x[[i]] <- integer(0)
-                  } else {
-                  if (any(j_in_i)) {
-                    A$r[[i]] <- A$r[[i]][!j_in_i]
-                    A$x[[i]] <- A$x[[i]][!j_in_i]
+                for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
+                  if(I_GAUSS_DUPLICATES == 2){
+                    A_TEMP <- A
+                    B_TEMP <- B
+                    eliminatedRows_TEMP <- eliminatedRows
+                    singleton_num_TEMP <- singleton_num
+                    
+                    A <- A_DUPLICATE
+                    B <- B_DUPLICATE
+                    eliminatedRows <- eliminatedRows_DUPLICATE
+                    singleton_num <- singleton_num_DUPLICATE
                   }
+                  subSubSec <- FALSE
+                  for (i in SeqInc(j + 1L, n)) {
+                    j_in_i <- A$r[[i]] %in% A$r[[j]]
+                    if (all(j_in_i)) {
+                      A$r[[i]] <- integer(0)
+                      A$x[[i]] <- integer(0)
+                    } else {
+                      if (any(j_in_i)) {
+                        A$r[[i]] <- A$r[[i]][!j_in_i]
+                        A$x[[i]] <- A$x[[i]][!j_in_i]
+                      }
+                    }
                   }
-                }
-                for (i in seq_len(nB)) {
-                  j_in_i <- B$r[[i]] %in% A$r[[j]]
-                  if (any(j_in_i)) {
-                    B$r[[i]] <- B$r[[i]][!j_in_i]
-                    B$x[[i]] <- B$x[[i]][!j_in_i]
+                  for (i in seq_len(nB)) {
+                    j_in_i <- B$r[[i]] %in% A$r[[j]]
+                    if (any(j_in_i)) {
+                      B$r[[i]] <- B$r[[i]][!j_in_i]
+                      B$x[[i]] <- B$x[[i]][!j_in_i]
+                    }
                   }
-                }
-                if (n2e) {
-                  A$r[[j]] <- integer(0)
-                  A$x[[j]] <- integer(0)
-                }   
-                isSecondary <- FALSE
-                eliminatedRows[A$r[[j]]] <- TRUE
-  if(I_GAUSS_DUPLICATES == 2){
-    A_DUPLICATE <- A 
-    B_DUPLICATE <- B 
-    eliminatedRows_DUPLICATE <- eliminatedRows
-    singleton_num_DUPLICATE <- singleton_num
-    
-    A <- A_TEMP
-    B <- B_TEMP
-    eliminatedRows <- eliminatedRows_TEMP
-    singleton_num <- singleton_num_TEMP
-  }
-} # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
+                  if (n2e) {
+                    A$r[[j]] <- integer(0)
+                    A$x[[j]] <- integer(0)
+                  }   
+                  isSecondary <- FALSE
+                  eliminatedRows[A$r[[j]]] <- TRUE
+                  if(I_GAUSS_DUPLICATES == 2){
+                    A_DUPLICATE <- A 
+                    B_DUPLICATE <- B 
+                    eliminatedRows_DUPLICATE <- eliminatedRows
+                    singleton_num_DUPLICATE <- singleton_num
+                    
+                    A <- A_TEMP
+                    B <- B_TEMP
+                    eliminatedRows <- eliminatedRows_TEMP
+                    singleton_num <- singleton_num_TEMP
+                  }
+                } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
                 reduced <- TRUE
               } else {
                 isSecondary <- TRUE
@@ -1273,305 +1273,305 @@ for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
         isSecondary <- FALSE
       }
       if (!isSecondary) {
-       if (!reduced) { 
-        ind <- A$r[[j]][1]
-        
-
-#eliminatedRows[ind] <- TRUE        
-for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
-  if(I_GAUSS_DUPLICATES == 2){
-    A_TEMP <- A
-    B_TEMP <- B
-    eliminatedRows_TEMP <- eliminatedRows
-    singleton_num_TEMP <- singleton_num
-    kk_2_factorsA_TEMP <- kk_2_factorsA
-    kk_2_factorsB_TEMP <- kk_2_factorsB
-    
-    A <- A_DUPLICATE
-    B <- B_DUPLICATE
-    eliminatedRows <- eliminatedRows_DUPLICATE
-    singleton_num <- singleton_num_DUPLICATE
-    kk_2_factorsA <- kk_2_factorsA_DUPLICATE
-    kk_2_factorsB <- kk_2_factorsB_DUPLICATE
-    
-    ind <- A$r[[j]][1]
-    #eliminatedRows[ind] <- TRUE
-  }
- 
-  eliminatedRows[ind] <- TRUE
-  
-  
-        nrA[] <- NA_integer_
-        nrB[] <- NA_integer_
-        for (i in SeqInc(j + 1L, n)) 
-          nrA[i] <- match(ind, A$r[[i]])
-        for (i in seq_len(nB)) 
-          nrB[i] <- match(ind, B$r[[i]])
-        
-        Arj <- A$r[[j]][-1L]
-        Axj <- A$x[[j]][-1L]
-        Axj1 <- A$x[[j]][1L]
-        if (n2e) {
-          A$r[[j]] <- integer(0) # NA_integer_
-          A$x[[j]] <- integer(0) # NA_integer_
-        }
-        
-        if (length(Arj) == 0L) {
-          for (i in which(!is.na(nrA))) {
-            if(length(A$r[[i]]) == 1L){
-              A$r[[i]] <- integer(0)
-              A$x[[i]] <- integer(0)
-            } else {
-              A$r[[i]] <- A$r[[i]][-nrA[i]]
-              A$x[[i]] <- A$x[[i]][-nrA[i]]
-              if (Scale2one(A$x[[i]])) {
-                A$x[[i]][] <- 1L
-                kk_2_factorsA[i] <- 1
-              }
+        if (!reduced) { 
+          ind <- A$r[[j]][1]
+          
+          
+          #eliminatedRows[ind] <- TRUE        
+          for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){
+            if(I_GAUSS_DUPLICATES == 2){
+              A_TEMP <- A
+              B_TEMP <- B
+              eliminatedRows_TEMP <- eliminatedRows
+              singleton_num_TEMP <- singleton_num
+              kk_2_factorsA_TEMP <- kk_2_factorsA
+              kk_2_factorsB_TEMP <- kk_2_factorsB
+              
+              A <- A_DUPLICATE
+              B <- B_DUPLICATE
+              eliminatedRows <- eliminatedRows_DUPLICATE
+              singleton_num <- singleton_num_DUPLICATE
+              kk_2_factorsA <- kk_2_factorsA_DUPLICATE
+              kk_2_factorsB <- kk_2_factorsB_DUPLICATE
+              
+              ind <- A$r[[j]][1]
+              #eliminatedRows[ind] <- TRUE
             }
-          }
-        } else {
-          for (i in which(!is.na(nrA))) {
-            if (length(A$x[[i]]) == 1L) {
-              A$r[[i]] <- Arj
-              A$x[[i]] <- Axj
-              kk_2_factorsA[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
-            } else {
-              ai <- Arj
-              bi <- A$r[[i]][-nrA[i]]
-              ma <- match(ai, bi)
-              isnama <- is.na(ma)
-              ma_isnama <- ma[!isnama]
-              di <- c(bi, ai[isnama])
-              if (abs(A$x[[i]][nrA[i]]) == abs(Axj1)) {
-                suppressWarnings({
-                  if (A$x[[i]][nrA[i]] == Axj1) {
-                    dx <- c(A$x[[i]][-nrA[i]], -Axj[isnama])
-                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
-                  } else {
-                    dx <- c(A$x[[i]][-nrA[i]], Axj[isnama])
-                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
-                  }
-                  if (DoTestMaxInt) {
-                    if (!anyNA(dx)) {
-                      if (max(dx) > testMaxInt) {
-                        dx[1] <- NA
-                        warning("testMaxInt exceeded")
-                      }
-                    }
-                  }
-                })
-                
-                if (anyNA(dx)) 
-                {
-                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
-                  if (A$x[[i]][nrA[i]] == Axj1) {
-                    dx <- as.numeric(c(A$x[[i]][-nrA[i]], -Axj[isnama]))
-                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
-                  } else {
-                    dx <- as.numeric(c(A$x[[i]][-nrA[i]], Axj[isnama]))
-                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
-                  }
-                  dx <- dx/kk_2_factorsA[i]    # rescale needed since change to numeric
-                  kk_2_factorsA[i] <- 1
+            
+            eliminatedRows[ind] <- TRUE
+            
+            
+            nrA[] <- NA_integer_
+            nrB[] <- NA_integer_
+            for (i in SeqInc(j + 1L, n)) 
+              nrA[i] <- match(ind, A$r[[i]])
+            for (i in seq_len(nB)) 
+              nrB[i] <- match(ind, B$r[[i]])
+            
+            Arj <- A$r[[j]][-1L]
+            Axj <- A$x[[j]][-1L]
+            Axj1 <- A$x[[j]][1L]
+            if (n2e) {
+              A$r[[j]] <- integer(0) # NA_integer_
+              A$x[[j]] <- integer(0) # NA_integer_
+            }
+            
+            if (length(Arj) == 0L) {
+              for (i in which(!is.na(nrA))) {
+                if(length(A$r[[i]]) == 1L){
+                  A$r[[i]] <- integer(0)
+                  A$x[[i]] <- integer(0)
                 } else {
-                  if(!is.integer(dx)){
-                    if(is.integer(A$x[[i]])){  # Change to numeric caused by Axj, rescale needed here also
-                      dx <- dx/kk_2_factorsA[i]
-                      kk_2_factorsA[i] <- 1
-                    }
-                  }
-                }
-              } else {
-                kk <- ReduceGreatestDivisor(c(A$x[[i]][nrA[i]], Axj1))
-                if(is.integer(kk)){
-                  kk_2_factorsA[i] <- kk[2] * kk_2_factorsA[i]
-                }
-                suppressWarnings({
-                  dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
-                  if (DoTestMaxInt) {
-                    if (!anyNA(dx)) {
-                      if (max(dx) > testMaxInt) {
-                        dx[1] <- NA
-                        warning("testMaxInt exceeded")
-                      }
-                    }
-                  }
-                })
-                if (anyNA(dx)) 
-                {
-                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
-                  kk <- as.numeric(kk)
-                  dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
-                  dx <- dx/kk_2_factorsA[i]   # rescale needed since change to numeric
-                  kk_2_factorsA[i] <- 1
-                } else {
-                  if(!is.integer(dx)){
-                    if(is.integer(A$x[[i]])){      # Change to numeric caused by Axj, rescale needed here also
-                      dx <- dx/kk_2_factorsA[i]
-                      kk_2_factorsA[i] <- 1
-                    }
+                  A$r[[i]] <- A$r[[i]][-nrA[i]]
+                  A$x[[i]] <- A$x[[i]][-nrA[i]]
+                  if (Scale2one(A$x[[i]])) {
+                    A$x[[i]][] <- 1L
+                    kk_2_factorsA[i] <- 1
                   }
                 }
               }
-              if(is.integer(dx)){
-                rows <- (dx != 0L)
-              } else {
-                rows <- (abs(dx) >= tolGauss)
-              }
-              di <- di[rows]
-              dx <- dx[rows]
-              r <- order(di)
-              A$r[[i]] <- di[r]
-              A$x[[i]] <- dx[r]
-              if (Scale2one(A$x[[i]])) {
-                A$x[[i]][] <- 1L
-                kk_2_factorsA[i] <- 1
-              }
-            }
-          }
-        }
-        if (!is.null(singleton)) {
-          okInd <- (Arj <= maxInd)
-          Arj <- Arj[okInd]
-          Axj <- Axj[okInd]
-        }
-        if (length(Arj) == 0L) {
-          for (i in which(!is.na(nrB))) {
-            B$r[[i]] <- B$r[[i]][-nrB[i]]
-            B$x[[i]] <- B$x[[i]][-nrB[i]]
-            if (Scale2one(B$x[[i]])) {
-              B$x[[i]][] <- 1L
-              kk_2_factorsB[i] <- 1
-            }
-          }
-        } else {
-          for (i in which(!is.na(nrB))) {
-            if (length(B$x[[i]]) == 1L) {
-              B$r[[i]] <- Arj
-              B$x[[i]] <- Axj
-              kk_2_factorsB[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
             } else {
-              ai <- Arj
-              bi <- B$r[[i]][-nrB[i]]
-              ma <- match(ai, bi)
-              isnama <- is.na(ma)
-              ma_isnama <- ma[!isnama]
-              di <- c(bi, ai[isnama])
-              if (abs(B$x[[i]][nrB[i]]) == abs(Axj1)) {
-                suppressWarnings({
-                  if (B$x[[i]][nrB[i]] == Axj1) {
-                    dx <- c(B$x[[i]][-nrB[i]], -Axj[isnama])
-                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+              for (i in which(!is.na(nrA))) {
+                if (length(A$x[[i]]) == 1L) {
+                  A$r[[i]] <- Arj
+                  A$x[[i]] <- Axj
+                  kk_2_factorsA[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
+                } else {
+                  ai <- Arj
+                  bi <- A$r[[i]][-nrA[i]]
+                  ma <- match(ai, bi)
+                  isnama <- is.na(ma)
+                  ma_isnama <- ma[!isnama]
+                  di <- c(bi, ai[isnama])
+                  if (abs(A$x[[i]][nrA[i]]) == abs(Axj1)) {
+                    suppressWarnings({
+                      if (A$x[[i]][nrA[i]] == Axj1) {
+                        dx <- c(A$x[[i]][-nrA[i]], -Axj[isnama])
+                        dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                      } else {
+                        dx <- c(A$x[[i]][-nrA[i]], Axj[isnama])
+                        dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                      }
+                      if (DoTestMaxInt) {
+                        if (!anyNA(dx)) {
+                          if (max(dx) > testMaxInt) {
+                            dx[1] <- NA
+                            warning("testMaxInt exceeded")
+                          }
+                        }
+                      }
+                    })
+                    
+                    if (anyNA(dx)) 
+                    {
+                      dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
+                      if (A$x[[i]][nrA[i]] == Axj1) {
+                        dx <- as.numeric(c(A$x[[i]][-nrA[i]], -Axj[isnama]))
+                        dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                      } else {
+                        dx <- as.numeric(c(A$x[[i]][-nrA[i]], Axj[isnama]))
+                        dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                      }
+                      dx <- dx/kk_2_factorsA[i]    # rescale needed since change to numeric
+                      kk_2_factorsA[i] <- 1
+                    } else {
+                      if(!is.integer(dx)){
+                        if(is.integer(A$x[[i]])){  # Change to numeric caused by Axj, rescale needed here also
+                          dx <- dx/kk_2_factorsA[i]
+                          kk_2_factorsA[i] <- 1
+                        }
+                      }
+                    }
                   } else {
-                    dx <- c(B$x[[i]][-nrB[i]], Axj[isnama])
-                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
-                  }
-                  if (DoTestMaxInt) {
-                    if (!anyNA(dx)) {
-                      if (max(dx) > testMaxInt) {
-                        dx[1] <- NA
-                        warning("testMaxInt exceeded")
+                    kk <- ReduceGreatestDivisor(c(A$x[[i]][nrA[i]], Axj1))
+                    if(is.integer(kk)){
+                      kk_2_factorsA[i] <- kk[2] * kk_2_factorsA[i]
+                    }
+                    suppressWarnings({
+                      dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
+                      dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                      if (DoTestMaxInt) {
+                        if (!anyNA(dx)) {
+                          if (max(dx) > testMaxInt) {
+                            dx[1] <- NA
+                            warning("testMaxInt exceeded")
+                          }
+                        }
+                      }
+                    })
+                    if (anyNA(dx)) 
+                    {
+                      dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
+                      kk <- as.numeric(kk)
+                      dx <- c(kk[2] * A$x[[i]][-nrA[i]], -kk[1] * Axj[isnama])
+                      dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                      dx <- dx/kk_2_factorsA[i]   # rescale needed since change to numeric
+                      kk_2_factorsA[i] <- 1
+                    } else {
+                      if(!is.integer(dx)){
+                        if(is.integer(A$x[[i]])){      # Change to numeric caused by Axj, rescale needed here also
+                          dx <- dx/kk_2_factorsA[i]
+                          kk_2_factorsA[i] <- 1
+                        }
                       }
                     }
                   }
-                })
-                if (anyNA(dx)) 
-                {
-                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
-                  if (B$x[[i]][nrB[i]] == Axj1) {
-                    dx <- as.numeric(c(B$x[[i]][-nrB[i]], -Axj[isnama]))
-                    dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                  if(is.integer(dx)){
+                    rows <- (dx != 0L)
                   } else {
-                    dx <- as.numeric(c(B$x[[i]][-nrB[i]], Axj[isnama]))
-                    dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                    rows <- (abs(dx) >= tolGauss)
                   }
-                  dx <- dx/kk_2_factorsB[i]
+                  di <- di[rows]
+                  dx <- dx[rows]
+                  r <- order(di)
+                  A$r[[i]] <- di[r]
+                  A$x[[i]] <- dx[r]
+                  if (Scale2one(A$x[[i]])) {
+                    A$x[[i]][] <- 1L
+                    kk_2_factorsA[i] <- 1
+                  }
+                }
+              }
+            }
+            if (!is.null(singleton)) {
+              okInd <- (Arj <= maxInd)
+              Arj <- Arj[okInd]
+              Axj <- Axj[okInd]
+            }
+            if (length(Arj) == 0L) {
+              for (i in which(!is.na(nrB))) {
+                B$r[[i]] <- B$r[[i]][-nrB[i]]
+                B$x[[i]] <- B$x[[i]][-nrB[i]]
+                if (Scale2one(B$x[[i]])) {
+                  B$x[[i]][] <- 1L
                   kk_2_factorsB[i] <- 1
                 }
-                else {
-                  if(!is.integer(dx)){
-                    if(is.integer(B$x[[i]])){
+              }
+            } else {
+              for (i in which(!is.na(nrB))) {
+                if (length(B$x[[i]]) == 1L) {
+                  B$r[[i]] <- Arj
+                  B$x[[i]] <- Axj
+                  kk_2_factorsB[i] <- kk_2_factorsA[j] # Factors are inherited when all values are inherited
+                } else {
+                  ai <- Arj
+                  bi <- B$r[[i]][-nrB[i]]
+                  ma <- match(ai, bi)
+                  isnama <- is.na(ma)
+                  ma_isnama <- ma[!isnama]
+                  di <- c(bi, ai[isnama])
+                  if (abs(B$x[[i]][nrB[i]]) == abs(Axj1)) {
+                    suppressWarnings({
+                      if (B$x[[i]][nrB[i]] == Axj1) {
+                        dx <- c(B$x[[i]][-nrB[i]], -Axj[isnama])
+                        dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                      } else {
+                        dx <- c(B$x[[i]][-nrB[i]], Axj[isnama])
+                        dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                      }
+                      if (DoTestMaxInt) {
+                        if (!anyNA(dx)) {
+                          if (max(dx) > testMaxInt) {
+                            dx[1] <- NA
+                            warning("testMaxInt exceeded")
+                          }
+                        }
+                      }
+                    })
+                    if (anyNA(dx)) 
+                    {
+                      dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
+                      if (B$x[[i]][nrB[i]] == Axj1) {
+                        dx <- as.numeric(c(B$x[[i]][-nrB[i]], -Axj[isnama]))
+                        dx[ma_isnama] <- dx[ma_isnama] - Axj[!isnama]
+                      } else {
+                        dx <- as.numeric(c(B$x[[i]][-nrB[i]], Axj[isnama]))
+                        dx[ma_isnama] <- dx[ma_isnama] + Axj[!isnama]
+                      }
                       dx <- dx/kk_2_factorsB[i]
                       kk_2_factorsB[i] <- 1
                     }
-                  }
-                }
-              } else {
-                kk <- ReduceGreatestDivisor(c(B$x[[i]][nrB[i]], Axj1))
-                if(is.integer(kk)){
-                  kk_2_factorsB[i] <- kk[2] * kk_2_factorsB[i]
-                }
-                suppressWarnings({
-                  dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
-                  if (DoTestMaxInt) {
-                    if (!anyNA(dx)) {
-                      if (max(dx) > testMaxInt) {
-                        dx[1] <- NA
-                        warning("testMaxInt exceeded")
+                    else {
+                      if(!is.integer(dx)){
+                        if(is.integer(B$x[[i]])){
+                          dx <- dx/kk_2_factorsB[i]
+                          kk_2_factorsB[i] <- 1
+                        }
+                      }
+                    }
+                  } else {
+                    kk <- ReduceGreatestDivisor(c(B$x[[i]][nrB[i]], Axj1))
+                    if(is.integer(kk)){
+                      kk_2_factorsB[i] <- kk[2] * kk_2_factorsB[i]
+                    }
+                    suppressWarnings({
+                      dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
+                      dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                      if (DoTestMaxInt) {
+                        if (!anyNA(dx)) {
+                          if (max(dx) > testMaxInt) {
+                            dx[1] <- NA
+                            warning("testMaxInt exceeded")
+                          }
+                        }
+                      }
+                    })
+                    if (anyNA(dx)) 
+                    {
+                      dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
+                      kk <- as.numeric(kk)
+                      dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
+                      dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
+                      dx <- dx/kk_2_factorsB[i]
+                      kk_2_factorsB[i] <- 1
+                    } else {
+                      if(!is.integer(dx)){
+                        if(is.integer(B$x[[i]])){
+                          dx <- dx/kk_2_factorsB[i]
+                          kk_2_factorsB[i] <- 1
+                        }
                       }
                     }
                   }
-                })
-                if (anyNA(dx)) 
-                {
-                  dot <- dash[N_GAUSS_DUPLICATES] # dot <- "-"
-                  kk <- as.numeric(kk)
-                  dx <- c(kk[2] * B$x[[i]][-nrB[i]], -kk[1] * Axj[isnama])
-                  dx[ma_isnama] <- dx[ma_isnama] - kk[1] * Axj[!isnama]
-                  dx <- dx/kk_2_factorsB[i]
-                  kk_2_factorsB[i] <- 1
-                } else {
-                  if(!is.integer(dx)){
-                    if(is.integer(B$x[[i]])){
-                      dx <- dx/kk_2_factorsB[i]
-                      kk_2_factorsB[i] <- 1
-                    }
+                  if(is.integer(dx)){
+                    rows <- (dx != 0L)
+                  } else {
+                    rows <- (abs(dx) >= tolGauss)
+                  }
+                  if(!length(rows)){
+                    stop("Suppression method failed")
+                  }
+                  di <- di[rows]
+                  dx <- dx[rows]
+                  r <- order(di)
+                  B$r[[i]] <- di[r]
+                  B$x[[i]] <- dx[r]
+                  if (Scale2one(B$x[[i]])) {
+                    B$x[[i]][] <- 1L
+                    kk_2_factorsB[i] <- 1
                   }
                 }
               }
-              if(is.integer(dx)){
-                rows <- (dx != 0L)
-              } else {
-                rows <- (abs(dx) >= tolGauss)
-              }
-              if(!length(rows)){
-                stop("Suppression method failed")
-              }
-              di <- di[rows]
-              dx <- dx[rows]
-              r <- order(di)
-              B$r[[i]] <- di[r]
-              B$x[[i]] <- dx[r]
-              if (Scale2one(B$x[[i]])) {
-                B$x[[i]][] <- 1L
-                kk_2_factorsB[i] <- 1
-              }
             }
-          }
-        }
- 
- 
-if(I_GAUSS_DUPLICATES == 2){
-    A_DUPLICATE <- A 
-    B_DUPLICATE <- B 
-    eliminatedRows_DUPLICATE <- eliminatedRows
-    singleton_num_DUPLICATE <- singleton_num
-    kk_2_factorsA_DUPLICATE <- kk_2_factorsA
-    kk_2_factorsB_DUPLICATE <- kk_2_factorsB
-    
-    A <- A_TEMP
-    B <- B_TEMP
-    eliminatedRows <- eliminatedRows_TEMP
-    singleton_num <- singleton_num_TEMP
-    kk_2_factorsA <- kk_2_factorsA_TEMP
-    kk_2_factorsB <- kk_2_factorsB_TEMP
-  }
-} # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){           
-       }  
+            
+            
+            if(I_GAUSS_DUPLICATES == 2){
+              A_DUPLICATE <- A 
+              B_DUPLICATE <- B 
+              eliminatedRows_DUPLICATE <- eliminatedRows
+              singleton_num_DUPLICATE <- singleton_num
+              kk_2_factorsA_DUPLICATE <- kk_2_factorsA
+              kk_2_factorsB_DUPLICATE <- kk_2_factorsB
+              
+              A <- A_TEMP
+              B <- B_TEMP
+              eliminatedRows <- eliminatedRows_TEMP
+              singleton_num <- singleton_num_TEMP
+              kk_2_factorsA <- kk_2_factorsA_TEMP
+              kk_2_factorsB <- kk_2_factorsB_TEMP
+            }
+          } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){           
+        }  
         ii <- ii + 1L
       } else {
         if (!is.logical(isSecondary)) {   #  Special AnyProportionalGaussInt output
@@ -1790,12 +1790,12 @@ FindDiffMatrix <- function(x, y = x, max_colSums_diff = Inf) {
   colSums_y_xty_j_1 <- colSums(y)[xty@j + 1]
   # finds children in x and parents in y
   r <- colSums(x)[xty@i + 1] == xty@x & 
-       colSums_y_xty_j_1     != xty@x & 
-       (colSums_y_xty_j_1 - xty@x) <= max_colSums_diff
+    colSums_y_xty_j_1     != xty@x & 
+    (colSums_y_xty_j_1 - xty@x) <= max_colSums_diff
   child <- xty@i[r] + 1L
   parent <- xty@j[r] + 1L
   diff_matrix <- y[, parent, drop = FALSE] - 
-                 x[, child, drop = FALSE]
+    x[, child, drop = FALSE]
   colnames(diff_matrix) <- parent
   diff_matrix
 }
