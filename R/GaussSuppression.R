@@ -1643,20 +1643,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
 
 
 
-# Simplified version of AnyProportionalGaussInt 
-Any0GaussInt <- function(r, rB) {
-  for (i in seq_along(rB)) {
-    ni <- length(rB[[i]])
-    if (ni) {    
-      if( all(rB[[i]] %in% r) )
-        return(TRUE)
-    }
-  }
-  FALSE
-}
-
-
-
 
 AnyProportionalGaussInt_OLD <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
   n <- length(r)
