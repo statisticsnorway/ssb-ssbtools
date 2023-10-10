@@ -37,10 +37,38 @@ At least one component is singleton contributor. The other component may be an i
 \item \code{H}: As \code{T} above. And in addition, the other component can be any primary suppressed published cell.
 This method may be computationally demanding for big data.
 }
+\item \code{elimination} (4th character):
+\itemize{
+\item \code{t}: The singleton problem will be handled by methodology implemented as a part of the Gaussian elimination algorithm.
+\item \code{m}: As \code{t} above. And in addition, a message will be printed to inform about problematic singletons.
+Actual reveals will be calculated when \code{singleton2Primary = T} (1st character)
+and when \code{singleton2Primary = t} yield the same result as \code{singleton2Primary = T}.
+Problematic singletons can appear since the algorithm is not perfect in the sense that the elimination of rows may cause problems.
+Such problems can be a reason not to switch off \code{sum2}.
+\item \code{w}: As \code{m} above, but \code{warning} instead of \code{message}.
+\item \code{T}, \code{M} and \code{W}: As \code{t}, \code{m} and \code{w} above.
+In addition, the gauss elimination routine is allowed to run in parallel with different sortings
+so that the problem of eliminated singleton rows is reduced.
+\item \code{f}: As \code{F}, which means that the elimination feature is turned off.
+However, when possible, a message will provide information about actual reveals, similar to \code{m} above.
+}
+\item \code{combinations} (5th character):
+\itemize{
+\item \code{T}: This is a sort of extension of \code{singleton2Primary} which is relevant when both \code{integerUnique} and \code{elimination} are used.
+For each unique singleton contributor, the method seeks to protect all linear combinations of singleton cells from the unique contributor.
+Instead of construction new primary cells, protection is achieved as a part of the elimination procedure.
+Technically this is implemented by extending the above \code{elimination} method.
+It cannot be guaranteed that all problems are solved, and this is a reason not to turn off \code{singleton2Primary}.
+Best performance is achieved when \code{elimination} is \code{T}, \code{M} or \code{W}.
+\item \code{t}:  As \code{T}, but without the added singleton protection.
+This means that protected linear combinations cannot be calculated linearly from non-suppressed cells.
+However, other contributors may still be able to recalculate these combinations using their own suppressed values.
+}
 }
 }
 \examples{
 NumSingleton("numTFF")
-NumSingleton("numFTT")
+NumSingleton("numFtT")
 NumSingleton("numttH")
+NumSingleton("numTTFTT")
 }
