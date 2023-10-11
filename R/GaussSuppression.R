@@ -20,7 +20,8 @@
 #'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
 #'         Note that in order to give information about unsafe cells, `"anySum"`  is internally changed to `"subSumAny"` when there are forced cells. 
 #'         All the above methods assume that any published singletons are primary suppressed. 
-#'         When this is not the case, `"anySumNOTprimary"` must be used.
+#'         If this is not the case, either `"anySumNOTprimary"` or `"anySum0"` must be used. 
+#'         Notably, `"anySum0"` is an enhancement of `"anySumNOTprimary"` for situations where zeros are singletons.
 #' * **Singleton methods for magnitude tables:**          
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
@@ -43,7 +44,7 @@
 #'            For some singleton methods, integer values representing the unique magnitude table contributors are needed. 
 #'            For all other singleton methods, only the values after conversion with `as.logical` matter.      
 #' @param singletonMethod Method for handling the problem of singletons and zeros: 
-#'             `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
+#'             `"anySum"` (default), `"anySum0"`, `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
 #'             or a \code{\link{NumSingleton}} method (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
@@ -273,7 +274,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #  return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   #}
   
-  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
+  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySum0", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
     stop("wrong singletonMethod")
   }
   if (singletonMethod_num == "sub2Sum") {
@@ -493,7 +494,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
-  if (singletonMethod == "anySumNOTprimary") {
+  anySum0 <- singletonMethod == "anySum0"
+  if (singletonMethod == "anySumNOTprimary" | anySum0) {
     singletonMethod <- "anySum"
     singletonNOTprimary <- TRUE
   } else {
@@ -506,7 +508,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     if (singletonNOTprimary) {
       if (singletonMethod != "anySum")
-        stop('singletonMethod must be "anySumNOTprimary" when singletons not primary suppressed')
+        stop('singletonMethod must be "anySumNOTprimary" or "anySum0" when singletons not primary suppressed')
       warning('singletonMethod is changed to "anySumNOTprimary"')
     }
   }
@@ -515,7 +517,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   parentChildSingleton <- NULL
   keepSecondary <- integer(0)  # To store A indices that will proceed the elimination process 
                                # after they are found to be secondary suppressed
-  anySum0 <- get0("anySum0", ifnotfound = FALSE)      # This is only for now
   easy1 <- FALSE               # Simplification in ParentChildExtension. Should probably be set to TRUE  
   
   if (singletonNOTprimary) {

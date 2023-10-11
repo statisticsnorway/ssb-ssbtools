@@ -42,7 +42,7 @@ For some singleton methods, integer values representing the unique magnitude tab
 For all other singleton methods, only the values after conversion with \code{as.logical} matter.}
 
 \item{singletonMethod}{Method for handling the problem of singletons and zeros:
-\code{"anySum"} (default), \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"none"}
+\code{"anySum"} (default), \code{"anySum0"}, \code{"anySumNOTprimary"}, \code{"subSum"}, \code{"subSpace"}, \code{"sub2Sum"}, \code{"none"}
 or a \code{\link{NumSingleton}} method (see details).}
 
 \item{printInc}{Printing "..." to console when TRUE}
@@ -94,7 +94,8 @@ sums within groups, the aim is to handle all possible sums, also across groups. 
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
 Note that in order to give information about unsafe cells, \code{"anySum"}  is internally changed to \code{"subSumAny"} when there are forced cells.
 All the above methods assume that any published singletons are primary suppressed.
-When this is not the case, \code{"anySumNOTprimary"} must be used.
+If this is not the case, either \code{"anySumNOTprimary"} or \code{"anySum0"} must be used.
+Notably, \code{"anySum0"} is an enhancement of \code{"anySumNOTprimary"} for situations where zeros are singletons.
 \item \strong{Singleton methods for magnitude tables:}
 The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
 This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
