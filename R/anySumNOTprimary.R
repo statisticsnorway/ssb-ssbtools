@@ -87,13 +87,15 @@ FindParentChild <- function(x) {
 # Parents and childs can be found in both A (candidates) and B (primary) 
 # Special indices in output, candidates as positive, primary as negative  
 # In addition to parent and child, extra output elements to be used later included
-FindParentChildSingleton <- function(x, candidates, primary, singleton) {
+FindParentChildSingleton <- function(x, candidates, primary, singleton, 
+                                     ncol_x_input, idxDD) {
   if (!any(singleton)) {
     return(NULL)
   }
   candidates_primary <- c(candidates, primary)
-  colSums_x <- colSums(x)
-  colSums_x_singleton <- colSums(x[singleton, , drop = FALSE])
+  ncol_x <- Ncol_x_input_removedDuplicated(ncol_x_input, idxDD) 
+  colSums_x <- colSums(x)[seq_len(ncol_x)]
+  colSums_x_singleton <- colSums(x[singleton, seq_len(ncol_x), drop = FALSE])
   colSingleton <- which(colSums_x_singleton > 0L & colSums_x_singleton == colSums_x)
   colSingleton <- colSingleton[colSingleton %in% candidates_primary]
   if (!length(colSingleton)) {
@@ -114,6 +116,24 @@ FindParentChildSingleton <- function(x, candidates, primary, singleton) {
   pc$uniqueA <- sort(pc$uniqueA[pc$uniqueA > 0])
   pc
 }
+
+# parent-child relevant for FindParentChildSingleton will initially be without xExtraPrimary
+# The number of columns after using removeDuplicated must be calculated
+Ncol_x_input_removedDuplicated <- function(ncol_x_input, idxDD) {
+  if (is.null(idxDD)) {
+    return(ncol_x_input)
+  }
+  length(unique(idxDD[seq_len(ncol_x_input)]))
+}
+
+
+
+
+
+
+
+
+
 
 
 

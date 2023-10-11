@@ -521,7 +521,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   if (singletonNOTprimary) {
     if (anySum0) {
-      parentChildSingleton <- FindParentChildSingleton(x, candidates, primary, singleton)
+      parentChildSingleton <- FindParentChildSingleton(x, candidates, primary, singleton, ncol_x_input, idxDD)
     }
   }
   if (is.null(parentChildSingleton)) {
