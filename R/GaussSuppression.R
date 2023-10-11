@@ -512,6 +512,22 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
+  parentChildSingleton <- NULL
+  keepSecondary <- integer(0)  # To store A indices that will proceed the elimination process 
+                               # after they are found to be secondary suppressed
+  anySum0 <- get0("anySum0", ifnotfound = FALSE)      # This is only for now
+  easy1 <- FALSE               # Simplification in ParentChildExtension. Should probably be set to TRUE  
+  
+  if (singletonNOTprimary) {
+    if (anySum0) {
+      parentChildSingleton <- FindParentChildSingleton(x, candidates, primary, singleton)
+    }
+  }
+  if (is.null(parentChildSingleton)) {
+    anySum0 <- FALSE
+  }
+  
+  
   # In order to give information about unsafe cells, "anySum" is internally changed to "subSumAny" when there are forced cells.
   if (!singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
     singletonMethod <- "subSumAny"
@@ -1204,7 +1220,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               }
             }
             if (subSubSec & singletonNOTprimary) {
-              if (!Any0GaussInt(A$r[[j]], B$r)) {
+              r_here <- A$r[[j]]
+              if (anySum0) {
+                r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1)
+              }
+              if (!Any0GaussInt(r_here, B$r)) {
                 for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
                   if(I_GAUSS_DUPLICATES == 2){
                     A_TEMP <- A
@@ -1218,8 +1238,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                     singleton_num <- singleton_num_DUPLICATE
                   }
                   subSubSec <- FALSE
-                  for (i in SeqInc(j + 1L, n)) {
-                    j_in_i <- A$r[[i]] %in% A$r[[j]]
+                  for (i in c(keepSecondary, SeqInc(j + 1L, n))) {
+                    j_in_i <- A$r[[i]] %in% r_here
                     if (all(j_in_i)) {
                       A$r[[i]] <- integer(0)
                       A$x[[i]] <- integer(0)
@@ -1231,7 +1251,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                     }
                   }
                   for (i in seq_len(nB)) {
-                    j_in_i <- B$r[[i]] %in% A$r[[j]]
+                    j_in_i <- B$r[[i]] %in% r_here
                     if (any(j_in_i)) {
                       B$r[[i]] <- B$r[[i]][!j_in_i]
                       B$x[[i]] <- B$x[[i]][!j_in_i]
@@ -1303,7 +1323,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             
             nrA[] <- NA_integer_
             nrB[] <- NA_integer_
-            for (i in SeqInc(j + 1L, n)) 
+            for (i in c(keepSecondary, SeqInc(j + 1L, n))) 
               nrA[i] <- match(ind, A$r[[i]])
             for (i in seq_len(nB)) 
               nrB[i] <- match(ind, B$r[[i]])
@@ -1585,11 +1605,15 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
           nB <- nB + 1L
         }
-        A$r[[j]] <- integer(0)
-        A$x[[j]] <- integer(0)
-        if (N_GAUSS_DUPLICATES == 2) {
-          A_DUPLICATE$r[[j]] <- integer(0)
-          A_DUPLICATE$x[[j]] <- integer(0)
+        if (j %in% parentChildSingleton$uniqueA) {
+          keepSecondary <- c(keepSecondary, j)
+        } else {
+          A$r[[j]] <- integer(0)
+          A$x[[j]] <- integer(0)
+          if (N_GAUSS_DUPLICATES == 2) {
+            A_DUPLICATE$r[[j]] <- integer(0)
+            A_DUPLICATE$x[[j]] <- integer(0)
+          }
         }
         secondary[j] <- TRUE
       }
