@@ -41,6 +41,7 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
       # Now a parent is found
       rD <- rP[[i]][!(rP[[i]] %in% r)]
       length_rD <- length(rD)
+      if (length_rD) {
       if (easy1 & length_rD == 1) {
         r_new <- c(r_new, rD)
       } else {
@@ -59,6 +60,7 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
             }
           }
         }
+      }
       }
     }
   }
