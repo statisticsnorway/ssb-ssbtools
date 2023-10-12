@@ -39,7 +39,7 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
   for (i in seq_along(rP)) {
     if (any(r %in% rP[[i]])) {
       # Now a parent is found
-      rD <- rP[[i]][!(rP[[i]] %in% r)]
+      rD <- rP[[i]][!(rP[[i]] %in% r)] # rD is difference between parent and (parts of) r
       length_rD <- length(rD)
       if (length_rD) {
         if (easy1 & length_rD == 1) {
