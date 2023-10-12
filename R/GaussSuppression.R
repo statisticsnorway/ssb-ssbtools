@@ -517,11 +517,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   parentChildSingleton <- NULL
   keepSecondary <- integer(0)  # To store A indices that will proceed the elimination process 
                                # after they are found to be secondary suppressed
-  easy1 <- FALSE               # Simplification in ParentChildExtension. Should probably be set to TRUE  
   
   if (singletonNOTprimary) {
     if (anySum0) {
       parentChildSingleton <- FindParentChildSingleton(x, candidates, primary, singleton, ncol_x_input, idxDD)
+      easy1 <- parentChildSingleton$all1  # Simplification in ParentChildExtension.
+      if (!is.null(parentChildSingleton)) { 
+        anySum0easy1 <- get0("anySum0easy1", ifnotfound = NULL) # It might appear that easy1 affects the result and not just speed.
+        if (!is.null(anySum0easy1)) {                           # This could be cases with invisible/hidden childs.
+          if (!is.na(anySum0easy1)) {           # It is believed that easy1 = TRUE is the best method in terms of protection anyway. 
+            easy1 <- anySum0easy1               # But it may still be best to turn it off to avoid the possibility of unsafe
+          }                                     # secondary suppressions in rare cases.
+          cat(paste0("_easy1_=_", easy1, " "))  # This is the rationale for the default value.
+        }                                       # With "anySum0easy1" it is possible to test. 
+      }
     }
   }
   if (is.null(parentChildSingleton)) {

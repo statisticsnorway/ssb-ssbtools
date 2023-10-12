@@ -114,6 +114,9 @@ FindParentChildSingleton <- function(x, candidates, primary, singleton,
   pc$match_parent <- match(pc$parent, pc$unique_parent)
   pc$uniqueA <- c(pc$unique_parent, pc$child)
   pc$uniqueA <- sort(pc$uniqueA[pc$uniqueA > 0])
+  col1 <- colSums(x[singleton, colSingleton, drop = FALSE]) == 1
+  row1 <- rowSums(x[singleton, colSingleton[col1], drop = FALSE]) > 0
+  pc$all1 <- all(row1)  # TRUE when all rows included as childs 
   pc
 }
 
