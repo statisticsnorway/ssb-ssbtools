@@ -42,25 +42,25 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
       rD <- rP[[i]][!(rP[[i]] %in% r)]
       length_rD <- length(rD)
       if (length_rD) {
-      if (easy1 & length_rD == 1) {
-        r_new <- c(r_new, rD)
-      } else {
-        # Going to check childs
-        childi <- pc$child[pc$match_parent == i]
-        rC <- rA[childi[childi > 0]]
-        nAchild <- length(rC)
-        rC <- c(rC, rB[-childi[childi < 0]])
-        for (k in rev(seq_along(rC))) {  # rev since fast decision is seen earlier
-          if (length_rD == length(rC[[k]])) {
-            if (all(rD == rC[[k]])) {    # uses knowledge that r is sorted
-              if (k > nAchild) {
-                return(integer(0))  # Fast decision when primary found. Empty regarded as proportional in Any0GaussInt.
+        if (easy1 & length_rD == 1) {
+          r_new <- c(r_new, rD)
+        } else {
+          # Going to check childs
+          childi <- pc$child[pc$match_parent == i]
+          rC <- rA[childi[childi > 0]]
+          nAchild <- length(rC)
+          rC <- c(rC, rB[-childi[childi < 0]])
+          for (k in rev(seq_along(rC))) {  # rev since fast decision is seen earlier
+            if (length_rD == length(rC[[k]])) {
+              if (all(rD == rC[[k]])) {    # uses knowledge that r is sorted
+                if (k > nAchild) {
+                  return(integer(0))  # Fast decision when primary found. Empty regarded as proportional in Any0GaussInt.
+                }
+                r_new <- c(r_new, rD)
               }
-              r_new <- c(r_new, rD)
             }
           }
         }
-      }
       }
     }
   }
