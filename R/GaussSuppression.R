@@ -534,6 +534,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         if (!anySum02primary) {
           cat(paste0("_2primary_=_", anySum02primary))
         }
+        anySum0maxiter <- get0("anySum0maxiter", ifnotfound = 99)
+        if (anySum0maxiter != 99) {
+          cat(paste0("_maxiter_=_", anySum0maxiter))
+        }
       }
     }
   }
@@ -1238,7 +1242,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               r_here <- A$r[[j]]
               length_Arj <- length(r_here)
               if (anySum0) {
-                r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1)
+                r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1, anySum0maxiter)
                 if (anySum02primary & length(r_here) > length_Arj) {
                   secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
                 } 

@@ -29,7 +29,7 @@ Any0GaussInt <- function(r, rB) {
 # Extend rows, r, to be checked by Any0GaussInt using “parentChildSingleton”
 # Parents and childs can be found in both A (candidates) and B (primary)
 # easy1 means possible quick extension decision since length-1 difference must be a meaningful child
-ParentChildExtension <- function(r, rA, rB, pc, easy1) {
+ParentChildExtension1 <- function(r, rA, rB, pc, easy1) {
   # pc = parentChildSingleton
   r_new <- integer(0)
   nr <- length(r)
@@ -68,6 +68,20 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
   if (length(r_new)) {
     return(sort(c(r, unique(r_new))))
   }
+  r
+}
+
+
+ParentChildExtension <- function(r, rA, rB, pc, easy1, maxiter) {
+  rold <- r
+  for (i in seq_len(maxiter)) {
+    r <- ParentChildExtension1(rold, rA, rB, pc, easy1)
+    if (length(r) == length(rold)) {
+      return(r)
+    }
+    rold <- r
+  }
+  warning("Iteration limit exceeded in anySum0 routine.")
   r
 }
 
