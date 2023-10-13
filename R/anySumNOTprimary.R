@@ -57,6 +57,7 @@ ParentChildExtension <- function(r, rA, rB, pc, easy1) {
                   return(integer(0))  # Fast decision when primary found. Empty regarded as proportional in Any0GaussInt.
                 }
                 r_new <- c(r_new, rD)
+                break
               }
             }
           }
