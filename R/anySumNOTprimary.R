@@ -109,6 +109,9 @@ FindParentChildSingleton <- function(x, candidates, primary, singleton,
   }
   pc$parent <- match(colSingleton[pc$parent], candidates_primary)
   pc$child <- match(colSingleton[pc$child], candidates_primary)
+  order_parent <- order(pc$parent)      # order needed since candidates first and primary last  
+  pc$parent <- pc$parent[order_parent]  # assumed in ParentChildExtension 
+  pc$child <- pc$child[order_parent] 
   lc <- length(candidates)
   pc$parent[pc$parent > lc] <- -(pc$parent[pc$parent > lc] - lc)  # primary as negative indices  
   pc$child[pc$child > lc] <- -(pc$child[pc$child > lc] - lc)
