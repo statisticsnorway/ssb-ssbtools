@@ -1230,6 +1230,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               }
             }
             secondaryTRUE <- TRUE
+            if (!subSubSec & singletonNOTprimary & anySum0) {
+              if (length(ParentChildExtension(A$r[[j]][1], A$r, B$r, parentChildSingleton, easy1)) > 1) {
+                warning('Programming of "anySum0" not finished.')
+              }
+            }
             if (subSubSec & singletonNOTprimary) {
               r_here <- A$r[[j]]
               length_Arj <- length(r_here)
