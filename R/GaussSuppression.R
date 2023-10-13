@@ -1231,8 +1231,14 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
             if (subSubSec & singletonNOTprimary) {
               r_here <- A$r[[j]]
+              length_Arj <- length(r_here)
               if (anySum0) {
                 r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1)
+                if (length(r_here) > length_Arj) {
+                  secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
+                } else {
+                  secondaryTRUE <- TRUE
+                }
               }
               if (!Any0GaussInt(r_here, B$r)) {
                 for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
@@ -1287,7 +1293,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
                 reduced <- TRUE
               } else {
-                isSecondary <- TRUE
+                isSecondary <- secondaryTRUE
               }
               
             } else {
