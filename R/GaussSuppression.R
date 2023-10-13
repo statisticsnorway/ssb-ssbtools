@@ -528,8 +528,12 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           if (!is.na(anySum0easy1)) {           # It is believed that easy1 = TRUE is the best method in terms of protection anyway. 
             easy1 <- anySum0easy1               # But it may still be best to turn it off to avoid the possibility of unsafe
           }                                     # secondary suppressions in rare cases.
-          cat(paste0("_easy1_=_", easy1, " "))  # This is the rationale for the default value.
-        }                                       # With "anySum0easy1" it is possible to test. 
+          cat(paste0("_easy1_=_", easy1))  # This is the rationale for the default value.
+        }                                       # With "anySum0easy1" it is possible to test.
+        anySum02primary <- get0("anySum02primary", ifnotfound = TRUE)
+        if (!anySum02primary) {
+          cat(paste0("_2primary_=_", anySum02primary))
+        }
       }
     }
   }
@@ -1235,7 +1239,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               length_Arj <- length(r_here)
               if (anySum0) {
                 r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1)
-                if (length(r_here) > length_Arj) {
+                if (anySum02primary & length(r_here) > length_Arj) {
                   secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
                 } 
               }
