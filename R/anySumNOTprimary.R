@@ -132,7 +132,7 @@ FindParentChildSingleton <- function(x, candidates, primary, singleton,
   pc$child[pc$child > lc] <- -(pc$child[pc$child > lc] - lc)
   pc$unique_parent <- unique(pc$parent)
   pc$match_parent <- match(pc$parent, pc$unique_parent)
-  pc$uniqueA <- c(pc$unique_parent, pc$child)
+  pc$uniqueA <- unique(c(pc$unique_parent, pc$child))
   pc$uniqueA <- sort(pc$uniqueA[pc$uniqueA > 0])
   col1 <- colSums(x[singleton, colSingleton, drop = FALSE]) == 1
   row1 <- rowSums(x[singleton, colSingleton[col1], drop = FALSE]) > 0
