@@ -539,13 +539,19 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         if (anySum0maxiter != 99) {
           cat(paste0("_maxiter_=_", anySum0maxiter))
         }
+        anySum0conservative <- get0("anySum0conservative", ifnotfound = TRUE)
+        if (!anySum0conservative) {
+          cat(paste0("_conservative_=_", anySum0conservative))
+        }
       }
     }
   }
   if (is.null(parentChildSingleton)) {
     anySum0 <- FALSE
   }
-  
+  if (!anySum0) {
+    anySum0conservative <- FALSE 
+  }
   
   # In order to give information about unsafe cells, "anySum" is internally changed to "subSumAny" when there are forced cells.
   if (!singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
@@ -1227,7 +1233,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               isSecondary <- AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
             }
           } else {
-            if (subSubSec) {
+            if (subSubSec & !anySum0conservative) {
               if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
                 if (!any(subUsed[A$r[[j]]])) {     # but can’r be sure after gaussian elimination of another “Not proportional to sum”.
                   subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
