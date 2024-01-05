@@ -22,6 +22,7 @@
 #'         All the above methods assume that any published singletons are primary suppressed. 
 #'         If this is not the case, either `"anySumNOTprimary"` or `"anySum0"` must be used. 
 #'         Notably, `"anySum0"` is an enhancement of `"anySumNOTprimary"` for situations where zeros are singletons.
+#'         Using that method avoids suppressing a zero marginal along with only one of its children.
 #' * **Singleton methods for magnitude tables:**          
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
