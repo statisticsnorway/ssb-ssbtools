@@ -20,7 +20,9 @@
 #'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
 #'         Note that in order to give information about unsafe cells, `"anySum"`  is internally changed to `"subSumAny"` when there are forced cells. 
 #'         All the above methods assume that any published singletons are primary suppressed. 
-#'         When this is not the case, `"anySumNOTprimary"` must be used.
+#'         If this is not the case, either `"anySumNOTprimary"` or `"anySum0"` must be used. 
+#'         Notably, `"anySum0"` is an enhancement of `"anySumNOTprimary"` for situations where zeros are singletons.
+#'         Using that method avoids suppressing a zero marginal along with only one of its children.
 #' * **Singleton methods for magnitude tables:**          
 #'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
@@ -43,7 +45,7 @@
 #'            For some singleton methods, integer values representing the unique magnitude table contributors are needed. 
 #'            For all other singleton methods, only the values after conversion with `as.logical` matter.      
 #' @param singletonMethod Method for handling the problem of singletons and zeros: 
-#'             `"anySum"` (default), `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
+#'             `"anySum"` (default), `"anySum0"`, `"anySumNOTprimary"`, `"subSum"`, `"subSpace"`, `"sub2Sum"`, `"none"` 
 #'             or a \code{\link{NumSingleton}} method (see details).
 #' @param printInc Printing "..." to console when TRUE
 #' @param tolGauss A tolerance parameter for sparse Gaussian elimination and linear dependency. This parameter is used only in cases where integer calculation cannot be used.
@@ -273,7 +275,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #  return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   #}
   
-  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
+  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySum0", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
     stop("wrong singletonMethod")
   }
   if (singletonMethod_num == "sub2Sum") {
@@ -493,7 +495,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
-  if (singletonMethod == "anySumNOTprimary") {
+  anySum0 <- singletonMethod == "anySum0"
+  if (singletonMethod == "anySumNOTprimary" | anySum0) {
     singletonMethod <- "anySum"
     singletonNOTprimary <- TRUE
   } else {
@@ -506,11 +509,50 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
     if (singletonNOTprimary) {
       if (singletonMethod != "anySum")
-        stop('singletonMethod must be "anySumNOTprimary" when singletons not primary suppressed')
+        stop('singletonMethod must be "anySumNOTprimary" or "anySum0" when singletons not primary suppressed')
       warning('singletonMethod is changed to "anySumNOTprimary"')
     }
   }
   
+  
+  parentChildSingleton <- NULL
+  keepSecondary <- integer(0)  # To store A indices that will proceed the elimination process 
+                               # after they are found to be secondary suppressed
+  
+  if (singletonNOTprimary) {
+    if (anySum0) {
+      parentChildSingleton <- FindParentChildSingleton(x, candidates, primary, singleton, ncol_x_input, idxDD)
+      # easy1 <- parentChildSingleton$all1  # Simplification in ParentChildExtension.
+      easy1 <- TRUE   # This seems fine when anySum02primary is TRUE
+      if (!is.null(parentChildSingleton)) { 
+        anySum0easy1 <- get0("anySum0easy1", ifnotfound = NULL) # It might appear that easy1 affects the result and not just speed.
+        if (!is.null(anySum0easy1)) {                           # This could be cases with invisible/hidden childs.
+          if (!is.na(anySum0easy1)) {           # It is believed that easy1 = TRUE is the best method in terms of protection anyway. 
+            easy1 <- anySum0easy1               # But it may still be best to turn it off to avoid the possibility of unsafe
+          }                                     # secondary suppressions in rare cases.
+          cat(paste0("_easy1_=_", easy1))  # This is the rationale for the default value. (but now changed due to anySum02primary, see above)
+        }                                       # With "anySum0easy1" it is possible to test.
+        anySum02primary <- get0("anySum02primary", ifnotfound = TRUE)
+        if (!anySum02primary) {
+          cat(paste0("_2primary_=_", anySum02primary))
+        }
+        anySum0maxiter <- get0("anySum0maxiter", ifnotfound = 99)
+        if (anySum0maxiter != 99) {
+          cat(paste0("_maxiter_=_", anySum0maxiter))
+        }
+        anySum0conservative <- get0("anySum0conservative", ifnotfound = TRUE)
+        if (!anySum0conservative) {
+          cat(paste0("_conservative_=_", anySum0conservative))
+        }
+      }
+    }
+  }
+  if (is.null(parentChildSingleton)) {
+    anySum0 <- FALSE
+  }
+  if (!anySum0) {
+    anySum0conservative <- FALSE 
+  }
   
   # In order to give information about unsafe cells, "anySum" is internally changed to "subSumAny" when there are forced cells.
   if (!singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
@@ -1192,7 +1234,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               isSecondary <- AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
             }
           } else {
-            if (subSubSec) {
+            if (subSubSec & !anySum0conservative) {
               if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
                 if (!any(subUsed[A$r[[j]]])) {     # but can’r be sure after gaussian elimination of another “Not proportional to sum”.
                   subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
@@ -1203,8 +1245,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 }
               }
             }
+            secondaryTRUE <- TRUE
             if (subSubSec & singletonNOTprimary) {
-              if (!Any0GaussInt(A$r[[j]], B$r)) {
+              r_here <- A$r[[j]]
+              length_Arj <- length(r_here)
+              if (anySum0) {
+                r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1, anySum0maxiter)
+                if (anySum02primary & length(r_here) > length_Arj) {
+                  secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
+                } 
+              }
+              if (!Any0GaussInt(r_here, B$r)) {
                 for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
                   if(I_GAUSS_DUPLICATES == 2){
                     A_TEMP <- A
@@ -1218,8 +1269,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                     singleton_num <- singleton_num_DUPLICATE
                   }
                   subSubSec <- FALSE
-                  for (i in SeqInc(j + 1L, n)) {
-                    j_in_i <- A$r[[i]] %in% A$r[[j]]
+                  for (i in c(keepSecondary, SeqInc(j + 1L, n))) {
+                    j_in_i <- A$r[[i]] %in% r_here
                     if (all(j_in_i)) {
                       A$r[[i]] <- integer(0)
                       A$x[[i]] <- integer(0)
@@ -1231,7 +1282,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                     }
                   }
                   for (i in seq_len(nB)) {
-                    j_in_i <- B$r[[i]] %in% A$r[[j]]
+                    j_in_i <- B$r[[i]] %in% r_here
                     if (any(j_in_i)) {
                       B$r[[i]] <- B$r[[i]][!j_in_i]
                       B$x[[i]] <- B$x[[i]][!j_in_i]
@@ -1257,7 +1308,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                 } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
                 reduced <- TRUE
               } else {
-                isSecondary <- TRUE
+                isSecondary <- secondaryTRUE
               }
               
             } else {
@@ -1303,7 +1354,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             
             nrA[] <- NA_integer_
             nrB[] <- NA_integer_
-            for (i in SeqInc(j + 1L, n)) 
+            for (i in c(keepSecondary, SeqInc(j + 1L, n))) 
               nrA[i] <- match(ind, A$r[[i]])
             for (i in seq_len(nB)) 
               nrB[i] <- match(ind, B$r[[i]])
@@ -1585,11 +1636,15 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
           nB <- nB + 1L
         }
-        A$r[[j]] <- integer(0)
-        A$x[[j]] <- integer(0)
-        if (N_GAUSS_DUPLICATES == 2) {
-          A_DUPLICATE$r[[j]] <- integer(0)
-          A_DUPLICATE$x[[j]] <- integer(0)
+        if (j %in% parentChildSingleton$uniqueA) {
+          keepSecondary <- c(keepSecondary, j)
+        } else {
+          A$r[[j]] <- integer(0)
+          A$x[[j]] <- integer(0)
+          if (N_GAUSS_DUPLICATES == 2) {
+            A_DUPLICATE$r[[j]] <- integer(0)
+            A_DUPLICATE$x[[j]] <- integer(0)
+          }
         }
         secondary[j] <- TRUE
       }
@@ -1639,20 +1694,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   MessageProblematicSingletons()
   c(candidates[secondary], -unsafePrimary)
-}
-
-
-
-# Simplified version of AnyProportionalGaussInt 
-Any0GaussInt <- function(r, rB) {
-  for (i in seq_along(rB)) {
-    ni <- length(rB[[i]])
-    if (ni) {    
-      if( all(rB[[i]] %in% r) )
-        return(TRUE)
-    }
-  }
-  FALSE
 }
 
 
