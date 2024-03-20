@@ -90,7 +90,7 @@ formula_include_hierarchies <-
 #' @param simplify logical value, default TRUE. Determines whether the formula
 #' should be simplified before output or not.
 #'
-#' @return
+#' @return model formula
 #' @export
 #'
 #' @examples
