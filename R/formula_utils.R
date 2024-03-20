@@ -71,7 +71,7 @@ table_formula_from_vars <-
 #'
 #' @examples
 #' f2 <- table_formula_from_vars(c("a", "b", "c"), c("a", "c"))
-#' formula_include_hierarchies(as.formula(f2), list(a = c("hello", "world")),
+#' formula_include_hierarchies(f2, list(a = c("hello", "world")),
 #' simplify = FALSE)
 formula_include_hierarchies <-
   function(f, hier_vars, simplify = TRUE, env = parent.frame()) {
