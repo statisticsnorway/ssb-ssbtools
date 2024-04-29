@@ -989,10 +989,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             #  Possible code here to look at distribution of numeric computing errors  
             #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
             #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
-            if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i])))
+            if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i])))
               return(TRUE)
             if (numSingletonEliminationCheck) {# if (restLimit) {
-              rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i]))]
+              rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i]))]
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
               # if (sum(rangeValues[rrest]) < restLimit) {
               check_s_unique <- Check_s_unique(s_unique, i)
