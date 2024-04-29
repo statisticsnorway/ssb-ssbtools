@@ -275,7 +275,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #  return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   #}
   
-  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySum0", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
+  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumOld", "anySum0", "anySumNOTprimary", "anySumNOTprimaryOld", "subSumSpace", "subSumAny", "none"))) {
     stop("wrong singletonMethod")
   }
   if (singletonMethod_num == "sub2Sum") {
@@ -492,6 +492,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         singleton[cS1rS] <- FALSE
       }
     }
+  }
+  
+  if (singletonMethod %in% c("anySumOld", "anySumNOTprimaryOld")) {
+    singletonMethod <- sub("Old", "", singletonMethod)
+    sign_here <- function(x) x
+  } else {
+    sign_here <- sign
   }
   
   
@@ -1235,7 +1242,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           } else {
             if (subSubSec & !anySum0conservative) {
-              if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
+              if (length(unique(sign_here(A$x[[j]]))) > 1) {  #  Old version when sign_here = function(x) x, old text:  # Not proportional to original sum, 
                 if (!any(subUsed[A$r[[j]]])) {     # but can’r be sure after gaussian elimination of another “Not proportional to sum”.
                   subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
                   subUsed[A$r[[j]]] <- TRUE
