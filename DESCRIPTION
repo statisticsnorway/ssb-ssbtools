@@ -10,7 +10,7 @@ Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
              person("Statistics Norway", role = "cph"))
 Depends: Matrix
 Imports: stringr, methods, MASS
-Description: Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, and functions for hierarchical computations are included (Langsrud, 2020) <doi:10.13140/RG.2.2.27313.61283>. The hierarchy specification functions are useful within statistical disclosure control.
+Description: Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, algorithms for statistical disclosure control and functions for hierarchical computations by sparse model matrices are included (Langsrud, 2023) <doi:10.32614/RJ-2023-088>. 
 License: MIT + file LICENSE
 URL: https://github.com/statisticsnorway/SSBtools
 BugReports: https://github.com/statisticsnorway/SSBtools/issues
