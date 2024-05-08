@@ -4,7 +4,8 @@ Title: Statistics Norway's Miscellaneous Tools
 Version: 1.5.1
 Date: 2024-04-29
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
-                    email = "oyl@ssb.no"),
+                    email = "oyl@ssb.no",
+                    comment = c(ORCID = "0000-0002-1380-4396")),
              person("Daniel", "Lupp", role = c("aut")),        
              person("Bjørn-Helge", "Mevik", role = c("ctb")),
              person("Statistics Norway", role = "cph"))
