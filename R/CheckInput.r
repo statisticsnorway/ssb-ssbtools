@@ -1,25 +1,29 @@
-#' Checking an input vector
+#' Checking function inputs 
 #'
-#' An input vector (of length one unless okSeveral is TRUE) is checked.
+#' An input vector (of length one unless `okSeveral` is `TRUE`) is checked.
 #'
 #' @param x Input vector to be checked
-#' @param alt NULL or vector of allowed values
-#' @param min NULL or minimum value (when type is numeric or integer)
-#' @param max NULL or maximum value (when type is numeric or integer)
-#' @param type One of: "character", "numeric", "integer", "logical", "varName", "varNr", "varNrName".
+#' @param alt `NULL` or vector of allowed values
+#' @param min `NULL` or minimum value (when `type` is numeric or integer)
+#' @param max `NULL` or maximum value (when `type` is numeric or integer)
+#' @param type One of: `"character"`, `"numeric"`, `"integer"`, `"logical"`, `"varName"`, `"varNr"`, `"varNrName"`.
 #'        numeric/integer is not checked against exact class, but whether the value fit into the class.
 #'        Also see data below.
-#' @param data A data frame or matrix. When above type is varNames x is checked against colnames(data).
-#'        When type is varNr x is checked against column numbers.
-#'        When type is varNrName x can be either column numbers or column names.
-#' @param okSeveral When TRUE length(x)>1 is allowed
-#' @param okNULL When TRUE NULL is allowed
-#' @param okNA   When TRUE NA is allowed
-#' @param okDuplicates When TRUE duplicated values are allowed.
-#'          Default is TRUE if alt is NULL and if type does not refer to column(s) of data.
+#' @param data A data frame or matrix. When above type is `varNames`, `x` is checked against `colnames(data)`.
+#'        When type is `varNr`, `x` is checked against column numbers.
+#'        When type is `varNrName`, `x` can be either column numbers or column names.
+#' @param okSeveral When `TRUE`, `length(x)>1` is allowed
+#' @param okNULL When `TRUE`, `NULL` is allowed
+#' @param okNA   When `TRUE`, `NA` is allowed
+#' @param okDuplicates When `TRUE`, duplicated values are allowed.
+#'          Default is `TRUE` if `alt` is `NULL` and if `type` does not refer to column(s) of `data`.
 #'
-#' @details x is checked according to the other input parameters.
-#'          When x is wrong an error is produced with appropriate text.
+#' @details `x` is checked according to the other input parameters.
+#'          When `x` is wrong an error is produced with appropriate text.
+#'          
+#' @note The function was originally created in 2016 and has been included in 
+#'       internal packages at Statistics Norway (SSB). Due to its widespread use, 
+#'       it was beneficial to include it in this CRAN package.
 #'
 #' @return NULL
 #'

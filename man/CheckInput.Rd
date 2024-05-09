@@ -2,7 +2,7 @@
 % Please edit documentation in R/CheckInput.r
 \name{CheckInput}
 \alias{CheckInput}
-\title{Checking an input vector}
+\title{Checking function inputs}
 \usage{
 CheckInput(
   x,
@@ -20,35 +20,40 @@ CheckInput(
 \arguments{
 \item{x}{Input vector to be checked}
 
-\item{alt}{NULL or vector of allowed values}
+\item{alt}{\code{NULL} or vector of allowed values}
 
-\item{min}{NULL or minimum value (when type is numeric or integer)}
+\item{min}{\code{NULL} or minimum value (when \code{type} is numeric or integer)}
 
-\item{max}{NULL or maximum value (when type is numeric or integer)}
+\item{max}{\code{NULL} or maximum value (when \code{type} is numeric or integer)}
 
-\item{type}{One of: "character", "numeric", "integer", "logical", "varName", "varNr", "varNrName".
+\item{type}{One of: \code{"character"}, \code{"numeric"}, \code{"integer"}, \code{"logical"}, \code{"varName"}, \code{"varNr"}, \code{"varNrName"}.
 numeric/integer is not checked against exact class, but whether the value fit into the class.
 Also see data below.}
 
-\item{data}{A data frame or matrix. When above type is varNames x is checked against colnames(data).
-When type is varNr x is checked against column numbers.
-When type is varNrName x can be either column numbers or column names.}
+\item{data}{A data frame or matrix. When above type is \code{varNames}, \code{x} is checked against \code{colnames(data)}.
+When type is \code{varNr}, \code{x} is checked against column numbers.
+When type is \code{varNrName}, \code{x} can be either column numbers or column names.}
 
-\item{okSeveral}{When TRUE length(x)>1 is allowed}
+\item{okSeveral}{When \code{TRUE}, \code{length(x)>1} is allowed}
 
-\item{okNULL}{When TRUE NULL is allowed}
+\item{okNULL}{When \code{TRUE}, \code{NULL} is allowed}
 
-\item{okNA}{When TRUE NA is allowed}
+\item{okNA}{When \code{TRUE}, \code{NA} is allowed}
 
-\item{okDuplicates}{When TRUE duplicated values are allowed.
-Default is TRUE if alt is NULL and if type does not refer to column(s) of data.}
+\item{okDuplicates}{When \code{TRUE}, duplicated values are allowed.
+Default is \code{TRUE} if \code{alt} is \code{NULL} and if \code{type} does not refer to column(s) of \code{data}.}
 }
 \description{
-An input vector (of length one unless okSeveral is TRUE) is checked.
+An input vector (of length one unless \code{okSeveral} is \code{TRUE}) is checked.
 }
 \details{
-x is checked according to the other input parameters.
-When x is wrong an error is produced with appropriate text.
+\code{x} is checked according to the other input parameters.
+When \code{x} is wrong an error is produced with appropriate text.
+}
+\note{
+The function was originally created in 2016 and has been included in
+internal packages at Statistics Norway (SSB). Due to its widespread use,
+it was beneficial to include it in this CRAN package.
 }
 \examples{
 a <- c("no", "yes")
