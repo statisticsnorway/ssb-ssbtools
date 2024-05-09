@@ -37,3 +37,4 @@ simplify = FALSE)
 \author{
 Daniel Lupp
 }
+\keyword{internal}

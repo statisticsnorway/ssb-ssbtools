@@ -32,3 +32,4 @@ combine_formulas(lof1, simplify = TRUE)
 \author{
 Daniel Lupp and Øyvind Langsrud
 }
+\keyword{internal}

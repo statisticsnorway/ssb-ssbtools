@@ -7,6 +7,7 @@
 #' @param env the environment for the output formula
 #'
 #' @return model formula
+#' @keywords internal
 #' @export
 #' @importFrom utils combn
 #' @author Daniel Lupp
@@ -69,6 +70,7 @@ formula_from_vars <-
 #' @param env the environment for the output formula
 #'
 #' @return model formula
+#' @keywords internal
 #' @export
 #' @author Daniel Lupp
 #'
@@ -103,6 +105,7 @@ formula_include_hierarchies <-
 #' @param env the environment for the output formula
 #'
 #' @return model formula
+#' @keywords internal
 #' @export
 #' @author Daniel Lupp and Øyvind Langsrud
 #'
@@ -120,3 +123,19 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
     return(formula(terms(out, simplify = TRUE), env = env))
   out
 }
+
+
+
+#' Functions for formula manipulation
+#' 
+#' @details
+#' 
+#' *  \code{\link{combine_formulas}}: Combine formulas
+#' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
+#' *  \code{\link{formula_include_hierarchies}}: Replace variables in formula with sum of other variables
+#'
+#' @docType data
+#' @name formula_utils
+#'
+NULL
+

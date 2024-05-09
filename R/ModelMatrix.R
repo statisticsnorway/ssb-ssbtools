@@ -35,7 +35,9 @@
 #' @param dimVar The main dimensional variables and additional aggregating variables. This parameter can be  useful when hierarchies and formula are unspecified.   
 #' @param select Data frame specifying variable combinations for output 
 #'               or a named list specifying code selections for each variable (see details). 
-#' @param ... Further arguments to  \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} or \code{\link{HierarchiesAndFormula2ModelMatrix}}    
+#' @param ... Further arguments to  \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}} or \code{\link{HierarchiesAndFormula2ModelMatrix}} 
+#' 
+#' @seealso  \link{formula_utils}    
 #'
 #' @return A (sparse) model matrix or a list of two elements (model matrix and cross table)
 #' @export

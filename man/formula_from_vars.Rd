@@ -38,3 +38,4 @@ formula_from_vars(c("a", "b"), c("d"))
 \author{
 Daniel Lupp
 }
+\keyword{internal}
