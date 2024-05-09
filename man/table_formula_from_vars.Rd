@@ -7,7 +7,8 @@
 table_formula_from_vars(
   nontotal_vars = NULL,
   total_vars = NULL,
-  simplify = TRUE
+  simplify = TRUE,
+  env = parent.frame()
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ table_formula_from_vars(
 
 \item{simplify}{logical value, default TRUE. Determines whether the formula
 should be simplified before output or not.}
+
+\item{env}{the environment for the output formula}
 }
 \value{
 model formula

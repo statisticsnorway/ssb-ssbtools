@@ -4,7 +4,12 @@
 \alias{formula_include_hierarchies}
 \title{Replace variables in formula with sum of other variables}
 \usage{
-formula_include_hierarchies(f, hier_vars, simplify = TRUE)
+formula_include_hierarchies(
+  f,
+  hier_vars,
+  simplify = TRUE,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{f}{model formula}
@@ -15,6 +20,8 @@ variables you wish to replace}
 
 \item{simplify}{logical value, default TRUE. Determines whether the formula
 should be simplified before output or not.}
+
+\item{env}{the environment for the output formula}
 }
 \value{
 model formula
@@ -24,6 +31,6 @@ Replace variables in formula with sum of other variables
 }
 \examples{
 f2 <- table_formula_from_vars(c("a", "b", "c"), c("a", "c"))
-formula_include_hierarchies(as.formula(f2), list(a = c("hello", "world")),
+formula_include_hierarchies(f2, list(a = c("hello", "world")),
 simplify = FALSE)
 }

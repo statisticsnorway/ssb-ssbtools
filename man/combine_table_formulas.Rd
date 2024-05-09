@@ -4,13 +4,15 @@
 \alias{combine_table_formulas}
 \title{Function for linking tables defined using model formulas}
 \usage{
-combine_table_formulas(lof, simplify = TRUE)
+combine_table_formulas(lof, simplify = TRUE, env = parent.frame())
 }
 \arguments{
 \item{lof}{list or vector of formulas to be linked}
 
 \item{simplify}{logical value, default TRUE. Determines whether the formula
 should be simplified before output or not.}
+
+\item{env}{the environment for the output formula}
 }
 \value{
 model formula
