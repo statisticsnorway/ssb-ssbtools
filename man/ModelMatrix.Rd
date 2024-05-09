@@ -133,6 +133,9 @@ ModelMatrix(z, list(age = ageHier, geo = geoDimList),
             crossTable = TRUE)$crossTable
 
 }
+\seealso{
+\link{formula_utils}
+}
 \author{
 Øyvind Langsrud
 }
