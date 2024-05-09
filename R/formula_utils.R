@@ -10,13 +10,13 @@
 #' @export
 #'
 #' @examples
-#' table_formula_from_vars(c("a", "b", "c"), c("a"))
-#' table_formula_from_vars(c("a", "b", "c"), c("a", "c"))
-#' table_formula_from_vars(c("a", "b", "c"), c("a", "b", "c"))
-#' table_formula_from_vars(c("a", "b", "c"), NULL)
-#' table_formula_from_vars(NULL, c("a", "b", "c"))
-#' table_formula_from_vars(c("a", "b"), c("d"))
-table_formula_from_vars <-
+#' formula_from_vars(c("a", "b", "c"), c("a"))
+#' formula_from_vars(c("a", "b", "c"), c("a", "c"))
+#' formula_from_vars(c("a", "b", "c"), c("a", "b", "c"))
+#' formula_from_vars(c("a", "b", "c"), NULL)
+#' formula_from_vars(NULL, c("a", "b", "c"))
+#' formula_from_vars(c("a", "b"), c("d"))
+formula_from_vars <-
   function(nontotal_vars = NULL,
            total_vars = NULL,
            simplify = TRUE,
@@ -70,7 +70,7 @@ table_formula_from_vars <-
 #' @export
 #'
 #' @examples
-#' f2 <- table_formula_from_vars(c("a", "b", "c"), c("a", "c"))
+#' f2 <- formula_from_vars(c("a", "b", "c"), c("a", "c"))
 #' formula_include_hierarchies(f2, list(a = c("hello", "world")),
 #' simplify = FALSE)
 formula_include_hierarchies <-
@@ -100,9 +100,9 @@ formula_include_hierarchies <-
 #'
 #' @examples
 #' lof1 <- c(~a+b, ~a:c, ~c*d)
-#' combine_table_formulas(lof1, simplify = TRUE)
-#' combine_table_formulas(lof1, simplify = FALSE)
-combine_table_formulas <- function(lof, simplify = TRUE, env = parent.frame()) {
+#' combine_formulas(lof1, simplify = TRUE)
+#' combine_formulas(lof1, simplify = FALSE)
+combine_formulas <- function(lof, simplify = TRUE, env = parent.frame()) {
   lof <- sapply(lof, function(x)
     deparse(x[[length(x)]]))
   out <- formula(paste("~", paste(lof, collapse = "+")), env = env)
