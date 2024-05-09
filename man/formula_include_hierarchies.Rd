@@ -34,3 +34,6 @@ f2 <- formula_from_vars(c("a", "b", "c"), c("a", "c"))
 formula_include_hierarchies(f2, list(a = c("hello", "world")),
 simplify = FALSE)
 }
+\author{
+Daniel Lupp
+}

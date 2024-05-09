@@ -2,15 +2,17 @@
 % Please edit documentation in R/formula_utils.R
 \name{combine_formulas}
 \alias{combine_formulas}
-\title{Function for linking tables defined using model formulas}
+\title{Combine formulas}
 \usage{
-combine_formulas(lof, simplify = TRUE, env = parent.frame())
+combine_formulas(lof, operator = "+", simplify = FALSE, env = parent.frame())
 }
 \arguments{
 \item{lof}{list or vector of formulas to be linked}
 
+\item{operator}{\code{"+"} (default), \code{"*"}, \code{":"} or another operator}
+
 \item{simplify}{logical value, default TRUE. Determines whether the formula
-should be simplified before output or not.}
+should be expanded and simplified before output or not.}
 
 \item{env}{the environment for the output formula}
 }
@@ -18,10 +20,15 @@ should be simplified before output or not.}
 model formula
 }
 \description{
-Function for linking tables defined using model formulas
+Combining formulas by \code{+} or another operator.
+This is particularly useful for linking tables in the case of table building with formulas.
 }
 \examples{
 lof1 <- c(~a+b, ~a:c, ~c*d)
+combine_formulas(lof1)
+combine_formulas(lof1, operator = "*")
 combine_formulas(lof1, simplify = TRUE)
-combine_formulas(lof1, simplify = FALSE)
+}
+\author{
+Daniel Lupp and Øyvind Langsrud
 }

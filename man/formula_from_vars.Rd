@@ -35,3 +35,6 @@ formula_from_vars(c("a", "b", "c"), NULL)
 formula_from_vars(NULL, c("a", "b", "c"))
 formula_from_vars(c("a", "b"), c("d"))
 }
+\author{
+Daniel Lupp
+}

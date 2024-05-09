@@ -8,6 +8,8 @@
 #'
 #' @return model formula
 #' @export
+#' @importFrom utils combn
+#' @author Daniel Lupp
 #'
 #' @examples
 #' formula_from_vars(c("a", "b", "c"), c("a"))
@@ -68,6 +70,7 @@ formula_from_vars <-
 #'
 #' @return model formula
 #' @export
+#' @author Daniel Lupp
 #'
 #' @examples
 #' f2 <- formula_from_vars(c("a", "b", "c"), c("a", "c"))
@@ -88,24 +91,31 @@ formula_include_hierarchies <-
   }
 
 
-#' Function for linking tables defined using model formulas
+#' Combine formulas
+#' 
+#' Combining formulas by `+` or another operator.
+#' This is particularly useful for linking tables in the case of table building with formulas.
 #'
 #' @param lof list or vector of formulas to be linked
+#' @param operator `"+"` (default), `"*"`, `":"` or another operator
 #' @param simplify logical value, default TRUE. Determines whether the formula
-#' should be simplified before output or not.
+#' should be expanded and simplified before output or not.
 #' @param env the environment for the output formula
 #'
 #' @return model formula
 #' @export
+#' @author Daniel Lupp and Øyvind Langsrud
 #'
 #' @examples
 #' lof1 <- c(~a+b, ~a:c, ~c*d)
+#' combine_formulas(lof1)
+#' combine_formulas(lof1, operator = "*")
 #' combine_formulas(lof1, simplify = TRUE)
-#' combine_formulas(lof1, simplify = FALSE)
-combine_formulas <- function(lof, simplify = TRUE, env = parent.frame()) {
+combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent.frame()) {
   lof <- sapply(lof, function(x)
     deparse(x[[length(x)]]))
-  out <- formula(paste("~", paste(lof, collapse = "+")), env = env)
+  lof <- paste0("(", lof, ")")
+  out <- formula(paste("~", paste(lof, collapse = operator)), env = env)
   if (simplify)
     return(formula(terms(out, simplify = TRUE), env = env))
   out
