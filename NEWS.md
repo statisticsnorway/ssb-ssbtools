@@ -12,6 +12,7 @@
   Then warning message:  *longer object length is not a multiple of shorter object length*
 * Minor change to the singleton method `"anySum"` in `GaussSuppression()` to align with best theory.
   - In practice, this rarely makes a difference.
+  - The previous behavior can be ensured by setting `singletonMethod` to either `"anySumOld"` or `"anySumNOTprimaryOld"`.
 * Fixed a zero-weight issue in `quantile_weighted()`. 
   - Now, `quantile_weighted(x=c(0,2,0), weights = c(1,1,0))` correctly outputs the 50% value as 1.  
 * The function `CheckInput()` for checking function inputs has been included     
