@@ -21,9 +21,9 @@
 #' @details `x` is checked according to the other input parameters.
 #'          When `x` is wrong an error is produced with appropriate text.
 #'          
-#' @note The function was originally created in 2016 and has been included in 
-#'       internal packages at Statistics Norway (SSB). Due to its widespread use, 
-#'       it was beneficial to include it in this CRAN package.
+#'  *The function was originally created in 2016 and has been included in 
+#'  internal packages at Statistics Norway (SSB). Due to its widespread use, 
+#'  it was beneficial to include it in this CRAN package.*
 #'
 #' @return NULL
 #'
@@ -164,4 +164,10 @@ HeadEnd <- function(x, n = 4L) {
     x <- c(head(x, n = n), "...", tail(x, n = 1))
   x
 }
+
+
+#' @rdname CheckInput
+#' @export
+#' @note `check_input` and `CheckInput` are identical
+check_input <- CheckInput
 

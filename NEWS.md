@@ -15,7 +15,7 @@
   - The previous behavior can be ensured by setting `singletonMethod` to either `"anySumOld"` or `"anySumNOTprimaryOld"`.
 * Fixed a zero-weight issue in `quantile_weighted()`. 
   - Now, `quantile_weighted(x=c(0,2,0), weights = c(1,1,0))` correctly outputs the 50% value as 1.  
-* The function `CheckInput()` for checking function inputs has been included     
+* A function for checking function inputs has been included and can be used as either `CheckInput()` or `check_input()`.
   -   The function was originally created in 2016 and has been included in internal packages at Statistics Norway (SSB). Due to its widespread use, it was beneficial to include it in this CRAN package.
 
 ## SSBtools	1.5.0

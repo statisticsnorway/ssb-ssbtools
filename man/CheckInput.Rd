@@ -2,9 +2,23 @@
 % Please edit documentation in R/CheckInput.r
 \name{CheckInput}
 \alias{CheckInput}
+\alias{check_input}
 \title{Checking function inputs}
 \usage{
 CheckInput(
+  x,
+  alt = NULL,
+  min = NULL,
+  max = NULL,
+  type = "character",
+  data = NULL,
+  okSeveral = FALSE,
+  okNULL = FALSE,
+  okNA = FALSE,
+  okDuplicates = is.null(alt) & !(type \%in\% c("varName", "varNr", "varNrName"))
+)
+
+check_input(
   x,
   alt = NULL,
   min = NULL,
@@ -49,11 +63,13 @@ An input vector (of length one unless \code{okSeveral} is \code{TRUE}) is checke
 \details{
 \code{x} is checked according to the other input parameters.
 When \code{x} is wrong an error is produced with appropriate text.
+
+\emph{The function was originally created in 2016 and has been included in
+internal packages at Statistics Norway (SSB). Due to its widespread use,
+it was beneficial to include it in this CRAN package.}
 }
 \note{
-The function was originally created in 2016 and has been included in
-internal packages at Statistics Norway (SSB). Due to its widespread use,
-it was beneficial to include it in this CRAN package.
+\code{check_input} and \code{CheckInput} are identical
 }
 \examples{
 a <- c("no", "yes")
