@@ -11,7 +11,7 @@ combine_formulas(lof, operator = "+", simplify = FALSE, env = parent.frame())
 
 \item{operator}{\code{"+"} (default), \code{"*"}, \code{":"} or another operator}
 
-\item{simplify}{logical value, default TRUE. Determines whether the formula
+\item{simplify}{logical value, default FALSE. Determines whether the formula
 should be expanded and simplified before output or not.}
 
 \item{env}{the environment for the output formula}

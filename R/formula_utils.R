@@ -100,7 +100,7 @@ formula_include_hierarchies <-
 #'
 #' @param lof list or vector of formulas to be linked
 #' @param operator `"+"` (default), `"*"`, `":"` or another operator
-#' @param simplify logical value, default TRUE. Determines whether the formula
+#' @param simplify logical value, default FALSE. Determines whether the formula
 #' should be expanded and simplified before output or not.
 #' @param env the environment for the output formula
 #'
