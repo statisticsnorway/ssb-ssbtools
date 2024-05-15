@@ -275,7 +275,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #  return(singletonMethod(x, candidates, primary, printInc, singleton = singleton, nForced = nForced))
   #}
   
-  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySum0", "anySumNOTprimary", "subSumSpace", "subSumAny", "none"))) {
+  if (!(singletonMethod %in% c("subSum", "subSpace", "anySum", "anySumOld", "anySum0", "anySumNOTprimary", "anySumNOTprimaryOld", "subSumSpace", "subSumAny", "none"))) {
     stop("wrong singletonMethod")
   }
   if (singletonMethod_num == "sub2Sum") {
@@ -492,6 +492,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         singleton[cS1rS] <- FALSE
       }
     }
+  }
+  
+  if (singletonMethod %in% c("anySumOld", "anySumNOTprimaryOld")) {
+    singletonMethod <- sub("Old", "", singletonMethod)
+    sign_here <- function(x) x
+  } else {
+    sign_here <- sign
   }
   
   
@@ -989,10 +996,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             #  Possible code here to look at distribution of numeric computing errors  
             #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
             #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
-            if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i])))
+            if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i])))
               return(TRUE)
             if (numSingletonEliminationCheck) {# if (restLimit) {
-              rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x) < tolGauss * abs(kk_2_factorsB[i]))]
+              rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i]))]
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
               # if (sum(rangeValues[rrest]) < restLimit) {
               check_s_unique <- Check_s_unique(s_unique, i)
@@ -1235,7 +1242,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           } else {
             if (subSubSec & !anySum0conservative) {
-              if (length(unique(A$x[[j]])) > 1) {  # Not proportional to original sum, 
+              if (length(unique(sign_here(A$x[[j]]))) > 1) {  #  Old version when sign_here = function(x) x, old text:  # Not proportional to original sum, 
                 if (!any(subUsed[A$r[[j]]])) {     # but can’r be sure after gaussian elimination of another “Not proportional to sum”.
                   subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
                   subUsed[A$r[[j]]] <- TRUE

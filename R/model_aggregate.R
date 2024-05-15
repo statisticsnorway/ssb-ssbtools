@@ -18,6 +18,9 @@
 #' @param hierarchies The `hierarchies` parameter to \code{\link{ModelMatrix}}
 #' @param formula     The `formula`     parameter to \code{\link{ModelMatrix}} 
 #' @param dim_var     The `dimVar`      parameter to \code{\link{ModelMatrix}}
+#' @param remove_empty  When non-NULL, the `removeEmpty` parameter to \code{\link{ModelMatrix}}.
+#'                    Thus, the actual default value is `TRUE` with formula input without hierarchy and 
+#'                    otherwise `FALSE` (see \code{\link{ModelMatrix}}).
 #' @param preagg_var  Extra variables to be used as grouping elements in the pre-aggregate step
 #' @param dummy       The `dummy`       parameter to \code{\link{dummy_aggregate}}.
 #'                    When `TRUE`, only 0s and 1s are assumed in the generated model matrix. 
@@ -132,6 +135,7 @@ model_aggregate = function(
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
+  remove_empty = NULL,
   preagg_var = NULL,
   dummy = TRUE,
   pre_aggregate = dummy,
@@ -243,6 +247,9 @@ model_aggregate = function(
   if (verbose) {
     cat("[ModelMatrix")
     flush.console()
+  }
+  if (!is.null(remove_empty)) {
+    mm_args <- c(mm_args, list(removeEmpty = remove_empty))
   }
   if (is.null(mm_args)) {
     mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE)

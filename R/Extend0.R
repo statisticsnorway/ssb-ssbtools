@@ -89,8 +89,12 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
   
   dimVarFromVarGroups <- unlist(varGroupsNames)
   
-  if (anyDuplicated(dimVarFromVarGroups)) {
-    stop("Duplicated names in varGroups.")
+  if (is.null(FunctionExtend0)) {              # Duplicated names allowed when FunctionExtend0
+    if (anyDuplicated(dimVarFromVarGroups)) {  # Then advanced FunctionExtend0 is possible  
+      stop("Duplicated names in varGroups.")
+    }
+  } else {
+    dimVarFromVarGroups <- unique(dimVarFromVarGroups)
   }
   
   if (!is.null(dimVar)) {

@@ -50,6 +50,19 @@ quantile_weighted <- function(x, probs = (0:4)/4, weights = rep(1, length(x)), t
   }
   
   n <- length(probs)
+  
+  weights0 <- FALSE 
+  weights_is_0 <- weights == 0
+  if (any(weights_is_0)) {
+    if (any(!weights_is_0)) {            #  Important to remove 0-weights 
+      x <- x[!weights_is_0]              #  so that the use of eps is correct.
+      weights <- weights[!weights_is_0]  #  This matters when using mean in    
+    } else {                             #  case of equal of probabilities.
+      weights0 <- TRUE    # Ex: quantile_weighted(x=c(0,2,0), weights = c(1,1,0))
+    }
+  }
+  rm(weights_is_0)
+  
   length_x <- length(x)
   
   ox <- order(x)
@@ -59,13 +72,12 @@ quantile_weighted <- function(x, probs = (0:4)/4, weights = rep(1, length(x)), t
     x <- x[1]
     w <- 1
     length_x <- 1L
+    weights0 <- FALSE
   } else {
     w <- as.numeric(weights[ox])
   }
   
-  weights0 <- FALSE
-  if (!w[1]) if (!max(w)) if (!min(w)) {  # All zero weights combinded with NOT all equal x -> NA's 
-    weights0 <- TRUE
+  if (weights0) {  # All zero weights combinded with NOT all equal x -> NA's 
     x <- x[c(1, length_x)]
     w <- c(1, 1)
     length_x <- 2L
