@@ -5,3 +5,4 @@ SECURITY.md
 ^\.Rproj\.user$
 .bat
 .pdf
+^\.github$
