@@ -116,7 +116,7 @@ formula_include_hierarchies <-
 #' combine_formulas(lof1, simplify = TRUE)
 combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent.frame()) {
   lof <- sapply(lof, function(x)
-    deparse(x[[length(x)]]))
+    deparse_here(x[[length(x)]]))
   lof <- paste0("(", lof, ")")
   out <- formula(paste("~", paste(lof, collapse = operator)), env = env)
   if (simplify)
@@ -138,4 +138,16 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 #' @name formula_utils
 #'
 NULL
+
+
+# copy of base::deparse1 for old R versions without deparse1
+deparse1_copy <- function (expr, collapse = " ", width.cutoff = 500L, ...) 
+  paste(deparse(expr, width.cutoff, ...), collapse = collapse)
+
+
+deparse_here <- get0("deparse1", envir=baseenv(), ifnotfound = deparse1_copy)
+
+
+
+
 
