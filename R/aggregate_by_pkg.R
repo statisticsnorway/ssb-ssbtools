@@ -14,9 +14,9 @@
 #' @return A data.frame containing the aggregated results.
 #'
 #' @export
+#' @importFrom stats complete.cases
 #' 
 #' @examples
-#' library(data.table)
 #' d <- SSBtoolsData("d2")[1:20, ]
 #' d[[2]] <- as.numeric(d[[2]])
 #' d$y <- as.numeric(1:20)
@@ -25,20 +25,26 @@
 #' d$main_income[11:12] <- NA
 #' d$k_group[19:20] <- NA
 #' by <- c("main_income", "county", "k_group")
+#'
 #' a1 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"))
-#' a2 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table")
+#' a2 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
+#'                        include_na = TRUE)
 #' a3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
-#'                        include_na = TRUE)
-#' a4 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
-#'                        include_na = TRUE)
-#' a5 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
 #'                        include_na = TRUE, fun = function(x) list(x))
-#' a6 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
-#'                        include_na = TRUE, fun = function(x) list(x))
+#'  
+#' if (requireNamespace("data.table")) {  
 #'                        
-#' identical(a1, a2)
-#' identical(a3, a4)
-#' identical(a5, a6)
+#'   b1 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table")
+#'   b2 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
+#'                          include_na = TRUE)
+#'   b3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
+#'                          include_na = TRUE, fun = function(x) list(x))                        
+#'                        
+#'   print(identical(a1, b1))
+#'   print(identical(a2, b2))
+#'   print(identical(a3, b3))
+#'   
+#' }  # END if (requireNamespace("data.table"))
 #'                         
 aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fun = sum, base_order = TRUE) {
   if (pkg == "base") {
@@ -94,11 +100,17 @@ aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fu
   }
   
   if (pkg == "data.table") {
-    dt <- as.data.table(data)
+    
+    if (!requireNamespace("data.table", quietly = TRUE)) {
+      stop("The 'data.table' package is required but is not installed. Please install it first.")
+    }
+    
+    dt <- data.table::as.data.table(data)  
     if (!include_na) {
       # Remove rows where any of the by-columns have NA if include_na is FALSE
       dt <- dt[complete.cases(dt[, ..by]), ]
     }
+    
     # Perform aggregation using data.table, grouping by the specified columns
     dt <- dt[, lapply(.SD, fun), by = by, .SDcols = var]
     
@@ -114,5 +126,11 @@ aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fu
   stop('pkg must be "base" or "data.table"')
 }
 
+# To avoid problems when data.table not in Depends
+.datatable.aware <- TRUE 
 
-
+# To avoid check problems
+utils::globalVariables(c("..by", ".SD"))
+                         
+                         
+                         
