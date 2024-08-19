@@ -1,5 +1,45 @@
-
-
+#' Aggregate by base R or data.table
+#'
+#' This function aggregates data by specified grouping variables, using either base R or `data.table`.
+#'
+#' @param data A data frame
+#' @param by A character vector specifying the column names to group by.
+#' @param var A character vector specifying the column names of the variables to be aggregated.
+#' @param pkg A character string indicating which package to use for aggregation. 
+#' Must be either `"base"` for base R or `"data.table"` for `data.table`. Default is `"base"`.
+#' @param include_na A logical value indicating whether `NA` values in the grouping variables should be included in the aggregation. Default is `FALSE`.
+#' @param fun The function to be applied for aggregation. Default is `sum`.
+#' @param base_order A logical value indicating whether to return the results in the same order as base R when using `data.table`. Default is `TRUE`.
+#'
+#' @return A data.frame containing the aggregated results.
+#'
+#' @export
+#' 
+#' @examples
+#' library(data.table)
+#' d <- SSBtoolsData("d2")[1:20, ]
+#' d[[2]] <- as.numeric(d[[2]])
+#' d$y <- as.numeric(1:20)
+#' d$y[2] <- NA
+#' d$county[8:9] <- NA
+#' d$main_income[11:12] <- NA
+#' d$k_group[19:20] <- NA
+#' by <- c("main_income", "county", "k_group")
+#' a1 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"))
+#' a2 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table")
+#' a3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
+#'                        include_na = TRUE)
+#' a4 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
+#'                        include_na = TRUE)
+#' a5 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
+#'                        include_na = TRUE, fun = function(x) list(x))
+#' a6 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
+#'                        include_na = TRUE, fun = function(x) list(x))
+#'                        
+#' identical(a1, a2)
+#' identical(a3, a4)
+#' identical(a5, a6)
+#'                         
 aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fun = sum, base_order = TRUE) {
   if (pkg == "base") {
     
