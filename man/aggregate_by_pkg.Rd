@@ -11,7 +11,8 @@ aggregate_by_pkg(
   pkg = "base",
   include_na = FALSE,
   fun = sum,
-  base_order = TRUE
+  base_order = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,7 +29,11 @@ Must be either \code{"base"} for base R or \code{"data.table"} for \code{data.ta
 
 \item{fun}{The function to be applied for aggregation. Default is \code{sum}.}
 
-\item{base_order}{A logical value indicating whether to return the results in the same order as base R when using \code{data.table}. Default is \code{TRUE}.}
+\item{base_order}{A logical value indicating whether to attempt to return the results in the same order as base R when using \code{data.table}.
+Note that while the function strives to maintain this order, it cannot be guaranteed due to potential variations in
+sorting behavior across different systems. Default is \code{TRUE}.}
+
+\item{...}{Further arguments passed to \code{\link{aggregate}} when \code{pkg} is \code{"base"}}
 }
 \value{
 A data.frame containing the aggregated results.
@@ -60,7 +65,7 @@ if (requireNamespace("data.table", quietly = TRUE)) {
   b3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
                          include_na = TRUE, fun = function(x) list(x))                        
                        
-  print(identical(a1, b1))
+  print(identical(a1, b1))   # TRUE when base_order succeeds
   print(identical(a2, b2))
   print(identical(a3, b3))
   

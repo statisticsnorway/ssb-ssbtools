@@ -9,7 +9,10 @@
 #' Must be either `"base"` for base R or `"data.table"` for `data.table`. Default is `"base"`.
 #' @param include_na A logical value indicating whether `NA` values in the grouping variables should be included in the aggregation. Default is `FALSE`.
 #' @param fun The function to be applied for aggregation. Default is `sum`.
-#' @param base_order A logical value indicating whether to return the results in the same order as base R when using `data.table`. Default is `TRUE`.
+#' @param base_order A logical value indicating whether to attempt to return the results in the same order as base R when using `data.table`. 
+#'                   Note that while the function strives to maintain this order, it cannot be guaranteed due to potential variations in 
+#'                   sorting behavior across different systems. Default is `TRUE`.
+#' @param ... Further arguments passed to \code{\link{aggregate}} when `pkg` is `"base"`
 #'
 #' @return A data.frame containing the aggregated results.
 #'
@@ -40,7 +43,7 @@
 #'   b3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
 #'                          include_na = TRUE, fun = function(x) list(x))                        
 #'                        
-#'   print(identical(a1, b1))
+#'   print(identical(a1, b1))   # TRUE when base_order succeeds
 #'   print(identical(a2, b2))
 #'   print(identical(a3, b3))
 #'   
@@ -48,7 +51,14 @@
 #'    print("The 'data.table' package is not installed.")
 #' }
 #'                         
-aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fun = sum, base_order = TRUE) {
+aggregate_by_pkg <- function(data, 
+                             by, 
+                             var, 
+                             pkg = "base", 
+                             include_na = FALSE, 
+                             fun = sum, 
+                             base_order = TRUE, 
+                             ...) {
   if (pkg == "base") {
     
     na_included <- rep(FALSE, length(by))
@@ -79,7 +89,7 @@ aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fu
       }
     }
     
-    result <- aggregate(data[var], data[by], fun)
+    result <- aggregate(data[var], data[by], fun, ...)
     
     if (any(na_included)) {
       for (i in seq_along(by)) {
