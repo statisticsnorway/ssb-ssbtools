@@ -32,7 +32,7 @@
 #' a3 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), 
 #'                        include_na = TRUE, fun = function(x) list(x))
 #'  
-#' if (requireNamespace("data.table")) {  
+#' if (requireNamespace("data.table", quietly = TRUE)) {  
 #'                        
 #'   b1 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table")
 #'   b2 <- aggregate_by_pkg(d, by = by, var = c("y", "freq"), pkg = "data.table", 
@@ -44,7 +44,9 @@
 #'   print(identical(a2, b2))
 #'   print(identical(a3, b3))
 #'   
-#' }  # END if (requireNamespace("data.table"))
+#' }  else {
+#'    print("The 'data.table' package is not installed.")
+#' }
 #'                         
 aggregate_by_pkg <- function(data, by, var, pkg = "base", include_na = FALSE, fun = sum, base_order = TRUE) {
   if (pkg == "base") {
