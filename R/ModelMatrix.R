@@ -142,6 +142,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
         a[is.na(a)] <- 0  # Code here allow possible change in later versions
       }
     }
+    return(a)
   }
   ModelMatrixOld(data = data, hierarchies = hierarchies, formula = formula, 
                  inputInOutput = inputInOutput, crossTable = crossTable, 
