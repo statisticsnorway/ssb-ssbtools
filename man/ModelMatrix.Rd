@@ -132,6 +132,11 @@ ModelMatrix(z, list(age = ageHier, geo = geoDimList),
             select = list(geo = c("nonEU", "Portugal"), age = c("Total", "young")), 
             crossTable = TRUE)$crossTable
 
+# Using NAomit parameter avalable in Formula2ModelMatrix()
+s$age[1] <- NA
+ModelMatrix(s, formula = ~age + year)
+ModelMatrix(s, formula = ~age + year, NAomit = FALSE)
+
 }
 \seealso{
 \link{formula_utils}
