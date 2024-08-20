@@ -20,7 +20,7 @@
 #' @param avoidHierarchical Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.  
 #' @param includeEmpty  When `TRUE`, empty columns of the model matrix (only zeros) are included. 
 #'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
-#' @param NAomit When `TRUE`, NAs are omitted and not treated as a separate category. 
+#' @param NAomit When `TRUE`, NAs in the grouping variables are omitted in output and not included as a separate category. 
 #'               Technically, this parameter is utilized through the function \code{\link{RowGroups}}.
 #' @param ... Extra unused parameters
 #'
