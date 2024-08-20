@@ -93,6 +93,11 @@
 #'             select = list(geo = c("nonEU", "Portugal"), age = c("Total", "young")), 
 #'             crossTable = TRUE)$crossTable
 #' 
+#' # Using NAomit parameter avalable in Formula2ModelMatrix()
+#' s$age[1] <- NA
+#' ModelMatrix(s, formula = ~age + year)
+#' ModelMatrix(s, formula = ~age + year, NAomit = FALSE)
+#' 
 ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput = TRUE, crossTable = FALSE, 
                         sparse = TRUE, viaOrdinary = FALSE, total = "Total", 
                         removeEmpty = !is.null(formula) & is.null(hierarchies), 
@@ -142,6 +147,7 @@ ModelMatrix <- function(data, hierarchies = NULL, formula = NULL, inputInOutput 
         a[is.na(a)] <- 0  # Code here allow possible change in later versions
       }
     }
+    return(a)
   }
   ModelMatrixOld(data = data, hierarchies = hierarchies, formula = formula, 
                  inputInOutput = inputInOutput, crossTable = crossTable, 
