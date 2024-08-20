@@ -18,7 +18,7 @@ FormulaSums(
   sepCross = ":",
   avoidHierarchical = FALSE,
   includeEmpty = FALSE,
-  NAomit = FALSE,
+  NAomit = TRUE,
   ...
 )
 

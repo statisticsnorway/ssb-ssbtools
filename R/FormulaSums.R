@@ -50,7 +50,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
                         dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", 
                         avoidHierarchical = FALSE, 
                         includeEmpty = FALSE, 
-                        NAomit = FALSE,
+                        NAomit = TRUE,
                         ...) {
   
   hg <- NULL  # Possible input in a future version
