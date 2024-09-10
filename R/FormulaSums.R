@@ -161,6 +161,27 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   nFac <- NCOL(fac)
   
+  entries <- rep(nrow(data), nFac + as.integer(intercept))
+  if (NAomit) {
+    faccolNA <- rep(NA, length(faccol))
+    for (i in seq_along(faccolNA)) {
+      faccolNA[i] <- anyNA(data[, faccol[i]])
+    }
+    for (k in seq_len(nFac)) {
+      if (any(faccolNA[fac[, k]])) {
+        rowNA <- FALSE
+        for (i in faccol[fac[, k]][faccolNA[fac[, k]]]) {
+          rowNA <- rowNA | is.na(data[, i])
+        }
+        entries[k] <- entries[k] - sum(rowNA)
+      }
+    }
+  }
+  entries <- sum(entries)
+  if (entries > .Machine$integer.max) {
+    stop(paste("A matrix of", entries, "nonzero entries cannot be created. Limit is 2^31-1."))
+  }
+  
   for (k in seq_len(nFac)) {
     if (attr_startCol) {
       startCol <- c(startCol, nrow(m) + 1L)
@@ -225,6 +246,13 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   if (attr_startCol) {
     names(startCol) <- termNames
+  }
+  
+  # Possible to check entries calculation
+  if (FALSE) if (makeModelMatrix) {
+    if (entries != sum(m != 0)) {
+      stop("Wrong entries calculation")
+    }
   }
   
   if ((makeModelMatrix) & (!crossTable) & (!response)) {
