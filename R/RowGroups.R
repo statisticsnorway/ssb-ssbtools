@@ -21,6 +21,8 @@ RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = 
   if (NROW(x) == 0) 
     return(RowGroups0rows(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId))
   
+  return(RowGroupsDT(data = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = NAomit))
+  
   if (NAomit) {
     return(RowGroupsNAomit(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = FALSE))
   }
@@ -126,9 +128,14 @@ RowGroupsNAomit <- function(x, ...) {
 
 
 
-RowGroupsDT <- function(data, NAomit = FALSE) {
+RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE) {
+  
+  if (!requireNamespace("data.table", quietly = TRUE)) {
+    stop("The 'data.table' package is required but is not installed. Please install it first.")
+  }
+  
   # Convert to data.table
-  dt <- as.data.table(data)
+  dt <- data.table::as.data.table(data)
   
   # If NAomit is TRUE, handle rows with NA separately
   if (NAomit) {
@@ -151,8 +158,6 @@ RowGroupsDT <- function(data, NAomit = FALSE) {
   groups <- dt[, .SD[1], by = Group]
   groups <- groups[, Group := NULL]  # Remove the Group column from groups
   
-  # idg: Row indices of the unique rows (one index per unique group)
-  idg <- dt[, .I[1], by = Group]$V1
   
   # Sort groups by all columns
   sort_order <- do.call(order, groups[, names(groups), with = FALSE])
@@ -162,12 +167,28 @@ RowGroupsDT <- function(data, NAomit = FALSE) {
   
   # Update idx so that it points to the correct row in the sorted groups
   idx <- order(sort_order)[idx]
+  if (!(returnGroups | returnGroupsId)) {
+    return(idx)
+  }
   
-  # Update idg to follow the same sorting order as groups
-  idg <- idg[sort_order]
+  out <- NULL
+  out$idx <- idx
   
-  # Return a list with idx, groups, and idg
-  return(list(idx = idx, groups = as.data.frame(groups), idg = idg))
+  if (returnGroups) {
+    out$groups <- as.data.frame(groups)
+  }
+  
+  if (returnGroupsId) {
+    # idg: Row indices of the unique rows (one index per unique group)
+    idg <- dt[, .I[1], by = Group]$V1
+    
+    # Update idg to follow the same sorting order as groups
+    idg <- idg[sort_order]
+    
+    out$idg <- idg
+  }
+  
+  out
 }
 # RowGroupsDT is written with help from ChatGPT
 
