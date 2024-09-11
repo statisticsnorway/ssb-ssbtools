@@ -123,3 +123,52 @@ RowGroupsNAomit <- function(x, ...) {
   rg
 }
 
+
+
+
+RowGroupsDT <- function(data, NAomit = FALSE) {
+  # Convert to data.table
+  dt <- as.data.table(data)
+  
+  # If NAomit is TRUE, handle rows with NA separately
+  if (NAomit) {
+    idx <- rep(NA, nrow(dt))  # Create an idx vector filled with NA
+    complete_rows <- complete.cases(dt)  # Find rows without NA
+    dt  <- dt[complete_rows]  # Keep only rows without NA for further processing
+  } 
+  
+  # Create groups for all rows
+  dt[, Group := .GRP, by = names(dt)]
+  
+  # Update the idx vector based on whether NAomit is TRUE or FALSE
+  if (NAomit) {
+    idx[complete_rows] <- dt$Group
+  } else {
+    idx <- dt$Group
+  }
+  
+  # groups: Get unique groups by taking the first row per group
+  groups <- dt[, .SD[1], by = Group]
+  groups <- groups[, Group := NULL]  # Remove the Group column from groups
+  
+  # idg: Row indices of the unique rows (one index per unique group)
+  idg <- dt[, .I[1], by = Group]$V1
+  
+  # Sort groups by all columns
+  sort_order <- do.call(order, groups[, names(groups), with = FALSE])
+  
+  # Sort groups based on sort_order
+  groups <- groups[sort_order]
+  
+  # Update idx so that it points to the correct row in the sorted groups
+  idx <- order(sort_order)[idx]
+  
+  # Update idg to follow the same sorting order as groups
+  idg <- idg[sort_order]
+  
+  # Return a list with idx, groups, and idg
+  return(list(idx = idx, groups = as.data.frame(groups), idg = idg))
+}
+# RowGroupsDT is written with help from ChatGPT
+
+
