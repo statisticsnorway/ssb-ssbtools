@@ -143,24 +143,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     }
   }
   
-  if (makeModelMatrix) {
-    m <- fac2sparse(rep(1, NROW(data)))
-    if (!intercept) 
-      m <- m[integer(0), , drop = FALSE]
-  }
-  
-  if (response) {
-    aggFormula <- stats::update(as.formula(formula), ".~rg1RowGroups735345")
-    attr(aggFormula, ".Environment") <- attr(as.formula(".~rg"), ".Environment")
-    
-    rg1RowGroups735345 <- rep(1, NROW(data))
-    allSums <- as.matrix(aggregate(aggFormula, data, sum)[, -1, drop = FALSE])
-    
-    if (!intercept) {
-      allSums <- allSums[integer(0), , drop = FALSE]
-    }
-  }
-  
   nFac <- NCOL(fac)
   
   entries <- rep(nrow(data), nFac + as.integer(intercept))
@@ -182,6 +164,24 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   entries <- sum(entries)
   if (entries > .Machine$integer.max) {
     stop(paste("A matrix of", entries, "nonzero entries cannot be created. Limit is 2^31-1."))
+  }
+  
+  if (makeModelMatrix) {
+    m <- fac2sparse(rep(1, NROW(data)))
+    if (!intercept) 
+      m <- m[integer(0), , drop = FALSE]
+  }
+  
+  if (response) {
+    aggFormula <- stats::update(as.formula(formula), ".~rg1RowGroups735345")
+    attr(aggFormula, ".Environment") <- attr(as.formula(".~rg"), ".Environment")
+    
+    rg1RowGroups735345 <- rep(1, NROW(data))
+    allSums <- as.matrix(aggregate(aggFormula, data, sum)[, -1, drop = FALSE])
+    
+    if (!intercept) {
+      allSums <- allSums[integer(0), , drop = FALSE]
+    }
   }
   
   for (k in seq_len(nFac)) {
