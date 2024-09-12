@@ -196,6 +196,9 @@ RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAom
     # Update idg to follow the same sorting order as groups
     idg <- idg[sort_order]
     
+    # Final row indices in original data
+    idg <- which(complete_rows)[idg]
+    
     out$idg <- idg
   }
   
