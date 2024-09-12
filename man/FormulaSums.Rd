@@ -19,6 +19,7 @@ FormulaSums(
   avoidHierarchical = FALSE,
   includeEmpty = FALSE,
   NAomit = TRUE,
+  rowGroupsPackage = "data.table",
   ...
 )
 
@@ -52,6 +53,8 @@ This is not implemented when a response term is included in the formula and \cod
 
 \item{NAomit}{When \code{TRUE}, NAs in the grouping variables are omitted in output and not included as a separate category.
 Technically, this parameter is utilized through the function \code{\link{RowGroups}}.}
+
+\item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.}
 
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
