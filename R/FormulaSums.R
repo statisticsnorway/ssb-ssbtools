@@ -22,14 +22,15 @@
 #'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
 #' @param NAomit When `TRUE`, NAs in the grouping variables are omitted in output and not included as a separate category. 
 #'               Technically, this parameter is utilized through the function \code{\link{RowGroups}}.
-#' @param rowGroupsPackage Parameter `pkg` to the function \code{\link{RowGroups}}.          
+#' @param rowGroupsPackage Parameter `pkg` to the function \code{\link{RowGroups}}.         
+#' @param viaSparseMatrix When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}. 
 #' @param ... Extra unused parameters
 #'
 #' @return
 #'   A matrix of sums, a sparse model matrix or a list of two or three elements (model matrix and cross table and sums when relevant).
 #'   
 #' @importFrom stats aggregate as.formula delete.response terms
-#' @importFrom Matrix fac2sparse
+#' @importFrom Matrix fac2sparse sparseMatrix
 #' @importFrom utils flush.console
 #' 
 #' @seealso \code{\link{ModelMatrix}}
@@ -53,6 +54,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
                         includeEmpty = FALSE, 
                         NAomit = TRUE,
                         rowGroupsPackage = "data.table",
+                        viaSparseMatrix = TRUE, 
                         ...) {
   
   hg <- NULL  # Possible input in a future version
@@ -170,9 +172,24 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   }
   
   if (makeModelMatrix) {
-    m <- fac2sparse(rep(1, NROW(data)))
-    if (!intercept) 
-      m <- m[integer(0), , drop = FALSE]
+    if (viaSparseMatrix) {
+      nrow_data <- NROW(data)
+      m <- list(i = rep(1, entries), j = rep(1, entries))
+      seq_len_nrow <- seq_len(nrow_data)
+      if (intercept) {
+        m$i[seq_len_nrow] <- seq_len_nrow
+        # m$j[seq_len_nrow] <- 1L
+        m_r <- nrow_data
+        m_j <- 1L
+      } else {
+        m_r <- 0L
+        m_j <- 0L
+      }
+    } else {
+      m <- fac2sparse(rep(1, NROW(data)))
+      if (!intercept)
+        m <- m[integer(0), , drop = FALSE]
+    }
   }
   
   if (response) {
@@ -189,7 +206,11 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   for (k in seq_len(nFac)) {
     if (attr_startCol) {
-      startCol <- c(startCol, nrow(m) + 1L)
+      if (viaSparseMatrix) {
+        startCol <- c(startCol, m_j + 1L)
+      } else {
+        startCol <- c(startCol, nrow(m) + 1L)
+      }
     }
                   
     if (printInc) 
@@ -243,10 +264,38 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       }
     }
     if (makeModelMatrix) {
-      m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE)) 
+      if (viaSparseMatrix) {
+        if (is.factor(rg1)) {
+          n_j <- max(as.integer(levels(rg1)))
+          # rg1 <- as.integer(as.character(rg1))
+          rg1 <- as.integer(rg1)
+        } else {
+          n_j <- max(rg1, na.rm = TRUE)
+        }
+        if (anyNA(rg1)) {
+          finite_rg1 <- which(is.finite(rg1))
+          m_ind <- m_r + seq_len(length(finite_rg1))
+          m$i[m_ind] <- finite_rg1
+          m$j[m_ind] <- m_j + rg1[finite_rg1]
+          m_r <- m_r + length(finite_rg1)
+        } else {
+          m_ind <- m_r + seq_len_nrow
+          m$i[m_ind] <- seq_len_nrow
+          m$j[m_ind] <- m_j + rg1
+          m_r <- m_r + nrow_data
+        }
+        m_j <- m_j + n_j
+      } else {
+        m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE))
+      }
     }
   }
   
+  if (makeModelMatrix) {
+    if (viaSparseMatrix) {
+      m <- sparseMatrix(i = m$j, j = m$i, x = 1, dims = c(m_j, nrow_data))
+    }
+  }
   
   if (makeNames) {
     rowNames <- MatrixPaste(allRows, sep = sep)

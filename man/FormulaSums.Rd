@@ -20,6 +20,7 @@ FormulaSums(
   includeEmpty = FALSE,
   NAomit = TRUE,
   rowGroupsPackage = "data.table",
+  viaSparseMatrix = TRUE,
   ...
 )
 
@@ -55,6 +56,8 @@ This is not implemented when a response term is included in the formula and \cod
 Technically, this parameter is utilized through the function \code{\link{RowGroups}}.}
 
 \item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.}
+
+\item{viaSparseMatrix}{When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}.}
 
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
