@@ -231,16 +231,17 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
           for (ick in unique(hgcolick)) fr[, ick] <- MatrixPaste(ur[, hgcolick == ick, drop = FALSE], sep = sepCross)
         }
       allRows <- rbind(allRows, fr)
+    } else { 
       if (makeModelMatrix) {
-        #m <- rbind(m, fac2sparse(rg[[1]])) 
-        m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE)) 
+        rg1 <- RowGroups(data[, ck, drop = FALSE], 
+                         returnGroups = FALSE, 
+                         NAomit = NAomit, 
+                         pkg = rowGroupsPackage)
       }
-    } else 
-      if (makeModelMatrix) 
-        m <- rbind(m, fac2sparse(RowGroups(data[, ck, drop = FALSE], 
-                                           returnGroups = FALSE, 
-                                           NAomit = NAomit, 
-                                           pkg = rowGroupsPackage)))
+    }
+    if (makeModelMatrix) {
+      m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE)) 
+    }
   }
   
   
