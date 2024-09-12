@@ -156,18 +156,18 @@ RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAom
   } 
   
   # Create groups for all rows
-  dt[, Group := .GRP, by = names(dt)]
+  dt[, G_r0u_P := .GRP, by = names(dt)]
   
   # Update the idx vector based on whether NAomit is TRUE or FALSE
   if (NAomit) {
-    idx[complete_rows] <- dt$Group
+    idx[complete_rows] <- dt$G_r0u_P
   } else {
-    idx <- dt$Group
+    idx <- dt$G_r0u_P
   }
   
   # groups: Get unique groups by taking the first row per group
-  groups <- dt[, .SD[1], by = Group]
-  groups <- groups[, Group := NULL]  # Remove the Group column from groups
+  groups <- dt[, .SD[1], by = G_r0u_P]
+  groups <- groups[, G_r0u_P := NULL]  # Remove the G_r0u_P column from groups
   
   
   # Sort groups by all columns
@@ -191,7 +191,7 @@ RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAom
   
   if (returnGroupsId) {
     # idg: Row indices of the unique rows (one index per unique group)
-    idg <- dt[, .I[1], by = Group]$V1
+    idg <- dt[, .I[1], by = G_r0u_P]$V1
     
     # Update idg to follow the same sorting order as groups
     idg <- idg[sort_order]
