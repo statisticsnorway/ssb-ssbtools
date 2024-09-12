@@ -207,3 +207,12 @@ RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAom
 # RowGroupsDT is written with help from ChatGPT
 
 
+# To avoid problems when data.table not in Depends
+.datatable.aware <- TRUE 
+
+# To avoid check problems
+utils::globalVariables(c(".GRP", ".I", ":=", "G_r0u_P"))
+
+
+
+
