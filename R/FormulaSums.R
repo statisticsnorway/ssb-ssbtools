@@ -78,6 +78,9 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     stop("'includeEmpty = TRUE' with response is not implemented")
   }
   
+  if (includeEmpty & !(makeNames | crossTable)) {
+    stop("'includeEmpty = TRUE' with chosen makeNames/crossTable  is not implemented")
+  }
   
   if (is.null(makeModelMatrix)) 
     makeModelMatrix <- !response
