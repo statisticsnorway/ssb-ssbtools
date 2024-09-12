@@ -4,6 +4,8 @@
 #' @param returnGroups   When TRUE unique rows are returned
 #' @param returnGroupsId When TRUE Index of unique rows are returned
 #' @param NAomit When `TRUE`, rows containing NAs are omitted, and the corresponding index numbers are set to `NA`. 
+#' @param pkg A character string indicating which package to use. 
+#'            Must be either `"base"` for base R or `"data.table"` for `data.table`. Default is `"base"`.
 #'
 #' @return A vector with the numbering or, according to the arguments, 
 #'         a list with more output.
@@ -16,12 +18,18 @@
 #' RowGroups(a, TRUE)
 #' RowGroups(a[, 1:2], TRUE, TRUE)
 #' RowGroups(a[, 1, drop = FALSE], TRUE)
-RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE) {
+RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE, pkg = "base") {
   
+  if (!(pkg %in% c("base", "data.table"))) {
+    stop('pkg must be "base" or "data.table"')
+  } 
+    
   if (NROW(x) == 0) 
     return(RowGroups0rows(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId))
   
-  return(RowGroupsDT(data = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = NAomit))
+  if (pkg == "data.table") {
+    return(RowGroupsDT(data = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = NAomit))
+  }
   
   if (NAomit) {
     return(RowGroupsNAomit(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = FALSE))
