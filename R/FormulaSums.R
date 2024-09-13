@@ -266,7 +266,8 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     if (makeModelMatrix) {
       if (viaSparseMatrix) {
         if (is.factor(rg1)) {
-          n_j <- max(as.integer(levels(rg1)))
+          # n_j <- max(as.integer(levels(rg1)))
+          n_j <- length(levels(rg1))   # Use length() for better clarity
           # rg1 <- as.integer(as.character(rg1))
           rg1 <- as.integer(rg1)
         } else {
