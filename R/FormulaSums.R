@@ -296,7 +296,10 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   if (makeModelMatrix) {
     if (viaSparseMatrix) {
-      m <- sparseMatrix(i = m$j, j = m$i, x = 1, dims = c(last_m_j, nrow_data))
+      m <- sparseMatrix(i = m$i, j = m$j, x = 1, dims = c(nrow_data, last_m_j))
+    }
+    else {
+      m <- Matrix::t(m)
     }
   }
   
@@ -307,7 +310,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   if (makeNames) {
     rowNames <- MatrixPaste(allRows, sep = sep)
     if (makeModelMatrix) 
-      rownames(m) <- rowNames
+      colnames(m) <- rowNames
     if (response) 
       rownames(allSums) <- rowNames
   }
@@ -325,11 +328,10 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   if ((makeModelMatrix) & (!crossTable) & (!response)) {
     if (attr_startCol) {
-      m <- Matrix::t(m)
       attr(m, "startCol") <- startCol
       return(m)
     }
-    return(Matrix::t(m))
+    return(m)
   }
   
   if ((!makeModelMatrix) & (!crossTable) & (response)) 
@@ -339,7 +341,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     allRows <- NULL
   
   if (makeModelMatrix) {
-    m <- Matrix::t(m)
     if (attr_startCol) {
       attr(m, "startCol") <- startCol
     }
