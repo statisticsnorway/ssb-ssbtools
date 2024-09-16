@@ -130,12 +130,15 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   firstROW <- as.matrix(firstROW)
   firstROW[, ] <- total
   rownames(firstROW) <- NULL
-  allRows <- firstROW
+  
+  nFac <- NCOL(fac)
+  
+  allRows <- vector("list", nFac + 1L)
   
   if (intercept) 
-    allRows <- firstROW 
+    allRows[[1L]] <- firstROW 
   else 
-    allRows <- firstROW[integer(0), , drop = FALSE]
+    allRows[[1L]] <- firstROW[integer(0), , drop = FALSE]
   
   if (attr_startCol) {
     # Copy from HierarchiesAndFormula2ModelMatrix
@@ -147,8 +150,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       startCol <- integer(0)
     }
   }
-  
-  nFac <- NCOL(fac)
   
   entries <- rep(nrow(data), nFac + as.integer(intercept))
   if (NAomit) {
@@ -254,7 +255,8 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
         fr[, hgcoli[ck]] <- ur else {
           for (ick in unique(hgcolick)) fr[, ick] <- MatrixPaste(ur[, hgcolick == ick, drop = FALSE], sep = sepCross)
         }
-      allRows <- rbind(allRows, fr)
+      #allRows <- rbind(allRows, fr)
+      allRows[[k + 1L]] <- fr
     } else { 
       if (makeModelMatrix) {
         rg1 <- RowGroups(data[, ck, drop = FALSE], 
@@ -296,6 +298,10 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     if (viaSparseMatrix) {
       m <- sparseMatrix(i = m$j, j = m$i, x = 1, dims = c(m_j, nrow_data))
     }
+  }
+  
+  if (makeNames | crossTable) {
+    allRows <- do.call("rbind", allRows)
   }
   
   if (makeNames) {
