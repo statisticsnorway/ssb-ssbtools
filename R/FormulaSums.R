@@ -180,11 +180,11 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       if (intercept) {
         m$i[seq_len_nrow] <- seq_len_nrow
         # m$j[seq_len_nrow] <- 1L
-        m_r <- nrow_data
-        m_j <- 1L
+        last_m_index <- nrow_data
+        last_m_j <- 1L
       } else {
-        m_r <- 0L
-        m_j <- 0L
+        last_m_index <- 0L
+        last_m_j <- 0L
       }
     } else {
       m <- fac2sparse(rep(1, NROW(data)))
@@ -208,7 +208,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   for (k in seq_len(nFac)) {
     if (attr_startCol) {
       if (viaSparseMatrix) {
-        startCol <- c(startCol, m_j + 1L)
+        startCol <- c(startCol, last_m_j + 1L)
       } else {
         startCol <- c(startCol, nrow(m) + 1L)
       }
@@ -277,17 +277,17 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
         }
         if (anyNA(rg1)) {
           finite_rg1 <- which(is.finite(rg1))
-          m_ind <- m_r + seq_len(length(finite_rg1))
+          m_ind <- last_m_index + seq_len(length(finite_rg1))
           m$i[m_ind] <- finite_rg1
-          m$j[m_ind] <- m_j + rg1[finite_rg1]
-          m_r <- m_r + length(finite_rg1)
+          m$j[m_ind] <- last_m_j + rg1[finite_rg1]
+          last_m_index <- last_m_index + length(finite_rg1)
         } else {
-          m_ind <- m_r + seq_len_nrow
+          m_ind <- last_m_index + seq_len_nrow
           m$i[m_ind] <- seq_len_nrow
-          m$j[m_ind] <- m_j + rg1
-          m_r <- m_r + nrow_data
+          m$j[m_ind] <- last_m_j + rg1
+          last_m_index <- last_m_index + nrow_data
         }
-        m_j <- m_j + n_j
+        last_m_j <- last_m_j + n_j
       } else {
         m <- rbind(m, fac2sparse(rg1, drop.unused.levels = FALSE))
       }
@@ -296,7 +296,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   if (makeModelMatrix) {
     if (viaSparseMatrix) {
-      m <- sparseMatrix(i = m$j, j = m$i, x = 1, dims = c(m_j, nrow_data))
+      m <- sparseMatrix(i = m$j, j = m$i, x = 1, dims = c(last_m_j, nrow_data))
     }
   }
   
