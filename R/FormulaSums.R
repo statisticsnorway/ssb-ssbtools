@@ -315,8 +315,9 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       rownames(allSums) <- rowNames
   }
   
-  if (attr_startCol) {
+  if (attr_startCol & makeModelMatrix) {
     names(startCol) <- termNames
+    attr(m, "startCol") <- startCol
   }
   
   # Possible to check entries calculation
@@ -327,10 +328,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   }
   
   if ((makeModelMatrix) & (!crossTable) & (!response)) {
-    if (attr_startCol) {
-      attr(m, "startCol") <- startCol
-      return(m)
-    }
     return(m)
   }
   
@@ -340,11 +337,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   if (!crossTable) 
     allRows <- NULL
   
-  if (makeModelMatrix) {
-    if (attr_startCol) {
-      attr(m, "startCol") <- startCol
-    }
-  } else {
+  if (!makeModelMatrix) {
     m <- NULL
   }
   
