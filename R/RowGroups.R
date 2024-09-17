@@ -3,6 +3,7 @@
 #' @param x Data frame or matrix
 #' @param returnGroups   When TRUE unique rows are returned
 #' @param returnGroupsId When TRUE Index of unique rows are returned
+#' @param NAomit When `TRUE`, rows containing NAs are omitted, and the corresponding index numbers are set to `NA`. 
 #'
 #' @return A vector with the numbering or, according to the arguments, 
 #'         a list with more output.
@@ -15,10 +16,14 @@
 #' RowGroups(a, TRUE)
 #' RowGroups(a[, 1:2], TRUE, TRUE)
 #' RowGroups(a[, 1, drop = FALSE], TRUE)
-RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE) {
+RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE) {
   
   if (NROW(x) == 0) 
     return(RowGroups0rows(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId))
+  
+  if (NAomit) {
+    return(RowGroupsNAomit(x = x, returnGroups = returnGroups, returnGroupsId = returnGroupsId, NAomit = FALSE))
+  }
   
   xInteger <- AsFactorInteger(x)
   if (!is.null(xInteger)) {
@@ -92,4 +97,32 @@ AsFactorInteger <- function(x) {
   
 }
 
+
+
+RowGroupsNAomit <- function(x, ...) {
+  isNa <- rep(FALSE, NROW(x))
+  for (i in seq_len(NCOL(x))) {
+    isNa <- isNa | is.na(x[, i, drop = TRUE])
+  }
+  
+  if (!any(isNa)) {
+    return(RowGroups(x, ...))
+  }
+  
+  rg1 <- rep(NA_integer_, NROW(x))
+  
+  rg <- RowGroups(x[!isNa, , drop = FALSE], ...)
+  
+  if (is.list(rg)) {
+    rg1[!isNa] <- rg[[1]]
+    rg[[1]] <- rg1
+    if (!is.null(rg$idg)) {
+      rg$idg <- which(!isNa)[rg$idg]
+    }
+  } else {
+    rg1[!isNa] <- rg
+    rg <- rg1
+  }
+  rg
+}
 

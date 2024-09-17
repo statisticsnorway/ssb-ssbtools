@@ -4,7 +4,7 @@
 \alias{RowGroups}
 \title{Create numbering according to unique rows}
 \usage{
-RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE)
+RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE)
 }
 \arguments{
 \item{x}{Data frame or matrix}
@@ -12,6 +12,8 @@ RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE)
 \item{returnGroups}{When TRUE unique rows are returned}
 
 \item{returnGroupsId}{When TRUE Index of unique rows are returned}
+
+\item{NAomit}{When \code{TRUE}, rows containing NAs are omitted, and the corresponding index numbers are set to \code{NA}.}
 }
 \value{
 A vector with the numbering or, according to the arguments,

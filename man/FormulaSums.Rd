@@ -18,6 +18,7 @@ FormulaSums(
   sepCross = ":",
   avoidHierarchical = FALSE,
   includeEmpty = FALSE,
+  NAomit = TRUE,
   ...
 )
 
@@ -48,6 +49,9 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 
 \item{includeEmpty}{When \code{TRUE}, empty columns of the model matrix (only zeros) are included.
 This is not implemented when a response term is included in the formula and \code{dropResponse = FALSE} (error will be produced).}
+
+\item{NAomit}{When \code{TRUE}, NAs in the grouping variables are omitted in output and not included as a separate category.
+Technically, this parameter is utilized through the function \code{\link{RowGroups}}.}
 
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }

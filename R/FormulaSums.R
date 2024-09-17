@@ -20,6 +20,8 @@
 #' @param avoidHierarchical Whether to avoid treating of hierarchical variables. Instead of logical, variables can be specified.  
 #' @param includeEmpty  When `TRUE`, empty columns of the model matrix (only zeros) are included. 
 #'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
+#' @param NAomit When `TRUE`, NAs in the grouping variables are omitted in output and not included as a separate category. 
+#'               Technically, this parameter is utilized through the function \code{\link{RowGroups}}.
 #' @param ... Extra unused parameters
 #'
 #' @return
@@ -47,7 +49,9 @@
 FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, total = "Total", printInc = FALSE, 
                         dropResponse = FALSE, makeModelMatrix = NULL, sep = "-", sepCross = ":", 
                         avoidHierarchical = FALSE, 
-                        includeEmpty = FALSE,  ...) {
+                        includeEmpty = FALSE, 
+                        NAomit = TRUE,
+                        ...) {
   
   hg <- NULL  # Possible input in a future version
  
@@ -157,6 +161,27 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   nFac <- NCOL(fac)
   
+  entries <- rep(nrow(data), nFac + as.integer(intercept))
+  if (NAomit) {
+    faccolNA <- rep(NA, length(faccol))
+    for (i in seq_along(faccolNA)) {
+      faccolNA[i] <- anyNA(data[, faccol[i]])
+    }
+    for (k in seq_len(nFac)) {
+      if (any(faccolNA[fac[, k]])) {
+        rowNA <- FALSE
+        for (i in faccol[fac[, k]][faccolNA[fac[, k]]]) {
+          rowNA <- rowNA | is.na(data[, i])
+        }
+        entries[k] <- entries[k] - sum(rowNA)
+      }
+    }
+  }
+  entries <- sum(entries)
+  if (entries > .Machine$integer.max) {
+    stop(paste("A matrix of", entries, "nonzero entries cannot be created. Limit is 2^31-1."))
+  }
+  
   for (k in seq_len(nFac)) {
     if (attr_startCol) {
       startCol <- c(startCol, nrow(m) + 1L)
@@ -170,7 +195,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
     ck <- faccol[fac[, k]]
     
     if (makeNames | crossTable | response) 
-      rg <- RowGroups(data[, ck, drop = FALSE], returnGroups = TRUE)
+      rg <- RowGroups(data[, ck, drop = FALSE], returnGroups = TRUE, NAomit = NAomit)
     
     if (response) {
       rg1RowGroups735345 <- rg[[1]]
@@ -207,7 +232,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       }
     } else 
       if (makeModelMatrix) 
-        m <- rbind(m, fac2sparse(RowGroups(data[, ck, drop = FALSE], returnGroups = FALSE)))
+        m <- rbind(m, fac2sparse(RowGroups(data[, ck, drop = FALSE], returnGroups = FALSE, NAomit = NAomit)))
   }
   
   
@@ -221,6 +246,13 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   if (attr_startCol) {
     names(startCol) <- termNames
+  }
+  
+  # Possible to check entries calculation
+  if (FALSE) if (makeModelMatrix) {
+    if (entries != sum(m != 0)) {
+      stop("Wrong entries calculation")
+    }
   }
   
   if ((makeModelMatrix) & (!crossTable) & (!response)) {
