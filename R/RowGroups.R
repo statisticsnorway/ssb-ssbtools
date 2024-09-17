@@ -116,6 +116,9 @@ RowGroupsNAomit <- function(x, ...) {
   if (is.list(rg)) {
     rg1[!isNa] <- rg[[1]]
     rg[[1]] <- rg1
+    if (!is.null(rg$idg)) {
+      rg$idg <- which(!isNa)[rg$idg]
+    }
   } else {
     rg1[!isNa] <- rg
     rg <- rg1
