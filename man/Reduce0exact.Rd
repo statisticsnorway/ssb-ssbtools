@@ -56,7 +56,7 @@ Exact elements can be identified in three ways in an iterative manner:
 \item By columns in x with a singe nonzero value. Done when \code{reduceByColSums} or \code{reduceByLeverage} is \code{TRUE}.
 \item By exact linear regression fit (when leverage is one). Done when \code{reduceByLeverage} is \code{TRUE}.
 The leverages are computed by \code{hat(as.matrix(x), intercept = FALSE)}, which can be very time and memory consuming.
-Furthermore, without \code{y} in input, known values will be computed by \code{\link{ginv}}.
+Furthermore, without \code{y} in input, known values will be computed by \code{\link[MASS]{ginv}}.
 }
 }
 \examples{

@@ -8,7 +8,7 @@
 #' 2.	By columns in x with a singe nonzero value. Done when `reduceByColSums` or `reduceByLeverage` is `TRUE`.  
 #' 3.	By exact linear regression fit (when leverage is one). Done when `reduceByLeverage` is `TRUE`. 
 #'    The leverages are computed by \code{hat(as.matrix(x), intercept = FALSE)}, which can be very time and memory consuming.
-#'    Furthermore, without `y` in input, known values will be computed by \code{\link{ginv}}. 
+#'    Furthermore, without `y` in input, known values will be computed by \code{\link[MASS]{ginv}}. 
 #' 
 #'
 #' @param x A matrix 
