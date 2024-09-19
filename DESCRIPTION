@@ -9,7 +9,8 @@ Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
              person("Daniel", "Lupp", role = c("aut"),
                     comment = c(ORCID = "0000-0003-3575-1691")),  
              person("Bjørn-Helge", "Mevik", role = c("ctb")),
-             person("Vidar Norstein", "Klungre", role = "rev"),
+             person("Vidar Norstein", "Klungre", role = "rev",
+                    comment = c(ORCID = "0000-0003-1925-5911")),
              person("Statistics Norway", role = "cph"))
 Depends: Matrix
 Imports: stringr, methods, MASS
