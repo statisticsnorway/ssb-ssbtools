@@ -72,7 +72,10 @@ A matrix of sums, a sparse model matrix or a list of two or three elements (mode
 By default this function return sums if the formula contains a response part and a model matrix otherwise
 }
 \details{
-The model matrix is constructed by calling fac2sparse() repeatedly. The sums are computed by calling aggregate() repeatedly.
+In the original version of the function the model matrix was constructed by
+calling \code{\link[Matrix]{fac2sparse}} repeatedly.
+Now this is replaced by a single call to \code{\link[Matrix]{sparseMatrix}}.
+The sums are computed by calling \code{\link[stats]{aggregate}} repeatedly.
 Hierarchical variables handled when constructing cross table.
 Column names constructed from the cross table.
 The returned model matrix includes the attribute \code{startCol} (see last example line).
