@@ -186,7 +186,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       seq_len_nrow <- seq_len(nrow_data)
       if (intercept) {
         m$i[seq_len_nrow] <- seq_len_nrow
-        # m$j[seq_len_nrow] <- 1L
         last_m_index <- nrow_data
         last_m_j <- 1L
       } else {
@@ -262,7 +261,6 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
         fr[, hgcoli[ck]] <- ur else {
           for (ick in unique(hgcolick)) fr[, ick] <- MatrixPaste(ur[, hgcolick == ick, drop = FALSE], sep = sepCross)
         }
-      #allRows <- rbind(allRows, fr)
       allRows[[k + 1L]] <- fr
     } else { 
       if (makeModelMatrix) {
@@ -276,9 +274,9 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
       if (viaSparseMatrix) {
         if (is.factor(rg1)) {
           # n_j <- max(as.integer(levels(rg1)))
-          n_j <- length(levels(rg1))   # Use length() for better clarity
-          # rg1 <- as.integer(as.character(rg1))
-          rg1 <- as.integer(rg1)
+          n_j <- length(levels(rg1))   # Use length() for better clarity than line above
+          # rg1 <- as.integer(as.character(rg1))   
+          rg1 <- as.integer(rg1)   # This line since integers above is wrong here  
         } else {
           n_j <- max(rg1, na.rm = TRUE)
         }
