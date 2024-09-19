@@ -57,7 +57,9 @@ Technically, this parameter is utilized through the function \code{\link{RowGrou
 
 \item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.}
 
-\item{viaSparseMatrix}{When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}.}
+\item{viaSparseMatrix}{When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}.
+Setting it to FALSE reverts to the previous behavior.
+This parameter is included for testing purposes and will likely be removed in future versions.}
 
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }

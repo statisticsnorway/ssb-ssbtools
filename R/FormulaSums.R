@@ -24,6 +24,8 @@
 #'               Technically, this parameter is utilized through the function \code{\link{RowGroups}}.
 #' @param rowGroupsPackage Parameter `pkg` to the function \code{\link{RowGroups}}.         
 #' @param viaSparseMatrix When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}. 
+#'          Setting it to FALSE reverts to the previous behavior. 
+#'          This parameter is included for testing purposes and will likely be removed in future versions.
 #' @param ... Extra unused parameters
 #'
 #' @return
