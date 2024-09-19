@@ -19,7 +19,7 @@ FormulaSums(
   avoidHierarchical = FALSE,
   includeEmpty = FALSE,
   NAomit = TRUE,
-  rowGroupsPackage = "data.table",
+  rowGroupsPackage = "base",
   viaSparseMatrix = TRUE,
   ...
 )
@@ -55,7 +55,9 @@ This is not implemented when a response term is included in the formula and \cod
 \item{NAomit}{When \code{TRUE}, NAs in the grouping variables are omitted in output and not included as a separate category.
 Technically, this parameter is utilized through the function \code{\link{RowGroups}}.}
 
-\item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.}
+\item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.
+Default is \code{"base"}.
+Setting this parameter to \code{"data.table"} can improve speed.}
 
 \item{viaSparseMatrix}{When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}.
 Setting it to FALSE reverts to the previous behavior.

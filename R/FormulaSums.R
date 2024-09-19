@@ -22,7 +22,9 @@
 #'                      This is not implemented when a response term is included in the formula and `dropResponse = FALSE` (error will be produced).  
 #' @param NAomit When `TRUE`, NAs in the grouping variables are omitted in output and not included as a separate category. 
 #'               Technically, this parameter is utilized through the function \code{\link{RowGroups}}.
-#' @param rowGroupsPackage Parameter `pkg` to the function \code{\link{RowGroups}}.         
+#' @param rowGroupsPackage Parameter `pkg` to the function \code{\link{RowGroups}}.   
+#'                         Default is `"base"`. 
+#'                         Setting this parameter to `"data.table"` can improve speed.       
 #' @param viaSparseMatrix When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}. 
 #'          Setting it to FALSE reverts to the previous behavior. 
 #'          This parameter is included for testing purposes and will likely be removed in future versions.
@@ -55,7 +57,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
                         avoidHierarchical = FALSE, 
                         includeEmpty = FALSE, 
                         NAomit = TRUE,
-                        rowGroupsPackage = "data.table",
+                        rowGroupsPackage = "base",
                         viaSparseMatrix = TRUE, 
                         ...) {
   
