@@ -1,8 +1,8 @@
 Package: SSBtools
 Type: Package
 Title: Statistics Norway's Miscellaneous Tools
-Version: 1.5.3
-Date: 2024-08-20
+Version: 1.5.4
+Date: 2024-09-20
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no",
                     comment = c(ORCID = "0000-0002-1380-4396")),
