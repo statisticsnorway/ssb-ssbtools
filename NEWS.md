@@ -1,3 +1,30 @@
+## SSBtools	X.X.X
+* The `GaussSuppression()` function and related functionality have now been documented in a *"Privacy in Statistical Databases 2024"* paper. 
+  - The package description and function documentations have been updated with this reference [(Langsrud, 2024)](https://doi.org/10.1007/978-3-031-69651-0_6). 
+* Now the `data.table` package is listed under *Suggests* and can be utilized in two functions.
+  See below.
+* New function, `aggregate_by_pkg()`
+  - This function aggregates data by specified grouping variables, using either base R or `data.table`.
+  - Note the parameter `include_na`: A logical value indicating whether `NA` values in the grouping variables should be included in the aggregation. Default is `FALSE`.
+  - Will be used in packages depending on SSBtools.
+* `NAomit` is new parameter to `RowGroups()` and `Formula2ModelMatrix()`/`FormulaSums()`.
+  - This is about NAs in the grouping variables.
+  - The parameter can be used as input to `ModelMatrix()`.
+* `pkg` is new parameter to `RowGroups()`
+  - Must be either `"base"` (default)  or `"data.table"` (for improved speed). 
+* Improved speed of `Formula2ModelMatrix()`/`FormulaSums()`.
+  - Thus, improved speed of `ModelMatrix()`. 
+  - Now, the model matrix is constructed by a single call to `Matrix::sparseMatrix()` 
+    instead of building the transposed matrix with `rbind()` based on numerous `Matrix::fac2sparse()` calls.
+  - Further speed improvement can be achieved by setting the new parameter, `rowGroupsPackage`, to `data.table`.
+* An efficiency bug in `ModelMatrix()` is fixed.
+  - With `viaOrdinary = TRUE`, `model.matrix()` or `sparse.model.matrix()` was called twice. 
+* `combine_formulas()` is improved
+  - A long string problem solved, when long formulas. 
+* Some technical changes in documentation to comply with standards.  
+
+  
+  
 
 ## SSBtools	1.5.2
 * The `ModelMatrix()` function and related functionality for hierarchical computations have now been documented in a paper in The R Journal. 

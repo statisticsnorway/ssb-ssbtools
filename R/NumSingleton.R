@@ -3,6 +3,8 @@
 #' Decoding of `singletonMethod`
 #' 
 #' A \code{\link{GaussSuppression}} `singletonMethod` starting with `"num"` is decoded into separate characters.
+#' Part of the theory for interpreting the 3rd, 4th, and 5th characters is discussed in Langsrud (2024). 
+#' To utilize possibly duplicated contributor IDs, the 2nd character must be `"T"`.
 #' 
 #' Any `F` means the feature is turned off.  
 #' Other characters have the following meaning:
@@ -19,7 +21,7 @@
 #'   }
 #' 3. `sum2` (3rd character): 
 #'  \itemize{
-#'   \item `T`: Imaginary primary suppressed cells are made, 
+#'   \item `T`: Virtual primary suppressed cells are made, 
 #'       which are the sum of some suppressed inner cells and which can be divided into two components.
 #'       At least one component is singleton contributor. The other component may be an inner cell. 
 #'   \item `H`: As `T` above. And in addition, the other component can be any primary suppressed published cell. 
@@ -57,6 +59,13 @@
 #'
 #' @return A character vector or `NULL`
 #' @export
+#' 
+#' @references 
+#' Langsrud, Ø. (2024): 
+#' \dQuote{Secondary Cell Suppression by Gaussian Elimination: An Algorithm Suitable for Handling Issues with Zeros and Singletons}. 
+#'  Presented at: \emph{Privacy in statistical databases}, Antibes, France. September 25-27, 2024.
+#' \doi{10.1007/978-3-031-69651-0_6}
+#' 
 #'
 #' @examples
 #' NumSingleton("numTFF")

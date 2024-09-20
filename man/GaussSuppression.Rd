@@ -86,9 +86,9 @@ Hidden indices (not candidates or primary) refer to cells that will not be publi
 \itemize{
 \item \strong{Singleton methods for frequency tables:}
 All singleton methods, except \code{"sub2Sum"} and the \code{\link{NumSingleton}} methods, have been implemented with frequency tables in mind.
-The singleton method \code{"subSum"} makes new imaginary primary suppressed cells, which are the sum of the singletons
+The singleton method \code{"subSum"} makes new virtual primary suppressed cells, which are the sum of the singletons
 within each group. The \code{"subSpace"} method is conservative and ignores the singleton dimensions when looking for
-linear dependency. The default method, \code{"anySum"}, is between the other two. Instead of making imaginary cells of
+linear dependency. The default method, \code{"anySum"}, is between the other two. Instead of making virtual cells of
 sums within groups, the aim is to handle all possible sums, also across groups. In addition, \code{"subSumSpace"}  and
 \code{"subSumAny"} are possible methods, primarily for testing. These methods are similar to \code{"subSpace"} and \code{"anySum"},
 and additional cells are created as in \code{"subSum"}. It is believed that the extra cells are redundant.
@@ -98,7 +98,7 @@ If this is not the case, either \code{"anySumNOTprimary"} or \code{"anySum0"} mu
 Notably, \code{"anySum0"} is an enhancement of \code{"anySumNOTprimary"} for situations where zeros are singletons.
 Using that method avoids suppressing a zero marginal along with only one of its children.
 \item \strong{Singleton methods for magnitude tables:}
-The singleton method \code{"sub2Sum"} makes new imaginary primary suppressed cells, which are the sum of two inner cells.
+The singleton method \code{"sub2Sum"} makes new virtual primary suppressed cells, which are the sum of two inner cells.
 This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 This was the first method implemented. Other magnitude methods follow the coding according to \code{\link{NumSingleton}}.
 The \code{"sub2Sum"} method is equivalent to \code{"numFFT"}.
@@ -140,4 +140,10 @@ datF$suppressedC[GaussSuppression(x, c(which(datF$values == 0), which(datF$value
 
 datF
 
+}
+\references{
+Langsrud, Ø. (2024):
+\dQuote{Secondary Cell Suppression by Gaussian Elimination: An Algorithm Suitable for Handling Issues with Zeros and Singletons}.
+Presented at: \emph{Privacy in statistical databases}, Antibes, France. September 25-27, 2024.
+\doi{10.1007/978-3-031-69651-0_6}
 }

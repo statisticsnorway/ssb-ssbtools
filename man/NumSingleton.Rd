@@ -14,6 +14,8 @@ A character vector or \code{NULL}
 }
 \description{
 A \code{\link{GaussSuppression}} \code{singletonMethod} starting with \code{"num"} is decoded into separate characters.
+Part of the theory for interpreting the 3rd, 4th, and 5th characters is discussed in Langsrud (2024).
+To utilize possibly duplicated contributor IDs, the 2nd character must be \code{"T"}.
 }
 \details{
 Any \code{F} means the feature is turned off.
@@ -31,7 +33,7 @@ Other characters have the following meaning:
 }
 \item \code{sum2} (3rd character):
 \itemize{
-\item \code{T}: Imaginary primary suppressed cells are made,
+\item \code{T}: Virtual primary suppressed cells are made,
 which are the sum of some suppressed inner cells and which can be divided into two components.
 At least one component is singleton contributor. The other component may be an inner cell.
 \item \code{H}: As \code{T} above. And in addition, the other component can be any primary suppressed published cell.
@@ -71,4 +73,10 @@ NumSingleton("numTFF")
 NumSingleton("numFtT")
 NumSingleton("numttH")
 NumSingleton("numTTFTT")
+}
+\references{
+Langsrud, Ø. (2024):
+\dQuote{Secondary Cell Suppression by Gaussian Elimination: An Algorithm Suitable for Handling Issues with Zeros and Singletons}.
+Presented at: \emph{Privacy in statistical databases}, Antibes, France. September 25-27, 2024.
+\doi{10.1007/978-3-031-69651-0_6}
 }
