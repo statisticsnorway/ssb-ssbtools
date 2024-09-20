@@ -1,4 +1,6 @@
 ## SSBtools	X.X.X
+* The `GaussSuppression()` function and related functionality have now been documented in a *"Privacy in Statistical Databases 2024"* paper. 
+  - The package description and function documentations have been updated with this reference [(Langsrud, 2024)](https://doi.org/10.1007/978-3-031-69651-0_6). 
 * Now the `data.table` package is listed under *Suggests* and can be utilized in two functions.
   See below.
 * New function, `aggregate_by_pkg()`
