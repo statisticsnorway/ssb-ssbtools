@@ -12,9 +12,9 @@
 #' 
 #' * **Singleton methods for frequency tables:** 
 #'         All singleton methods, except `"sub2Sum"` and the \code{\link{NumSingleton}} methods, have been implemented with frequency tables in mind.
-#'         The singleton method `"subSum"` makes new imaginary primary suppressed cells, which are the sum of the singletons 
+#'         The singleton method `"subSum"` makes new virtual primary suppressed cells, which are the sum of the singletons 
 #'         within each group. The `"subSpace"` method is conservative and ignores the singleton dimensions when looking for 
-#'         linear dependency. The default method, `"anySum"`, is between the other two. Instead of making imaginary cells of 
+#'         linear dependency. The default method, `"anySum"`, is between the other two. Instead of making virtual cells of 
 #'         sums within groups, the aim is to handle all possible sums, also across groups. In addition, `"subSumSpace"`  and 
 #'         `"subSumAny"` are possible methods, primarily for testing. These methods are similar to `"subSpace"` and `"anySum"`,
 #'         and additional cells are created as in `"subSum"`. It is believed that the extra cells are redundant.
@@ -24,7 +24,7 @@
 #'         Notably, `"anySum0"` is an enhancement of `"anySumNOTprimary"` for situations where zeros are singletons.
 #'         Using that method avoids suppressing a zero marginal along with only one of its children.
 #' * **Singleton methods for magnitude tables:**          
-#'  The singleton method `"sub2Sum"` makes new imaginary primary suppressed cells, which are the sum of two inner cells. 
+#'  The singleton method `"sub2Sum"` makes new virtual primary suppressed cells, which are the sum of two inner cells. 
 #'  This is done when a group contains exactly two primary suppressed inner cells provided that at least one of them is singleton.
 #'  This was the first method implemented. Other magnitude methods follow the coding according to \code{\link{NumSingleton}}.  
 #'  The `"sub2Sum"` method is equivalent to `"numFFT"`.

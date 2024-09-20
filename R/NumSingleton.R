@@ -19,7 +19,7 @@
 #'   }
 #' 3. `sum2` (3rd character): 
 #'  \itemize{
-#'   \item `T`: Imaginary primary suppressed cells are made, 
+#'   \item `T`: Virtual primary suppressed cells are made, 
 #'       which are the sum of some suppressed inner cells and which can be divided into two components.
 #'       At least one component is singleton contributor. The other component may be an inner cell. 
 #'   \item `H`: As `T` above. And in addition, the other component can be any primary suppressed published cell. 
