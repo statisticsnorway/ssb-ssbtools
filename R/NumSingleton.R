@@ -3,6 +3,8 @@
 #' Decoding of `singletonMethod`
 #' 
 #' A \code{\link{GaussSuppression}} `singletonMethod` starting with `"num"` is decoded into separate characters.
+#' Part of the theory for interpreting the 3rd, 4th, and 5th characters is discussed in Langsrud (2024). 
+#' To utilize possibly duplicated contributor IDs, the 2nd character must be `"T"`.
 #' 
 #' Any `F` means the feature is turned off.  
 #' Other characters have the following meaning:
