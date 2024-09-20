@@ -19,6 +19,8 @@ FormulaSums(
   avoidHierarchical = FALSE,
   includeEmpty = FALSE,
   NAomit = TRUE,
+  rowGroupsPackage = "base",
+  viaSparseMatrix = TRUE,
   ...
 )
 
@@ -53,6 +55,14 @@ This is not implemented when a response term is included in the formula and \cod
 \item{NAomit}{When \code{TRUE}, NAs in the grouping variables are omitted in output and not included as a separate category.
 Technically, this parameter is utilized through the function \code{\link{RowGroups}}.}
 
+\item{rowGroupsPackage}{Parameter \code{pkg} to the function \code{\link{RowGroups}}.
+Default is \code{"base"}.
+Setting this parameter to \code{"data.table"} can improve speed.}
+
+\item{viaSparseMatrix}{When TRUE, the model matrix is constructed by a single call to \code{\link[Matrix]{sparseMatrix}}.
+Setting it to FALSE reverts to the previous behavior.
+This parameter is included for testing purposes and will likely be removed in future versions.}
+
 \item{...}{Further arguments to be passed to \code{FormulaSums}}
 }
 \value{
@@ -62,7 +72,10 @@ A matrix of sums, a sparse model matrix or a list of two or three elements (mode
 By default this function return sums if the formula contains a response part and a model matrix otherwise
 }
 \details{
-The model matrix is constructed by calling fac2sparse() repeatedly. The sums are computed by calling aggregate() repeatedly.
+In the original version of the function the model matrix was constructed by
+calling \code{\link[Matrix]{fac2sparse}} repeatedly.
+Now this is replaced by a single call to \code{\link[Matrix]{sparseMatrix}}.
+The sums are computed by calling \code{\link[stats]{aggregate}} repeatedly.
 Hierarchical variables handled when constructing cross table.
 Column names constructed from the cross table.
 The returned model matrix includes the attribute \code{startCol} (see last example line).

@@ -20,6 +20,42 @@ test_that("ModelMatrix: dimVar vs formula", {
 })
 
 
+test_that("Parameters to FormulaSums", {
+  if (!requireNamespace("data.table", quietly = TRUE)) {
+    skip()
+  }
+  
+  z3 <- SSBtoolsData("z3")
+  
+  set.seed(123)
+  z <- z3[sample.int(nrow(z3), 50), ]
+  for (i in 1:4) z[sample.int(nrow(z), 3), i] <- NA
+  
+  f <- ~fylke * hovedint * mnd + region * hovedint * mnd2 + kostragr * hovedint * mnd2
+  
+  for (removeEmpty in c(FALSE, TRUE)) {
+    for (NAomit in c(FALSE, TRUE)) {
+      m1 <- ModelMatrix(z, formula = f, 
+                        crossTable = TRUE, 
+                        removeEmpty = removeEmpty, 
+                        NAomit = NAomit)
+      for (rowGroupsPackage in c("base", "data.table")) {
+        for (viaSparseMatrix in c(FALSE, TRUE)) {
+          m2 <- ModelMatrix(z, formula = f, 
+                            crossTable = TRUE, 
+                            removeEmpty = removeEmpty, 
+                            NAomit = NAomit, 
+                            rowGroupsPackage = rowGroupsPackage,
+                            viaSparseMatrix = viaSparseMatrix)
+          expect_equal(m1, m2)
+        }
+      }
+    }
+  }
+})
+
+
+
 test_that("ModelMatrix: select parameter", {
   z <- SSBtoolsData("sprt_emp_withEU")
   z$age[z$age == "Y15-29"] <- "young"

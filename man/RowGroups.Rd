@@ -4,7 +4,13 @@
 \alias{RowGroups}
 \title{Create numbering according to unique rows}
 \usage{
-RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE)
+RowGroups(
+  x,
+  returnGroups = FALSE,
+  returnGroupsId = FALSE,
+  NAomit = FALSE,
+  pkg = "base"
+)
 }
 \arguments{
 \item{x}{Data frame or matrix}
@@ -14,6 +20,9 @@ RowGroups(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = FALSE)
 \item{returnGroupsId}{When TRUE Index of unique rows are returned}
 
 \item{NAomit}{When \code{TRUE}, rows containing NAs are omitted, and the corresponding index numbers are set to \code{NA}.}
+
+\item{pkg}{A character string indicating which package to use.
+Must be either \code{"base"} for base R or \code{"data.table"} for \code{data.table}. Default is \code{"base"}.}
 }
 \value{
 A vector with the numbering or, according to the arguments,
