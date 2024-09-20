@@ -64,6 +64,13 @@
 #' @return Secondary suppression indices  
 #' @importFrom Matrix colSums t Matrix
 #' @export
+#' 
+#' @references 
+#' Langsrud, Ø. (2024): 
+#' \dQuote{Secondary Cell Suppression by Gaussian Elimination: An Algorithm Suitable for Handling Issues with Zeros and Singletons}. 
+#'  Presented at: \emph{Privacy in statistical databases}, Antibes, France. September 25-27, 2024.
+#' \doi{10.1007/978-3-031-69651-0_6}
+#' 
 #'
 #' @examples
 #' # Input data
