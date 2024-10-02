@@ -17,6 +17,7 @@
 #'                or character string(s) to be converted to a formula (see details) 
 #' @param intercept Parameter that specifies whether a possible intercept term (overall total) should be included in the output.
 #'                  Default is `TRUE` when a formula is input. Otherwise, see details.
+#' @param logical When `TRUE`, the logical selection vector is returned.                     
 #'
 #' @return Limited model matrix or a data frame
 #' @export
@@ -51,7 +52,7 @@
 #' FormulaSelection(b, ~geo * age)
 #' FormulaSelection(b, "age:geo")
 #' FormulaSelection(b, ~year - 1)
-FormulaSelection <- function(x, formula, intercept = NA) {
+FormulaSelection <- function(x, formula, intercept = NA, logical = FALSE) {
 
   if (is.character(formula)) {
     if (!grepl("~", formula[1])) {
@@ -94,6 +95,9 @@ FormulaSelection <- function(x, formula, intercept = NA) {
   for (i in seq_along(terms)) {
     ma <- match(OrderedVarNames(terms[i]), OrderedVarNames(names(startInd)))
     selection[startInd[ma]:(startInd[ma + 1] - 1)] <- TRUE
+  }
+  if (logical) {
+    return(selection)
   }
   if (isCol) {
     out <- x[, selection, drop = FALSE]

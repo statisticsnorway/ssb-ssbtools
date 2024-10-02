@@ -5,9 +5,9 @@
 \alias{formula_selection}
 \title{Limit matrix or data frame to selected model terms}
 \usage{
-FormulaSelection(x, formula, intercept = NA)
+FormulaSelection(x, formula, intercept = NA, logical = FALSE)
 
-formula_selection(x, formula, intercept = NA)
+formula_selection(x, formula, intercept = NA, logical = FALSE)
 }
 \arguments{
 \item{x}{Model matrix or a data frame}
@@ -17,6 +17,8 @@ or character string(s) to be converted to a formula (see details)}
 
 \item{intercept}{Parameter that specifies whether a possible intercept term (overall total) should be included in the output.
 Default is \code{TRUE} when a formula is input. Otherwise, see details.}
+
+\item{logical}{When \code{TRUE}, the logical selection vector is returned.}
 }
 \value{
 Limited model matrix or a data frame
