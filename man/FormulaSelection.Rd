@@ -75,4 +75,5 @@ attr(b, "startRow") <- attr(a$modelMatrix, "startCol", exact = TRUE)
 FormulaSelection(b, ~geo * age)
 FormulaSelection(b, "age:geo")
 FormulaSelection(b, ~year - 1)
+FormulaSelection(b, ~geo:age, logical = TRUE)
 }
