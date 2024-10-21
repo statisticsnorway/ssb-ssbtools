@@ -1,3 +1,10 @@
+
+## SSBtools	1.5.5
+* The function `FormulaSelection()` and thereby the identical wrapper `formula_selection()` have been generalized.
+  - New parameter named `logical`: When `TRUE`, the logical selection vector is returned.
+  - `FormulaSelection()` is now a generic function, allowing methods for other input objects to be added.
+
+
 ## SSBtools	1.5.4
 * The `GaussSuppression()` function and related functionality have now been documented in a *"Privacy in Statistical Databases 2024"* paper. 
   - The package description and function documentations have been updated with this reference [(Langsrud, 2024)](https://doi.org/10.1007/978-3-031-69651-0_6). 
