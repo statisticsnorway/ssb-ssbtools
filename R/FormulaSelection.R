@@ -2,6 +2,7 @@
 #' Limit matrix or data frame to selected model terms 
 #' 
 #' For use with output from \code{\link{ModelMatrix}} or data frames derived from such output.
+#' It is a generic function which means that methods for other input objects can be added. 
 #' 
 #' The selection is based on `startCol` or `startRow` attribute in input `x`.
 #' 
@@ -20,6 +21,7 @@
 #' @param logical When `TRUE`, the logical selection vector is returned.                     
 #'
 #' @return Limited model matrix or a data frame
+#' @rdname FormulaSelection
 #' @export
 #'
 #' @examples
@@ -52,7 +54,7 @@
 #' FormulaSelection(b, ~geo * age)
 #' FormulaSelection(b, "age:geo")
 #' FormulaSelection(b, ~year - 1)
-FormulaSelection <- function(x, formula, intercept = NA, logical = FALSE) {
+FormulaSelection.default <- function(x, formula, intercept = NA, logical = FALSE) {
 
   if (is.character(formula)) {
     if (!grepl("~", formula[1])) {
@@ -112,6 +114,12 @@ FormulaSelection <- function(x, formula, intercept = NA, logical = FALSE) {
 # Function from CalibrateSSB
 OrderedVarNames <- function(x, sep = ":") {
   unlist(lapply(strsplit(x, sep), function(x) paste(sort(x), collapse = sep)))
+}
+
+#' @rdname FormulaSelection
+#' @export
+FormulaSelection <- function(x, formula, intercept = NA, logical = FALSE) {
+  UseMethod("FormulaSelection", x)
 }
 
 
