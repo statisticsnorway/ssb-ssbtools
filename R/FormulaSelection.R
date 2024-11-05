@@ -97,7 +97,7 @@ FormulaSelection.default <- function(x, formula, intercept = NA, logical = FALSE
   selection <- rep(FALSE, n)
   for (i in seq_along(terms)) {
     ma <- match(OrderedVarNames(terms[i]), OrderedVarNames(names(startInd)))
-    selection[startInd[ma]:(startInd[ma + 1] - 1)] <- TRUE
+    selection[SeqInc(startInd[ma], (startInd[ma + 1] - 1))] <- TRUE
   }
   if (logical) {
     return(selection)

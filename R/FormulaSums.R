@@ -278,7 +278,7 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
           # rg1 <- as.integer(as.character(rg1))   
           rg1 <- as.integer(rg1)   # This line since integers above is wrong here  
         } else {
-          n_j <- max(rg1, na.rm = TRUE)
+          n_j <- ifelse(all(is.na(rg1)), 0L, max(rg1, na.rm = TRUE))
         }
         if (anyNA(rg1)) {
           finite_rg1 <- which(is.finite(rg1))
