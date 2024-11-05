@@ -49,7 +49,7 @@
 Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NULL, dimVar = NULL, extraVar = TRUE) {
   
   if (!is.logical(extraVar)) {
-    extraVar <- names(data[1, extraVar, drop = FALSE])
+    extraVar <- names(data[0, extraVar, drop = FALSE])
     eVar <- extraVar
   } else {
     eVar <- character(0)
@@ -60,7 +60,7 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     dimVar <- dimVar[!(dimVar %in% c(freqName, eVar))]
   } else {
     if (is.null(varGroups)) {
-      dimVar <- names(data[1, dimVar, drop = FALSE])
+      dimVar <- names(data[0, dimVar, drop = FALSE])
     }
   }
   
@@ -129,7 +129,7 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
   }  
   
   ma <- Match(data[dimVar], z[dimVar])
-  z[freqName] <- 0L
+  z[ ,freqName] <- rep(0L, nrow(z))  
   newrows <- rep(TRUE, nrow(z))
   newrows[ma] <- FALSE
   z <- z[newrows, , drop = FALSE]
@@ -139,7 +139,7 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
   
   if (!(freqName %in% names(data))) {
     data <- data[allVar]
-    data[freqName] <- 1L
+    data[ ,freqName] <- rep(1L, nrow(data)) 
     allVar <- c(allVar, freqName)
   }
   
