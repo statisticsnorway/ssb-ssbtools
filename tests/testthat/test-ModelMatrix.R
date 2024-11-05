@@ -20,7 +20,7 @@ test_that("ModelMatrix: dimVar vs formula", {
 })
 
 
-test_that("Parameters to FormulaSums", {
+test_that("Parameters to FormulaSums + FormulaSelection", {
   if (!requireNamespace("data.table", quietly = TRUE)) {
     skip()
   }
@@ -30,8 +30,11 @@ test_that("Parameters to FormulaSums", {
   set.seed(123)
   z <- z3[sample.int(nrow(z3), 50), ]
   for (i in 1:4) z[sample.int(nrow(z), 3), i] <- NA
+  z$mnd2[!is.na(z$region) & !is.na(z$hovedint)] <- NA
   
   f <- ~fylke * hovedint * mnd + region * hovedint * mnd2 + kostragr * hovedint * mnd2
+  
+  ncols <- integer(0)
   
   for (removeEmpty in c(FALSE, TRUE)) {
     for (NAomit in c(FALSE, TRUE)) {
@@ -39,6 +42,9 @@ test_that("Parameters to FormulaSums", {
                         crossTable = TRUE, 
                         removeEmpty = removeEmpty, 
                         NAomit = NAomit)
+      ncols <- c(ncols,  
+                 ncol(formula_selection(m1$modelMatrix, ~region:hovedint:mnd2 - 1)),
+                 ncol(FormulaSelection(m1$modelMatrix, ~kostragr * hovedint * mnd2)))
       for (rowGroupsPackage in c("base", "data.table")) {
         for (viaSparseMatrix in c(FALSE, TRUE)) {
           m2 <- ModelMatrix(z, formula = f, 
@@ -52,6 +58,7 @@ test_that("Parameters to FormulaSums", {
       }
     }
   }
+  expect_equal(ncols, c(310, 126, 0, 44, 47, 80, 0, 39))
 })
 
 
