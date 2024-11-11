@@ -60,3 +60,6 @@ Hierarchies2Vars(list(f1 = c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = A
 
 
 }
+\seealso{
+\code{\link{Vars2Hierarchies}}
+}

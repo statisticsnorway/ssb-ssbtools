@@ -17,6 +17,7 @@
 #' @param ...  Further parameters sent to \code{\link{AutoHierarchies}} 
 #'
 #' @return Named list of data frames 
+#' @seealso \code{\link{Vars2Hierarchies}}
 #' @export
 #'
 #' @examples
@@ -95,6 +96,58 @@ Hierarchies2Vars <- function(hierarchies,
   
   vars
 }
+
+
+
+
+
+#' Transform hierarchies coded as Variables to "to-from" format 
+#' 
+#' A kind of reverse operation of \code{\link{Hierarchies2Vars}}
+#'
+#' @param hierarchiesAsVars As output from \code{\link{Hierarchies2Vars}}
+#'
+#' @return List of hierarchies
+#' 
+#' @export
+#'
+#' @examples
+#' 
+#' a <- Hierarchies2Vars(list(f1 = 
+#'        c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
+#' a
+#' 
+#' Vars2Hierarchies(a)
+#' 
+Vars2Hierarchies <- function(hierarchiesAsVars) {
+  if (any(!sapply(hierarchiesAsVars, is.data.frame))) {
+    stop("Input must be a list of data frames")
+  }
+  if (any(sapply(hierarchiesAsVars, function(x) anyNA(x[[1]])))) {
+    stop("The first column cannot have missing values")
+  }
+  lapply(hierarchiesAsVars, Vars2Hierarchies1)
+}
+
+
+
+Vars2Hierarchies1 <- function(a) {
+  
+  z <- data.frame(mapsFrom = character(0), mapsTo = character(0), 
+                  sign = integer(0), level = integer(0))
+  
+  for (i in SeqInc(2, ncol(a))) {
+    x <- a[c(1, i)]
+    x <- x[!is.na(x[[2]]), , drop = FALSE]
+    names(x) <- c("mapsFrom", "mapsTo")
+    z <- rbind(z, cbind(x, sign = 1L, level = i - 1L))
+  }
+  rownames(z) <- NULL
+  z
+}
+
+
+
 
 
 NiceHierarchy2Vars <- function(dummyHierarchy, autoHierarchy, message) {
