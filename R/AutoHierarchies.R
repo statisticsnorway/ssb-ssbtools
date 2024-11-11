@@ -193,10 +193,14 @@ AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
       hi <- Hrc2DimList(hi, total = total)
     if (!is.data.frame(hi)) 
       stop("Something is wrong")
-    if (NCOL(hi) == 2) 
-      hi <- DimList2Hierarchy(hi) 
-    else 
-      hi <- HierarchyFix(hi, hierarchyVarNames)
+    if (NCOL(hi) == 2) { 
+      if ("levels" %in% names(hi)) {
+        if (identical(unique(unique(strsplit(hi$levels, NULL)[[1]])), "@")) {
+          return(DimList2Hierarchy(hi))
+        }
+      }
+    }
+    hi <- HierarchyFix(hi, hierarchyVarNames)
     hi
 }
 
