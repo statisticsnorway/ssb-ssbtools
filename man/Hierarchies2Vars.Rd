@@ -9,6 +9,7 @@ Hierarchies2Vars(
   singleVars = FALSE,
   fromDummy = NA,
   dummyReorder = TRUE,
+  nameFunction = function(name, level) paste0(name, "_level_", level),
   ...
 )
 }
@@ -25,6 +26,10 @@ Hierarchies2Vars(
 }}
 
 \item{dummyReorder}{When \code{TRUE}, the dummy-coded hierarchies are reordered, potentially improving the structure of output variables.}
+
+\item{nameFunction}{A function that defines how to name all columns except the first.
+The input consists of the hierarchy name (identical to the first column’s name, \code{name})
+and the column number minus 1 (\code{level}).}
 
 \item{...}{Further parameters sent to \code{\link{AutoHierarchies}}}
 }

@@ -11,6 +11,9 @@
 #'   - When `FALSE`, the algorithm works directly on hierarchies standardized by `AutoHierarchies`, which often results in well-structured output variables.
 #'   - When `NA` (default), the algorithm first attempts the `FALSE` method; if this is not feasible, it falls back to the `TRUE` method.
 #' @param dummyReorder  When `TRUE`, the dummy-coded hierarchies are reordered, potentially improving the structure of output variables.  
+#' @param nameFunction  A function that defines how to name all columns except the first. 
+#'                      The input consists of the hierarchy name (identical to the first column’s name, `name`) 
+#'                      and the column number minus 1 (`level`).
 #' @param ...  Further parameters sent to \code{\link{AutoHierarchies}} 
 #'
 #' @return Named list of data frames 
@@ -36,7 +39,12 @@
 #'                       f2 = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
 #' 
 #' 
-Hierarchies2Vars <- function(hierarchies, singleVars = FALSE, fromDummy = NA, dummyReorder = TRUE, ...) {
+Hierarchies2Vars <- function(hierarchies, 
+                             singleVars = FALSE, 
+                             fromDummy = NA, 
+                             dummyReorder = TRUE,
+                             nameFunction = function(name, level) paste0(name, "_level_", level),
+                             ...) {
   
   if (singleVars) {
     fromDummy <- TRUE
@@ -77,12 +85,11 @@ Hierarchies2Vars <- function(hierarchies, singleVars = FALSE, fromDummy = NA, du
     if (isFALSE(vars[[i]])) {
       vars[[i]] <- Dummy2Vars(dummyHierarchies[[i]], singleVars = singleVars)
     }
-    
-    if (singleVars) {
-      names(vars[[i]])[1] <- names(vars)[i]
-    } else {
-      nam <- c("", paste("_level", seq_len(ncol(vars[[i]]) - 1), sep = "_"))
-      names(vars[[i]]) <- paste0(names(vars)[i], nam)
+    names(vars[[i]])[1] <- names(vars)[i]
+    if (!singleVars) {
+      for (j in seq_len(ncol(vars[[i]]) - 1)) {
+        names(vars[[i]])[j+1] <- nameFunction(names(vars)[i], j)
+      }
     }
   }
   
