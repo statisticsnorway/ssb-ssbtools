@@ -17,7 +17,7 @@ A kind of reverse operation of \code{\link{Hierarchies2Vars}}
 }
 \examples{
 
-a <- Hierarchies2Vars(list(f1 = 
+a <- Hierarchies2Vars(list(f = 
        c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
 a
 

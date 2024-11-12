@@ -5,15 +5,16 @@
 #' The hierarchical relations are stored as minimal datasets
 #'
 #' @param hierarchies List of hierarchies on the same form as input to \code{\link{AutoHierarchies}}
+#' @param nameFunction  A function that defines how to name all columns except the first. 
+#'                      The input consists of the hierarchy name (identical to the first column’s name, `name`) 
+#'                      and the column number minus 1 (`level`).
 #' @param singleVars When `TRUE`, a single variable is created for all codes except the input codes. 
 #' @param fromDummy Logical value indicating the method for handling hierarchies.
 #'   - When `TRUE`, the algorithm uses dummy-coded hierarchies.
 #'   - When `FALSE`, the algorithm works directly on hierarchies standardized by `AutoHierarchies`, which often results in well-structured output variables.
 #'   - When `NA` (default), the algorithm first attempts the `FALSE` method; if this is not feasible, it falls back to the `TRUE` method.
 #' @param dummyReorder  When `TRUE`, the dummy-coded hierarchies are reordered, potentially improving the structure of output variables.  
-#' @param nameFunction  A function that defines how to name all columns except the first. 
-#'                      The input consists of the hierarchy name (identical to the first column’s name, `name`) 
-#'                      and the column number minus 1 (`level`).
+#' @param combineVars   When `TRUE`, an algorithm is run, potentially reducing the number of output variables needed.
 #' @param ...  Further parameters sent to \code{\link{AutoHierarchies}} 
 #'
 #' @return Named list of data frames 
@@ -35,16 +36,15 @@
 #' 
 #' 
 #' # NAs are included in data when necessary
-#' # Order may affect the results. In this case, the second formula gives better results.
-#' Hierarchies2Vars(list(f1 = c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD"),
-#'                       f2 = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
+#' Hierarchies2Vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
 #' 
 #' 
-Hierarchies2Vars <- function(hierarchies, 
+Hierarchies2Vars <- function(hierarchies,
+                             nameFunction = function(name, level) paste0(name, "_level_", level),
                              singleVars = FALSE, 
                              fromDummy = NA, 
                              dummyReorder = TRUE,
-                             nameFunction = function(name, level) paste0(name, "_level_", level),
+                             combineVars = TRUE,
                              ...) {
   
   if (singleVars) {
@@ -87,6 +87,9 @@ Hierarchies2Vars <- function(hierarchies,
       vars[[i]] <- Dummy2Vars(dummyHierarchies[[i]], singleVars = singleVars)
     }
     names(vars[[i]])[1] <- names(vars)[i]
+    if(combineVars & !singleVars){
+      vars = lapply(vars, CombineVars)     
+    }
     if (!singleVars) {
       for (j in seq_len(ncol(vars[[i]]) - 1)) {
         names(vars[[i]])[j+1] <- nameFunction(names(vars)[i], j)
@@ -113,7 +116,7 @@ Hierarchies2Vars <- function(hierarchies,
 #'
 #' @examples
 #' 
-#' a <- Hierarchies2Vars(list(f1 = 
+#' a <- Hierarchies2Vars(list(f = 
 #'        c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
 #' a
 #' 
@@ -239,8 +242,6 @@ DummyReorder <- function(dummyHierarchies, autoHierarchies, message) {
 
 
 DummyReorder1 <- function(dummyHierarchy, autoHierarchy, message) {
-  dummyHierarchy <<- dummyHierarchy
-  autoHierarchy <<- autoHierarchy 
   if (!any(diff(autoHierarchy$level) < 0) | any(autoHierarchy$sign < 0)) {
     ord <- match(unique(autoHierarchy$mapsTo), rownames(dummyHierarchy))
     sum1 <- sum(rowSums(dummyHierarchy) * seq_len(nrow(dummyHierarchy)))
@@ -255,7 +256,34 @@ DummyReorder1 <- function(dummyHierarchy, autoHierarchy, message) {
   dummyHierarchy
 }
 
-
+CombineVars <- function(x) {
+  recursive <- FALSE
+  if (anyNA(x)) {
+    m <- As_TsparseMatrix(crossprod(as.matrix(!is.na(x))) == 0)
+    ii <- integer(0)
+    jj <- integer(0)
+    ord <- order(m@i)
+    i <- m@i[ord] + 1L
+    j <- m@j[ord] + 1L
+    while (length(i)) {
+      recursive <- TRUE
+      ii <- c(ii, i[1])
+      jj <- c(jj, j[1])
+      ind <- i == i[1] | i == j[1] | j == i[1] | j == j[1]
+      i <- i[!ind]
+      j <- j[!ind]
+    }
+    if (recursive) {
+      for (k in seq_along(ii)) {
+        isjk <- !is.na(x[jj[k]])
+        if (any(!is.na(x[[ii[k]]][isjk]))) {
+          stop("CombineVars algorithm is wrong")
+        }
+        x[[ii[k]]][isjk] <- x[[jj[k]]][isjk]
+      }
+      x <- CombineVars(x[-jj])
+    }
+  }
+  x
+}
  
-
-

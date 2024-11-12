@@ -6,15 +6,20 @@
 \usage{
 Hierarchies2Vars(
   hierarchies,
+  nameFunction = function(name, level) paste0(name, "_level_", level),
   singleVars = FALSE,
   fromDummy = NA,
   dummyReorder = TRUE,
-  nameFunction = function(name, level) paste0(name, "_level_", level),
+  combineVars = TRUE,
   ...
 )
 }
 \arguments{
 \item{hierarchies}{List of hierarchies on the same form as input to \code{\link{AutoHierarchies}}}
+
+\item{nameFunction}{A function that defines how to name all columns except the first.
+The input consists of the hierarchy name (identical to the first column’s name, \code{name})
+and the column number minus 1 (\code{level}).}
 
 \item{singleVars}{When \code{TRUE}, a single variable is created for all codes except the input codes.}
 
@@ -27,9 +32,7 @@ Hierarchies2Vars(
 
 \item{dummyReorder}{When \code{TRUE}, the dummy-coded hierarchies are reordered, potentially improving the structure of output variables.}
 
-\item{nameFunction}{A function that defines how to name all columns except the first.
-The input consists of the hierarchy name (identical to the first column’s name, \code{name})
-and the column number minus 1 (\code{level}).}
+\item{combineVars}{When \code{TRUE}, an algorithm is run, potentially reducing the number of output variables needed.}
 
 \item{...}{Further parameters sent to \code{\link{AutoHierarchies}}}
 }
@@ -54,9 +57,7 @@ Hierarchies2Vars(list(age = ageHier, geo = geoDimList, year = yearFormula), sing
 
 
 # NAs are included in data when necessary
-# Order may affect the results. In this case, the second formula gives better results.
-Hierarchies2Vars(list(f1 = c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD"),
-                      f2 = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
+Hierarchies2Vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
 
 
 }

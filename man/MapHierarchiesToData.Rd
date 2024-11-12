@@ -31,6 +31,6 @@ ageHier <- SSBtoolsData("sprt_emp_ageHier")
 MapHierarchiesToData(z, list(age = ageHier, geo = geoDimList, year = yearFormula))
 
 MapHierarchiesToData(data.frame(f = c("A", "B", "C", "D", "E", "A")), list(f = 
-       c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
+       c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
        
 }
