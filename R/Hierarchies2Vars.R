@@ -1,98 +1,92 @@
 
 
+
 #' Hierarchies coded as variables 
 #' 
 #' The hierarchical relations are stored as minimal datasets
 #'
-#' @param hierarchies List of hierarchies on the same form as input to \code{\link{AutoHierarchies}}
-#' @param nameFunction  A function that defines how to name all columns except the first. 
-#'                      The input consists of the hierarchy name (identical to the first column’s name, `name`) 
+#' @param hierarchies List of hierarchies in the same format as input to \code{\link{AutoHierarchies}}
+#' @param name_function A function defining how to name all columns except the first.
+#'                      The input consists of the hierarchy name (identical to the first column’s name, `name`)
 #'                      and the column number minus 1 (`level`).
-#' @param singleVars When `TRUE`, a single variable is created for all codes except the input codes. 
-#' @param fromDummy Logical value indicating the method for handling hierarchies.
+#' @param single_vars When `TRUE`, a single variable is created for all codes except the input codes.
+#' @param from_dummy Logical value indicating the method for handling hierarchies.
 #'   - When `TRUE`, the algorithm uses dummy-coded hierarchies.
-#'   - When `FALSE`, the algorithm works directly on hierarchies standardized by `AutoHierarchies`, which often results in well-structured output variables.
-#'   - When `NA` (default), the algorithm first attempts the `FALSE` method; if this is not feasible, it falls back to the `TRUE` method.
-#' @param dummyReorder  When `TRUE`, the dummy-coded hierarchies are reordered, potentially improving the structure of output variables.  
-#' @param combineVars   When `TRUE`, an algorithm is run, potentially reducing the number of output variables needed.
-#' @param ...  Further parameters sent to \code{\link{AutoHierarchies}} 
+#'   - When `FALSE`, the algorithm works directly on hierarchies standardized by `AutoHierarchies`, often resulting in well-structured output variables.
+#'   - When `NA` (default), the algorithm first attempts the `FALSE` method; if not feasible, it falls back to the `TRUE` method.
+#' @param dummy_reorder When `TRUE`, dummy-coded hierarchies are reordered to potentially improve the structure of output variables.
+#' @param combine_vars When `TRUE`, an algorithm is applied to potentially reduce the number of output variables needed.
+#' @param ... Additional parameters passed to \code{\link{AutoHierarchies}}
 #'
-#' @return Named list of data frames 
-#' @seealso \code{\link{Vars2Hierarchies}}
+#' @return Named list of data frames
+#' @seealso \code{\link{vars_to_hierarchies}}
 #' @export
 #'
 #' @examples
-#' 
 #' # Examples based on those from AutoHierarchies
 #' # You may also try converting other examples from AutoHierarchies
-#' 
+#'
 #' z <- SSBtoolsData("sprt_emp_withEU")
-#' yearFormula <- c("y_14 = 2014", "y_15_16 = y_all - y_14", "y_all = 2014 + 2015 + 2016")
-#' geoDimList <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
-#' ageHier <- SSBtoolsData("sprt_emp_ageHier")
-#' 
-#' Hierarchies2Vars(list(age = ageHier, geo = geoDimList, year = yearFormula))
-#' Hierarchies2Vars(list(age = ageHier, geo = geoDimList, year = yearFormula), singleVars = TRUE)
-#' 
-#' 
+#' year_formula <- c("y_14 = 2014", "y_15_16 = y_all - y_14", "y_all = 2014 + 2015 + 2016")
+#' geo_dim_list <- FindDimLists(z[, c("geo", "eu")], total = "Europe")[[1]]
+#' age_hierarchy <- SSBtoolsData("sprt_emp_ageHier")
+#'
+#' hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula))
+#' hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula), 
+#'                     singleVars = TRUE)
+#'                     
 #' # NAs are included in data when necessary
-#' Hierarchies2Vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
-#' 
-#' 
-Hierarchies2Vars <- function(hierarchies,
-                             nameFunction = function(name, level) paste0(name, "_level_", level),
-                             singleVars = FALSE, 
-                             fromDummy = NA, 
-                             dummyReorder = TRUE,
-                             combineVars = TRUE,
-                             ...) {
+#' hierarchies_as_vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))                     
+#'                     
+hierarchies_as_vars <- function(hierarchies,
+                                name_function = function(name, level) paste0(name, "_level_", level),
+                                single_vars = FALSE, 
+                                from_dummy = NA, 
+                                dummy_reorder = TRUE,
+                                combine_vars = TRUE,
+                                ...) {
   
-  if (singleVars) {
-    fromDummy <- TRUE
+  if (single_vars) {
+    from_dummy <- TRUE
   }
   
-  # fromDummy = NaN is hack to print messages 
-  if (is.nan(fromDummy)) {
+  if (is.nan(from_dummy)) {
     message_here <- message 
   } else {
     message_here <- function(x) NULL
   }
   
-  autoHierarchies <- AutoHierarchies(hierarchies = hierarchies, ...)
-  dummyHierarchies <- DummyHierarchies(autoHierarchies)
+  auto_hierarchies <- AutoHierarchies(hierarchies = hierarchies, ...)
+  dummy_hierarchies <- DummyHierarchies(auto_hierarchies)
   
-  # Reorder can lead to smarter/less output variables
-  if (dummyReorder) {
-    dummyHierarchies <- DummyReorder(dummyHierarchies, 
-                                     autoHierarchies, 
-                                     message = message_here)
-  }
- 
-  # list of FALSE better than list of NULL, since vars[[i]] = NULL not working as expected 
-  vars <- as.list(rep(FALSE, length(autoHierarchies)))
-  names(vars) <- names(autoHierarchies)
- 
-  
-  for (i in seq_along(autoHierarchies)) {
-    
-    if (isFALSE(fromDummy) | is.na(fromDummy)) {
-      vars[[i]] <- NiceHierarchy2Vars(dummyHierarchies[[i]], 
-                                      autoHierarchies[[i]],
+  if (dummy_reorder) {
+    dummy_hierarchies <- DummyReorder(dummy_hierarchies, 
+                                      auto_hierarchies, 
                                       message = message_here)
-      if (isFALSE(fromDummy) & isFALSE(vars[[i]])) {
-        stop("FALSE fromDummy not working")
+  }
+  
+  vars <- as.list(rep(FALSE, length(auto_hierarchies)))
+  names(vars) <- names(auto_hierarchies)
+  
+  for (i in seq_along(auto_hierarchies)) {
+    if (isFALSE(from_dummy) | is.na(from_dummy)) {
+      vars[[i]] <- nice_hierarchy_to_vars(dummy_hierarchies[[i]], 
+                                          auto_hierarchies[[i]],
+                                          message = message_here)
+      if (isFALSE(from_dummy) & isFALSE(vars[[i]])) {
+        stop("FALSE from_dummy not working")
       }
     }
     if (isFALSE(vars[[i]])) {
-      vars[[i]] <- Dummy2Vars(dummyHierarchies[[i]], singleVars = singleVars)
+      vars[[i]] <- dummy_to_vars(dummy_hierarchies[[i]], single_vars = single_vars)
     }
     names(vars[[i]])[1] <- names(vars)[i]
-    if(combineVars & !singleVars){
-      vars = lapply(vars, CombineVars)     
+    if (combine_vars & !single_vars){
+      vars <- lapply(vars, CombineVars)     
     }
-    if (!singleVars) {
+    if (!single_vars) {
       for (j in seq_len(ncol(vars[[i]]) - 1)) {
-        names(vars[[i]])[j+1] <- nameFunction(names(vars)[i], j)
+        names(vars[[i]])[j + 1] <- name_function(names(vars)[i], j)
       }
     }
   }
@@ -100,42 +94,34 @@ Hierarchies2Vars <- function(hierarchies,
   vars
 }
 
-
-
-
-
 #' Transform hierarchies coded as Variables to "to-from" format 
 #' 
-#' A kind of reverse operation of \code{\link{Hierarchies2Vars}}
+#' A kind of reverse operation of \code{\link{hierarchies_as_vars}}
 #'
-#' @param hierarchiesAsVars As output from \code{\link{Hierarchies2Vars}}
+#' @param var_hierarchies As output from \code{\link{hierarchies_as_vars}}
 #'
 #' @return List of hierarchies
 #' 
 #' @export
-#'
+#' 
 #' @examples
 #' 
-#' a <- Hierarchies2Vars(list(f = 
+#' a <- hierarchies_as_vars(list(f = 
 #'        c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
 #' a
 #' 
-#' Vars2Hierarchies(a)
-#' 
-Vars2Hierarchies <- function(hierarchiesAsVars) {
-  if (any(!sapply(hierarchiesAsVars, is.data.frame))) {
+#' vars_to_hierarchies(a)
+vars_to_hierarchies <- function(var_hierarchies) {
+  if (any(!sapply(var_hierarchies, is.data.frame))) {
     stop("Input must be a list of data frames")
   }
-  if (any(sapply(hierarchiesAsVars, function(x) anyNA(x[[1]])))) {
+  if (any(sapply(var_hierarchies, function(x) anyNA(x[[1]])))) {
     stop("The first column cannot have missing values")
   }
-  lapply(hierarchiesAsVars, Vars2Hierarchies1)
+  lapply(var_hierarchies, vars_to_hierarchies_1)
 }
 
-
-
-Vars2Hierarchies1 <- function(a) {
-  
+vars_to_hierarchies_1 <- function(a) {
   z <- data.frame(mapsFrom = character(0), mapsTo = character(0), 
                   sign = integer(0), level = integer(0))
   
@@ -151,49 +137,46 @@ Vars2Hierarchies1 <- function(a) {
 
 
 
-
-
-NiceHierarchy2Vars <- function(dummyHierarchy, autoHierarchy, message) {
+nice_hierarchy_to_vars <- function(dummy_hierarchy, auto_hierarchy, message) {
   
-  if (any(duplicated(autoHierarchy$mapsFrom))) {
-    message(("duplicated(autoHierarchy$mapsFrom"))
+  if (any(duplicated(auto_hierarchy$mapsFrom))) {
+    message("duplicated(auto_hierarchy$mapsFrom)")
     return(FALSE)
   }
   
-  uniqueAuto2 <- unique(autoHierarchy[c("mapsTo", "level")])
-  if (any(duplicated(uniqueAuto2$mapsTo))) {
-    message("duplicated(uniqueAuto2$mapsTo")
+  unique_auto_2 <- unique(auto_hierarchy[c("mapsTo", "level")])
+  if (any(duplicated(unique_auto_2$mapsTo))) {
+    message("duplicated(unique_auto_2$mapsTo)")
     return(FALSE)
   }
   
-  flat <- HierarchyFromDummy(dummyHierarchy)
+  flat <- HierarchyFromDummy(dummy_hierarchy)
   if (any(flat$sign != 1)) {
     message("any(flat$sign != 1)")
     return(FALSE)
   }
   
-  ma <- match(flat$mapsTo, uniqueAuto2$mapsTo)
-  flat$levelOriginal <- uniqueAuto2$level[ma]
-  for (j in 1:max(flat$levelOriginal)) {
-    if (any(duplicated(flat$mapsFrom[flat$levelOriginal == j]))) {
-      message("duplicated(flat$mapsFrom[flat$levelOriginal == j])")
+  ma <- match(flat$mapsTo, unique_auto_2$mapsTo)
+  flat$level_original <- unique_auto_2$level[ma]
+  for (j in 1:max(flat$level_original)) {
+    if (any(duplicated(flat$mapsFrom[flat$level_original == j]))) {
+      message("duplicated(flat$mapsFrom[flat$level_original == j])")
       return(FALSE)
     }
   }
   
   x <- unique(flat["mapsFrom"])
-  for (i in seq_len(max(flat$levelOriginal))) {
-    ma <- match(flat[flat$levelOriginal == i, "mapsFrom"], x$mapsFrom)
+  for (i in seq_len(max(flat$level_original))) {
+    ma <- match(flat[flat$level_original == i, "mapsFrom"], x$mapsFrom)
     y <- data.frame(mapsTo = rep(NA, nrow(x)))
-    y[ma, "mapsTo"] <- flat[flat$levelOriginal == i, "mapsTo"]
+    y[ma, "mapsTo"] <- flat[flat$level_original == i, "mapsTo"]
     x <- cbind(x, y)
   }
   rownames(x) <- NULL
   x
 }
 
-# firstname used her, but in pratice changed later
-Dummy2Vars <- function(dummy, singleVars = FALSE, firstname = "INPUT") {
+dummy_to_vars <- function(dummy, single_vars = FALSE, first_name = "INPUT") {
   if (!all(unique(As_TsparseMatrix(dummy)@x) %in% c(0, 1))) {
     stop("Only 0 and 1 allowed in dummy matrix")
   }
@@ -202,10 +185,10 @@ Dummy2Vars <- function(dummy, singleVars = FALSE, firstname = "INPUT") {
   n <- nrow(x)
   z <- vector("list", ncol(x) + 1)
   z[[1]] <- rownames(x)
-  usez <- rep(FALSE, length(z))
-  usez[1] <- TRUE
+  use_z <- rep(FALSE, length(z))
+  use_z[1] <- TRUE
   colnames_x <- colnames(x)
-  names_z <- c(firstname, colnames(x))
+  names_z <- c(first_name, colnames(x))
   names(z) <- names_z
   
   check <- FALSE
@@ -218,18 +201,19 @@ Dummy2Vars <- function(dummy, singleVars = FALSE, firstname = "INPUT") {
     }
     if (!check) {
       j <- i + 1
-      usez[j] <- TRUE
+      use_z[j] <- TRUE
       z[[names_z[j]]] <- rep(NA, n)
-      check <- !singleVars
+      check <- !single_vars
     }
     z[[names_z[j]]][xi1] <- colnames_x[i]
   }
-  if (singleVars) {
+  if (single_vars) {
     return(as.data.frame(z))
   }
-  as.data.frame(z[usez])
-  
+  as.data.frame(z[use_z])
 }
+
+
 
 DummyReorder <- function(dummyHierarchies, autoHierarchies, message) {
   for (i in seq_along(dummyHierarchies)) {

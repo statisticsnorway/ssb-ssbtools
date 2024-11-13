@@ -9,19 +9,19 @@ MapHierarchiesToData(data, hierarchies, ...)
 \arguments{
 \item{data}{A data frame containing variables with names matching the names of the hierarchies.}
 
-\item{hierarchies}{List of hierarchies on the same form as input to \code{\link{AutoHierarchies}}}
+\item{hierarchies}{List of hierarchies in the same format as input to \code{\link{AutoHierarchies}}}
 
-\item{...}{Further parameters sent to \code{\link{Hierarchies2Vars}}}
+\item{...}{Further parameters sent to \code{\link{hierarchies_as_vars}}}
 }
 \value{
 Input \code{data} with extra Variables
 }
 \description{
-Uses \code{\link{Hierarchies2Vars}} to transform hierarchies, followed by mapping to the dataset.
+Uses \code{\link{hierarchies_as_vars}} to transform hierarchies, followed by mapping to the dataset.
 }
 \examples{
 
-# Examples similar those from Hierarchies2Vars
+# Examples similar those from hierarchies_as_vars
 
 z <- SSBtoolsData("sprt_emp_withEU")
 yearFormula <- c("y_14 = 2014", "y_15_16 = y_all - y_14", "y_all = 2014 + 2015 + 2016")
