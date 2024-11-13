@@ -208,8 +208,9 @@ AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName,
     if (!is.data.frame(hi)) 
       stop("Something is wrong")
     if (NCOL(hi) == 2) { 
-      if ("levels" %in% names(hi)) {
-        if (identical(unique(unique(strsplit(hi$levels, NULL)[[1]])), "@")) {
+      levels <- pmatch("lev", names(hi), nomatch = FALSE)
+      if (levels) {
+        if (identical(unique(unique(strsplit(hi[[levels]], NULL)[[1]])), "@")) {
           return(DimList2Hierarchy(hi))
         }
       }
