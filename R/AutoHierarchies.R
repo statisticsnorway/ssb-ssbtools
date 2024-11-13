@@ -200,6 +200,9 @@ AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
         }
       }
     }
+    
+    hi <- FromToHierarchy(hi, hierarchyVarNames)
+    
     hi <- HierarchyFix(hi, hierarchyVarNames)
     hi
 }
@@ -252,4 +255,62 @@ HierarchyFromDummy <- function(d) {
   x <- data.frame(mapsFrom = colnames(d)[as.vector(col(d))], mapsTo = rownames(d)[as.vector(row(d))], sign = as.vector(d), stringsAsFactors = FALSE)
   x[x$sign != 0, , drop = FALSE]
 }
+
+
+
+FromToHierarchy <- function(hi, 
+                            hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
+                            fromCodes =   c("from", "code", "child"),
+                            toCodes = c("to", "parentCode", "parent")) {
+  
+  
+  mapsTo <- hierarchyVarNames["mapsTo"]
+  mapsFrom <- hierarchyVarNames["mapsFrom"]
+  
+  if (!any(c(mapsFrom, mapsTo) %in% names(hi))) {
+    
+    ma1 <- match(tolower(names(hi)), tolower(fromCodes))
+    ma2 <- match(tolower(names(hi)), tolower(toCodes))
+    fromCol <- which(!is.na(ma1))
+    toCol <- which(!is.na(ma2))
+    ma1 <- ma1[fromCol]
+    ma2 <- ma2[toCol]
+    
+    if (length(ma1 == 1) & identical(ma1, ma2)) {
+      names(hi)[fromCol] <- mapsFrom
+      names(hi)[toCol] <- mapsTo
+    } else {
+      stop("Interpreting 'from-to' variable names failed.")
+    }
+  }
+  
+  if (!(hierarchyVarNames["sign"] %in% names(hi))) {
+    if ("sign" %in% tolower(names(hi))) {
+      stop("suspicious sign column found. See parameter hierarchyVarNames.")
+    } else {
+      hi[hierarchyVarNames["sign"]] <- 1L
+    }
+  }
+  
+  if (anyNA(hi[[mapsTo]])) {
+    uniqueCodes <- unique(c(hi[[mapsFrom]], hi[[mapsTo]]))
+    rows <- !is.na(hi[[mapsTo]])
+    hi <- hi[rows, , drop = FALSE]
+    
+    diffCodes <- setdiff(uniqueCodes, unique(c(hi[[mapsFrom]], hi[[mapsTo]])))
+    diffCodes <- diffCodes[!is.na(diffCodes)]
+    
+    if (length(diffCodes)) {
+      warning(paste("Codes removed due to NAs in the 'to' variable:", paste(diffCodes, collapse = ", ")))
+    }
+  }
+  
+  hi
+  
+}
+
+  
+  
+  
+  
 
