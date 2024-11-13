@@ -20,9 +20,18 @@
 #' @param hierarchies List of hierarchies
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param total Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.  
-#' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
+#' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}. However:
+#'   - `level` is by default not required (see `autoLevel` below).
+#'   - If the `sign` variable is missing, it defaults to a variable of 1s.
+#'   - Common 'from-to' variable names are recognized (see `autoNames` below).    
 #' @param combineHierarchies Whether to combine several hierarchies for same variable into a single hierarchy (see examples).
 #' @param unionComplement Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined. 
+#' @param autoLevel When TRUE (default), the level is computed automatically, ignoring the input level variable. 
+#'                  This parameter is passed to \code{\link{HierarchyFix}}..
+#' @param autoNames Named character vector of 'from-to' variable names to be automatically recognized.
+#'                  These names do not need to be specified in `hierarchyVarNames`.
+#'                  Thus, `autoNames` can serve as an alternative to `hierarchyVarNames`.
+#'                                   
 #' @param ... Extra unused parameters
 #' 
 #' @seealso \code{\link{FindHierarchies}}, \code{\link{DimList2Hierarchy}}, \code{\link{DimList2Hrc}}, 
@@ -112,7 +121,10 @@
 #' 
 AutoHierarchies <- function(hierarchies, data = NULL, total = "Total", 
                             hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-                            combineHierarchies = TRUE, unionComplement = FALSE, ...) {
+                            combineHierarchies = TRUE, unionComplement = FALSE,
+                            autoLevel = TRUE, 
+                            autoNames = c(to = "from", parentCode = "code", parent = "child", root = "leaf"),
+                            ...) {
   total <- rep_len(total, length(hierarchies))
   
   if (is.null(names(hierarchies))) {
@@ -155,7 +167,8 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
   if (any(names(hierarchies) %in% c(NA, ""))) 
     stop("Unnamed elements of hierarchies could not be automatically handled (try `combineHierarchies = NA`)")
   for (i in 1:length(hierarchies)) {
-    hierarchies[[i]] <- AutoHierarchies1(hierarchies[[i]], data = data, total = total[i], hierarchyVarNames = hierarchyVarNames, varName = namesHierarchies[i])
+    hierarchies[[i]] <- AutoHierarchies1(hierarchies[[i]], data = data, total = total[i], hierarchyVarNames = hierarchyVarNames, varName = namesHierarchies[i], 
+                                         autoLevel = autoLevel, autoNames = autoNames)
   }
   if (combineHierarchies) {
     dph <- duplicated(names(hierarchies))
@@ -175,7 +188,8 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
 
 
 
-AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
+AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName, 
+                             autoLevel, autoNames) {
   if (is.character(hi)) 
     if (length(hi) == 1) if(!grepl("\\=", hi)) {
       if (hi == "") 
@@ -201,9 +215,12 @@ AutoHierarchies1 <- function(hi, data, total, hierarchyVarNames, varName) {
       }
     }
     
-    hi <- FromToHierarchy(hi, hierarchyVarNames)
+    hi <- FromToHierarchy(as.data.frame(hi), 
+                          hierarchyVarNames,
+                          fromCodes =   autoNames,
+                          toCodes = names(autoNames))
     
-    hi <- HierarchyFix(hi, hierarchyVarNames)
+    hi <- HierarchyFix(hi, hierarchyVarNames, autoLevel = autoLevel)
     hi
 }
 
@@ -258,11 +275,7 @@ HierarchyFromDummy <- function(d) {
 
 
 
-FromToHierarchy <- function(hi, 
-                            hierarchyVarNames = c(mapsFrom = "mapsFrom", mapsTo = "mapsTo", sign = "sign", level = "level"),
-                            fromCodes =   c("from", "code", "child"),
-                            toCodes = c("to", "parentCode", "parent")) {
-  
+FromToHierarchy <- function(hi, hierarchyVarNames, fromCodes, toCodes) {
   
   mapsTo <- hierarchyVarNames["mapsTo"]
   mapsFrom <- hierarchyVarNames["mapsFrom"]
@@ -292,6 +305,17 @@ FromToHierarchy <- function(hi,
     }
   }
   
+  
+  equalFromTo <- hi[[mapsFrom]] == hi[[mapsTo]]
+  
+  if (any(equalFromTo, na.rm = TRUE)) {
+    hi[[mapsTo]][equalFromTo] <- NA
+    warnText <- "Codes removed due to 'to'=='from' or 'to'== NA:"
+  } else {
+    warnText <- "Codes removed due to NAs in the 'to' variable:"
+  }
+  
+  
   if (anyNA(hi[[mapsTo]])) {
     uniqueCodes <- unique(c(hi[[mapsFrom]], hi[[mapsTo]]))
     rows <- !is.na(hi[[mapsTo]])
@@ -301,7 +325,7 @@ FromToHierarchy <- function(hi,
     diffCodes <- diffCodes[!is.na(diffCodes)]
     
     if (length(diffCodes)) {
-      warning(paste("Codes removed due to NAs in the 'to' variable:", paste(diffCodes, collapse = ", ")))
+      warning(paste(warnText, paste(diffCodes, collapse = ", ")))
     }
   }
   

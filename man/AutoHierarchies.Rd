@@ -12,6 +12,8 @@ AutoHierarchies(
     "level"),
   combineHierarchies = TRUE,
   unionComplement = FALSE,
+  autoLevel = TRUE,
+  autoNames = c(to = "from", parentCode = "code", parent = "child", root = "leaf"),
   ...
 )
 }
@@ -22,11 +24,23 @@ AutoHierarchies(
 
 \item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.}
 
-\item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}}
+\item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}. However:
+\itemize{
+\item \code{level} is by default not required (see \code{autoLevel} below).
+\item If the \code{sign} variable is missing, it defaults to a variable of 1s.
+\item Common 'from-to' variable names are recognized (see \code{autoNames} below).
+}}
 
 \item{combineHierarchies}{Whether to combine several hierarchies for same variable into a single hierarchy (see examples).}
 
 \item{unionComplement}{Logical vector as in \code{\link{Hierarchies2ModelMatrix}}. The parameter is only in use when hierarchies are combined.}
+
+\item{autoLevel}{When TRUE (default), the level is computed automatically, ignoring the input level variable.
+This parameter is passed to \code{\link{HierarchyFix}}..}
+
+\item{autoNames}{Named character vector of 'from-to' variable names to be automatically recognized.
+These names do not need to be specified in \code{hierarchyVarNames}.
+Thus, \code{autoNames} can serve as an alternative to \code{hierarchyVarNames}.}
 
 \item{...}{Extra unused parameters}
 }
