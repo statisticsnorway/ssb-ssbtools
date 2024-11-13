@@ -60,7 +60,7 @@ hierarchies_as_vars <- function(hierarchies,
   dummy_hierarchies <- DummyHierarchies(auto_hierarchies)
   
   if (dummy_reorder) {
-    dummy_hierarchies <- DummyReorder(dummy_hierarchies, 
+    dummy_hierarchies <- fun_dummy_reorder(dummy_hierarchies, 
                                       auto_hierarchies, 
                                       message = message_here)
   }
@@ -82,7 +82,7 @@ hierarchies_as_vars <- function(hierarchies,
     }
     names(vars[[i]])[1] <- names(vars)[i]
     if (combine_vars & !single_vars){
-      vars <- lapply(vars, CombineVars)     
+      vars <- lapply(vars, fun_combine_vars)     
     }
     if (!single_vars) {
       for (j in seq_len(ncol(vars[[i]]) - 1)) {
@@ -215,9 +215,9 @@ dummy_to_vars <- function(dummy, single_vars = FALSE, first_name = "INPUT") {
 
 
 
-DummyReorder <- function(dummyHierarchies, autoHierarchies, message) {
+fun_dummy_reorder <- function(dummyHierarchies, autoHierarchies, message) {
   for (i in seq_along(dummyHierarchies)) {
-    dummyHierarchies[[i]] <- DummyReorder1(dummyHierarchies[[i]], 
+    dummyHierarchies[[i]] <- fun_dummy_reorder1(dummyHierarchies[[i]], 
                                            autoHierarchies[[i]],  
                                            message = message)
   }
@@ -225,7 +225,7 @@ DummyReorder <- function(dummyHierarchies, autoHierarchies, message) {
 }
 
 
-DummyReorder1 <- function(dummyHierarchy, autoHierarchy, message) {
+fun_dummy_reorder1 <- function(dummyHierarchy, autoHierarchy, message) {
   if (!any(diff(autoHierarchy$level) < 0) | any(autoHierarchy$sign < 0)) {
     ord <- match(unique(autoHierarchy$mapsTo), rownames(dummyHierarchy))
     sum1 <- sum(rowSums(dummyHierarchy) * seq_len(nrow(dummyHierarchy)))
@@ -240,7 +240,7 @@ DummyReorder1 <- function(dummyHierarchy, autoHierarchy, message) {
   dummyHierarchy
 }
 
-CombineVars <- function(x) {
+fun_combine_vars <- function(x) {
   recursive <- FALSE
   if (anyNA(x)) {
     m <- As_TsparseMatrix(crossprod(as.matrix(!is.na(x))) == 0)
@@ -261,11 +261,11 @@ CombineVars <- function(x) {
       for (k in seq_along(ii)) {
         isjk <- !is.na(x[jj[k]])
         if (any(!is.na(x[[ii[k]]][isjk]))) {
-          stop("CombineVars algorithm is wrong")
+          stop("fun_combine_vars algorithm is wrong")
         }
         x[[ii[k]]][isjk] <- x[[jj[k]]][isjk]
       }
-      x <- CombineVars(x[-jj])
+      x <- fun_combine_vars(x[-jj])
     }
   }
   x
