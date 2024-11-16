@@ -36,6 +36,22 @@
 #' total_collapse(a, c("geo", "eu"))
 #' total_collapse(a, c("sector2", "sector4"))                                 
 #' 
+#' 
+#' # Similar examples with total parameter input
+#' aa <- a
+#' aa[1:2][aa[1:2] == "Total"] <- "Europe"
+#' aa[3:4][aa[3:4] == "Total"] <- ""
+#' aa
+#' 
+#' bb <- total_collapse(data = aa, 
+#'                      variables = list(GEO = c("geo", "eu"), 
+#'                                       SECTOR = c("sector2", "sector4")), 
+#'                      total = c("Europe", ""))
+#' bb
+#' 
+#' total_collapse(aa, c("geo", "eu"), total = "Europe")
+#' total_collapse(aa, c("sector2", "sector4"), total = "") 
+#' 
 total_collapse <- function(data, variables, total = "Total") {
   if(!is.list(variables)) {
     return(total_collapse_var(data[variables], total = total))
