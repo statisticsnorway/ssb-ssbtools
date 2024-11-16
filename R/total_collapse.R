@@ -76,14 +76,14 @@ total_collapse_var <- function(data, total) {
   z
 }
 
-# Copy from statisticsnorway/ssb-kostra
+# Copy from https://github.com/statisticsnorway/ssb-kostra
 MinPos = function(x){
   z=min(c(x[x>0],Inf))
   if(!is.finite(z)) z=NA
   z
 }
 
-# Copy from statisticsnorway/ssb-kostra
+# Copy from https://github.com/statisticsnorway/ssb-kostra
 WhereFirst =  function(x){
   x = as.matrix(x)
   apply(col(x)* (is.finite(x)),1,MinPos)
