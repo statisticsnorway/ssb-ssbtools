@@ -10,15 +10,19 @@ total_collapse(data, variables, total = "Total", include_names = NULL)
 \item{data}{A data frame containing the variables to be collapsed.}
 
 \item{variables}{A vector of variable names or a named list of variable names.
-If \code{variables} is a vector, the specified variables in \code{data} are collapsed
+\itemize{
+\item If \code{variables} is a vector, the specified variables in \code{data} are collapsed
 into a single character vector.
-If \code{variables} is a named list, each element in the list defines a group of
+\item If \code{variables} is a named list, each element in the list defines a group of
 variables to consolidate into a new column.
-Each list name will be used as the new column name in the resulting data frame.}
+Each list name will be used as the new column name in the resulting data frame.
+}}
 
 \item{total}{A total code or vector of total codes to use in the result.
-If \code{variables} is a vector, \code{total} specifies the code to represent collapsed values.
-If \code{variables} is a named list, \code{total} may contain one code per group.}
+\itemize{
+\item If \code{variables} is a vector, \code{total} specifies the code to represent collapsed values.
+\item If \code{variables} is a named list, \code{total} may contain one code per group.
+}}
 
 \item{include_names}{A character string or \code{NULL} (default).
 \itemize{

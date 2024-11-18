@@ -7,14 +7,14 @@
 #'
 #' @param data A data frame containing the variables to be collapsed.
 #' @param variables A vector of variable names or a named list of variable names.
-#'    If `variables` is a vector, the specified variables in `data` are collapsed 
+#'  *  If `variables` is a vector, the specified variables in `data` are collapsed 
 #'        into a single character vector.
-#'    If `variables` is a named list, each element in the list defines a group of 
+#'  *  If `variables` is a named list, each element in the list defines a group of 
 #'        variables to consolidate into a new column. 
 #'        Each list name will be used as the new column name in the resulting data frame.
 #' @param total A total code or vector of total codes to use in the result. 
-#'     If `variables` is a vector, `total` specifies the code to represent collapsed values. 
-#'     If `variables` is a named list, `total` may contain one code per group.
+#'  *  If `variables` is a vector, `total` specifies the code to represent collapsed values. 
+#'  *  If `variables` is a named list, `total` may contain one code per group.
 #' @param include_names A character string or `NULL` (default). 
 #'  *  If `variables` is a vector, whether the resulting output vector is named depends 
 #'       on whether `include_names` is `NULL` or not. The actual value of `include_names` 
