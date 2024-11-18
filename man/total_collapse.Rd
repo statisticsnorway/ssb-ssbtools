@@ -4,7 +4,7 @@
 \alias{total_collapse}
 \title{Collapse variables to single representation}
 \usage{
-total_collapse(data, variables, total = "Total")
+total_collapse(data, variables, total = "Total", include_names = NULL)
 }
 \arguments{
 \item{data}{A data frame containing the variables to be collapsed.}
@@ -19,6 +19,16 @@ Each list name will be used as the new column name in the resulting data frame.}
 \item{total}{A total code or vector of total codes to use in the result.
 If \code{variables} is a vector, \code{total} specifies the code to represent collapsed values.
 If \code{variables} is a named list, \code{total} may contain one code per group.}
+
+\item{include_names}{A character string or \code{NULL} (default).
+\itemize{
+\item If \code{variables} is a vector, whether the resulting output vector is named depends
+on whether \code{include_names} is \code{NULL} or not. The actual value of \code{include_names}
+is ignored in this case.
+\item If \code{variables} is a named list, \code{include_names} specifies a suffix to append to
+each group name, creating one additional column per group.
+If \code{NULL}, no additional columns with variable names are included in the result.
+}}
 }
 \value{
 A character vector (if \code{variables} is a vector) or a modified data frame (if \code{variables} is a named list).
@@ -45,7 +55,7 @@ total_collapse(a, c("geo", "eu"))
 total_collapse(a, c("sector2", "sector4"))                                 
 
 
-# Similar examples with total parameter input
+# Similar examples with both `total` and `include_names` parameters
 aa <- a
 aa[1:2][aa[1:2] == "Total"] <- "Europe"
 aa[3:4][aa[3:4] == "Total"] <- ""
@@ -54,10 +64,11 @@ aa
 bb <- total_collapse(data = aa, 
                      variables = list(GEO = c("geo", "eu"), 
                                       SECTOR = c("sector2", "sector4")), 
-                     total = c("Europe", ""))
+                     total = c("Europe", ""),
+                     include_names = "_Vars")
 bb
 
-total_collapse(aa, c("geo", "eu"), total = "Europe")
-total_collapse(aa, c("sector2", "sector4"), total = "") 
+total_collapse(aa, c("geo", "eu"), total = "Europe", include_names = "_Vars")
+total_collapse(aa, c("sector2", "sector4"), total = "", include_names = "_Vars") 
 
 }
