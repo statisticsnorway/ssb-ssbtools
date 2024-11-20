@@ -60,6 +60,12 @@
 #' total_collapse(aa, c("geo", "eu"), total = "Europe", include_names = "_Vars")
 #' total_collapse(aa, c("sector2", "sector4"), total = "", include_names = "_Vars") 
 #' 
+#' 
+#' # All four variables can be collapsed
+#' total_collapse(a, 
+#'                list(ALL = c("geo", "eu", "sector2", "sector4")), 
+#'                include_names = "_Vars")
+#' 
 total_collapse <- function(data, variables, total = "Total", include_names = NULL) {
   if(!is.list(variables)) {
     return(total_collapse_var(data[variables], total = total, include_names = include_names))
@@ -83,7 +89,7 @@ total_collapse_1 <- function(data, var_names, new_name, total, include_names) {
   names(data)[var_ind[1]] <- new_name
   one_or_two <- 1 + as.integer(!is.null(include_names))
   if (length(var_ind) > one_or_two) {
-    data <- data[-(var_ind[-one_or_two])]
+    data <- data[-(var_ind[-seq_len(one_or_two)])]
   }
   if (!is.null(include_names)) {
     if (length(var_names) == 1) {

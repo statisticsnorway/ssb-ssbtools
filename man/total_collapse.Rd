@@ -75,4 +75,10 @@ bb
 total_collapse(aa, c("geo", "eu"), total = "Europe", include_names = "_Vars")
 total_collapse(aa, c("sector2", "sector4"), total = "", include_names = "_Vars") 
 
+
+# All four variables can be collapsed
+total_collapse(a, 
+               list(ALL = c("geo", "eu", "sector2", "sector4")), 
+               include_names = "_Vars")
+
 }
