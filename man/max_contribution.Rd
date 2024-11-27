@@ -2,7 +2,8 @@
 % Please edit documentation in R/max_contribution.R
 \name{max_contribution}
 \alias{max_contribution}
-\title{Find major contributions to aggregates}
+\alias{n_contributors}
+\title{Find Major Contributions to Aggregates and Count Contributors}
 \usage{
 max_contribution(
   x,
@@ -15,6 +16,8 @@ max_contribution(
   remove_fraction = NULL,
   do_abs = TRUE
 )
+
+n_contributors(x, y = rep(1L, nrow(x)), id = NULL, output = "n_contr", ...)
 }
 \arguments{
 \item{x}{A (sparse) dummy matrix}
@@ -56,15 +59,20 @@ If FALSE, finds the smallest contributors.}
 \item{do_abs}{Logical. If TRUE (default), uses the absolute values of the summed contributions.
 The summation is performed for all contributions from the same contributor,
 within each aggregate being computed.}
+
+\item{...}{Further arguments to \code{max_contribution}  (used by \code{n_contributors}).}
 }
 \value{
 A list or a single element, depending on the values of the \code{output} and \code{drop} parameters.
 }
 \description{
-This function identifies the largest contributions to aggregates. Aggregates are
-assumed to be calculated using a dummy matrix with the formula:
-\code{z = t(x) \%*\% y}.
-For each aggregate, the \code{n} largest contributions are identified.
+These functions analyze contributions to aggregates, assuming that the aggregates are calculated
+using a dummy matrix with the formula: \code{z = t(x) \%*\% y}.
+}
+\details{
+The \code{max_contribution} function identifies the largest contributions to these aggregates, while
+the wrapper function \code{n_contributors} is designed specifically to count the number of contributors
+for each aggregate.
 }
 \examples{
 
@@ -72,8 +80,9 @@ z <- SSBtoolsData("magnitude1")
 a <- ModelMatrix(z, formula = ~sector4 + geo, crossTable = TRUE)
 
 cbind(a$crossTable, 
-      y = max_contribution(x = a$modelMatrix, y = z$value, n = 2), 
-      id = max_contribution(x = a$modelMatrix, y = z$value, n = 2, output = "id"))
+      y =  max_contribution(x = a$modelMatrix, y = z$value, n = 2), 
+      id = max_contribution(x = a$modelMatrix, y = z$value, n = 2, output = "id"),
+      n =  n_contributors(  x = a$modelMatrix, y = z$value, n = 2))
 
 cbind(a$crossTable, 
       y = max_contribution(x = a$modelMatrix, y = z$value, n = 3, id = z$company), 

@@ -1,9 +1,11 @@
-#' Find major contributions to aggregates
+#' Find Major Contributions to Aggregates and Count Contributors
 #'
-#' This function identifies the largest contributions to aggregates. Aggregates are 
-#' assumed to be calculated using a dummy matrix with the formula:
-#' \code{z = t(x) \%*\% y}. 
-#' For each aggregate, the `n` largest contributions are identified.
+#' These functions analyze contributions to aggregates, assuming that the aggregates are calculated 
+#' using a dummy matrix with the formula: \code{z = t(x) \%*\% y}.
+#' 
+#' The `max_contribution` function identifies the largest contributions to these aggregates, while 
+#' the wrapper function `n_contributors` is designed specifically to count the number of contributors 
+#' for each aggregate. 
 #'
 #' @param x A (sparse) dummy matrix 
 #' @param y A numeric vector of input values (contributions).
@@ -45,8 +47,9 @@
 #' a <- ModelMatrix(z, formula = ~sector4 + geo, crossTable = TRUE)
 #' 
 #' cbind(a$crossTable, 
-#'       y = max_contribution(x = a$modelMatrix, y = z$value, n = 2), 
-#'       id = max_contribution(x = a$modelMatrix, y = z$value, n = 2, output = "id"))
+#'       y =  max_contribution(x = a$modelMatrix, y = z$value, n = 2), 
+#'       id = max_contribution(x = a$modelMatrix, y = z$value, n = 2, output = "id"),
+#'       n =  n_contributors(  x = a$modelMatrix, y = z$value, n = 2))
 #' 
 #' cbind(a$crossTable, 
 #'       y = max_contribution(x = a$modelMatrix, y = z$value, n = 3, id = z$company), 
@@ -261,4 +264,16 @@ max_contribution <- function(x,
   out
 }
 
+
+
+#' @rdname max_contribution
+#' @param ... Further arguments to `max_contribution`  (used by `n_contributors`).
+#' @export
+n_contributors <- function(x, 
+                           y = rep(1L, nrow(x)), 
+                           id = NULL, 
+                           output = "n_contr", 
+                           ...) {
+  max_contribution(x = x, y = y, id = id, output = output, ...)
+}
 
