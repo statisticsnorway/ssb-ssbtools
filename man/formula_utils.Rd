@@ -11,6 +11,6 @@ Functions for formula manipulation
 \itemize{
 \item \code{\link{combine_formulas}}: Combine formulas
 \item \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
-\item \code{\link{formula_include_hierarchies}}: Replace variables in formula with sum of other variables
+\item \code{\link{substitute_formula_terms}}: Replace variables in formula with sum of other variables
 }
 }

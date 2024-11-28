@@ -72,21 +72,23 @@ formula_from_vars <-
 #' @return model formula
 #' @keywords internal
 #' @export
-#' @author Daniel Lupp
+#' @author Daniel Lupp and Øyvind Langsrud
 #'
 #' @examples
-#' f2 <- formula_from_vars(c("a", "b", "c"), c("a", "c"))
-#' formula_include_hierarchies(f2, list(a = c("hello", "world")),
-#' simplify = FALSE)
-formula_include_hierarchies <-
+#' f <- ~b + a*c  + b:d
+#' substitute_formula_terms(f, list(a = c("hello", "world", "b"), 
+#'                                  b = c("Q1", "Q2")))
+#' 
+substitute_formula_terms <-
   function(f, hier_vars, simplify = TRUE, env = parent.frame()) {
+    replace <-list()
     for (v in names(hier_vars)) {
-      replace <- formula(paste0("~", paste(hier_vars[[v]], collapse = "+")), env = env)
-      replace <- list(replace[[length(replace)]])
-      names(replace) <- v
-      f <- do.call(substitute, list(expr = f, env = replace))
-      environment(f) <- env
+      replace_v <- formula(paste0("~", paste(hier_vars[[v]], collapse = "+")), env = env)
+      replace_v <- list(replace_v[[length(replace_v)]])
+      names(replace_v) <- v
+      replace <- c(replace, replace_v)
     }
+    f <- as.formula(do.call(substitute, list(expr = f, env = replace)), env = env)
     if (simplify)
       return(formula(terms(f, simplify = TRUE), env = env))
     f
@@ -132,7 +134,7 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 #' 
 #' *  \code{\link{combine_formulas}}: Combine formulas
 #' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
-#' *  \code{\link{formula_include_hierarchies}}: Replace variables in formula with sum of other variables
+#' *  \code{\link{substitute_formula_terms}}: Replace variables in formula with sum of other variables
 #'
 #' @docType data
 #' @name formula_utils
