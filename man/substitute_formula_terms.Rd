@@ -7,7 +7,7 @@
 substitute_formula_terms(
   f,
   replacements,
-  simplify = TRUE,
+  simplify = FALSE,
   env = parent.frame()
 )
 }
@@ -18,8 +18,8 @@ substitute_formula_terms(
 Each element in \code{replacements} must be a character vector consisting of those
 variables you wish to replace}
 
-\item{simplify}{logical value, default TRUE. Determines whether the formula
-should be simplified before output or not.}
+\item{simplify}{logical value, default FALSE. Determines whether the formula
+should be expanded and simplified before output or not.}
 
 \item{env}{the environment for the output formula}
 }

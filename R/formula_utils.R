@@ -65,8 +65,8 @@ formula_from_vars <-
 #' @param replacements named list. the names of `replacements` must correspond to variables in `f`.
 #' Each element in `replacements` must be a character vector consisting of those
 #' variables you wish to replace
-#' @param simplify logical value, default TRUE. Determines whether the formula
-#' should be simplified before output or not.
+#' @param simplify logical value, default FALSE. Determines whether the formula
+#' should be expanded and simplified before output or not.
 #' @param env the environment for the output formula
 #'
 #' @return model formula
@@ -80,10 +80,16 @@ formula_from_vars <-
 #'                                  b = c("Q1", "Q2")))
 #' 
 substitute_formula_terms <-
-  function(f, replacements, simplify = TRUE, env = parent.frame()) {
+  function(f, replacements, simplify = FALSE, env = parent.frame()) {
     replace <-list()
     for (v in names(replacements)) {
-      replace_v <- formula(paste0("~", paste(replacements[[v]], collapse = "+")), env = env)
+      replacements_v <- replacements[[v]]
+      n <- length(replacements_v)
+      if (n > 1) {
+        replacements_v[1] <- paste0("(", replacements_v[1])
+        replacements_v[n] <- paste0(replacements_v[n], ")")
+      }
+      replace_v <- formula(paste0("~", paste(replacements_v, collapse = "+")), env = env)
       replace_v <- list(replace_v[[length(replace_v)]])
       names(replace_v) <- v
       replace <- c(replace, replace_v)
