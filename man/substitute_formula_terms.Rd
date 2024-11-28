@@ -4,13 +4,18 @@
 \alias{substitute_formula_terms}
 \title{Replace variables in formula with sum of other variables}
 \usage{
-substitute_formula_terms(f, hier_vars, simplify = TRUE, env = parent.frame())
+substitute_formula_terms(
+  f,
+  replacements,
+  simplify = TRUE,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{f}{model formula}
 
-\item{hier_vars}{named list. the names of \code{hier_vars} must correspond to variables in \code{f}.
-Each element in \code{hier_vars} must be a character vector consisting of those
+\item{replacements}{named list. the names of \code{replacements} must correspond to variables in \code{f}.
+Each element in \code{replacements} must be a character vector consisting of those
 variables you wish to replace}
 
 \item{simplify}{logical value, default TRUE. Determines whether the formula

@@ -62,8 +62,8 @@ formula_from_vars <-
 #' Replace variables in formula with sum of other variables
 #'
 #' @param f model formula
-#' @param hier_vars named list. the names of `hier_vars` must correspond to variables in `f`.
-#' Each element in `hier_vars` must be a character vector consisting of those
+#' @param replacements named list. the names of `replacements` must correspond to variables in `f`.
+#' Each element in `replacements` must be a character vector consisting of those
 #' variables you wish to replace
 #' @param simplify logical value, default TRUE. Determines whether the formula
 #' should be simplified before output or not.
@@ -80,10 +80,10 @@ formula_from_vars <-
 #'                                  b = c("Q1", "Q2")))
 #' 
 substitute_formula_terms <-
-  function(f, hier_vars, simplify = TRUE, env = parent.frame()) {
+  function(f, replacements, simplify = TRUE, env = parent.frame()) {
     replace <-list()
-    for (v in names(hier_vars)) {
-      replace_v <- formula(paste0("~", paste(hier_vars[[v]], collapse = "+")), env = env)
+    for (v in names(replacements)) {
+      replace_v <- formula(paste0("~", paste(replacements[[v]], collapse = "+")), env = env)
       replace_v <- list(replace_v[[length(replace_v)]])
       names(replace_v) <- v
       replace <- c(replace, replace_v)
