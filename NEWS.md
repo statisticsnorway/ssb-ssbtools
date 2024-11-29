@@ -1,4 +1,22 @@
 
+## SSBtools x.x.x
+* New function `max_contribution()` with wrapper `n_contributors()`.
+  - Find major contributions to aggregates and count contributors.
+  - Improved versions of `MaxContribution()` and `Ncontributors()` developed in the 
+    [GaussSuppression package](https://cran.r-project.org/package=GaussSuppression).
+* New function `table_all_integers()`.
+  -  Table all integers from 1 to n
+* New function `total_collapse()`.
+  - Collapse variables to single representation.
+* Allow "empty terms" in `FormulaSums()` when `viaSparseMatrix = TRUE`.
+  - "Empty terms" refer to cases where no columns exist in the model matrix due to `NAomit`.
+  - The old method (`viaSparseMatrix = FALSE`) already handled this correctly.
+* Minor improvement to `Extent0()`.
+  - Now allows 0 input rows when `hierarchical = FALSE`.
+* Minor improvement to `FormulaSelection()` and its identical wrapper `formula_selection()`.
+  - Now supports 0-length selections.
+
+
 ## SSBtools	1.5.5
 * The function `FormulaSelection()` and thereby the identical wrapper `formula_selection()` have been generalized.
   - New parameter named `logical`: When `TRUE`, the logical selection vector is returned.
