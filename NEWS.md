@@ -1,5 +1,25 @@
 
 ## SSBtools x.x.x
+* `AutoHierarchies()` has been updated to recognize common from-to names, 
+    and the `sign` variable is now optional.
+  - See the new parameter `autoNames` for details on common from-to names.
+  - Also note the new parameter `autoLevel`, with a default value (`TRUE`) 
+    that ensures the function behaves as it always has.
+  - NAs in the 'to' variable are now allowed to support common hierarchies, 
+    and rows where 'to' == 'from' are also allowed. 
+    Such rows are removed before processing the hierarchy, with a warning when relevant 
+    (*Codes removed due to 'to' == 'from' or 'to' == NA*).
+  - Output from functions like `get_klass()` in the 
+    [klassR package](https://cran.r-project.org/package=klassR) 
+    or `hier_create()` in the 
+    [sdcHierarchies package](https://cran.r-project.org/package=sdcHierarchies) 
+    can now be used directly as input. 
+  - Example of usage:
+    ```r
+    a <- get_klass(classification = "24")
+    b <- hier_create(root = "Total", nodes = LETTERS[1:5])
+    AutoHierarchies(list(tree = a, letter = b))
+    ```
 * New function `max_contribution()` with wrapper `n_contributors()`.
   - Find major contributions to aggregates and count contributors.
   - Improved versions of `MaxContribution()` and `Ncontributors()` developed in the 
