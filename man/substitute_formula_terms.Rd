@@ -2,7 +2,7 @@
 % Please edit documentation in R/formula_utils.R
 \name{substitute_formula_terms}
 \alias{substitute_formula_terms}
-\title{Replace variables in formula with sum of other variables}
+\title{Replace terms in a formula with sums of other terms}
 \usage{
 substitute_formula_terms(
   f,
@@ -12,22 +12,22 @@ substitute_formula_terms(
 )
 }
 \arguments{
-\item{f}{model formula}
+\item{f}{A model formula.}
 
-\item{replacements}{named list. the names of \code{replacements} must correspond to variables in \code{f}.
-Each element in \code{replacements} must be a character vector consisting of those
-variables you wish to replace}
+\item{replacements}{A named list. The names of \code{replacements} must correspond to terms in \code{f}.
+Each element in \code{replacements} must be a character vector consisting of
+the terms you wish to replace.}
 
-\item{simplify}{logical value, default FALSE. Determines whether the formula
+\item{simplify}{Logical, default is FALSE. Determines whether the formula
 should be expanded and simplified before output or not.}
 
-\item{env}{the environment for the output formula}
+\item{env}{The environment for the output formula.}
 }
 \value{
 model formula
 }
 \description{
-Replace variables in formula with sum of other variables
+Replace terms in a formula with sums of other terms
 }
 \examples{
 f <- ~b + a*c  + b:d
