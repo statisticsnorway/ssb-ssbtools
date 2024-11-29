@@ -20,6 +20,15 @@
     b <- hier_create(root = "Total", nodes = LETTERS[1:5])
     AutoHierarchies(list(tree = a, letter = b))
     ```
+* New hierarchy functionality with hierarchies coded as variables (minimal datasets):
+  - New function `hierarchies_as_vars()`: 
+    - Hierarchies coded as variables.
+  - New function `vars_to_hierarchies()`: 
+    - Transform hierarchies coded as variables to "to-from" format. 
+    - A kind of reverse operation of `hierarchies_as_vars()`. 
+  - New function `map_hierarchies_to_data()`: 
+    - Add variables to dataset based on hierarchies.
+    - Uses `hierarchies_as_vars()` to transform hierarchies, followed by mapping to the dataset. 
 * New function `max_contribution()` with wrapper `n_contributors()`.
   - Find major contributions to aggregates and count contributors.
   - Improved versions of `MaxContribution()` and `Ncontributors()` developed in the 
