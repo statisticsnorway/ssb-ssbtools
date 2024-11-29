@@ -8,6 +8,10 @@
   -  Table all integers from 1 to n
 * New function `total_collapse()`.
   - Collapse variables to single representation.
+* New function `substitute_formula_terms()`.
+  - Part of the utility functions listed under `?formula_utils`.
+  - An improved version of `formula_include_hierarchies()`, which has been renamed for clarity 
+    and corrected to produce the intended output.
 * Allow "empty terms" in `FormulaSums()` when `viaSparseMatrix = TRUE`.
   - "Empty terms" refer to cases where no columns exist in the model matrix due to `NAomit`.
   - The old method (`viaSparseMatrix = FALSE`) already handled this correctly.
