@@ -59,12 +59,12 @@ formula_from_vars <-
   }
 
 
-#' Replace terms in a formula with sums of other terms
+#' Replace variables in formula with sum of other variables
 #'
 #' @param f A model formula.
 #' @param replacements A named list. The names of `replacements` must correspond to terms in `f`.
 #'   Each element in `replacements` must be a character vector consisting of 
-#'   the terms you wish to replace.
+#'   the variables you wish to replace.
 #' @param simplify Logical, default is FALSE. Determines whether the formula 
 #'   should be expanded and simplified before output or not.
 #' @param env The environment for the output formula.
@@ -76,10 +76,10 @@ formula_from_vars <-
 #'
 #' @examples
 #' f <- ~b + a*c  + b:d
-#' substitute_formula_terms(f, list(a = c("hello", "world", "b"), 
-#'                                  b = c("Q1", "Q2")))
+#' substitute_formula_vars(f, list(a = c("hello", "world", "b"), 
+#'                                 b = c("Q1", "Q2")))
 #' 
-substitute_formula_terms <-
+substitute_formula_vars <-
   function(f, replacements, simplify = FALSE, env = parent.frame()) {
     replace <-list()
     for (v in names(replacements)) {
@@ -140,7 +140,7 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 #' 
 #' *  \code{\link{combine_formulas}}: Combine formulas
 #' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
-#' *  \code{\link{substitute_formula_terms}}: Replace variables in formula with sum of other variables
+#' *  \code{\link{substitute_formula_vars}}: Replace variables in formula with sum of other variables
 #'
 #' @docType data
 #' @name formula_utils
