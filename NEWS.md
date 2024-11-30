@@ -37,7 +37,7 @@
   -  Table all integers from 1 to n
 * New function `total_collapse()`.
   - Collapse variables to single representation.
-* New function `substitute_formula_terms()`.
+* New function `substitute_formula_vars()`.
   - Part of the utility functions listed under `?formula_utils`.
   - An improved version of `formula_include_hierarchies()`, which has been renamed for clarity 
     and corrected to produce the intended output.
