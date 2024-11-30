@@ -14,7 +14,7 @@ substitute_formula_vars(
 \arguments{
 \item{f}{A model formula.}
 
-\item{replacements}{A named list. The names of \code{replacements} must correspond to terms in \code{f}.
+\item{replacements}{A named list. The names of \code{replacements} must correspond to variables in \code{f}.
 Each element in \code{replacements} must be a character vector consisting of
 the variables you wish to replace.}
 

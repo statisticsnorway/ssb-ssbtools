@@ -62,7 +62,7 @@ formula_from_vars <-
 #' Replace variables in formula with sum of other variables
 #'
 #' @param f A model formula.
-#' @param replacements A named list. The names of `replacements` must correspond to terms in `f`.
+#' @param replacements A named list. The names of `replacements` must correspond to variables in `f`.
 #'   Each element in `replacements` must be a character vector consisting of 
 #'   the variables you wish to replace.
 #' @param simplify Logical, default is FALSE. Determines whether the formula 
