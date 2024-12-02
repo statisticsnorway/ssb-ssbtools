@@ -61,32 +61,40 @@ formula_from_vars <-
 
 #' Replace variables in formula with sum of other variables
 #'
-#' @param f model formula
-#' @param hier_vars named list. the names of `hier_vars` must correspond to variables in `f`.
-#' Each element in `hier_vars` must be a character vector consisting of those
-#' variables you wish to replace
-#' @param simplify logical value, default TRUE. Determines whether the formula
-#' should be simplified before output or not.
-#' @param env the environment for the output formula
+#' @param f A model formula.
+#' @param replacements A named list. The names of `replacements` must correspond to variables in `f`.
+#'   Each element in `replacements` must be a character vector consisting of 
+#'   the variables you wish to replace.
+#' @param simplify Logical, default is FALSE. Determines whether the formula 
+#'   should be expanded and simplified before output or not.
+#' @param env The environment for the output formula.
 #'
 #' @return model formula
 #' @keywords internal
 #' @export
-#' @author Daniel Lupp
+#' @author Daniel Lupp and Øyvind Langsrud
 #'
 #' @examples
-#' f2 <- formula_from_vars(c("a", "b", "c"), c("a", "c"))
-#' formula_include_hierarchies(f2, list(a = c("hello", "world")),
-#' simplify = FALSE)
-formula_include_hierarchies <-
-  function(f, hier_vars, simplify = TRUE, env = parent.frame()) {
-    for (v in names(hier_vars)) {
-      replace <- formula(paste0("~", paste(hier_vars[[v]], collapse = "+")), env = env)
-      replace <- list(replace[[length(replace)]])
-      names(replace) <- v
-      f <- do.call(substitute, list(expr = f, env = replace))
-      environment(f) <- env
+#' f <- ~b + a*c  + b:d
+#' substitute_formula_vars(f, list(a = c("hello", "world", "b"), 
+#'                                 b = c("Q1", "Q2")))
+#' 
+substitute_formula_vars <-
+  function(f, replacements, simplify = FALSE, env = parent.frame()) {
+    replace <-list()
+    for (v in names(replacements)) {
+      replacements_v <- replacements[[v]]
+      n <- length(replacements_v)
+      if (n > 1) {
+        replacements_v[1] <- paste0("(", replacements_v[1])
+        replacements_v[n] <- paste0(replacements_v[n], ")")
+      }
+      replace_v <- formula(paste0("~", paste(replacements_v, collapse = "+")), env = env)
+      replace_v <- list(replace_v[[length(replace_v)]])
+      names(replace_v) <- v
+      replace <- c(replace, replace_v)
     }
+    f <- as.formula(do.call(substitute, list(expr = f, env = replace)), env = env)
     if (simplify)
       return(formula(terms(f, simplify = TRUE), env = env))
     f
@@ -132,7 +140,7 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 #' 
 #' *  \code{\link{combine_formulas}}: Combine formulas
 #' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
-#' *  \code{\link{formula_include_hierarchies}}: Replace variables in formula with sum of other variables
+#' *  \code{\link{substitute_formula_vars}}: Replace variables in formula with sum of other variables
 #'
 #' @docType data
 #' @name formula_utils
