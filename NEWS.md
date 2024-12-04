@@ -1,5 +1,5 @@
 
-## SSBtools x.x.x
+## SSBtools 1.6.0
 * `AutoHierarchies()` has been updated to recognize common from-to names, 
     and the `sign` variable is now optional.
   - See the new parameter `autoNames` for details on common from-to names.
