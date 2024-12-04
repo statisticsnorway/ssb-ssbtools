@@ -1,4 +1,55 @@
 
+## SSBtools x.x.x
+* `AutoHierarchies()` has been updated to recognize common from-to names, 
+    and the `sign` variable is now optional.
+  - See the new parameter `autoNames` for details on common from-to names.
+  - Also note the new parameter `autoLevel`, with a default value (`TRUE`) 
+    that ensures the function behaves as it always has.
+  - NAs in the 'to' variable are now allowed to support common hierarchies, 
+    and rows where 'to' == 'from' are also allowed. 
+    Such rows are removed before processing the hierarchy, with a warning when relevant 
+    (*Codes removed due to 'to' == 'from' or 'to' == NA*).
+  - Output from functions like `get_klass()` in the 
+    [klassR package](https://cran.r-project.org/package=klassR) 
+    or `hier_create()` in the 
+    [sdcHierarchies package](https://cran.r-project.org/package=sdcHierarchies) 
+    can now be used directly as input. 
+  - Example of usage:
+    ```r
+    a <- get_klass(classification = "24")
+    b <- hier_create(root = "Total", nodes = LETTERS[1:5])
+    AutoHierarchies(list(tree = a, letter = b))
+    ```
+* New hierarchy functionality with hierarchies coded as variables (minimal datasets):
+  - New function `hierarchies_as_vars()`: 
+    - Hierarchies coded as variables.
+  - New function `vars_to_hierarchies()`: 
+    - Transform hierarchies coded as variables to "to-from" format. 
+    - A kind of reverse operation of `hierarchies_as_vars()`. 
+  - New function `map_hierarchies_to_data()`: 
+    - Add variables to dataset based on hierarchies.
+    - Uses `hierarchies_as_vars()` to transform hierarchies, followed by mapping to the dataset. 
+* New function `max_contribution()` with wrapper `n_contributors()`.
+  - Find major contributions to aggregates and count contributors.
+  - Improved versions of `MaxContribution()` and `Ncontributors()` developed in the 
+    [GaussSuppression package](https://cran.r-project.org/package=GaussSuppression).
+* New function `table_all_integers()`.
+  -  Table all integers from 1 to n
+* New function `total_collapse()`.
+  - Collapse variables to single representation.
+* New function `substitute_formula_vars()`.
+  - Part of the utility functions listed under `?formula_utils`.
+  - An improved version of `formula_include_hierarchies()`, which has been renamed for clarity 
+    and corrected to produce the intended output.
+* Allow "empty terms" in `FormulaSums()` when `viaSparseMatrix = TRUE`.
+  - "Empty terms" refer to cases where no columns exist in the model matrix due to `NAomit`.
+  - The old method (`viaSparseMatrix = FALSE`) already handled this correctly.
+* Minor improvement to `Extent0()`.
+  - Now allows 0 input rows when `hierarchical = FALSE`.
+* Minor improvement to `FormulaSelection()` and its identical wrapper `formula_selection()`.
+  - Now supports 0-length selections.
+
+
 ## SSBtools	1.5.5
 * The function `FormulaSelection()` and thereby the identical wrapper `formula_selection()` have been generalized.
   - New parameter named `logical`: When `TRUE`, the logical selection vector is returned.
