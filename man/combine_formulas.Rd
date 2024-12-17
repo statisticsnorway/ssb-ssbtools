@@ -28,6 +28,13 @@ lof1 <- c(~a+b, ~a:c, ~c*d)
 combine_formulas(lof1)
 combine_formulas(lof1, operator = "*")
 combine_formulas(lof1, simplify = TRUE)
+
+# Intercept is included when needed
+lof2 <- c(~a+b -1, ~a:c -1, ~c*d)
+combine_formulas(lof2)
+combine_formulas(lof2, simplify = TRUE)
+combine_formulas(lof2[1:2])
+combine_formulas(lof2[1:2], simplify = TRUE)
 }
 \author{
 Daniel Lupp and Øyvind Langsrud
