@@ -13,6 +13,7 @@ model_aggregate(
   formula = NULL,
   dim_var = NULL,
   remove_empty = NULL,
+  avoid_hierarchical = NULL,
   preagg_var = NULL,
   dummy = TRUE,
   pre_aggregate = dummy,
@@ -43,6 +44,9 @@ This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy
 \item{remove_empty}{When non-NULL, the \code{removeEmpty} parameter to \code{\link{ModelMatrix}}.
 Thus, the actual default value is \code{TRUE} with formula input without hierarchy and
 otherwise \code{FALSE} (see \code{\link{ModelMatrix}}).}
+
+\item{avoid_hierarchical}{When non-NULL, the \code{avoidHierarchical} parameter to \code{\link{Formula2ModelMatrix}},
+which is an underlying function of \code{\link{ModelMatrix}}.}
 
 \item{preagg_var}{Extra variables to be used as grouping elements in the pre-aggregate step}
 

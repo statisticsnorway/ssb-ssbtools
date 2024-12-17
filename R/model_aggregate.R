@@ -21,6 +21,8 @@
 #' @param remove_empty  When non-NULL, the `removeEmpty` parameter to \code{\link{ModelMatrix}}.
 #'                    Thus, the actual default value is `TRUE` with formula input without hierarchy and 
 #'                    otherwise `FALSE` (see \code{\link{ModelMatrix}}).
+#' @param avoid_hierarchical  When non-NULL, the `avoidHierarchical` parameter to \code{\link{Formula2ModelMatrix}},
+#'                    which is an underlying function of \code{\link{ModelMatrix}}.                
 #' @param preagg_var  Extra variables to be used as grouping elements in the pre-aggregate step
 #' @param dummy       The `dummy`       parameter to \code{\link{dummy_aggregate}}.
 #'                    When `TRUE`, only 0s and 1s are assumed in the generated model matrix. 
@@ -136,6 +138,7 @@ model_aggregate = function(
   formula = NULL,
   dim_var = NULL,
   remove_empty = NULL,
+  avoid_hierarchical = NULL,
   preagg_var = NULL,
   dummy = TRUE,
   pre_aggregate = dummy,
@@ -250,6 +253,9 @@ model_aggregate = function(
   }
   if (!is.null(remove_empty)) {
     mm_args <- c(mm_args, list(removeEmpty = remove_empty))
+  }
+  if (!is.null(avoid_hierarchical)) {
+    mm_args <- c(mm_args, list(avoidHierarchical = avoid_hierarchical))
   }
   if (is.null(mm_args)) {
     mm <- ModelMatrix(data, hierarchies = hierarchies, formula = formula, dimVar = dim_var, crossTable = TRUE)
