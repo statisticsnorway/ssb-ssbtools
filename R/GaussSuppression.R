@@ -176,6 +176,10 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   if (!isFALSE(removeDuplicated)) {
     removeDuplicatedCols <- TRUE
+    removeDuplicatedRows <- TRUE
+  } else {
+    removeDuplicatedCols <- FALSE
+    removeDuplicatedRows <- FALSE
   }
   
   if (removeDuplicatedCols) {
@@ -315,6 +319,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                  ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
                                  whenPrimaryForced = whenPrimaryForced, 
+                                 removeDuplicatedRows = removeDuplicatedRows, 
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -376,6 +381,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
+                              removeDuplicatedRows,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -577,6 +583,29 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singletonMethod <- "subSumAny"
   }
   
+  
+  if (removeDuplicatedRows) {
+    row_filter <- rep(TRUE, nrow(x))
+    if (any(singleton)) {
+      row_filter[singleton] <- FALSE
+    }
+    if (any(singleton_num)) {
+      row_filter[as.logical(singleton_num)] <- FALSE
+    }
+    if (any(row_filter)) {
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(!row_filter)) {
+        if (any(singleton)) {
+          singleton <- singleton[!row_filter]
+        }
+        if (any(singleton_num)) {
+          singleton_num <- singleton_num[!row_filter]
+        }
+        x <- x[!row_filter, , drop = FALSE]
+      }
+    }
+  }
+  
   ##
   ##  START extending x based on singleton
   ##
@@ -746,6 +775,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   if (!any(singleton)) 
     singleton <- NULL
+  
+  
+  # Ensure that 'singleton_num' is no longer used when When there are no singletons.
+  # Note: If 'singleton_num' contains only FALSE or 0, it may have an incorrect length.
+  # This can happen if its length is 1 
+  #    or if it was not updated correctly  due to removeDuplicatedRows
+  if (!any(singleton_num)) {  
+    numSingletonElimination <- FALSE
+    numRevealsMessage <- FALSE
+  }
   
   # Change to unique integers. Other uses of singleton_num are finished  
   if ((numSingletonElimination|numRevealsMessage) & is.logical(singleton_num)) {
