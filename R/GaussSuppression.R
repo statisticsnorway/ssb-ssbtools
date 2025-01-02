@@ -174,13 +174,17 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   unsafePrimary <- integer(0)
   
-  if (removeDuplicated) {
+  if (!isFALSE(removeDuplicated)) {
+    removeDuplicatedCols <- TRUE
+  }
+  
+  if (removeDuplicatedCols) {
     # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
     idxDD <- DummyDuplicatedSpec(x,  candidates, primary, forced)
     idxDDunique <- unique(idxDD)
     
     if (length(idxDDunique) == length(idxDD)) {
-      removeDuplicated <- FALSE
+      removeDuplicatedCols <- FALSE
     } else {
       if (length(forced)) { # Needed for warning
         primary <- primary[!(primary %in% forced)]
@@ -214,7 +218,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
-  if (!removeDuplicated) {
+  if (!removeDuplicatedCols) {
     idxDD <- NULL
     idxDDunique <- NULL
     candidatesOld <- NULL
@@ -338,7 +342,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #stop("wrong singletonMethod")
 }
 
-# Function to handle removeDuplicated
+# Function to handle removeDuplicatedCols
 SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld, primaryOld) {
   if (is.null(idxDD)) {
     return(secondary)
