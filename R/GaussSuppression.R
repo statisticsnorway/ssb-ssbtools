@@ -123,12 +123,19 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     cat("\n ----------------   removeDuplicated = FALSE  --------------------------\n")
     sysCall["removeDuplicated"] <- FALSE
     outFALSE <- eval(sysCall, envir = parentFrame)
-    if(isTRUE(all.equal(outTRUE, outFALSE))){
-      return(outTRUE)
+    cat('\n ----------------   removeDuplicated = "cols_rows2"  -------------------\n')
+    sysCall["removeDuplicated"] <- "cols_rows2"
+    out_cols_rows2 <- eval(sysCall, envir = parentFrame)
+    cat('\n ----------------   removeDuplicated = "rows"  -------------------------\n')
+    sysCall["removeDuplicated"] <- "rows"
+    out_rows <- eval(sysCall, envir = parentFrame)
+    if(!isTRUE(all.equal(outTRUE, out_rows)) | !isTRUE(all.equal(outFALSE, out_cols_rows2))) {
+      stop("removeDuplicated test: all.equal problem")
     }
-    print(outTRUE)
-    print(outFALSE)
-    stop("removeDuplicated test: Not all equal")
+    if(!isTRUE(all.equal(outTRUE, outFALSE))){
+      message("removeDuplicated test: removeDuplicatedRows matters")
+    }
+    return(outTRUE)
   }
   
   if (is.logical(primary)) 
