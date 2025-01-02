@@ -174,12 +174,23 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   unsafePrimary <- integer(0)
   
+  removeDuplicatedCols <- FALSE
+  removeDuplicatedRows <- FALSE
+  removeDuplicatedRows2 <- FALSE
+  
   if (!isFALSE(removeDuplicated)) {
-    removeDuplicatedCols <- TRUE
-    removeDuplicatedRows <- TRUE
-  } else {
-    removeDuplicatedCols <- FALSE
-    removeDuplicatedRows <- FALSE
+    if (is.character(removeDuplicated)) {
+      removeDuplicated <- tolower(strsplit(removeDuplicated, split = "_", fixed = TRUE)[[1]])
+      if (any(!(removeDuplicated %in% c("cols", "rows", "rows2")))) {
+        stop('"removeDuplicated" as character can only consist of "cols", "rows", "rows2", "test", or their combinations.')
+      }
+      removeDuplicatedCols  <- "cols"  %in% removeDuplicated
+      removeDuplicatedRows  <- "rows"  %in% removeDuplicated
+      removeDuplicatedRows2 <- "rows2" %in% removeDuplicated
+    } else {
+      removeDuplicatedCols <- TRUE
+      removeDuplicatedRows <- TRUE
+    }
   }
   
   if (removeDuplicatedCols) {
@@ -319,7 +330,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                  ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
                                  whenPrimaryForced = whenPrimaryForced, 
-                                 removeDuplicatedRows = removeDuplicatedRows, 
+                                 removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -381,7 +392,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
-                              removeDuplicatedRows,
+                              removeDuplicatedRows, removeDuplicatedRows2,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -584,6 +595,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
+  #  Duplicated non-singleton rows are removed. 
   if (removeDuplicatedRows) {
     row_filter <- rep(TRUE, nrow(x))
     if (any(singleton)) {
@@ -769,6 +781,32 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   ##
   ##  END extending x based on singleton
   ##
+  
+  
+  # Exact copy of code above: Duplicated non-singleton rows are removed.
+  # Alternative after "extending x based on singleton"
+  if (removeDuplicatedRows2) {
+    row_filter <- rep(TRUE, nrow(x))
+    if (any(singleton)) {
+      row_filter[singleton] <- FALSE
+    }
+    if (any(singleton_num)) {
+      row_filter[as.logical(singleton_num)] <- FALSE
+    }
+    if (any(row_filter)) {
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(!row_filter)) {
+        if (any(singleton)) {
+          singleton <- singleton[!row_filter]
+        }
+        if (any(singleton_num)) {
+          singleton_num <- singleton_num[!row_filter]
+        }
+        x <- x[!row_filter, , drop = FALSE]
+      }
+    }
+  }
+  
   
   n_relevant_primary <- sum(primary <= relevant_ncol_x)
   
