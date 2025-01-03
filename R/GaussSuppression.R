@@ -602,8 +602,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   
-  #  Duplicated non-singleton rows are removed. 
   if (removeDuplicatedRows) {
+    
+    
+    #  Duplicated non-singleton rows are removed.
     row_filter <- rep(TRUE, nrow(x))
     if (any(singleton)) {
       row_filter[singleton] <- FALSE
@@ -623,6 +625,72 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         x <- x[!row_filter, , drop = FALSE]
       }
     }
+    
+    #  Duplicated singleton (for frequency tables) rows are removed.
+    if (any(singleton)) {
+      row_filter <- singleton
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(row_filter)) {
+        x <- x[!row_filter, , drop = FALSE]
+        singleton <- singleton[!row_filter]
+        if (any(singleton_num))
+          singleton_num <- singleton_num[!row_filter]
+      }
+    }
+    
+    
+    #  Some duplicated singleton (for magnitude tables) rows are removed.
+    if (any(singleton_num)) {
+      row_filter <- as.logical(singleton_num)
+      dd_idx <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = TRUE, rows = TRUE, rnd = TRUE)
+      
+      
+      # First remove duplicates seen from both singleton integers and rows of x
+      # After this, the remaining problem is the same, whether singleton_num is logical or integer.
+      if (!is.logical(singleton_num)) {
+        duplicated2 <- duplicated(cbind(dd_idx, singleton_num[row_filter]))
+        row_filter[row_filter] <- duplicated2
+        if (any(row_filter)) {
+          x <- x[!row_filter, , drop = FALSE]
+          singleton_num <- singleton_num[!row_filter]
+          if (any(singleton))
+            singleton <- singleton[!row_filter]
+          dd_idx <- dd_idx[!duplicated2]
+        }
+        row_filter <- as.logical(singleton_num)
+      }
+      
+      # A group of replicated rows with more than three contributors is not 
+      # related to singleton disclosures protected by any of the methods. 
+      # Singleton marking can be removed, 
+      # and duplicates can also be eliminated. 
+      # Note that removing duplicates while retaining singleton marking will 
+      # result in incorrect calculations of the number of unique contributors.
+      table_dd_idx <- table_all_integers(dd_idx, max(dd_idx))
+      least3 <- dd_idx %in% which(table_dd_idx > 2)
+      if (any(least3)) {
+        row_filter[row_filter] <- least3
+        dd_idx <- dd_idx[least3]
+        
+        duplicated4 <- duplicated(dd_idx)
+        
+        singleton_num[row_filter] <- FALSE  # i.e. set 0 when not logical
+        row_filter[row_filter] <- duplicated4
+        x <- x[!row_filter, , drop = FALSE]
+        singleton_num <- singleton_num[!row_filter]
+        if (any(singleton))
+          singleton <- singleton[!row_filter]
+      }
+    }
+    
+    # Checks for errors in the code above
+    if (any(singleton)) 
+      if (length(singleton) != nrow(x)) 
+        stop("removeDuplicatedRows failed")
+    if (any(singleton_num)) 
+      if (length(singleton_num) != nrow(x)) 
+        stop("removeDuplicatedRows failed")
+    
   }
   
   ##
