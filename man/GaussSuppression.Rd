@@ -56,7 +56,18 @@ or a \code{\link{NumSingleton}} method (see details).}
 \item{whenPrimaryForced}{Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
 The same function will also be called when there are forced cells marked as singletons (will be ignored).}
 
-\item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
+\item{removeDuplicated}{Specifies whether to remove duplicated columns and rows in \code{x} before running the main algorithm.
+Removing duplicates results in a faster algorithm while generally maintaining the same results.
+In some cases, singleton handling for magnitude tables may be affected.
+In such cases, singleton handling will generally be improved.
+Singletons are considered when removing duplicate rows, so not all duplicates are removed.
+To remove only rows or only columns, set \code{removeDuplicated} to \code{"rows"} or \code{"cols"}, respectively.
+There are also specific possibilities:
+\code{"rows2"}, which removes only duplicate non-singleton rows
+in a way that preserves singleton handling,
+and \code{"rows2_cols"}, which additionally removes duplicate columns.
+The latter also removes duplicate columns.
+Furthermore, there are other variants designed specifically for testing purposes.}
 
 \item{iFunction}{A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters.}
 
