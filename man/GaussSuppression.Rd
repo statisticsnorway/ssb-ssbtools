@@ -22,6 +22,7 @@ GaussSuppression(
   iWait = Inf,
   xExtraPrimary = NULL,
   unsafeAsNegative = FALSE,
+  printXdim = FALSE,
   ...
 )
 }
@@ -77,6 +78,11 @@ Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last itera
 \item{xExtraPrimary}{Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.}
 
 \item{unsafeAsNegative}{When \code{TRUE}, unsafe primary cells due to forced cells are included in the output vector as negative indices.}
+
+\item{printXdim}{When set to \code{TRUE}, the \code{printInc} parameter is also automatically set to \code{TRUE}.
+Additionally, the dimensions of the \code{x} matrix are printed twice:
+first, the dimensions of the input \code{x}, potentially extended with \code{xExtraPrimary};
+second, the dimensions after applying \code{singletonMethod} and \code{removeDuplicated}.}
 
 \item{...}{Extra unused parameters}
 }

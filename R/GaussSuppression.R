@@ -70,6 +70,10 @@
 #'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration. 
 #' @param xExtraPrimary Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.  
 #' @param unsafeAsNegative  When `TRUE`, unsafe primary cells due to forced cells are included in the output vector as negative indices.              
+#' @param printXdim When set to `TRUE`, the `printInc` parameter is also automatically set to `TRUE`. 
+#'                  Additionally, the dimensions of the `x` matrix are printed twice: 
+#'                    first, the dimensions of the input `x`, potentially extended with `xExtraPrimary`; 
+#'                    second, the dimensions after applying `singletonMethod` and `removeDuplicated`.
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -123,6 +127,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              iFunction = GaussIterationFunction, iWait = Inf,
                              xExtraPrimary = NULL,
                              unsafeAsNegative = FALSE,
+                             printXdim = FALSE, 
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -163,6 +168,12 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     x <- cbind(x, xExtraPrimary)
   }
   ncol_x_with_xExtraPrimary <- ncol(x)
+  
+  if (printXdim) {
+    printInc <- TRUE
+    cat("<", nrow(x), "*", ncol(x), ">", sep = "")
+    flush.console()
+  }
   
   if (!length(primary)) 
     return(integer(0))
@@ -349,6 +360,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
                                  whenPrimaryForced = whenPrimaryForced, 
                                  removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
+                                 printXdim =  printXdim, 
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -411,6 +423,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
                               removeDuplicatedRows, removeDuplicatedRows2,
+                              printXdim, 
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -893,6 +906,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
   }
   
+  if (printXdim) {
+    cat("<", nrow(x), "*", ncol(x), ">", sep = "")
+    flush.console()
+  }
   
   n_relevant_primary <- sum(primary <= relevant_ncol_x)
   
