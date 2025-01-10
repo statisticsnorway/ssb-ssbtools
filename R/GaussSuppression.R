@@ -58,13 +58,17 @@
 #'     In some cases, singleton handling for magnitude tables may be affected. 
 #'     In such cases, singleton handling will generally be improved.
 #'     Singletons are considered when removing duplicate rows, so not all duplicates are removed.
-#'     To remove only rows or only columns, set `removeDuplicated` to `"rows"` or `"cols"`, respectively.
-#'     There are also specific possibilities: 
-#'        `"rows2"`, which removes only duplicate non-singleton rows 
-#'            in a way that preserves singleton handling, 
-#'        and `"rows2_cols"`, which additionally removes duplicate columns.
-#'     The latter also removes duplicate columns.
-#'     Furthermore, there are other variants designed specifically for testing purposes.
+#'     The available options for `removeDuplicated` are as follows:
+#'
+#'  * `TRUE` (default): Removes both duplicate columns and rows.
+#'  * `FALSE`: No removal of duplicates.
+#'  * `"cols"`: Removes only duplicate columns.
+#'  * `"rows"`: Removes only duplicate rows.
+#'  * `"rows2"`: Removes only duplicate non-singleton rows in a way that preserves singleton handling.
+#'  * Combined possibilities: Variants can be combined with "_". For example, 
+#'      `"cols_rows"` is equivalent to `TRUE`,
+#'      and `"cols_rows2"` represents an alternative variant. Combining `"rows"` and `"rows2"` is possible, but superfluous calculations are then performed.
+#'  * `"test"`: A special variant for testing purposes. The four configurations `TRUE`, `FALSE`, `"cols_rows2"`, and `"rows"` are executed.
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
 #'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration. 

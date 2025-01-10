@@ -62,13 +62,18 @@ Removing duplicates results in a faster algorithm while generally maintaining th
 In some cases, singleton handling for magnitude tables may be affected.
 In such cases, singleton handling will generally be improved.
 Singletons are considered when removing duplicate rows, so not all duplicates are removed.
-To remove only rows or only columns, set \code{removeDuplicated} to \code{"rows"} or \code{"cols"}, respectively.
-There are also specific possibilities:
-\code{"rows2"}, which removes only duplicate non-singleton rows
-in a way that preserves singleton handling,
-and \code{"rows2_cols"}, which additionally removes duplicate columns.
-The latter also removes duplicate columns.
-Furthermore, there are other variants designed specifically for testing purposes.}
+The available options for \code{removeDuplicated} are as follows:
+\itemize{
+\item \code{TRUE} (default): Removes both duplicate columns and rows.
+\item \code{FALSE}: No removal of duplicates.
+\item \code{"cols"}: Removes only duplicate columns.
+\item \code{"rows"}: Removes only duplicate rows.
+\item \code{"rows2"}: Removes only duplicate non-singleton rows in a way that preserves singleton handling.
+\item Combined possibilities: Variants can be combined with "_". For example,
+\code{"cols_rows"} is equivalent to \code{TRUE},
+and \code{"cols_rows2"} represents an alternative variant. Combining \code{"rows"} and \code{"rows2"} is possible, but superfluous calculations are then performed.
+\item \code{"test"}: A special variant for testing purposes. The four configurations \code{TRUE}, \code{FALSE}, \code{"cols_rows2"}, and \code{"rows"} are executed.
+}}
 
 \item{iFunction}{A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters.}
 
