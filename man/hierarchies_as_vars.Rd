@@ -11,6 +11,8 @@ hierarchies_as_vars(
   from_dummy = NA,
   dummy_reorder = TRUE,
   combine_vars = TRUE,
+  drop_codes = NULL,
+  include_codes = NULL,
   ...
 )
 }
@@ -33,6 +35,11 @@ and the column number minus 1 (\code{level}).}
 \item{dummy_reorder}{When \code{TRUE}, dummy-coded hierarchies are reordered to potentially improve the structure of output variables.}
 
 \item{combine_vars}{When \code{TRUE}, an algorithm is applied to potentially reduce the number of output variables needed.}
+
+\item{drop_codes}{A named list of codes (except the input codes) to be dropped from the output.
+The list must have the same names as the hierarchies, but not all names/elements need to be included.}
+
+\item{include_codes}{Similar to drop_codes, but specifies the codes to be included instead.}
 
 \item{...}{Additional parameters passed to \code{\link{AutoHierarchies}}}
 }
@@ -57,7 +64,13 @@ hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_fo
                     
 # NAs are included in data when necessary
 hierarchies_as_vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))                     
-                    
+
+# drop_codes and include_codes  
+hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula), 
+                    drop_codes = list(geo = "nonEU", year = c("y_14", "y_all")))  
+hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula), 
+                    include_codes = list(year = c("y_14", "y_all")))      
+               
 }
 \seealso{
 \code{\link{vars_to_hierarchies}}

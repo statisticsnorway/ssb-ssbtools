@@ -53,12 +53,31 @@
 #' @param whenEmptyUnsuppressed Function to be called when empty input to candidate cells may be problematic. Supply NULL to do nothing.
 #' @param whenPrimaryForced Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
 #'            The same function will also be called when there are forced cells marked as singletons (will be ignored).
-#' @param removeDuplicated Whether to remove duplicated columns in `x` before running the main algorithm. 
+#' @param removeDuplicated Specifies whether to remove duplicated columns and rows in `x` before running the main algorithm. 
+#'     Removing duplicates results in a faster algorithm while generally maintaining the same results. 
+#'     In some cases, singleton handling for magnitude tables may be affected. 
+#'     In such cases, singleton handling will generally be improved.
+#'     Singletons are considered when removing duplicate rows, so not all duplicates are removed.
+#'     The available options for `removeDuplicated` are as follows:
+#'
+#'  * `TRUE` (default): Removes both duplicate columns and rows.
+#'  * `FALSE`: No removal of duplicates.
+#'  * `"cols"`: Removes only duplicate columns.
+#'  * `"rows"`: Removes only duplicate rows.
+#'  * `"rows2"`: Removes only duplicate non-singleton rows in a way that preserves singleton handling.
+#'  * Combined possibilities: Variants can be combined with "_". For example, 
+#'      `"cols_rows"` is equivalent to `TRUE`,
+#'      and `"cols_rows2"` represents an alternative variant. Combining `"rows"` and `"rows2"` is possible, but superfluous calculations are then performed.
+#'  * `"test"`: A special variant for testing purposes. The four configurations `TRUE`, `FALSE`, `"cols_rows2"`, and `"rows"` are executed.
 #' @param iFunction A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters. 
 #' @param iWait The minimum number of seconds between each call to `iFunction`.
 #'              Whenever `iWait<Inf`, `iFunction` will also be called after last iteration. 
 #' @param xExtraPrimary Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.  
 #' @param unsafeAsNegative  When `TRUE`, unsafe primary cells due to forced cells are included in the output vector as negative indices.              
+#' @param printXdim When set to `TRUE`, the `printInc` parameter is also automatically set to `TRUE`. 
+#'                  Additionally, the dimensions of the `x` matrix are printed twice: 
+#'                    first, the dimensions of the input `x`, potentially extended with `xExtraPrimary`; 
+#'                    second, the dimensions after applying `singletonMethod` and `removeDuplicated`.
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -112,6 +131,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              iFunction = GaussIterationFunction, iWait = Inf,
                              xExtraPrimary = NULL,
                              unsafeAsNegative = FALSE,
+                             printXdim = FALSE, 
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -123,12 +143,19 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     cat("\n ----------------   removeDuplicated = FALSE  --------------------------\n")
     sysCall["removeDuplicated"] <- FALSE
     outFALSE <- eval(sysCall, envir = parentFrame)
-    if(isTRUE(all.equal(outTRUE, outFALSE))){
-      return(outTRUE)
+    cat('\n ----------------   removeDuplicated = "cols_rows2"  -------------------\n')
+    sysCall["removeDuplicated"] <- "cols_rows2"
+    out_cols_rows2 <- eval(sysCall, envir = parentFrame)
+    cat('\n ----------------   removeDuplicated = "rows"  -------------------------\n')
+    sysCall["removeDuplicated"] <- "rows"
+    out_rows <- eval(sysCall, envir = parentFrame)
+    if(!isTRUE(all.equal(outTRUE, out_rows)) | !isTRUE(all.equal(outFALSE, out_cols_rows2))) {
+      stop("removeDuplicated test: all.equal problem")
     }
-    print(outTRUE)
-    print(outFALSE)
-    stop("removeDuplicated test: Not all equal")
+    if(!isTRUE(all.equal(outTRUE, outFALSE))){
+      message("removeDuplicated test: removeDuplicatedRows matters")
+    }
+    return(outTRUE)
   }
   
   if (is.logical(primary)) 
@@ -145,6 +172,12 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     x <- cbind(x, xExtraPrimary)
   }
   ncol_x_with_xExtraPrimary <- ncol(x)
+  
+  if (printXdim) {
+    printInc <- TRUE
+    cat("<", nrow(x), "*", ncol(x), ">", sep = "")
+    flush.console()
+  }
   
   if (!length(primary)) 
     return(integer(0))
@@ -174,13 +207,32 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   
   unsafePrimary <- integer(0)
   
-  if (removeDuplicated) {
+  removeDuplicatedCols <- FALSE
+  removeDuplicatedRows <- FALSE
+  removeDuplicatedRows2 <- FALSE
+  
+  if (!isFALSE(removeDuplicated)) {
+    if (is.character(removeDuplicated)) {
+      removeDuplicated <- tolower(strsplit(removeDuplicated, split = "_", fixed = TRUE)[[1]])
+      if (any(!(removeDuplicated %in% c("cols", "rows", "rows2")))) {
+        stop('"removeDuplicated" as character can only consist of "cols", "rows", "rows2", "test", or their combinations.')
+      }
+      removeDuplicatedCols  <- "cols"  %in% removeDuplicated
+      removeDuplicatedRows  <- "rows"  %in% removeDuplicated
+      removeDuplicatedRows2 <- "rows2" %in% removeDuplicated
+    } else {
+      removeDuplicatedCols <- TRUE
+      removeDuplicatedRows <- TRUE
+    }
+  }
+  
+  if (removeDuplicatedCols) {
     # idxDD <- DummyDuplicated(x, idx = TRUE, rnd = TRUE)
     idxDD <- DummyDuplicatedSpec(x,  candidates, primary, forced)
     idxDDunique <- unique(idxDD)
     
     if (length(idxDDunique) == length(idxDD)) {
-      removeDuplicated <- FALSE
+      removeDuplicatedCols <- FALSE
     } else {
       if (length(forced)) { # Needed for warning
         primary <- primary[!(primary %in% forced)]
@@ -214,7 +266,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
-  if (!removeDuplicated) {
+  if (!removeDuplicatedCols) {
     idxDD <- NULL
     idxDDunique <- NULL
     candidatesOld <- NULL
@@ -311,6 +363,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  main_primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld,
                                  ncol_x_input = ncol_x_input, ncol_x_with_xExtraPrimary = ncol_x_with_xExtraPrimary,
                                  whenPrimaryForced = whenPrimaryForced, 
+                                 removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
+                                 printXdim =  printXdim, 
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -338,7 +392,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   #stop("wrong singletonMethod")
 }
 
-# Function to handle removeDuplicated
+# Function to handle removeDuplicatedCols
 SecondaryFinal <- function(secondary, primary, idxDD, idxDDunique, candidatesOld, primaryOld) {
   if (is.null(idxDD)) {
     return(secondary)
@@ -372,6 +426,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               iFunction, iWait, 
                               main_primary, idxDD, idxDDunique, candidatesOld, primaryOld, # main_primary also since primary may be changed 
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
+                              removeDuplicatedRows, removeDuplicatedRows2,
+                              printXdim, 
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -573,6 +629,98 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singletonMethod <- "subSumAny"
   }
   
+  
+  if (removeDuplicatedRows) {
+    
+    
+    #  Duplicated non-singleton rows are removed.
+    row_filter <- rep(TRUE, nrow(x))
+    if (any(singleton)) {
+      row_filter[singleton] <- FALSE
+    }
+    if (any(singleton_num)) {
+      row_filter[as.logical(singleton_num)] <- FALSE
+    }
+    if (any(row_filter)) {
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(!row_filter)) {
+        if (any(singleton)) {
+          singleton <- singleton[!row_filter]
+        }
+        if (any(singleton_num)) {
+          singleton_num <- singleton_num[!row_filter]
+        }
+        x <- x[!row_filter, , drop = FALSE]
+      }
+    }
+    
+    #  Duplicated singleton (for frequency tables) rows are removed.
+    if (any(singleton)) {
+      row_filter <- singleton
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(row_filter)) {
+        x <- x[!row_filter, , drop = FALSE]
+        singleton <- singleton[!row_filter]
+        if (any(singleton_num))
+          singleton_num <- singleton_num[!row_filter]
+      }
+    }
+    
+    
+    #  Some duplicated singleton (for magnitude tables) rows are removed.
+    if (any(singleton_num)) {
+      row_filter <- as.logical(singleton_num)
+      dd_idx <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = TRUE, rows = TRUE, rnd = TRUE)
+      
+      
+      # First remove duplicates seen from both singleton integers and rows of x
+      # After this, the remaining problem is the same, whether singleton_num is logical or integer.
+      if (!is.logical(singleton_num)) {
+        duplicated2 <- duplicated(cbind(dd_idx, singleton_num[row_filter]))
+        row_filter[row_filter] <- duplicated2
+        if (any(row_filter)) {
+          x <- x[!row_filter, , drop = FALSE]
+          singleton_num <- singleton_num[!row_filter]
+          if (any(singleton))
+            singleton <- singleton[!row_filter]
+          dd_idx <- dd_idx[!duplicated2]
+        }
+        row_filter <- as.logical(singleton_num)
+      }
+      
+      # A group of replicated rows with more than three contributors is not 
+      # related to singleton disclosures protected by any of the methods. 
+      # Singleton marking can be removed, 
+      # and duplicates can also be eliminated. 
+      # Note that removing duplicates while retaining singleton marking will 
+      # result in incorrect calculations of the number of unique contributors.
+      table_dd_idx <- table_all_integers(dd_idx, max(dd_idx))
+      least3 <- dd_idx %in% which(table_dd_idx > 2)
+      if (any(least3)) {
+        row_filter[row_filter] <- least3
+        dd_idx <- dd_idx[least3]
+        
+        duplicated4 <- duplicated(dd_idx)
+        
+        singleton_num[row_filter] <- FALSE  # i.e. set 0 when not logical
+        row_filter[row_filter] <- duplicated4
+        x <- x[!row_filter, , drop = FALSE]
+        singleton_num <- singleton_num[!row_filter]
+        if (any(singleton))
+          singleton <- singleton[!row_filter]
+      }
+    }
+    
+    # Checks for errors in the code above
+    if (any(singleton)) 
+      if (length(singleton) != nrow(x)) 
+        stop("removeDuplicatedRows failed")
+    if (any(singleton_num)) 
+      if (length(singleton_num) != nrow(x)) 
+        stop("removeDuplicatedRows failed")
+    
+  }
+  
   ##
   ##  START extending x based on singleton
   ##
@@ -737,11 +885,51 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   ##  END extending x based on singleton
   ##
   
+  
+  # Exact copy of code above: Duplicated non-singleton rows are removed.
+  # Alternative after "extending x based on singleton"
+  if (removeDuplicatedRows2) {
+    row_filter <- rep(TRUE, nrow(x))
+    if (any(singleton)) {
+      row_filter[singleton] <- FALSE
+    }
+    if (any(singleton_num)) {
+      row_filter[as.logical(singleton_num)] <- FALSE
+    }
+    if (any(row_filter)) {
+      row_filter[row_filter] <- DummyDuplicated(x[row_filter, , drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      if (any(!row_filter)) {
+        if (any(singleton)) {
+          singleton <- singleton[!row_filter]
+        }
+        if (any(singleton_num)) {
+          singleton_num <- singleton_num[!row_filter]
+        }
+        x <- x[!row_filter, , drop = FALSE]
+      }
+    }
+  }
+  
+  if (printXdim) {
+    cat("<", nrow(x), "*", ncol(x), ">", sep = "")
+    flush.console()
+  }
+  
   n_relevant_primary <- sum(primary <= relevant_ncol_x)
   
   
   if (!any(singleton)) 
     singleton <- NULL
+  
+  
+  # Ensure that 'singleton_num' is no longer used when When there are no singletons.
+  # Note: If 'singleton_num' contains only FALSE or 0, it may have an incorrect length.
+  # This can happen if its length is 1 
+  #    or if it was not updated correctly  due to removeDuplicatedRows
+  if (!any(singleton_num)) {  
+    numSingletonElimination <- FALSE
+    numRevealsMessage <- FALSE
+  }
   
   # Change to unique integers. Other uses of singleton_num are finished  
   if ((numSingletonElimination|numRevealsMessage) & is.logical(singleton_num)) {
