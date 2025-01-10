@@ -16,6 +16,9 @@
 #'   - When `NA` (default), the algorithm first attempts the `FALSE` method; if not feasible, it falls back to the `TRUE` method.
 #' @param dummy_reorder When `TRUE`, dummy-coded hierarchies are reordered to potentially improve the structure of output variables.
 #' @param combine_vars When `TRUE`, an algorithm is applied to potentially reduce the number of output variables needed.
+#' @param drop_codes A named list of codes (except the input codes) to be dropped from the output. 
+#'                   The list must have the same names as the hierarchies, but not all names/elements need to be included.
+#' @param include_codes Similar to drop_codes, but specifies the codes to be included instead. 
 #' @param ... Additional parameters passed to \code{\link{AutoHierarchies}}
 #'
 #' @return Named list of data frames
@@ -37,13 +40,21 @@
 #'                     
 #' # NAs are included in data when necessary
 #' hierarchies_as_vars(list(f = c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))                     
-#'                     
+#' 
+#' # drop_codes and include_codes  
+#' hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula), 
+#'                     drop_codes = list(geo = "nonEU", year = c("y_14", "y_all")))  
+#' hierarchies_as_vars(list(age = age_hierarchy, geo = geo_dim_list, year = year_formula), 
+#'                     include_codes = list(year = c("y_14", "y_all")))      
+#'                
 hierarchies_as_vars <- function(hierarchies,
                                 name_function = function(name, level) paste0(name, "_level_", level),
                                 single_vars = FALSE, 
                                 from_dummy = NA, 
                                 dummy_reorder = TRUE,
                                 combine_vars = TRUE,
+                                drop_codes = NULL, 
+                                include_codes = NULL, 
                                 ...) {
   
   if (single_vars) {
@@ -58,6 +69,19 @@ hierarchies_as_vars <- function(hierarchies,
   
   auto_hierarchies <- AutoHierarchies(hierarchies = hierarchies, ...)
   dummy_hierarchies <- DummyHierarchies(auto_hierarchies)
+  
+  
+  
+  for (hi_name in names(dummy_hierarchies)) {
+    if (!is.null(drop_codes[[hi_name]])) {
+      rows <- rownames(dummy_hierarchies[[hi_name]]) %in% drop_codes[[hi_name]]
+      dummy_hierarchies[[hi_name]] <- dummy_hierarchies[[hi_name]][!rows, , drop = FALSE]
+    }
+    if (!is.null(include_codes[[hi_name]])) {
+      rows <- rownames(dummy_hierarchies[[hi_name]]) %in% include_codes[[hi_name]]
+      dummy_hierarchies[[hi_name]] <- dummy_hierarchies[[hi_name]][rows, , drop = FALSE]
+    }
+  }
   
   if (dummy_reorder) {
     dummy_hierarchies <- fun_dummy_reorder(dummy_hierarchies, 
@@ -228,6 +252,7 @@ fun_dummy_reorder <- function(dummyHierarchies, autoHierarchies, message) {
 fun_dummy_reorder1 <- function(dummyHierarchy, autoHierarchy, message) {
   if (!any(diff(autoHierarchy$level) < 0) | any(autoHierarchy$sign < 0)) {
     ord <- match(unique(autoHierarchy$mapsTo), rownames(dummyHierarchy))
+    ord <- ord[!is.na(ord)]
     sum1 <- sum(rowSums(dummyHierarchy) * seq_len(nrow(dummyHierarchy)))
     sum2 <- sum(rowSums(dummyHierarchy)[ord] * seq_len(nrow(dummyHierarchy)))
     if (sum2 >= sum1) {
