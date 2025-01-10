@@ -22,6 +22,7 @@ GaussSuppression(
   iWait = Inf,
   xExtraPrimary = NULL,
   unsafeAsNegative = FALSE,
+  printXdim = FALSE,
   ...
 )
 }
@@ -56,7 +57,23 @@ or a \code{\link{NumSingleton}} method (see details).}
 \item{whenPrimaryForced}{Function to be called if any forced cells are primary suppressed (suppression will be ignored). Supply NULL to do nothing.
 The same function will also be called when there are forced cells marked as singletons (will be ignored).}
 
-\item{removeDuplicated}{Whether to remove duplicated columns in \code{x} before running the main algorithm.}
+\item{removeDuplicated}{Specifies whether to remove duplicated columns and rows in \code{x} before running the main algorithm.
+Removing duplicates results in a faster algorithm while generally maintaining the same results.
+In some cases, singleton handling for magnitude tables may be affected.
+In such cases, singleton handling will generally be improved.
+Singletons are considered when removing duplicate rows, so not all duplicates are removed.
+The available options for \code{removeDuplicated} are as follows:
+\itemize{
+\item \code{TRUE} (default): Removes both duplicate columns and rows.
+\item \code{FALSE}: No removal of duplicates.
+\item \code{"cols"}: Removes only duplicate columns.
+\item \code{"rows"}: Removes only duplicate rows.
+\item \code{"rows2"}: Removes only duplicate non-singleton rows in a way that preserves singleton handling.
+\item Combined possibilities: Variants can be combined with "_". For example,
+\code{"cols_rows"} is equivalent to \code{TRUE},
+and \code{"cols_rows2"} represents an alternative variant. Combining \code{"rows"} and \code{"rows2"} is possible, but superfluous calculations are then performed.
+\item \code{"test"}: A special variant for testing purposes. The four configurations \code{TRUE}, \code{FALSE}, \code{"cols_rows2"}, and \code{"rows"} are executed.
+}}
 
 \item{iFunction}{A function to be called during the iterations. See the default function, \code{\link{GaussIterationFunction}}, for description of parameters.}
 
@@ -66,6 +83,11 @@ Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last itera
 \item{xExtraPrimary}{Extra x-matrix that defines extra primary suppressed cells in addition to those defined by other inputs.}
 
 \item{unsafeAsNegative}{When \code{TRUE}, unsafe primary cells due to forced cells are included in the output vector as negative indices.}
+
+\item{printXdim}{When set to \code{TRUE}, the \code{printInc} parameter is also automatically set to \code{TRUE}.
+Additionally, the dimensions of the \code{x} matrix are printed twice:
+first, the dimensions of the input \code{x}, potentially extended with \code{xExtraPrimary};
+second, the dimensions after applying \code{singletonMethod} and \code{removeDuplicated}.}
 
 \item{...}{Extra unused parameters}
 }
