@@ -16,6 +16,9 @@ model_aggregate(
   preagg_var = NULL,
   dummy = TRUE,
   pre_aggregate = dummy,
+  aggregate_pkg = "base",
+  aggregate_na = TRUE,
+  aggregate_base_order = FALSE,
   list_return = FALSE,
   pre_return = FALSE,
   verbose = TRUE,
@@ -55,6 +58,17 @@ Note that all original \code{fun_vars} observations are retained in the aggregat
 However, \code{pre_aggregate} must be set to \code{FALSE} when the \code{dummy_aggregate} parameter \code{dummy} is set to \code{FALSE}
 since then \code{\link{unlist}} will not be run.
 An exception to this is if the \code{fun} functions are written to handle list data.}
+
+\item{aggregate_pkg}{Package used to pre-aggregate.
+Parameter \code{pkg} to \code{\link{aggregate_by_pkg}}.}
+
+\item{aggregate_na}{Whether to include NAs in the grouping variables while preAggregate.
+Parameter \code{include_na} to \code{\link{aggregate_by_pkg}}.}
+
+\item{aggregate_base_order}{Parameter \code{base_order} to \code{\link{aggregate_by_pkg}}, used when pre-aggregate.
+The default is set to \code{FALSE} to avoid unnecessary sorting operations.
+When \code{TRUE}, an attempt is made to return the same result with \code{data.table} as with base R.
+This cannot be guaranteed due to potential variations in sorting behavior across different systems.}
 
 \item{list_return}{Whether to return a list of separate components including the model matrix \code{x}.}
 
