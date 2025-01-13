@@ -9,7 +9,8 @@
 #' An attribute called `startCol` has been added to the output data frame to make this functionality work.
 #' 
 #'
-#' @param data A data frame containing data to be aggregated 
+#' @param data Input data containing data to be aggregated, typically a data frame, tibble, or data.table. 
+#'             If data is not a classic data frame, it will be coerced to one internally.  
 #' @param sum_vars Variables to be summed. This will be done via matrix multiplication. 
 #' @param fun_vars Variables to be aggregated by supplied functions.  
 #'      This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy_aggregate}} and 
@@ -154,6 +155,14 @@ model_aggregate = function(
   pre_return = FALSE,
   verbose = TRUE,
   mm_args = NULL, ...) {
+  
+  data <- as.data.frame(data)
+  # Note: 
+  #   "if (!(pre_aggregate & aggregate_pkg == "data.table"))"
+  #       not used above 
+  # since then sum_data <- data.table::copy(data) needed below 
+  # but this is before the data.table availability check
+  
   
   if (!length(sum_vars)) {
     sum_vars <- NULL

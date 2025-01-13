@@ -27,7 +27,8 @@ model_aggregate(
 )
 }
 \arguments{
-\item{data}{A data frame containing data to be aggregated}
+\item{data}{Input data containing data to be aggregated, typically a data frame, tibble, or data.table.
+If data is not a classic data frame, it will be coerced to one internally.}
 
 \item{sum_vars}{Variables to be summed. This will be done via matrix multiplication.}
 
