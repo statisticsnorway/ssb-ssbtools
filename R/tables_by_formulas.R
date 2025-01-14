@@ -49,11 +49,11 @@ tables_by_formulas <- function(data,
   }
   
   if (length(substitute_vars)) {
-    a <- total_collapse(a, substitute_vars_removed) 
+    a <- total_collapse_allow_missing(a, substitute_vars_removed) 
   }
   
   if (length(collapse_vars)) {
-    a <- total_collapse(a, collapse_vars) 
+    a <- total_collapse_allow_missing(a, collapse_vars) 
   }
   
   a <- cbind(a, table_indicators)
@@ -65,7 +65,10 @@ tables_by_formulas <- function(data,
   
 }
 
-
+# remove_included_substitute_elements(list(region = c("geo", "eu"), region1 = "eu"))
+## list(region = c("geo", "eu"))
+# remove_included_substitute_elements(list(region = c("geo", "eu"), region1 = c("geo", "geo2")))
+## Error .... Problematic substitute_vars
 remove_included_substitute_elements <- function(x) {
   
   x <- x[order(sapply(x, length), decreasing = TRUE)]
@@ -87,23 +90,15 @@ remove_included_substitute_elements <- function(x) {
   x[keep]
 } 
 
-
-if(FALSE) {
-  
-  
-   magnitude1 <- SSBtoolsData("magnitude1")
-
-                        
-   tables_by_formulas(magnitude1, 
-                      table_fun = model_aggregate,
-                      table_formulas = list(table_1 = ~region*sector2, 
-                                            table_2 = ~region1:sector4 -1,
-                                            table_3 = ~region + sector4 -1),
-                      substitute_vars = list(region = c("geo", "eu"), region1 = "eu"),
-                      collapse_vars  = list(sector = c("sector2", "sector4")),
-                      sum_vars = "value") 
-                                                 
-  
+# Allow variables not found in data
+total_collapse_allow_missing <- function(data, variables, ...) {
+  for (i in seq_along(variables)) {
+    variables[[i]] <- variables[[i]][variables[[i]] %in% names(data)]
+  }
+  variables <- variables[sapply(variables, length) > 0]
+  if (!length(variables)) {
+    return(data)
+  }
+  total_collapse(data, variables, ...)
 }
-
 
