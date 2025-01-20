@@ -42,3 +42,6 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                    collapse_vars = list(sector = c("sector2", "sector4")), 
                    sum_vars = "value")
 }
+\seealso{
+\code{\link{filter_by_variable}}
+}

@@ -11,6 +11,8 @@
 #'
 #' @return A data frame 
 #' @export
+#' 
+#' @seealso \code{\link{filter_by_variable}}
 #'
 #' @examples
 #' tables_by_formulas(SSBtoolsData("magnitude1"),
