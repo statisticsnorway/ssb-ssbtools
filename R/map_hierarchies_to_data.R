@@ -8,7 +8,8 @@
 #' @param when_overwritten A function to be called when existing column(s) are overwritten.
 #'                         Supply `stop` to invoke an error, `warning` for a warning (default),
 #'                         `message` to display an informational message, or `NULL` to do nothing.
-#'                         
+#' @param add_comment Logical. When `TRUE` (default), a comment attribute will be added to the output data frame,
+#'                    containing the names of the variables that were added.                         
 #' @param ... Further parameters sent to \code{\link{hierarchies_as_vars}} 
 #'
 #' @return Input `data` with extra Variables
@@ -29,7 +30,21 @@
 #' map_hierarchies_to_data(data.frame(f = c("A", "B", "C", "D", "E", "A")), list(f = 
 #'        c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
 #'        
-map_hierarchies_to_data <- function(data, hierarchies, when_overwritten = warning, ...){
+#'        
+#' # Examples demonstrating when_overwritten and add_comment        
+#'        
+#' a <- map_hierarchies_to_data(z, list(age = age_hierarchy, geo = geo_dim_list))
+#' comment(a)
+#' 
+#' b <- map_hierarchies_to_data(a[-7], list(age = age_hierarchy, geo = geo_dim_list), 
+#'                              when_overwritten = message, add_comment = FALSE)
+#' comment(b)
+#' 
+map_hierarchies_to_data <- function(data, 
+                                    hierarchies, 
+                                    when_overwritten = warning,
+                                    add_comment = TRUE,
+                                    ...){
   a <- hierarchies_as_vars(hierarchies, ...)
   for(i in seq_along(a)){
     a[[i]] = map_var_hierarchy(a[[i]], data[[names(a[i])]])
@@ -48,7 +63,11 @@ map_hierarchies_to_data <- function(data, hierarchies, when_overwritten = warnin
     }
     data <- data[-a_names_in_data]
   }
-  do.call(cbind, c(list(data), a))
+  data <- do.call(cbind, c(list(data), a))
+  if (add_comment) {
+    comment(data) <- a_names
+  }
+  data
 }
 
 
