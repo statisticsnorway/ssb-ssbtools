@@ -4,12 +4,16 @@
 \alias{map_hierarchies_to_data}
 \title{Add variables to dataset based on hierarchies}
 \usage{
-map_hierarchies_to_data(data, hierarchies, ...)
+map_hierarchies_to_data(data, hierarchies, when_overwritten = warning, ...)
 }
 \arguments{
 \item{data}{A data frame containing variables with names matching the names of the hierarchies.}
 
 \item{hierarchies}{List of hierarchies in the same format as input to \code{\link{AutoHierarchies}}}
+
+\item{when_overwritten}{A function to be called when existing column(s) are overwritten.
+Supply \code{stop} to invoke an error, \code{warning} for a warning (default),
+\code{message} to display an informational message, or \code{NULL} to do nothing.}
 
 \item{...}{Further parameters sent to \code{\link{hierarchies_as_vars}}}
 }

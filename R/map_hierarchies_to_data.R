@@ -5,6 +5,10 @@
 #'
 #' @param data A data frame containing variables with names matching the names of the hierarchies.
 #' @inheritParams hierarchies_as_vars
+#' @param when_overwritten A function to be called when existing column(s) are overwritten.
+#'                         Supply `stop` to invoke an error, `warning` for a warning (default),
+#'                         `message` to display an informational message, or `NULL` to do nothing.
+#'                         
 #' @param ... Further parameters sent to \code{\link{hierarchies_as_vars}} 
 #'
 #' @return Input `data` with extra Variables
@@ -25,12 +29,25 @@
 #' map_hierarchies_to_data(data.frame(f = c("A", "B", "C", "D", "E", "A")), list(f = 
 #'        c("AB = A + B", "AC = A + C", "CD = C + D", "ABCD = AB + CD")))
 #'        
-map_hierarchies_to_data <- function(data, hierarchies, ...){
+map_hierarchies_to_data <- function(data, hierarchies, when_overwritten = warning, ...){
   a <- hierarchies_as_vars(hierarchies, ...)
   for(i in seq_along(a)){
     a[[i]] = map_var_hierarchy(a[[i]], data[[names(a[i])]])
   }
   names(a) <- NULL
+  a_names <- unlist(lapply(a, names))
+  if (any(duplicated(a_names))) {
+    stop("Duplicate generated variable names not allowed")
+  }
+  a_names_in_data <- which(names(data) %in% a_names)
+  if (length(a_names_in_data)) {
+    if (!is.null(when_overwritten)) {
+      message_text <- paste("Overwritten columns:", 
+          paste(names(data)[a_names_in_data], collapse = ", "))
+      when_overwritten(message_text)
+    }
+    data <- data[-a_names_in_data]
+  }
   do.call(cbind, c(list(data), a))
 }
 
