@@ -2,9 +2,12 @@
 % Please edit documentation in R/filter_by_variable.R
 \name{filter_by_variable}
 \alias{filter_by_variable}
-\title{Filter a List of Items by a Variable}
+\alias{names_by_variable}
+\title{Filter a List of Items or Retrieve Names by a Variable}
 \usage{
 filter_by_variable(variable, items, variable_mapping)
+
+names_by_variable(variable, variable_mapping)
 }
 \arguments{
 \item{variable}{A character string. The variable to filter the items by.}
@@ -16,13 +19,22 @@ with the corresponding item in \code{items}. The names of the list in \code{vari
 the names of the list in \code{items}.}
 }
 \value{
-A named list containing a subset of \code{items} where each element is associated
-with the specified \code{variable}. If no matches are found, an empty list is returned.
+\itemize{
+\item \code{filter_by_variable()}: A named list containing a subset of \code{items} where each element is
+associated with the specified \code{variable}. If no matches are found, an empty list is returned.
+\item \code{names_by_variable()}: A character vector of names from \code{variable_mapping} that are associated
+with the specified \code{variable}. If no matches are found, an empty character vector is returned.
+}
 }
 \description{
-Filters a list of items, retaining only those associated with a specific variable.
-The association between items and variables is provided via a named list, where
-each element contains a vector of variables corresponding to an item in \code{items}.
+Filters a list of items, retaining only those associated with a specific variable,
+or retrieves the names of items associated with the variable. The association between
+items and variables is provided via a named list, where each element contains a
+vector of variables corresponding to an item in \code{items}.
+}
+\details{
+\code{filter_by_variable()} returns the filtered list of items, whereas
+\code{names_by_variable()} is a simpler function that just returns the names of the items.
 }
 \note{
 This function is written and documented by ChatGPT after some discussion.
@@ -43,13 +55,12 @@ variable_mapping <- list(
   table_2 = c("value", "x", "y")
 )
 
-# Filter by variable "value"
 filter_by_variable("value", items, variable_mapping)
-
-# Filter by variable "y"
 filter_by_variable("y", items, variable_mapping)
-
-# Filter by a variable that does not exist
 filter_by_variable("nonexistent", items, variable_mapping)
+
+names_by_variable("value", variable_mapping)
+names_by_variable("y", variable_mapping)
+names_by_variable("nonexistent", variable_mapping)
 
 }
