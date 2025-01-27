@@ -6,7 +6,32 @@
 # In the future, this function should be moved to SSBtools and also be used by  Package GaussSuppression.
 # 
 
-#' @importFrom SSBtools AutoHierarchies SeqInc
+#' A specialized version of Extend0()
+#' 
+#' `Extend0fromModelMatrixInput()` is a specialized function that extends the input data based on the provided parameters.
+#' It is designed specifically to work with input to [ModelMatrix()].
+#'
+#' - `Extend0fromModelMatrixInput()`: The main function that processes and extends input data according to the specified parameters.
+#' - `IsExtend0()`: A helper function that evaluates the `extend0` parameter and returns `TRUE` or `FALSE`, indicating whether the data should be extended.
+#' 
+#' @inheritParams ModelMatrix 
+#' @inheritParams Extend0
+#' @param data Input data frame 
+#' @param extend0  When `extend0` is set to `TRUE`, the data is automatically extended.  
+#'        Additionally, `extend0` can be specified as a list, representing the `varGroups` parameter 
+#'        in the \code{\link{Extend0}} function. 
+#'        Can also be set to `"all"` which means that input codes in hierarchies 
+#'        are considered in addition to those in data.
+#' @param dVar Optional. Specifies the `dimVar` input for [Extend0()]. 
+#'        If not provided, `dimVar` is calculated by the [NamesFromModelMatrixInput()] function.
+#' @param ... Further arguments to underlying functions. 
+#'
+#' @return Extended data frame
+#' @export
+#' @keywords internal
+#' 
+#' @seealso [Extend0()]
+#'
 Extend0fromModelMatrixInput = function(data, 
                                        freqName, 
                                        hierarchies,
@@ -84,6 +109,10 @@ Extend0recode <- function(extend0, asLogical = FALSE) {
 }
 
 
+#' @rdname Extend0fromModelMatrixInput
+#' @export
+#' @keywords internal
+#'
 IsExtend0 <- function(extend0) {
   Extend0recode(extend0, asLogical = TRUE)
 }
@@ -99,7 +128,6 @@ IsExtend0 <- function(extend0) {
 # This function may be a future function in SSBtools. Then dimVar is not needed in input. Instead found by  SSBtools:::NamesFromHierarchies
 
 
-#' @importFrom SSBtools HierarchicalGroups2
 Extend0fromHierarchies <- function(data, freqName, hierarchies, dimVar, extend0all, ...) {
   
   toFindDimLists <- (names(hierarchies) %in% c(NA, "")) & (sapply(hierarchies, is.character))  # toFindDimLists created exactly as in AutoHierarchies
