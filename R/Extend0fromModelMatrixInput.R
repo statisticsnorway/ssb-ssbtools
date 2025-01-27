@@ -1,10 +1,3 @@
-# 
-# This function is made by copying code from Package GaussSuppression.
-# Extend0fromHierarchies is a direct copy. 
-# Other code is copy of lines within GaussSuppressionFromData.
-# Minor difference is the parameter isExtend0 instead of changing extend0 from input.
-# In the future, this function should be moved to SSBtools and also be used by  Package GaussSuppression.
-# 
 
 #' A specialized version of Extend0()
 #' 
@@ -24,6 +17,14 @@
 #'        are considered in addition to those in data.
 #' @param dVar Optional. Specifies the `dimVar` input for [Extend0()]. 
 #'        If not provided, `dimVar` is calculated by the [NamesFromModelMatrixInput()] function.
+#' @param avoidHierarchical Parameter passed to [Formula2ModelMatrix()] via [ModelMatrix()]. 
+#' The default value (`FALSE`) is the same as in the receiving function.
+#' @param hierarchical_extend0 Specifies the `hierarchical` input to [Extend0()]. 
+#' By default, it is set to the opposite of `avoidHierarchical` when `hierarchies` is not provided. 
+#' If `hierarchies` is provided, `hierarchical_extend0` is by default set to `FALSE`. 
+#' This parameter allows the `hierarchical` input to `Extend0()` to be specified manually, 
+#' independent of the input provided to `ModelMatrix()`.
+#' 
 #' @param ... Further arguments to underlying functions. 
 #'
 #' @return Extended data frame
@@ -38,7 +39,10 @@ Extend0fromModelMatrixInput = function(data,
                                        formula,
                                        dimVar,
                                        extend0, 
-                                       dVar = NULL, ...){
+                                       dVar = NULL, 
+                                       avoidHierarchical = FALSE,
+                                       hierarchical_extend0 = !avoidHierarchical & is.null(hierarchies),
+                                       ...){
   
   e0 <- Extend0recode(extend0)
   
@@ -50,15 +54,6 @@ Extend0fromModelMatrixInput = function(data,
   
   if(is.null(dVar)){
     dVar <- NamesFromModelMatrixInput(hierarchies = hierarchies, formula = formula, dimVar = dimVar)
-  }
-  
-  
-  # Capture possible avoidHierarchical argument to Formula2ModelMatrix
-  if (!is.null(formula) & is.null(hierarchies)) {
-    AH <- function(avoidHierarchical = FALSE, ...){avoidHierarchical}
-    avoidHierarchical <- AH(...)
-  } else {
-    avoidHierarchical <- FALSE
   }
   
   
@@ -77,7 +72,7 @@ Extend0fromModelMatrixInput = function(data,
     data <- data$data 
   } else {
     data <- Extend0(data, freqName = freqName, dimVar = dVar,  varGroups = varGroups, extraVar = TRUE, 
-                    hierarchical = !avoidHierarchical & is.null(hierarchies))
+                    hierarchical = hierarchical_extend0)
   }
   data
 }

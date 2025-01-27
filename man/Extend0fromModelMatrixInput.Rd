@@ -13,6 +13,8 @@ Extend0fromModelMatrixInput(
   dimVar,
   extend0,
   dVar = NULL,
+  avoidHierarchical = FALSE,
+  hierarchical_extend0 = !avoidHierarchical & is.null(hierarchies),
   ...
 )
 
@@ -38,6 +40,15 @@ are considered in addition to those in data.}
 
 \item{dVar}{Optional. Specifies the \code{dimVar} input for \code{\link[=Extend0]{Extend0()}}.
 If not provided, \code{dimVar} is calculated by the \code{\link[=NamesFromModelMatrixInput]{NamesFromModelMatrixInput()}} function.}
+
+\item{avoidHierarchical}{Parameter passed to \code{\link[=Formula2ModelMatrix]{Formula2ModelMatrix()}} via \code{\link[=ModelMatrix]{ModelMatrix()}}.
+The default value (\code{FALSE}) is the same as in the receiving function.}
+
+\item{hierarchical_extend0}{Specifies the \code{hierarchical} input to \code{\link[=Extend0]{Extend0()}}.
+By default, it is set to the opposite of \code{avoidHierarchical} when \code{hierarchies} is not provided.
+If \code{hierarchies} is provided, \code{hierarchical_extend0} is by default set to \code{FALSE}.
+This parameter allows the \code{hierarchical} input to \code{Extend0()} to be specified manually,
+independent of the input provided to \code{ModelMatrix()}.}
 
 \item{...}{Further arguments to underlying functions.}
 }
