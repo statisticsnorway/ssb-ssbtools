@@ -8,6 +8,7 @@
 #' @param table_formulas table_formulas 
 #' @param substitute_vars substitute_vars 
 #' @param collapse_vars collapse_vars 
+#' @param total total
 #'
 #' @return A data frame 
 #' @export
@@ -22,13 +23,15 @@
 #'                                          table_3 = ~region + sector4 - 1), 
 #'                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
 #'                    collapse_vars = list(sector = c("sector2", "sector4")), 
-#'                    sum_vars = "value")
+#'                    sum_vars = "value", 
+#'                    total = "T")
 tables_by_formulas <- function(data, 
                                ..., 
                                table_fun, 
                                table_formulas, 
                                substitute_vars = NULL, 
-                               collapse_vars = NULL) {
+                               collapse_vars = NULL, 
+                               total = "Total") {
   
   if (length(substitute_vars)) {
     for (i in seq_along(table_formulas)) {
@@ -39,7 +42,7 @@ tables_by_formulas <- function(data,
   
   formula <- combine_formulas(table_formulas)
   
-  a <- table_fun(data, ..., formula = formula, avoid_hierarchical = TRUE, avoidHierarchical = TRUE)
+  a <- table_fun(data, ..., formula = formula, avoid_hierarchical = TRUE, avoidHierarchical = TRUE, total = total)
   
   startRow <- attr(a, "startRow", exact = TRUE)
   
@@ -51,11 +54,11 @@ tables_by_formulas <- function(data,
   }
   
   if (length(substitute_vars)) {
-    a <- total_collapse_allow_missing(a, substitute_vars_removed) 
+    a <- total_collapse_allow_missing(a, substitute_vars_removed, total = total) 
   }
   
   if (length(collapse_vars)) {
-    a <- total_collapse_allow_missing(a, collapse_vars) 
+    a <- total_collapse_allow_missing(a, collapse_vars, total = total) 
   }
   
   a <- cbind(a, table_indicators)

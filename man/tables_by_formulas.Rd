@@ -10,7 +10,8 @@ tables_by_formulas(
   table_fun,
   table_formulas,
   substitute_vars = NULL,
-  collapse_vars = NULL
+  collapse_vars = NULL,
+  total = "Total"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ tables_by_formulas(
 \item{substitute_vars}{substitute_vars}
 
 \item{collapse_vars}{collapse_vars}
+
+\item{total}{total}
 }
 \value{
 A data frame
@@ -40,7 +43,8 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                                          table_3 = ~region + sector4 - 1), 
                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
                    collapse_vars = list(sector = c("sector2", "sector4")), 
-                   sum_vars = "value")
+                   sum_vars = "value", 
+                   total = "T")
 }
 \seealso{
 \code{\link{filter_by_variable}}
