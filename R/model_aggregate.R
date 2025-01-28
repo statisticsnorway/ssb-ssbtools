@@ -19,6 +19,10 @@
 #' @param hierarchies The `hierarchies` parameter to \code{\link{ModelMatrix}}
 #' @param formula     The `formula`     parameter to \code{\link{ModelMatrix}} 
 #' @param dim_var     The `dimVar`      parameter to \code{\link{ModelMatrix}}
+#' @param total       When non-NULL, the `total` parameter to \code{\link{ModelMatrix}}.
+#'                    Thus, the actual default value is `"Total"`. 
+#' @param input_in_output When non-NULL, the `inputInOutput` parameter to \code{\link{ModelMatrix}}.  
+#'                        Thus, the actual default value is `TRUE`.                    
 #' @param remove_empty  When non-NULL, the `removeEmpty` parameter to \code{\link{ModelMatrix}}.
 #'                    Thus, the actual default value is `TRUE` with formula input without hierarchy and 
 #'                    otherwise `FALSE` (see \code{\link{ModelMatrix}}).
@@ -146,6 +150,8 @@ model_aggregate = function(
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
+  total = NULL,
+  input_in_output = NULL,
   remove_empty = NULL,
   avoid_hierarchical = NULL,
   preagg_var = NULL,
@@ -289,6 +295,12 @@ model_aggregate = function(
   if (verbose) {
     cat("[ModelMatrix")
     flush.console()
+  }
+  if (!is.null(input_in_output)) {
+    mm_args <- c(mm_args, list(inputInOutput = input_in_output))
+  }
+  if (!is.null(total)) {
+    mm_args <- c(mm_args, list(total = total))
   }
   if (!is.null(remove_empty)) {
     mm_args <- c(mm_args, list(removeEmpty = remove_empty))

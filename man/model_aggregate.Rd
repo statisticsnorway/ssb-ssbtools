@@ -12,6 +12,8 @@ model_aggregate(
   hierarchies = NULL,
   formula = NULL,
   dim_var = NULL,
+  total = NULL,
+  input_in_output = NULL,
   remove_empty = NULL,
   avoid_hierarchical = NULL,
   preagg_var = NULL,
@@ -44,6 +46,12 @@ This will be done via \code{\link{aggregate_multiple_fun}} and \code{\link{dummy
 \item{formula}{The \code{formula}     parameter to \code{\link{ModelMatrix}}}
 
 \item{dim_var}{The \code{dimVar}      parameter to \code{\link{ModelMatrix}}}
+
+\item{total}{When non-NULL, the \code{total} parameter to \code{\link{ModelMatrix}}.
+Thus, the actual default value is \code{"Total"}.}
+
+\item{input_in_output}{When non-NULL, the \code{inputInOutput} parameter to \code{\link{ModelMatrix}}.
+Thus, the actual default value is \code{TRUE}.}
 
 \item{remove_empty}{When non-NULL, the \code{removeEmpty} parameter to \code{\link{ModelMatrix}}.
 Thus, the actual default value is \code{TRUE} with formula input without hierarchy and
