@@ -2,38 +2,66 @@
 % Please edit documentation in R/tables_by_formulas.R
 \name{tables_by_formulas}
 \alias{tables_by_formulas}
-\title{tables_by_formulas}
+\title{Tabular Statistics Based on Formulas}
 \usage{
 tables_by_formulas(
   data,
-  ...,
   table_fun,
+  ...,
   table_formulas,
   substitute_vars = NULL,
+  auto_collapse = TRUE,
   collapse_vars = NULL,
-  total = "Total"
+  total = "Total",
+  hierarchical_extend0 = TRUE
 )
 }
 \arguments{
-\item{data}{data}
+\item{data}{The input data to be processed by \code{table_fun}.}
 
-\item{...}{dots}
+\item{table_fun}{The table-producing function to be used.}
 
-\item{table_fun}{table_fun}
+\item{...}{Additional arguments passed to \code{table_fun}.}
 
-\item{table_formulas}{table_formulas}
+\item{table_formulas}{A named list of formulas, where each entry defines a specific table.}
 
-\item{substitute_vars}{substitute_vars}
+\item{substitute_vars}{Allows formulas in \code{table_formulas} to be written in a simplified way.
+If \code{substitute_vars} is specified, the final formulas are generated
+using \code{\link[=substitute_formula_vars]{substitute_formula_vars()}} with \code{substitute_vars} as input.}
 
-\item{collapse_vars}{collapse_vars}
+\item{auto_collapse}{Logical. If \code{TRUE}, variables are collapsed using \code{\link[=total_collapse]{total_collapse()}}
+with the \code{variables} parameter according to \code{substitute_vars}.}
 
-\item{total}{total}
+\item{collapse_vars}{When specified, \code{\link[=total_collapse]{total_collapse()}} is called with \code{collapse_vars} as the \code{variables} parameter,
+after any call triggered by the \code{auto_collapse} parameter.}
+
+\item{total}{A string used to name totals. Passed to both \code{table_fun} and \code{\link[=total_collapse]{total_collapse()}}.}
+
+\item{hierarchical_extend0}{Controls automatic hierarchy generation for \code{\link[=Extend0]{Extend0()}}.
+See "Details" for more information.}
 }
 \value{
-A data frame
+A single \code{data.frame} containing results for all tables defined in \code{table_formulas}.
 }
 \description{
-tables_by_formulas
+This function acts as an overlay for functions that produce table statistics
+through an interface utilizing the \code{\link[=ModelMatrix]{ModelMatrix()}} function and its \code{formula} parameter.
+Each table (individual statistic) is defined by a formula. The output is a single \code{data.frame}
+that contains the results for all tables.
+}
+\details{
+To ensure full control over the generated output variables, \code{table_fun} is called with \code{avoid_hierarchical}
+or \code{avoidHierarchical} set to \code{TRUE}. Desired variables in the output are achieved using
+\code{substitute_vars}, \code{auto_collapse}, and \code{collapse_vars}.
+
+If \code{table_fun} automatically uses \code{\link[=Extend0]{Extend0()}}, the parameter \code{hierarchical_extend0}
+specifies the \code{hierarchical} parameter in \code{\link[=Extend0]{Extend0()}} via \code{\link[=Extend0fromModelMatrixInput]{Extend0fromModelMatrixInput()}}.
+When \code{hierarchical_extend0} is \code{TRUE}, hierarchies are generated automatically.
+By default, it is set to \code{TRUE}, preventing excessive data extension and aligning with
+the default behavior of \code{\link[=Formula2ModelMatrix]{Formula2ModelMatrix()}}, where \code{avoidHierarchical = FALSE}.
+
+Note: The use of \code{total_collapse} internally allows handling of variable names not present in the data.
+This ensures flexibility when modifying the \code{table_formulas} parameter.
 }
 \examples{
 tables_by_formulas(SSBtoolsData("magnitude1"),
