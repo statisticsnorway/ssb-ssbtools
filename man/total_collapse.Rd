@@ -49,7 +49,7 @@ magnitude1 <- SSBtoolsData("magnitude1")
 a <- model_aggregate(magnitude1, 
                      formula = ~geo + eu + sector2 + sector4, 
                      sum_vars = "value", 
-                     mm_args = list(avoidHierarchical = TRUE))
+                     avoid_hierarchical = TRUE)
 a
 
 b <- total_collapse(a, list(GEO = c("geo", "eu"), SECTOR = c("sector2", "sector4")))
