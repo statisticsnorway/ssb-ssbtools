@@ -74,7 +74,9 @@ tables_by_formulas <- function(data,
                  total = total, 
                  hierarchical_extend0 = hierarchical_extend0)
   
-  startRow <- attr(a, "startRow", exact = TRUE)
+  # Extract all attributes except names, class, and row.names
+  preserved_attrs <- attributes(a)
+  preserved_attrs <- preserved_attrs[setdiff(names(preserved_attrs), c("names", "class", "row.names"))]
   
   table_indicators <- as.data.frame(matrix(NA, nrow(a), length(table_formulas)))
   names(table_indicators) <- names(table_formulas)
@@ -93,9 +95,13 @@ tables_by_formulas <- function(data,
   
   a <- cbind(a, table_indicators)
 
-  if (!is.null(startRow)) {
-    attr(a, "startRow") <- startRow
+  # Restore the preserved attributes if they do not already exist
+  for (attr_name in names(preserved_attrs)) {
+    if (is.null(attr(a, attr_name))) {
+      attr(a, attr_name) <- preserved_attrs[[attr_name]]
+    }
   }
+  
   a
   
 }
