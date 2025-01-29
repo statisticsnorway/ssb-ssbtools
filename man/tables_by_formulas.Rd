@@ -44,7 +44,7 @@ See "Details" for more information.}
 A single \code{data.frame} containing results for all tables defined in \code{table_formulas}.
 }
 \description{
-This function acts as an overlay for functions that produce table statistics
+This function acts as an overlay for functions that produce tabular statistics
 through an interface utilizing the \code{\link[=ModelMatrix]{ModelMatrix()}} function and its \code{formula} parameter.
 Each table (individual statistic) is defined by a formula. The output is a single \code{data.frame}
 that contains the results for all tables.

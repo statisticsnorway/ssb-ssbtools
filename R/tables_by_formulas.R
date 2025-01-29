@@ -1,7 +1,7 @@
 
 #' Tabular Statistics Based on Formulas
 #'
-#' This function acts as an overlay for functions that produce table statistics 
+#' This function acts as an overlay for functions that produce tabular statistics 
 #' through an interface utilizing the [ModelMatrix()] function and its `formula` parameter. 
 #' Each table (individual statistic) is defined by a formula. The output is a single `data.frame` 
 #' that contains the results for all tables.
