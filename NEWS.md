@@ -1,6 +1,10 @@
 
-## SSBtools x.x.x  
-
+## SSBtools x.x.x 
+* **New function: `tables_by_formulas()`**  
+  - This function acts as an overlay for functions that produce tabular statistics 
+    through an interface utilizing the `ModelMatrix()` function and its `formula` parameter. 
+  - Each table (individual statistic) is defined by a formula. The output is a single `data.frame` 
+    that contains the results for all tables.
 * **Improvements to `model_aggregate()`**  
   - Now, `avoid_hierarchical`, `input_in_output`, and `total` are direct parameters to `model_aggregate()`.  
     - Previously, the corresponding `ModelMatrix()` parameters (`avoidHierarchical`, `inputInOutput`, and `total`) 
@@ -21,9 +25,21 @@
     based on `ModelMatrix()` that uses the `hierarchies` parameter together with `inputInOutput = FALSE`.  
   - Also note the related new parameter, `printXdim`, which can be used to print 
     information about dimensional changes to the console.   
- 
-
-
+* **Improvements to `map_hierarchies_to_data()`**  
+  - Duplicate variable names are now handled. See the new parameter `when_overwritten`.  
+  - A comment attribute is added to the output data frame, containing the names of 
+    the variables that were added.  See the new parameter `add_comment`.  
+* **Improvements to `hierarchies_as_vars()`**  
+  - See the new parameters `drop_codes` and `include_codes`.  
+* **Intercept problem in `combine_formulas()` is fixed**  
+  - When combining formulas with and without intercept using the `"+"` operator,  
+    it is now ensured that the resulting formula includes an intercept.  
+* **Additional new functions**  
+  - `filter_by_variable()` and `names_by_variable()` are functions to  
+    filter a list of items or retrieve names based on a variable.  
+  - `Extend0fromModelMatrixInput()`, marked as internal, is a specialized version of `Extend0()`  
+    designed specifically to work with input to `ModelMatrix()`. 
+    
 
 ## SSBtools 1.6.0
 * `AutoHierarchies()` has been updated to recognize common from-to names, 
