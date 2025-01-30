@@ -1,4 +1,30 @@
 
+## SSBtools x.x.x  
+
+* **Improvements to `model_aggregate()`**  
+  - Now, `avoid_hierarchical`, `input_in_output`, and `total` are direct parameters to `model_aggregate()`.  
+    - Previously, the corresponding `ModelMatrix()` parameters (`avoidHierarchical`, `inputInOutput`, and `total`) 
+      had to be set via the `mm_args` parameter. Old code remains functional.  
+  - Improved support for `tibble` and `data.table` input (parameter `data`).  
+    - Input is now explicitly coerced to a data frame using `as.data.frame()` to ensure consistent behavior.  
+  - The pre-aggregation functionality in `model_aggregate()` can now be speeded up.  
+    - Set the new parameter `aggregate_pkg = "data.table"` to utilize this possibility. 
+    Also note the related new parameter `aggregate_base_order`.  
+  - Added a new parameter, `aggregate_na`, to control handling of missing values in grouping variables.  
+    - This is linked to the `NAomit` parameter to `Formula2ModelMatrix()`, 
+      which makes it meaningful to include NAs in the grouping variables.  
+    - When `aggregate_na = TRUE`, NAs in grouping variables are retained during pre-aggregation.  
+* **Improved `GaussSuppression()` – now removes duplicate rows **  
+  - See the updated documentation for the `removeDuplicated` parameter.  
+  - Previously, only duplicate columns were removed.   
+  - This update improves speed, especially when the function is called through an interface 
+    based on `ModelMatrix()` that uses the `hierarchies` parameter together with `inputInOutput = FALSE`.  
+  - Also note the related new parameter, `printXdim`, which can be used to print 
+    information about dimensional changes to the console.   
+ 
+
+
+
 ## SSBtools 1.6.0
 * `AutoHierarchies()` has been updated to recognize common from-to names, 
     and the `sign` variable is now optional.
