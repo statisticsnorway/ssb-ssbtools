@@ -49,15 +49,39 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="r-package-ssbtools">R package SSBtools<a class="anchor" aria-label="anchor" href="#r-package-ssbtools"></a>
 </h1></div>
-<p>Tools used by other packages from Statistics Norway</p>
-<p>Official version on CRAN: <a href="https://cran.r-project.org/package=SSBtools" class="external-link">https://cran.r-project.org/package=SSBtools</a></p>
+<table class="table">
+<colgroup>
+<col width="30%">
+<col width="4%">
+<col width="30%">
+<col width="4%">
+<col width="30%">
+</colgroup>
+<thead><tr class="header">
+<th><a href="https://cran.r-project.org/package=SSBtools" class="external-link">SSBtools on CRAN</a></th>
+<th></th>
+<th><a href="https://statisticsnorway.github.io/ssb-ssbtools/">pkgdown website</a></th>
+<th></th>
+<th><a href="https://github.com/statisticsnorway/ssb-ssbtools" class="external-link">GitHub Repository</a></th>
+</tr></thead>
+<tbody></tbody>
+</table>
+<hr>
+<div class="section level3">
+<h3 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+</h3>
+<p>Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, algorithms for statistical disclosure control <a href="https://doi.org/10.1007%2F978-3-031-69651-0_6" class="external-link">(Langsrud, 2024)</a> and functions for hierarchical computations by sparse model matrices are included <a href="https://doi.org/10.32614%2FRJ-2023-088" class="external-link">(Langsrud, 2023)</a>.</p>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p>You can install SSBtools from CRAN with</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SSBtools"</span><span class="op">)</span>  <span class="co"># Install from CRAN </span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/statisticsnorway/ssb-ssbtools" class="external-link">SSBtools</a></span><span class="op">)</span>             <span class="co"># Load SSBtools</span></span>
-<span><span class="op">?</span><span class="va">HierarchyCompute</span>             <span class="co"># Help documentation of function HierarchyCompute</span></span>
-<span></span>
-<span><span class="co"># Alternatively install from GitHub if you want to test the newest changes</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"statisticsnorway/SSBtools"</span><span class="op">)</span> </span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SSBtools"</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively install from GitHub by<code>devtools::install_github("statisticsnorway/SSBtools")</code> if you want to test the newest changes.</p>
+<hr>
+</div>
 <div class="section level3">
 <h3 id="some-of-the-functions">Some of the functions<a class="anchor" aria-label="anchor" href="#some-of-the-functions"></a>
 </h3>
@@ -66,137 +90,84 @@
 <col width="31%">
 <col width="68%">
 </colgroup>
-<thead><tr class="header">
-<th>Function</th>
-<th></th>
-</tr></thead>
 <tbody>
 <tr class="odd">
-<td>AddLeadingZeros</td>
-<td>Add leading zeros to numbers while preserving other text</td>
-</tr>
-<tr class="even">
-<td>AutoHierarchies</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoHierarchies.html">AutoHierarchies()</a></td>
 <td>Ensure standardized coding of hierarchies</td>
 </tr>
-<tr class="odd">
-<td>AutoSplit</td>
-<td>Creating variables by splitting the elements of a character vector without needing a split string</td>
-</tr>
 <tr class="even">
-<td>CbindIdMatch</td>
-<td>Combine several data frames by using id variables to match rows</td>
-</tr>
-<tr class="odd">
-<td>DimList2Hrc/Hrc2DimList</td>
-<td>Conversion between hierarchy coding in sdcTable and TauArgus</td>
-</tr>
-<tr class="even">
-<td>GaussIndependent/GaussRank</td>
+<td>
+<a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussIndependent.html">GaussIndependent()</a>/<a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussRank.html">GaussRank()</a>
+</td>
 <td>Linearly independent rows and columns by Gaussian elimination</td>
 </tr>
 <tr class="odd">
-<td>GaussSuppression</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussSuppression.html">GaussSuppression()</a></td>
 <td>Secondary suppression by Gaussian elimination</td>
 </tr>
 <tr class="even">
-<td>FactorLevCorr</td>
-<td>Factor level correlation</td>
+<td>
+<a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/FindHierarchies.html">FindHierarchies()</a>/<a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDimLists.html">FindDimLists()</a>
+</td>
+<td>Finding hierarchies automatically from data</td>
 </tr>
 <tr class="odd">
-<td>FindDimLists</td>
-<td>Finding dimList</td>
-</tr>
-<tr class="even">
-<td>FormulaSums/Formula2ModelMatrix</td>
-<td>Sums (aggregates) and/or sparse model matrix with possible cross table</td>
-</tr>
-<tr class="odd">
-<td>HierarchicalGroups</td>
-<td>Finding hierarchical variable groups</td>
-</tr>
-<tr class="even">
-<td>HierarchicalWildcardGlobbing</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchicalWildcardGlobbing.html">HierarchicalWildcardGlobbing()</a></td>
 <td>Find variable combinations by advanced wildcard/globbing specifications.</td>
 </tr>
-<tr class="odd">
-<td>Hierarchies2ModelMatrix</td>
-<td>Model matrix representing crossed hierarchies</td>
-</tr>
 <tr class="even">
-<td>HierarchiesAndFormula2ModelMatrix</td>
-<td>Model matrix representing crossed hierarchies according to a formula</td>
-</tr>
-<tr class="odd">
-<td>HierarchyCompute</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchyCompute.html">HierarchyCompute()</a></td>
 <td>Hierarchical Computations</td>
 </tr>
-<tr class="even">
-<td>Match</td>
+<tr class="odd">
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/Match.html">Match()</a></td>
 <td>Matching rows in data frames</td>
 </tr>
-<tr class="odd">
-<td>matlabColon</td>
-<td>Simulate Matlab’s ‘:’</td>
-</tr>
 <tr class="even">
-<td>Mipf</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/Mipf.html">Mipf()</a></td>
 <td>Iterative proportional fitting from matrix input</td>
 </tr>
 <tr class="odd">
-<td>ModelMatrix</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/ModelMatrix.html">ModelMatrix()</a></td>
 <td>Model matrix from hierarchies and/or a formula (common interface)</td>
 </tr>
 <tr class="even">
-<td>RbindAll</td>
-<td>Combining several data frames when the columns don’t match</td>
-</tr>
-<tr class="odd">
-<td>Reduce0exact</td>
-<td>Reducing a non-negative regression problem</td>
-</tr>
-<tr class="even">
-<td>RowGroups</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/RowGroups.html">RowGroups()</a></td>
 <td>Create numbering according to unique rows</td>
 </tr>
 <tr class="odd">
-<td>SSBtoolsData</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/SSBtoolsData.html">SSBtoolsData()</a></td>
 <td>Function that returns a dataset</td>
 </tr>
 <tr class="even">
-<td>Stack</td>
-<td>Stack columns from a data frame and include variables.</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_by_pkg.html">aggregate_by_pkg()</a></td>
+<td>Aggregate by base R or data.table</td>
 </tr>
 <tr class="odd">
-<td>Unstack</td>
-<td>Unstack a column from a data frame and include additional variables.</td>
-</tr>
-<tr class="even">
-<td>WildcardGlobbing</td>
-<td>Row selection by wildcard/globbing</td>
-</tr>
-<tr class="odd">
-<td>WildcardGlobbingVector</td>
-<td>Selection of elements by wildcard/globbing</td>
-</tr>
-<tr class="even">
-<td>aggregate_multiple_fun</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_multiple_fun.html">aggregate_multiple_fun()</a></td>
 <td>Wrapper to aggregate</td>
 </tr>
-<tr class="odd">
-<td>dummy_aggregate</td>
-<td>aggregate_multiple_fun using a dummy matrix</td>
-</tr>
 <tr class="even">
-<td>model_aggregate</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/map_hierarchies_to_data.html">map_hierarchies_to_data()</a></td>
+<td>Add variables to dataset based on hierarchies</td>
+</tr>
+<tr class="odd">
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/model_aggregate.html">model_aggregate()</a></td>
 <td>Hierarchical aggregation via model specification</td>
 </tr>
+<tr class="even">
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/tables_by_formulas.html">tables_by_formulas()</a></td>
+<td>Tabular Statistics Based on Formulas</td>
+</tr>
 <tr class="odd">
-<td>quantile_weighted</td>
+<td><a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/quantile_weighted.html">quantile_weighted()</a></td>
 <td>Weighted quantiles</td>
 </tr>
 </tbody>
 </table>
+<p>📌 See the <a href="https://statisticsnorway.github.io/ssb-ssbtools/reference/index.html">broader list of available functions</a>.</p>
+<hr>
+<p>Official version on CRAN: <a href="https://cran.r-project.org/package=SSBtools" class="external-link">https://cran.r-project.org/package=SSBtools</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
