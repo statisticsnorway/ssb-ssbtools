@@ -1,5 +1,7 @@
 
 ## SSBtools x.x.x 
+* **New pkgdown website for the package**  
+  - This package now has a documentation site at [https://statisticsnorway.github.io/ssb-ssbtools/](https://statisticsnorway.github.io/ssb-ssbtools/).
 * **New function: `tables_by_formulas()`**  
   - This function acts as an overlay for functions that produce tabular statistics 
     through an interface utilizing the `ModelMatrix()` function and its `formula` parameter. 
