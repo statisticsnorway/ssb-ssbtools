@@ -6,3 +6,6 @@ SECURITY.md
 .bat
 .pdf
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
