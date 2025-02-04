@@ -1,18 +1,35 @@
 # R package SSBtools
 
-Tools used by other packages from Statistics Norway
 
-Official version on CRAN: [https://cran.r-project.org/package=SSBtools](https://cran.r-project.org/package=SSBtools)
+| [SSBtools on CRAN](https://cran.r-project.org/package=SSBtools) |  | [pkgdown website](https://statisticsnorway.github.io/ssb-ssbtools/) |  | [GitHub Repository](https://github.com/statisticsnorway/ssb-ssbtools) |
+|----------------------|---|----------------------|---|----------------------|
 
+
+***
+
+### Description
+
+Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, algorithms for statistical disclosure control 
+[(Langsrud, 2024)](https://doi.org/10.1007%2F978-3-031-69651-0_6) 
+and functions for hierarchical computations by sparse model matrices are included 
+[(Langsrud, 2023)](https://doi.org/10.32614%2FRJ-2023-088). 
+
+
+***
+
+
+### Installation
+
+You can install SSBtools from CRAN with
 
 ```r
-install.packages("SSBtools")  # Install from CRAN 
-library(SSBtools)             # Load SSBtools
-?HierarchyCompute             # Help documentation of function HierarchyCompute
-
-# Alternatively install from GitHub if you want to test the newest changes
-devtools::install_github("statisticsnorway/SSBtools") 
+install.packages("SSBtools")
 ```
+
+Alternatively install from GitHub by`devtools::install_github("statisticsnorway/SSBtools")` if you want to test the newest changes.
+
+
+***
 
 ### Some of the functions
 
@@ -49,3 +66,10 @@ devtools::install_github("statisticsnorway/SSBtools")
 | dummy_aggregate |	aggregate_multiple_fun using a dummy matrix |
 | model_aggregate |	Hierarchical aggregation via model specification |
 | quantile_weighted |	Weighted quantiles |
+
+
+***
+
+
+Official version on CRAN: [https://cran.r-project.org/package=SSBtools](https://cran.r-project.org/package=SSBtools)
+
