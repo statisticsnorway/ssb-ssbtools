@@ -122,11 +122,25 @@ substitute_formula_vars <-
 #' combine_formulas(lof1)
 #' combine_formulas(lof1, operator = "*")
 #' combine_formulas(lof1, simplify = TRUE)
+#' 
+#' # Intercept is included when needed
+#' lof2 <- c(~a+b -1, ~a:c -1, ~c*d)
+#' combine_formulas(lof2)
+#' combine_formulas(lof2, simplify = TRUE)
+#' combine_formulas(lof2[1:2])
+#' combine_formulas(lof2[1:2], simplify = TRUE)
 combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent.frame()) {
-  lof <- sapply(lof, function(x)
+  lof_ <- sapply(lof, function(x)
     deparse_here(x[[length(x)]]))
-  lof <- paste0("(", lof, ")")
-  out <- formula(paste("~", paste(lof, collapse = operator)), env = env)
+  lof_ <- paste0("(", lof_, ")")
+  out <- formula(paste("~", paste(lof_, collapse = operator)), env = env)
+  if (operator == "+") {
+    if (!has_intercept(out)) {
+      if (any(sapply(lof, has_intercept))) {
+        out <- formula(paste("~", paste(lof_, collapse = operator), " + 1"), env = env)
+      }
+    }
+  }
   if (simplify)
     return(formula(terms(out, simplify = TRUE), env = env))
   out
@@ -157,5 +171,8 @@ deparse_here <- get0("deparse1", envir=baseenv(), ifnotfound = deparse1_copy)
 
 
 
-
+has_intercept <- function(formula) {
+  terms_obj <- terms(formula)
+  attr(terms_obj, "intercept") == 1
+}
 
