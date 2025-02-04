@@ -21,6 +21,9 @@ test_that("ModelMatrix: dimVar vs formula", {
 
 
 test_that("Parameters to FormulaSums + FormulaSelection", {
+  
+  skip_on_cran()
+  
   if (!requireNamespace("data.table", quietly = TRUE)) {
     skip()
   }

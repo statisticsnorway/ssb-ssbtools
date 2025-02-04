@@ -1,5 +1,5 @@
 
-## SSBtools x.x.x 
+## SSBtools 1.7.0 
 * **New pkgdown website for the package**  
   - This package now has a documentation site at [https://statisticsnorway.github.io/ssb-ssbtools/](https://statisticsnorway.github.io/ssb-ssbtools/).
 * **New function: `tables_by_formulas()`**  
