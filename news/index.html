@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,64 @@
       <small>Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.7.0" id="ssbtools-170">SSBtools 1.7.0<a class="anchor" aria-label="anchor" href="#ssbtools-170"></a></h2><p class="text-muted">CRAN release: 2025-02-04</p>
+<ul><li>
+<strong>New pkgdown website for the package</strong>
+<ul><li>This package now has a documentation site at <a href="https://statisticsnorway.github.io/ssb-ssbtools/">https://statisticsnorway.github.io/ssb-ssbtools/</a>.</li>
+</ul></li>
+<li>
+<strong>New function: <code><a href="../reference/tables_by_formulas.html">tables_by_formulas()</a></code></strong>
+<ul><li>This function acts as an overlay for functions that produce tabular statistics through an interface utilizing the <code><a href="../reference/ModelMatrix.html">ModelMatrix()</a></code> function and its <code>formula</code> parameter.</li>
+<li>Each table (individual statistic) is defined by a formula. The output is a single <code>data.frame</code> that contains the results for all tables.</li>
+</ul></li>
+<li>
+<strong>Improvements to <code><a href="../reference/model_aggregate.html">model_aggregate()</a></code></strong>
+<ul><li>Now, <code>avoid_hierarchical</code>, <code>input_in_output</code>, and <code>total</code> are direct parameters to <code><a href="../reference/model_aggregate.html">model_aggregate()</a></code>.
+<ul><li>Previously, the corresponding <code><a href="../reference/ModelMatrix.html">ModelMatrix()</a></code> parameters (<code>avoidHierarchical</code>, <code>inputInOutput</code>, and <code>total</code>) had to be set via the <code>mm_args</code> parameter. Old code remains functional.<br></li>
+</ul></li>
+<li>Improved support for <code>tibble</code> and <code>data.table</code> input (parameter <code>data</code>).
+<ul><li>Input is now explicitly coerced to a data frame using <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> to ensure consistent behavior.<br></li>
+</ul></li>
+<li>The pre-aggregation functionality in <code><a href="../reference/model_aggregate.html">model_aggregate()</a></code> can now be speeded up.
+<ul><li>Set the new parameter <code>aggregate_pkg = "data.table"</code> to utilize this possibility. Also note the related new parameter <code>aggregate_base_order</code>.<br></li>
+</ul></li>
+<li>Added a new parameter, <code>aggregate_na</code>, to control handling of missing values in grouping variables.
+<ul><li>This is linked to the <code>NAomit</code> parameter to <code><a href="../reference/FormulaSums.html">Formula2ModelMatrix()</a></code>, which makes it meaningful to include NAs in the grouping variables.<br></li>
+<li>When <code>aggregate_na = TRUE</code>, NAs in grouping variables are retained during pre-aggregation.<br></li>
+</ul></li>
+</ul></li>
+<li>
+<strong>Improved <code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code> – now removes duplicate rows </strong>
+<ul><li>See the updated documentation for the <code>removeDuplicated</code> parameter.<br></li>
+<li>Previously, only duplicate columns were removed.<br></li>
+<li>This update improves speed, especially when the function is called through an interface based on <code><a href="../reference/ModelMatrix.html">ModelMatrix()</a></code> that uses the <code>hierarchies</code> parameter together with <code>inputInOutput = FALSE</code>.<br></li>
+<li>Also note the related new parameter, <code>printXdim</code>, which can be used to print information about dimensional changes to the console.<br></li>
+</ul></li>
+<li>
+<strong>Improvements to <code><a href="../reference/map_hierarchies_to_data.html">map_hierarchies_to_data()</a></code></strong>
+<ul><li>Duplicate variable names are now handled. See the new parameter <code>when_overwritten</code>.<br></li>
+<li>A comment attribute is added to the output data frame, containing the names of the variables that were added. See the new parameter <code>add_comment</code>.<br></li>
+</ul></li>
+<li>
+<strong>Improvements to <code><a href="../reference/hierarchies_as_vars.html">hierarchies_as_vars()</a></code></strong>
+<ul><li>See the new parameters <code>drop_codes</code> and <code>include_codes</code>.<br></li>
+</ul></li>
+<li>
+<strong>Intercept problem in <code><a href="../reference/combine_formulas.html">combine_formulas()</a></code> is fixed</strong>
+<ul><li>When combining formulas with and without intercept using the <code>"+"</code> operator,<br>
+it is now ensured that the resulting formula includes an intercept.<br></li>
+</ul></li>
+<li>
+<strong>Additional new functions</strong>
+<ul><li>
+<code><a href="../reference/filter_by_variable.html">filter_by_variable()</a></code> and <code><a href="../reference/filter_by_variable.html">names_by_variable()</a></code> are functions to<br>
+filter a list of items or retrieve names based on a variable.<br></li>
+<li>
+<code><a href="../reference/Extend0fromModelMatrixInput.html">Extend0fromModelMatrixInput()</a></code>, marked as internal, is a specialized version of <code><a href="../reference/Extend0.html">Extend0()</a></code><br>
+designed specifically to work with input to <code><a href="../reference/ModelMatrix.html">ModelMatrix()</a></code>.</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.6.0" id="ssbtools-160">SSBtools 1.6.0<a class="anchor" aria-label="anchor" href="#ssbtools-160"></a></h2><p class="text-muted">CRAN release: 2024-12-04</p>
 <ul><li>
