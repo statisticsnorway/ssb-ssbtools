@@ -110,12 +110,12 @@ m6 <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoHier2, year = "all
 
 # Compute aggregates
 ths_per <- as.matrix(z[, "ths_per", drop = FALSE])  # matrix with the values to be aggregated
-t(m1) \%*\% ths_per  # crossprod(m1, ths_per) is equivalent and faster
-t(m2) \%*\% ths_per
-t(m3) \%*\% ths_per
-t(m4) \%*\% ths_per
-t(m5) \%*\% ths_per
-t(m6) \%*\% ths_per
+Matrix::t(m1) \%*\% ths_per  # Matrix::crossprod(m1, ths_per) is equivalent and faster
+Matrix::t(m2) \%*\% ths_per
+Matrix::t(m3) \%*\% ths_per
+Matrix::t(m4) \%*\% ths_per
+Matrix::t(m5) \%*\% ths_per
+Matrix::t(m6) \%*\% ths_per
 
 
 # Example using the select parameter as a data frame
@@ -125,7 +125,7 @@ m2a <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), select 
 # Same result by slower alternative
 m2B <- Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), crossTable = TRUE)
 m2b <- m2B$modelMatrix[, Match(select, m2B$crossTable), drop = FALSE]
-t(m2b) \%*\% ths_per
+Matrix::t(m2b) \%*\% ths_per
 
 # Examples using the select parameter as a list
 Hierarchies2ModelMatrix(z, list(age = ageHier, geo = geoDimList), 

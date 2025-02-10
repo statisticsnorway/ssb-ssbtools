@@ -2,7 +2,7 @@ test_that("DummyApply works", {
   z <- SSBtools::SSBtoolsData("sprt_emp_withEU")
   
   x <- SSBtools::ModelMatrix(z, formula = ~age + geo, crossTable = TRUE)$modelMatrix
-  sum1 <- (t(x) %*% z$ths_per)[, 1]
+  sum1 <- (Matrix::t(x) %*% z$ths_per)[, 1]
   sum2 <- DummyApply(x, z$ths_per, sum)
   
   expect_equal(sum1, sum2, check.attributes = FALSE)

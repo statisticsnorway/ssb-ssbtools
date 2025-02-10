@@ -48,7 +48,7 @@ x <- ModelMatrix(SSBtoolsData("z2"), formula = ~fylke + kostragr * hovedint - 1)
 
 GaussIndependent(x)
 GaussRank(x)
-GaussRank(t(x))
+GaussRank(Matrix::t(x))
 
 \dontrun{
 # For comparison, qr-based rank may not work

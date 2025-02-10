@@ -66,7 +66,7 @@ x5 <- FormulaSelection(x, c("(Intercept)", "age"))
 
 a <- ModelMatrix(z, formula = ~age * geo + year, crossTable = TRUE)
 b <- cbind(as.data.frame(a$crossTable), 
-           sum = (t(a$modelMatrix) \%*\% z$ths_per)[, 1], 
+           sum = (Matrix::t(a$modelMatrix) \%*\% z$ths_per)[, 1], 
            max = DummyApply(a$modelMatrix, 
            z$ths_per, max))
 rownames(b) <- NULL
