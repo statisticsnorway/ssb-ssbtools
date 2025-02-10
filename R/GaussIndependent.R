@@ -23,7 +23,7 @@
 #' 
 #' GaussIndependent(x)
 #' GaussRank(x)
-#' GaussRank(t(x))
+#' GaussRank(Matrix::t(x))
 #' 
 #' \dontrun{
 #' # For comparison, qr-based rank may not work

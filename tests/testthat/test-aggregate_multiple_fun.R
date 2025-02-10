@@ -82,7 +82,7 @@ test_that("1,2,3,4,5,6,7 variables, dummy and non-dummy", {
   
   x <- ModelMatrix(z, formula = ~hovedint:kostragr - 1)
   
-  s1 <- as.vector(t(x) %*% z[["y"]])
+  s1 <- as.vector(Matrix::t(x) %*% z[["y"]])
   
   expect_equal(s1, 
                dummy_aggregate(data = z, x = x, 
@@ -122,13 +122,13 @@ test_that("1,2,3,4,5,6,7 variables, dummy and non-dummy", {
   x2[, 4] <- 0
   
   
-  expect_equal(as.vector(t(x2^2) %*% z[["y"]]), 
+  expect_equal(as.vector(Matrix::t(x2^2) %*% z[["y"]]), 
                dummy_aggregate(data = z, x = x2, dummy = FALSE,
                                fun = function(x, y2) {sum(x^2 * y2)},  
                                vars = list( y = list(c("y"))))$y)
   
   
-  s2 <- as.vector(t(x2) %*% z[["ant"]]  + t(x2^2) %*% z[["y"]])
+  s2 <- as.vector(Matrix::t(x2) %*% z[["ant"]]  + Matrix::t(x2^2) %*% z[["y"]])
   
   
   expect_equal(s2, 

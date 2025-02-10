@@ -152,15 +152,15 @@ test_that("ModelMatrix: select parameter", {
   expect_equal(m2BF, m2B$modelMatrix)
   expect_equal(m3CF_, m3C_$modelMatrix)
   
-  expect_true(all.equal(m1C$crossTable, m1C_$crossTable[colSums(m1C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
-  expect_true(all.equal(m2C$crossTable, m2C_$crossTable[colSums(m2C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
-  expect_true(all.equal(m3C$crossTable, m3C_$crossTable[colSums(m3C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
+  expect_true(all.equal(m1C$crossTable, m1C_$crossTable[Matrix::colSums(m1C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
+  expect_true(all.equal(m2C$crossTable, m2C_$crossTable[Matrix::colSums(m2C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
+  expect_true(all.equal(m3C$crossTable, m3C_$crossTable[Matrix::colSums(m3C_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
   
   expect_equal(m2D, m2D_)
   expect_equal(m3D, m3D_)
   expect_equal(m2E, m2E_)
   expect_equal(m3E, m3E_)
-  expect_true(all.equal(m1D$crossTable, m1D_$crossTable[colSums(m1D_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
-  expect_true(all.equal(m1E$crossTable, m1E_$crossTable[colSums(m1E_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
+  expect_true(all.equal(m1D$crossTable, m1D_$crossTable[Matrix::colSums(m1D_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
+  expect_true(all.equal(m1E$crossTable, m1E_$crossTable[Matrix::colSums(m1E_$modelMatrix)!=0, , drop=FALSE], check.attributes = FALSE)) 
   
 })  

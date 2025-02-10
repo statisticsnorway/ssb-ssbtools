@@ -9,7 +9,7 @@ test_that("Reduce0exact works", {
   d$ths_per[to0] <- 0
   
   # Values as a single column matrix
-  y <- Matrix(d$ths_per, ncol = 1)
+  y <- Matrix::Matrix(d$ths_per, ncol = 1)
   
   # A model matrix using a special year hierarchy
   x <- Hierarchies2ModelMatrix(d, hierarchies = list(geo = "", age = "", year = 
@@ -17,7 +17,7 @@ test_that("Reduce0exact works", {
      ), inputInOutput = FALSE)
   
   # Aggregates 
-  z <- t(x) %*% y
+  z <- Matrix::t(x) %*% y
   
   a <- Reduce0exact(x, z)
   expect_equivalent(sum(a$yKnown), 17)
@@ -36,7 +36,7 @@ test_that("Reduce0exact works", {
   expect_true(is.matrix(b$x))
   expect_true(is(b$y,"Matrix"))
   expect_equivalent(as.matrix(a$x), b$x) 
-  expect_equivalent(sum(abs((z- t(x) %*% b$y)[which(!b$zSkipped),1, drop=FALSE]-b$z)),0)
+  expect_equivalent(sum(abs((z- Matrix::t(x) %*% b$y)[which(!b$zSkipped),1, drop=FALSE]-b$z)),0)
   expect_equal(rownames(b$z), colnames(x)[which(!b$zSkipped)])
   
   a <- Reduce0exact(x, y = as.matrix(y), reduceByLeverage = TRUE)

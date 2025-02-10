@@ -25,7 +25,7 @@
 #' a <- ModelMatrix(z, formula = ~age + geo, crossTable = TRUE)
 #' 
 #' cbind(as.data.frame(a$crossTable), 
-#'       sum1 = (t(a$modelMatrix) %*% z$ths_per)[,1],
+#'       sum1 = (Matrix::t(a$modelMatrix) %*% z$ths_per)[,1],
 #'       sum2 = DummyApply(a$modelMatrix, z$ths_per, sum),
 #'        max = DummyApply(a$modelMatrix, z$ths_per, max))
 #'        

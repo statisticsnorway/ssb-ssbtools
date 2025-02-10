@@ -57,7 +57,7 @@ The algorithm will work similar to \code{\link{loglin}} when the input x-matrix 
 \dontrun{
 data2 <- SSBtoolsData("z2")
 x <- ModelMatrix(data2, formula = ~fylke + kostragr * hovedint - 1)
-z <- t(x) \%*\% data2$ant  # same as FormulaSums(data2, ant~fylke + kostragr * hovedint -1)
+z <- Matrix::t(x) \%*\% data2$ant  # same as FormulaSums(data2, ant~fylke + kostragr * hovedint -1)
 yHat <- Mipf(x, z)
 
 #############################
@@ -81,7 +81,7 @@ max(abs(sort(dfLoglm$Freq, decreasing = TRUE)[1:nrow(data2)] - sort(yHat, decrea
 
 # Modify so that region is in output. Problem 1 avoided.
 x <- ModelMatrix(data2, formula = ~region + kostragr * hovedint - 1)
-z <- t(x) \%*\% data2$ant  # same as FormulaSums(data2, ant~fylke + kostragr * hovedint -1)
+z <- Matrix::t(x) \%*\% data2$ant  # same as FormulaSums(data2, ant~fylke + kostragr * hovedint -1)
 yHat <- Mipf(x, z, eps = 1e-04)
 outLoglm <- loglm(ant ~ region + kostragr * hovedint, data2, eps = 1e-04, iter = 100)
 dfLoglm <- as.data.frame.table(fitted(outLoglm))
@@ -117,7 +117,7 @@ yHatLoglin <- matrix(((out$fit)), ncol = 1)
 df <- as.data.frame.table(tab)
 names(df)[1:5] <- c("A", "B", "C", "D", "E")
 x <- ModelMatrix(df, formula = ~A:B + A:C + A:D + A:E + B:C:D + C:D:E - 1)
-z <- t(x) \%*\% df$Freq
+z <- Matrix::t(x) \%*\% df$Freq
 
 # Estimate yHat by Mipf
 yHatPMipf <- Mipf(x, z, iter = iter, eps = eps)
@@ -145,7 +145,7 @@ x <- ModelMatrix(z3, formula = ~region + kostragr * hovedint + region * mnd2 + f
 t <- 360
 y <- z3$ant
 y[round((1:t) * 432/t)] <- 0
-z <- t(x) \%*\% y
+z <- Matrix::t(x) \%*\% y
 a1 <- Mipf(x, z, eps = 0.1)
 a2 <- Mipf(x, z, reduceBy0 = TRUE, eps = 0.1)
 a3 <- Mipf(x, z, reduceByColSums = TRUE, eps = 0.1)
@@ -158,7 +158,7 @@ max(abs(a1 - a3))
 t <- 402
 y <- z3$ant
 y[round((1:t) * 432/t)] <- 0
-z <- t(x) \%*\% y
+z <- Matrix::t(x) \%*\% y
 a1 <- Mipf(x, z, eps = 1)
 a2 <- Mipf(x, z, reduceBy0 = TRUE, eps = 1)
 a3 <- Mipf(x, z, reduceByColSums = TRUE, eps = 1)
@@ -170,7 +170,7 @@ max(abs(a1 - a3))
 t <- 378
 y <- z3$ant
 y[round((1:t) * 432/t)] <- 0
-z <- t(x) \%*\% y
+z <- Matrix::t(x) \%*\% y
 a1 <- Mipf(x, z, eps = 1)
 a2 <- Mipf(x, z, reduceBy0 = TRUE, eps = 1)
 a3 <- Mipf(x, z, reduceByColSums = TRUE, eps = 1)
@@ -184,7 +184,7 @@ max(abs(a1 - a4))
 t <- 384
 y <- z3$ant
 y[round((1:t) * 432/t)] <- 0
-z <- t(x) \%*\% y
+z <- Matrix::t(x) \%*\% y
 a1 <- Mipf(x, z, eps = 1e-14)
 a2 <- Mipf(x, z, reduceBy0 = TRUE, eps = 1e-14)
 a3 <- Mipf(x, z, reduceByColSums = TRUE, eps = 1e-14)
@@ -196,7 +196,7 @@ max(abs(a1 - a3))
 t <- 411
 y <- z3$ant
 y[round((1:t) * 432/t)] <- 0
-z <- t(x) \%*\% y
+z <- Matrix::t(x) \%*\% y
 a1 <- Mipf(x, z)
 a2 <- Mipf(x, z, reduceBy0 = TRUE)
 a3 <- Mipf(x, z, reduceByColSums = TRUE)

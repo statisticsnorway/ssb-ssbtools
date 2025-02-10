@@ -99,11 +99,11 @@ attr(m, "startCol")
 
 # Compute aggregates
 m <- H(z, ageGeoYear, ~geo * age, inputInOutput = c(TRUE, FALSE, TRUE))
-t(m) \%*\% z$ths_per
+Matrix::t(m) \%*\% z$ths_per
 
 # Without hierarchies. Only factors.
 ageGeoYearFactor <- list(age = "", geo = "", year = "")
-t(H(z, ageGeoYearFactor, ~geo * age + year:geo))
+Matrix::t(H(z, ageGeoYearFactor, ~geo * age + year:geo))
 }
 \seealso{
 \code{\link{ModelMatrix}}, \code{\link{Hierarchies2ModelMatrix}}, \code{\link{Formula2ModelMatrix}}.

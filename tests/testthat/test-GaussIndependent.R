@@ -3,7 +3,7 @@ test_that("GaussIndependent works", {
   a <- GaussIndependent(x)
   expect_equivalent(which(a$rows), c(1, 2, 3, 5, 7, 9, 10, 12, 20, 23, 31, 34, 42))
   expect_equivalent(which(a$columns), c(1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15))
-  b <- GaussIndependent(t(x))
+  b <- GaussIndependent(Matrix::t(x))
   expect_identical(a$rows, b$columns)
   expect_identical(b$rows, a$columns)
   
@@ -16,17 +16,17 @@ test_that("GaussIndependent works", {
   a <- GaussIndependent(x)
   expect_equivalent(which(a$rows), c(1, 2, 3, 4, 6, 8, 9, 10, 12, 16, 19, 20, 23, 31, 34, 36, 37, 43))
   expect_equivalent(which(a$columns), c(1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20))
-  b <- GaussIndependent(t(x))
+  b <- GaussIndependent(Matrix::t(x))
   expect_identical(a$rows, b$columns)
   expect_identical(b$rows, a$columns)
   
   a1 <- GaussIndependent(x, allNumeric = TRUE)
-  b1 <- GaussIndependent(t(x), allNumeric = TRUE)
+  b1 <- GaussIndependent(Matrix::t(x), allNumeric = TRUE)
   expect_identical(a1,a)
   expect_identical(b1,b)
   
   a1 <- GaussIndependent(x, testMaxInt = 2)
-  b1 <- GaussIndependent(t(x), testMaxInt = 2)
+  b1 <- GaussIndependent(Matrix::t(x), testMaxInt = 2)
   expect_identical(a1,a)
   expect_identical(b1,b)
   
@@ -58,7 +58,7 @@ test_that("GaussIndependent integer overflow", {
   expect_identical(sum(a$rows), 420L)  
   expect_identical(sum(a$columns), 420L)
   
-  b <- GaussIndependent(t(x))
+  b <- GaussIndependent(Matrix::t(x))
   
   expect_identical(sum(b$rows), 420L)  
   expect_identical(sum(b$columns), 420L)

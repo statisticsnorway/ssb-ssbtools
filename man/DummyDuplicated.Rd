@@ -27,7 +27,7 @@ The random values are generated locally within the function without affecting th
 }
 \examples{
 x <- cbind(1, rbind(diag(2), diag(2)), diag(4)[, 1:2])
-z <- Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5, 2)])
+z <- Matrix::Matrix(x[c(1:4, 2:3), c(1, 2, 1:5, 5, 2)])
 
 DummyDuplicated(z)
 which(DummyDuplicated(z, rows = TRUE))
@@ -35,14 +35,14 @@ which(DummyDuplicated(z, rows = TRUE))
 # Four ways to obtain the same result
 DummyDuplicated(z, idx = TRUE)
 DummyDuplicated(z, idx = TRUE, rnd = TRUE)
-DummyDuplicated(t(z), idx = TRUE, rows = TRUE)
-DummyDuplicated(t(z), idx = TRUE, rows = TRUE, rnd = TRUE)
+DummyDuplicated(Matrix::t(z), idx = TRUE, rows = TRUE)
+DummyDuplicated(Matrix::t(z), idx = TRUE, rows = TRUE, rnd = TRUE)
 
 # The unique values in four ways 
 which(!DummyDuplicated(z), )
 which(!DummyDuplicated(z, rnd = TRUE))
-which(!DummyDuplicated(t(z), rows = TRUE))
-which(!DummyDuplicated(t(z), rows = TRUE, rnd = TRUE))
+which(!DummyDuplicated(Matrix::t(z), rows = TRUE))
+which(!DummyDuplicated(Matrix::t(z), rows = TRUE, rnd = TRUE))
 }
 \author{
 Øyvind Langsrud

@@ -24,7 +24,7 @@
 #' set.seed(123)
 #' data2 <- SSBtoolsData("z2")
 #' x <- ModelMatrix(data2, formula = ~fylke + kostragr * hovedint - 1)
-#' z <- t(x) %*% data2$ant + rnorm(ncol(x), sd = 3)
+#' z <- Matrix::t(x) %*% data2$ant + rnorm(ncol(x), sd = 3)
 #' LSfitNonNeg(x, z)
 #' LSfitNonNeg(x, z, limit = NULL)
 #' 
@@ -32,7 +32,7 @@
 #' mf <- ~region*mnd + hovedint*mnd + fylke*hovedint*mnd + kostragr*hovedint*mnd
 #' data4 <- SSBtoolsData("sosialFiktiv")
 #' x <- ModelMatrix(data4, formula = mf)
-#' z <- t(x) %*% data4$ant + rnorm(ncol(x), sd = 3)
+#' z <- Matrix::t(x) %*% data4$ant + rnorm(ncol(x), sd = 3)
 #' zFit <- LSfitNonNeg(x, z)
 #' }
 LSfitNonNeg <- function(x, z, limit = 1e-10, viaQR = FALSE, printInc = TRUE) {

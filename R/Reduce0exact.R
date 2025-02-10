@@ -49,7 +49,7 @@
 #' d$ths_per[to0] <- 0
 #' 
 #' # Values as a single column matrix
-#' y <- Matrix(d$ths_per, ncol = 1)
+#' y <- Matrix::Matrix(d$ths_per, ncol = 1)
 #' 
 #' # A model matrix using a special year hierarchy
 #' x <- Hierarchies2ModelMatrix(d, hierarchies = list(geo = "", age = "", year = 
@@ -58,7 +58,7 @@
 #'       inputInOutput = FALSE)
 #' 
 #' # Aggregates 
-#' z <- t(x) %*% y
+#' z <- Matrix::t(x) %*% y
 #' sum(z == 0)  # 5 zeros
 #' 
 #' # From zeros in z
@@ -67,13 +67,13 @@
 #' dim(a$x)        # Reduced x, without known y and z with zeros 
 #' dim(a$z)        # Corresponding reduced z 
 #' sum(a$zSkipped) # 5 elements skipped 
-#' t(a$y)          # Just zeros (known are 0 and unknown set to 0) 
+#' Matrix::t(a$y)          # Just zeros (known are 0 and unknown set to 0) 
 #' 
 #' # It seems that three additional y-values can be found directly from z
-#' sum(colSums(a$x) == 1)
+#' sum(Matrix::colSums(a$x) == 1)
 #' 
 #' # But it is the same element of y (row 18)
-#' a$x[18, colSums(a$x) == 1]
+#' a$x[18, Matrix::colSums(a$x) == 1]
 #' 
 #' # Make use of ones in colSums
 #' a2 <- Reduce0exact(x, z, reduceByColSums = TRUE)
