@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -150,21 +150,36 @@ Values corresponding to <code>"rowFactor"</code> and <code>"colFactor"</code> ar
 <span class="r-in"><span><span class="va">geoYear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>geo <span class="op">=</span> <span class="va">geoDimList</span>, year <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">H</span><span class="op">(</span><span class="va">s</span>, <span class="va">geoYear</span>, <span class="op">~</span><span class="va">geo</span> <span class="op">*</span> <span class="va">year</span>, inputInOutput <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">m</span>, col.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 x 12 sparse Matrix of class "dgCMatrix"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      Europe-Total EU-Total nonEU-Total Europe-2014 Europe-2015 Europe-2016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]            1        1           .           1           .           .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]            1        1           .           1           .           .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]            1        1           .           .           1           .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]            1        1           .           .           1           .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]            1        1           .           .           .           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,]            1        1           .           .           .           1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      EU-2014 EU-2015 EU-2016 nonEU-2014 nonEU-2015 nonEU-2016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       1       .       .          .          .          .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]       1       .       .          .          .          .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]       .       1       .          .          .          .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]       .       1       .          .          .          .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       .       .       1          .          .          .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,]       .       .       1          .          .          .</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;S4 Type Object&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"i")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0 1 2 3 4 5 0 1 2 3 4 5 0 1 2 3 4 5 0 1 2 3 4 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"p")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  0  6 12 12 14 16 18 20 22 24 24 24 24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"Dim")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  6 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"Dimnames")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"Dimnames")[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"Dimnames")[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Europe-Total" "EU-Total"     "nonEU-Total"  "Europe-2014"  "Europe-2015" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "Europe-2016"  "EU-2014"      "EU-2015"      "EU-2016"      "nonEU-2014"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "nonEU-2015"   "nonEU-2016"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"x")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"factors")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "dgCMatrix"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")attr(,"package")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Matrix"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"total")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      geo     year </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Europe"  "Total" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"startCol")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      geo geo:year </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        1        4 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">m</span>, <span class="st">"total"</span><span class="op">)</span>     <span class="co"># Total code 'Europe' is found</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      geo     year </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "Europe"  "Total" </span>
@@ -254,7 +269,7 @@ Values corresponding to <code>"rowFactor"</code> and <code>"colFactor"</code> ar
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compute aggregates</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">H</span><span class="op">(</span><span class="va">z</span>, <span class="va">ageGeoYear</span>, <span class="op">~</span><span class="va">geo</span> <span class="op">*</span> <span class="va">age</span>, inputInOutput <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">z</span><span class="op">$</span><span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">z</span><span class="op">$</span><span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Europe-Y15-64 680.8</span>
@@ -269,7 +284,7 @@ Values corresponding to <code>"rowFactor"</code> and <code>"colFactor"</code> ar
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Without hierarchies. Only factors.</span></span></span>
 <span class="r-in"><span><span class="va">ageGeoYearFactor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="st">""</span>, geo <span class="op">=</span> <span class="st">""</span>, year <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu">H</span><span class="op">(</span><span class="va">z</span>, <span class="va">ageGeoYearFactor</span>, <span class="op">~</span><span class="va">geo</span> <span class="op">*</span> <span class="va">age</span> <span class="op">+</span> <span class="va">year</span><span class="op">:</span><span class="va">geo</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="fu">H</span><span class="op">(</span><span class="va">z</span>, <span class="va">ageGeoYearFactor</span>, <span class="op">~</span><span class="va">geo</span> <span class="op">*</span> <span class="va">age</span> <span class="op">+</span> <span class="va">year</span><span class="op">:</span><span class="va">geo</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21 x 18 sparse Matrix of class "dgCMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Total-Total-Total     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span>

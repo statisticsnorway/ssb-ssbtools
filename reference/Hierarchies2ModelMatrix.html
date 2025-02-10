@@ -11,7 +11,7 @@ t(x) %*% y, where  y is a matrix with one column for each numerical variable."><
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -218,13 +218,13 @@ This is also an additional option for users of the function.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compute aggregates</span></span></span>
 <span class="r-in"><span><span class="va">ths_per</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">z</span><span class="op">[</span>, <span class="st">"ths_per"</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span>  <span class="co"># matrix with the values to be aggregated</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span>  <span class="co"># crossprod(m1, ths_per) is equivalent and faster</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m1</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span>  <span class="co"># Matrix::crossprod(m1, ths_per) is equivalent and faster</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:Europe   680.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:EU       670.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU     10.6</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:Europe     680.8</span>
@@ -245,7 +245,7 @@ This is also an additional option for users of the function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y30-64:Iceland      5.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y30-64:Portugal    70.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y30-64:Spain      362.0</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m3</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:Europe:2014   222.3</span>
@@ -257,7 +257,7 @@ This is also an additional option for users of the function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2014      3.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2015      3.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2016      3.8</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m4</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m4</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:Europe:allYears   680.8</span>
@@ -272,14 +272,14 @@ This is also an additional option for users of the function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2014          3.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2015          3.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:2016          3.8</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m5</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m5</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:EUandSpain:allYears  1231.6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:EU:allYears           670.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:Europe:allYears       680.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:nonEU:allYears         10.6</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m6</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m6</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:EUandSpain:allYears   670.2</span>
@@ -295,7 +295,7 @@ This is also an additional option for users of the function.</p>
 <span class="r-in"><span><span class="co"># Same result by slower alternative</span></span></span>
 <span class="r-in"><span><span class="va">m2B</span> <span class="op">&lt;-</span> <span class="fu">Hierarchies2ModelMatrix</span><span class="op">(</span><span class="va">z</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">ageHier</span>, geo <span class="op">=</span> <span class="va">geoDimList</span><span class="op">)</span>, crossTable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m2b</span> <span class="op">&lt;-</span> <span class="va">m2B</span><span class="op">$</span><span class="va">modelMatrix</span><span class="op">[</span>, <span class="fu"><a href="Match.html">Match</a></span><span class="op">(</span><span class="va">select</span>, <span class="va">m2B</span><span class="op">$</span><span class="va">crossTable</span><span class="op">)</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">m2b</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
+<span class="r-in"><span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">m2b</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">ths_per</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 x 1 Matrix of class "dgeMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              ths_per</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Y15-64:EU      670.2</span>
