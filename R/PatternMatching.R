@@ -274,7 +274,6 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
 #'
 #' @return Logical vector defining subset of rows. 
 #' @importFrom utils glob2rx 
-#' @importFrom stringr str_split 
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -309,7 +308,7 @@ WildcardGlobbing <- function(x, wg, sign = TRUE, invert = "!") {
       {
         wgijLast[j] <- wg[i, j]
         
-        wgss <- str_split(wg[i, j], invert)[[1]]
+        wgss <- strsplit(wg[i, j], invert, fixed = TRUE)[[1]]
         
         if (length(wgss) == 1) 
           selijLast[[j]] <- grepl(glob2rx(wgss), x[, names(wg)[j]]) else selijLast[[j]] <- !grepl(glob2rx(wgss[2]), x[, names(wg)[j]])
@@ -350,7 +349,7 @@ WildcardGlobbing <- function(x, wg, sign = TRUE, invert = "!") {
 #' # Add to the selection cities not having six or more letters.
 #' WildcardGlobbingVector(x, c("B*", "C*", "Sa*", "-?o*", "-???t*", "!??????*"))
 WildcardGlobbingVector <- function(x, wg, negSign = "-", invert = "!") {
-  a <- str_split(wg, negSign, simplify = TRUE, n = 2)
+  a <- split_once(wg, negSign)
   sig <- !(a[, 1] == "")
   sign <- rep("+", length(sig))
   sign[!sig] <- "-"
@@ -380,4 +379,19 @@ crossMerge <- function(ind1, ind2, x, y, useMatrixToDataFrame = TRUE) {
       CrossCodeFrames(z1, z2, useMatrixToDataFrame = useMatrixToDataFrame)
 }
 
+
+
+# Written by ChatGPT after some discussion.
+# Base R Equivalent of stringr::str_split(x, split, n = 2, simplify = TRUE)
+split_once <- function(x, split) {
+  pos <- regexpr(split, x, fixed = TRUE)  # Find the first occurrence of the split
+  
+  # If the split character is not found, return the full string and an empty string
+  part1 <- ifelse(pos > 0, substr(x, 1, pos - 1), x)
+  part2 <- ifelse(pos > 0, substr(x, pos + nchar(split), nchar(x)), "")
+  
+  result <- cbind(as.vector(part1), as.vector(part2))  # Ensure identical structure to `str_split()`
+  
+  return(result)
+}
 
