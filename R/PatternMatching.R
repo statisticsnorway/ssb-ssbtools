@@ -17,6 +17,7 @@
 #' @param printInfo When TRUE, information is printed during the process.
 #' @param useMatrixToDataFrame When TRUE, special functions (DataFrameToMatrix/MatrixToDataFrame) 
 #'             for improving speed and memory is utilized.
+#' @inheritParams WildcardGlobbing
 #'
 #' @return data.frame
 #' @importFrom stats dist hclust
@@ -89,7 +90,7 @@
 #' 
 #' # same result with as.list since same unique values of each variable
 #' dim(HierarchicalWildcardGlobbing(as.list(zFrame), wg))
-HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FALSE, makeWarning = TRUE, printInfo = FALSE, useMatrixToDataFrame = TRUE) {
+HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FALSE, makeWarning = TRUE, printInfo = FALSE, useMatrixToDataFrame = TRUE, invert = "!") {
   if (any(!(names(wg) %in% c("sign", names(z))))) {
     if (makeWarning) 
       warning("wg: Unique variant of common variables used")
@@ -165,7 +166,7 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
   for (i in 1:length(z)) {
     # print(names(z)[i]) print(rg$groups$sign)
     for (j in seq_len(nGroups)[as.logical(rg$groups$sign * rg$groups[, names(z)[i]])]) # print(j)
-      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = TRUE), , drop = FALSE]
+      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = TRUE, invert = invert), , drop = FALSE]
   }
   
   
@@ -177,7 +178,7 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
   for (i in 1:length(z)) {
     # print(names(z)[i])
     for (j in seq_len(nGroups)[as.logical((!rg$groups$sign) * rg$groups[, names(z)[i]])]) if (nTRUE[j] == 1) 
-      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = FALSE), , drop = FALSE]
+      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = FALSE, invert = invert), , drop = FALSE]
   }
   
   
@@ -237,10 +238,10 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
           rgy <- RowGroups(y[[i]][, vars, drop = FALSE], returnGroups = TRUE)
           cat("]")
           flush.console()
-          selg <- WildcardGlobbing(rgy$groups, wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr])
+          selg <- WildcardGlobbing(rgy$groups, wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr], invert = invert)
           sel <- selg[rgy$idx]
         } else {
-          sel <- WildcardGlobbing(y[[i]][, vars, drop = FALSE], wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr])
+          sel <- WildcardGlobbing(y[[i]][, vars, drop = FALSE], wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr], invert = invert)
         }
         y[[i]] <- y[[i]][sel, , drop = FALSE]
         if (printInfo) {
@@ -359,7 +360,7 @@ WildcardGlobbingVector <- function(x, wg, negSign = "-", invert = "!") {
   
   z <- data.frame(x = x)
   
-  HierarchicalWildcardGlobbing(z, wg = wg)[[1]]
+  HierarchicalWildcardGlobbing(z, wg = wg, invert = invert)[[1]]
 }
 
 #' crossMerge
