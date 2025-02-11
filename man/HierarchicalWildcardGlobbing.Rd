@@ -11,7 +11,8 @@ HierarchicalWildcardGlobbing(
   useFactor = FALSE,
   makeWarning = TRUE,
   printInfo = FALSE,
-  useMatrixToDataFrame = TRUE
+  useMatrixToDataFrame = TRUE,
+  invert = "!"
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ HierarchicalWildcardGlobbing(
 
 \item{useMatrixToDataFrame}{When TRUE, special functions (DataFrameToMatrix/MatrixToDataFrame)
 for improving speed and memory is utilized.}
+
+\item{invert}{Character to invert each single selection.}
 }
 \value{
 data.frame

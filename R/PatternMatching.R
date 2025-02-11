@@ -17,6 +17,7 @@
 #' @param printInfo When TRUE, information is printed during the process.
 #' @param useMatrixToDataFrame When TRUE, special functions (DataFrameToMatrix/MatrixToDataFrame) 
 #'             for improving speed and memory is utilized.
+#' @inheritParams WildcardGlobbing
 #'
 #' @return data.frame
 #' @importFrom stats dist hclust
@@ -89,7 +90,7 @@
 #' 
 #' # same result with as.list since same unique values of each variable
 #' dim(HierarchicalWildcardGlobbing(as.list(zFrame), wg))
-HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FALSE, makeWarning = TRUE, printInfo = FALSE, useMatrixToDataFrame = TRUE) {
+HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FALSE, makeWarning = TRUE, printInfo = FALSE, useMatrixToDataFrame = TRUE, invert = "!") {
   if (any(!(names(wg) %in% c("sign", names(z))))) {
     if (makeWarning) 
       warning("wg: Unique variant of common variables used")
@@ -165,7 +166,7 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
   for (i in 1:length(z)) {
     # print(names(z)[i]) print(rg$groups$sign)
     for (j in seq_len(nGroups)[as.logical(rg$groups$sign * rg$groups[, names(z)[i]])]) # print(j)
-      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = TRUE), , drop = FALSE]
+      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = TRUE, invert = invert), , drop = FALSE]
   }
   
   
@@ -177,7 +178,7 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
   for (i in 1:length(z)) {
     # print(names(z)[i])
     for (j in seq_len(nGroups)[as.logical((!rg$groups$sign) * rg$groups[, names(z)[i]])]) if (nTRUE[j] == 1) 
-      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = FALSE), , drop = FALSE]
+      x[[i]] <- x[[i]][WildcardGlobbing(x[[i]], wg[rg$idx == j, names(z)[i], drop = FALSE], sign = FALSE, invert = invert), , drop = FALSE]
   }
   
   
@@ -237,10 +238,10 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
           rgy <- RowGroups(y[[i]][, vars, drop = FALSE], returnGroups = TRUE)
           cat("]")
           flush.console()
-          selg <- WildcardGlobbing(rgy$groups, wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr])
+          selg <- WildcardGlobbing(rgy$groups, wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr], invert = invert)
           sel <- selg[rgy$idx]
         } else {
-          sel <- WildcardGlobbing(y[[i]][, vars, drop = FALSE], wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr])
+          sel <- WildcardGlobbing(y[[i]][, vars, drop = FALSE], wg[rg$idx == j, vars, drop = FALSE], sign = rg$groups[j, signNr], invert = invert)
         }
         y[[i]] <- y[[i]][sel, , drop = FALSE]
         if (printInfo) {
@@ -274,7 +275,6 @@ HierarchicalWildcardGlobbing <- function(z, wg, useUnique = NULL, useFactor = FA
 #'
 #' @return Logical vector defining subset of rows. 
 #' @importFrom utils glob2rx 
-#' @importFrom stringr str_split 
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -309,7 +309,7 @@ WildcardGlobbing <- function(x, wg, sign = TRUE, invert = "!") {
       {
         wgijLast[j] <- wg[i, j]
         
-        wgss <- str_split(wg[i, j], invert)[[1]]
+        wgss <- strsplit(wg[i, j], invert, fixed = TRUE)[[1]]
         
         if (length(wgss) == 1) 
           selijLast[[j]] <- grepl(glob2rx(wgss), x[, names(wg)[j]]) else selijLast[[j]] <- !grepl(glob2rx(wgss[2]), x[, names(wg)[j]])
@@ -350,7 +350,7 @@ WildcardGlobbing <- function(x, wg, sign = TRUE, invert = "!") {
 #' # Add to the selection cities not having six or more letters.
 #' WildcardGlobbingVector(x, c("B*", "C*", "Sa*", "-?o*", "-???t*", "!??????*"))
 WildcardGlobbingVector <- function(x, wg, negSign = "-", invert = "!") {
-  a <- str_split(wg, negSign, simplify = TRUE, n = 2)
+  a <- split_once(wg, negSign)
   sig <- !(a[, 1] == "")
   sign <- rep("+", length(sig))
   sign[!sig] <- "-"
@@ -360,7 +360,7 @@ WildcardGlobbingVector <- function(x, wg, negSign = "-", invert = "!") {
   
   z <- data.frame(x = x)
   
-  HierarchicalWildcardGlobbing(z, wg = wg)[[1]]
+  HierarchicalWildcardGlobbing(z, wg = wg, invert = invert)[[1]]
 }
 
 #' crossMerge
@@ -380,4 +380,19 @@ crossMerge <- function(ind1, ind2, x, y, useMatrixToDataFrame = TRUE) {
       CrossCodeFrames(z1, z2, useMatrixToDataFrame = useMatrixToDataFrame)
 }
 
+
+
+# Written by ChatGPT after some discussion.
+# Base R Equivalent of stringr::str_split(x, split, n = 2, simplify = TRUE)
+split_once <- function(x, split) {
+  pos <- regexpr(split, x, fixed = TRUE)  # Find the first occurrence of the split
+  
+  # If the split character is not found, return the full string and an empty string
+  part1 <- ifelse(pos > 0, substr(x, 1, pos - 1), x)
+  part2 <- ifelse(pos > 0, substr(x, pos + nchar(split), nchar(x)), "")
+  
+  result <- cbind(as.vector(part1), as.vector(part2))  # Ensure identical structure to `str_split()`
+  
+  return(result)
+}
 
