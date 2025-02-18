@@ -1,6 +1,6 @@
 Package: SSBtools
 Type: Package
-Title: Statistics Norway's Miscellaneous Tools
+Title: Algorithms and Tools for Tabular Statistics and Hierarchical Computations
 Version: 1.7.2
 Date: 2025-02-11
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
@@ -13,7 +13,7 @@ Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-1925-5911")),
              person("Statistics Norway", role = "cph"))
 Imports: methods, MASS, Matrix
-Description: Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, algorithms for statistical disclosure control (Langsrud, 2024) <doi:10.1007/978-3-031-69651-0_6> and functions for hierarchical computations by sparse model matrices are included (Langsrud, 2023) <doi:10.32614/RJ-2023-088>. 
+Description: Includes general data manipulation functions, algorithms for statistical disclosure control (Langsrud, 2024) <doi:10.1007/978-3-031-69651-0_6> and functions for hierarchical computations by sparse model matrices are (Langsrud, 2023) <doi:10.32614/RJ-2023-088>. 
 License: MIT + file LICENSE
 URL: https://github.com/statisticsnorway/ssb-ssbtools, https://statisticsnorway.github.io/ssb-ssbtools/
 BugReports: https://github.com/statisticsnorway/ssb-ssbtools/issues
