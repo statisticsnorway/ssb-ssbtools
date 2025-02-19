@@ -9,9 +9,9 @@
 
 ### Description
 
-Functions used by other packages from Statistics Norway are gathered. General data manipulation functions, algorithms for statistical disclosure control 
+Includes general data manipulation functions, algorithms for statistical disclosure control 
 [(Langsrud, 2024)](https://doi.org/10.1007%2F978-3-031-69651-0_6) 
-and functions for hierarchical computations by sparse model matrices are included 
+and functions for hierarchical computations by sparse model matrices  
 [(Langsrud, 2023)](https://doi.org/10.32614%2FRJ-2023-088). 
 
 
