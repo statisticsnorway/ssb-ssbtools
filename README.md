@@ -1,4 +1,4 @@
-# R package SSBtools
+# R package SSBtools <img src="man/figures/logo.png" align="right" height="150" /> 
 
 
 | [SSBtools on CRAN](https://cran.r-project.org/package=SSBtools) |  | [pkgdown website](https://statisticsnorway.github.io/ssb-ssbtools/) |  | [GitHub Repository](https://github.com/statisticsnorway/ssb-ssbtools) |
