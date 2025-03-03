@@ -102,11 +102,13 @@ CbindIdMatch <-  function(..., addName=names(x), sep="_",
 #' RbindAll(list(zA, zB, zC, zD))
 RbindAll <-  function(...){
   x = list(...)
+  x <- x[!sapply(x, is.null)]
   if (length(x)==1) # Handle list input
     if (is.list(x[[1]]))
       if (!is.data.frame(x[[1]]))
         x <- x[[1]]
   n <- length(x)
+  if (n == 0) return(NULL)
   allColnames <- NULL
   for (i in seq_len(n)) 
     allColnames <- unique(c(allColnames, colnames(x[[i]])))
