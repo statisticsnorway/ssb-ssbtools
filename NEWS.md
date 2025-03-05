@@ -1,3 +1,16 @@
+## SSBtools x.x.x 
+* The title and description in the DESCRIPTION file have been updated  
+  to avoid giving the impression that the package is strictly internal to Statistics Norway.
+* A small improvement to a singleton method in `GaussSuppression()`, along with a minor fix.  
+  - See the note under `?NumSingleton` for details on the improvement to `elimination` (4th character).  
+  - A previous attempt for a similar improvement was not implemented correctly,  
+    which in rare cases could lead to unnecessary secondary cells. This has now been fixed.
+* Improved robustness of `RbindAll()`.  
+  - `RbindAll()` now correctly handles data frames with 0 rows instead of producing an error.  
+  - `RbindAll()` now also accepts `NULL` as input.      
+* A hexagon sticker logo is now visible on the 
+  [pkgdown website](https://statisticsnorway.github.io/ssb-ssbtools/) and the 
+  [GitHub repository](https://github.com/statisticsnorway/ssb-ssbtools).
 
 ## SSBtools 1.7.0 
 * **New pkgdown website for the package**  
