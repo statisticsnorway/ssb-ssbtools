@@ -54,6 +54,21 @@
 #'      This means that protected linear combinations cannot be calculated linearly from non-suppressed cells. 
 #'      However, other contributors may still be able to recalculate these combinations using their own suppressed values.
 #'   }
+#'   
+#'   
+#' @note Note an update made in SSBtools version 1.7.3, which relates to this sentence in Langsrud (2024):  
+#' *"The remaining non-zero rows for columns corresponding to primary cells must not originate solely from one contributor."*  
+#' Due to speed and memory considerations, the algorithm does not first perform elimination and then check the result. 
+#' Instead, it first verifies whether elimination is permissible before executing it. 
+#' This approach allows for a more thorough validation process compared to performing elimination with a fixed row order.  
+#' Specifically, this means that the singleton procedure, denoted as `elimination` (4th character), 
+#' can take into account different row orders. 
+#' Such an improvement was introduced in SSBtools version 1.7.3 after the publication of Langsrud (2024). 
+#' As a result, more potential issues can now be detected during 
+#' a single elimination sequence (`t` as the 4th character), 
+#' slightly reducing the need for double elimination (`T` as the 4th character). 
+#' However, since the row order influences subsequent elimination steps, 
+#' double elimination remains an important safeguard.
 #'
 #' @param singletonMethod String to be decoded. If necessary, the input string is extended with `F`'s. 
 #'
