@@ -1,6 +1,14 @@
 ## SSBtools x.x.x 
 * The title and description in the DESCRIPTION file have been updated  
   to avoid giving the impression that the package is strictly internal to Statistics Norway.
+* `Matrix` are moved from Depends to Imports  
+  - To follow best practices for R packages.
+* Removed dependency on `stringr`
+  - Ensures that `SSBtools` has no dependencies beyond standard R packages. 
+  - Replaced `stringr::str_split()` with base R alternatives in `WildcardGlobbingVector()` and `HierarchicalWildcardGlobbing()`.
+* Fixed usage of the `invert` parameter in `WildcardGlobbingVector()` and `HierarchicalWildcardGlobbing()`.
+  - Previously, the default value was always used.
+  - This change was made now because this code was reviewed as part of removing the stringr dependency.
 * A small improvement to a singleton method in `GaussSuppression()`, along with a minor fix.  
   - See the note under `?NumSingleton` for details on the improvement to `elimination` (4th character).  
   - A previous attempt for a similar improvement was not implemented correctly,  
