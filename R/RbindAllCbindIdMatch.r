@@ -102,14 +102,27 @@ CbindIdMatch <-  function(..., addName=names(x), sep="_",
 #' RbindAll(list(zA, zB, zC, zD))
 RbindAll <-  function(...){
   x = list(...)
+  x <- x[!sapply(x, is.null)]
   if (length(x)==1) # Handle list input
     if (is.list(x[[1]]))
       if (!is.data.frame(x[[1]]))
         x <- x[[1]]
   n <- length(x)
+  if (n == 0) return(NULL)
   allColnames <- NULL
   for (i in seq_len(n)) 
     allColnames <- unique(c(allColnames, colnames(x[[i]])))
+  nrow0 <- sapply(x, nrow) == 0
+  if (any(nrow0)) {
+    if(!any(!nrow0)) {
+      return(as.data.frame(
+        matrix(ncol = length(allColnames), 
+               nrow = 1, 
+               dimnames = list(NULL, allColnames)))[0, , drop = FALSE])
+    }
+    x <- x[!nrow0]
+    n <- length(x)
+  }
   for (i in seq_len(n)) 
     x[[i]][, c(as.character(setdiff(allColnames, colnames(x[[i]]))))] <- NA
   eval(parse(text = paste("rbind(", paste("x[[", seq_len(n), "]],", collapse = ""), "deparse.level = 0)")))

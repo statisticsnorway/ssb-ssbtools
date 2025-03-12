@@ -1132,7 +1132,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         }
         if (!doCheck) {
           if (numSingletonEliminationCheck) {
-            if (r[1] %in% rB[[i]]) {         # No gauss elimination if r[1] not in rB[[i]]
+            r_in_rB <- r %in% rB[[i]]
+            if (any(r_in_rB)) { 
               r_in_rB <- r %in% rB[[i]]
               rB_in_r <- rB[[i]] %in% r
               rdiff <- c(r[!r_in_rB], rB[[i]][!rB_in_r])  # elements not common 
@@ -1169,10 +1170,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               
             }
             if (identical(kk_2_x, kk_1_xB_i))
-              return(TRUE)
+              return(doCheck)
             if (is.numeric(kk)) {
               if (all(abs(xBi_here - kk_2_x/kk[1]) < tolGauss))
-                return(TRUE)
+                return(doCheck)
             }
             if (numSingletonEliminationCheck) { #if (restLimit) {  # Same logical vectors again when TRUE not returned and when rangeLimits used (simplification possible)
               if (!is.numeric(kk)) {  
@@ -1192,7 +1193,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
             #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
             if (all(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i])))
-              return(TRUE)
+              return(doCheck)
             if (numSingletonEliminationCheck) {# if (restLimit) {
               rrest <- (r[r_in_rB])[!(abs(xBi_here - (cx1xBi1[2]/cx1xBi1[1]) * x_here) < tolGauss * abs(kk_2_factorsB[i]))]
               s_unique <- unique(c(s_unique, singleton_num[rrest]))
@@ -1221,11 +1222,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     #AnyProportionalGaussInt <- AnyProportionalGaussInt_NEW
     AnyProportionalGaussInt <- function(...){
       anyP <- AnyProportionalGaussInt_NEW(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num) 
-      if (anyP) return(anyP)
-      if (singleton_num[A$r[[j]]][1] & length(A$r[[j]]) > 1) {   # More may be seen since A$r[[j]]][1] used in AnyProportionalGaussInt_NEW (elimination)
-        r <- c(SeqInc(2, length(A$r[[j]])), 1L)                  # length(A$r[[j]]) > 1  should be unnecessary
-        anyP <- AnyProportionalGaussInt_NEW(A$r[[j]][r], A$x[[j]][r], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB, singleton_num = singleton_num)
-      }
       if (anyP) return(anyP)
       if (N_GAUSS_DUPLICATES == 1) {
         return(anyP)
