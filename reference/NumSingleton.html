@@ -3,7 +3,7 @@
 Part of the theory for interpreting the 3rd, 4th, and 5th characters is discussed in Langsrud (2024).
 To utilize possibly duplicated contributor IDs, the 2nd character must be "T".'><meta property="og:description" content='A GaussSuppression singletonMethod starting with "num" is decoded into separate characters.
 Part of the theory for interpreting the 3rd, 4th, and 5th characters is discussed in Langsrud (2024).
-To utilize possibly duplicated contributor IDs, the 2nd character must be "T".'></head><body>
+To utilize possibly duplicated contributor IDs, the 2nd character must be "T".'><meta property="og:image" content="https://statisticsnorway.github.io/ssb-ssbtools/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -11,7 +11,7 @@ To utilize possibly duplicated contributor IDs, the 2nd character must be "T".'>
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,8 +31,7 @@ To utilize possibly duplicated contributor IDs, the 2nd character must be "T".'>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Decoding of <code>singletonMethod</code></h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Decoding of <code>singletonMethod</code></h1>
       <small class="dont-index">Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/R/NumSingleton.R" class="external-link"><code>R/NumSingleton.R</code></a></small>
       <div class="d-none name"><code>NumSingleton.Rd</code></div>
     </div>
@@ -99,6 +98,22 @@ This means that protected linear combinations cannot be calculated linearly from
 However, other contributors may still be able to recalculate these combinations using their own suppressed values.</p></li>
 </ul></li>
 </ol></div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>Note an update made in SSBtools version 1.7.3, which relates to this sentence in Langsrud (2024):
+<em>"The remaining non-zero rows for columns corresponding to primary cells must not originate solely from one contributor."</em>
+Due to speed and memory considerations, the algorithm does not first perform elimination and then check the result.
+Instead, it first verifies whether elimination is permissible before executing it.
+This approach allows for a more thorough validation process compared to performing elimination with a fixed row order.
+Specifically, this means that the singleton procedure, denoted as <code>elimination</code> (4th character),
+can take into account different row orders.
+Such an improvement was introduced in SSBtools version 1.7.3 after the publication of Langsrud (2024).
+As a result, more potential issues can now be detected during
+a single elimination sequence (<code>t</code> as the 4th character),
+slightly reducing the need for double elimination (<code>T</code> as the 4th character).
+However, since the row order influences subsequent elimination steps,
+double elimination remains an important safeguard.</p>
+    </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Langsrud, Ø. (2024):
