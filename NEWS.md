@@ -1,4 +1,4 @@
-## SSBtools x.x.x 
+## SSBtools 1.7.5 
 * The title and description in the DESCRIPTION file have been updated  
   to avoid giving the impression that the package is strictly internal to Statistics Norway.
 * `Matrix` are moved from Depends to Imports  

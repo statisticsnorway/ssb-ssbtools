@@ -69,14 +69,14 @@ However, other contributors may still be able to recalculate these combinations 
 }
 }
 \note{
-Note an update made in SSBtools version 1.7.3, which relates to this sentence in Langsrud (2024):
+Note an update made in SSBtools version 1.7.5, which relates to this sentence in Langsrud (2024):
 \emph{"The remaining non-zero rows for columns corresponding to primary cells must not originate solely from one contributor."}
 Due to speed and memory considerations, the algorithm does not first perform elimination and then check the result.
 Instead, it first verifies whether elimination is permissible before executing it.
 This approach allows for a more thorough validation process compared to performing elimination with a fixed row order.
 Specifically, this means that the singleton procedure, denoted as \code{elimination} (4th character),
 can take into account different row orders.
-Such an improvement was introduced in SSBtools version 1.7.3 after the publication of Langsrud (2024).
+Such an improvement was introduced in SSBtools version 1.7.5 after the publication of Langsrud (2024).
 As a result, more potential issues can now be detected during
 a single elimination sequence (\code{t} as the 4th character),
 slightly reducing the need for double elimination (\code{T} as the 4th character).
