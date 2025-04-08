@@ -1,22 +1,24 @@
 
 
-
-AnyProportionalGaussInt_OLD <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
+# A version that not only checks if any cells are proportional,
+# but returns whether each cell is proportional or not.
+AnyProportionalGaussInt_OLD_ALL <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) {
   n <- length(r)
   if(!n){
-    return(TRUE) # Empty "A-input" regarded as proportional
+    stop("Unforeseen problem")
   }
+  out <- rep(FALSE, length(rB))
   for (i in seq_along(rB)) {
     ni <- length(xB[[i]])
     if (ni) {    # Empty "B-input" not regarded as proportional
       if (ni == n) {
         if (identical(r, rB[[i]])) {
           if (n==1L)
-            return(TRUE)
+          {out[i] <- TRUE; next;}
           if (identical(x, xB[[i]])) 
-            return(TRUE)
+          {out[i] <- TRUE; next;}
           if (identical(-x, xB[[i]])) 
-            return(TRUE)
+          {out[i] <- TRUE; next;}
           
           cx1xBi1 <- c(x[1], xB[[i]][1])
           if(is.integer(cx1xBi1)){
@@ -32,26 +34,19 @@ AnyProportionalGaussInt_OLD <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) 
               
             }   
             if (identical(kk_2_x, kk_1_xB_i)) 
-              return(TRUE)
+            {out[i] <- TRUE; next;}
             if(is.numeric(kk)){
               if( all(abs( xB[[i]] - kk_2_x/kk[1]) < tolGauss))
-                return(TRUE)
+              {out[i] <- TRUE; next;}
             }
           }
           else {
-            #if (FALSE) {
-            #
-            #  Possible code here to look at distribution of numeric computing errors  
-            #
-            #  aabb <- abs((xB[[i]] - (cx1xBi1[2]/cx1xBi1[1]) * x)/kk_2_factorsB[i])
-            #  aabb <- aabb[aabb > 0 & aabb < 1e-04]
-            #}
             if( all(abs(  xB[[i]] - (cx1xBi1[2]/cx1xBi1[1])* x) < tolGauss*abs(kk_2_factorsB[i]) )  )
-              return(TRUE)
+            {out[i] <- TRUE; next;}
           }
         }
       }
     }
   }
-  FALSE
+  out
 }
