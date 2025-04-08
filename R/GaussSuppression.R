@@ -78,6 +78,10 @@
 #'                  Additionally, the dimensions of the `x` matrix are printed twice: 
 #'                    first, the dimensions of the input `x`, potentially extended with `xExtraPrimary`; 
 #'                    second, the dimensions after applying `singletonMethod` and `removeDuplicated`.
+#' @param cell_grouping Numeric vector indicating suppression group membership.
+#'        Cells with the same non-zero value belong to the same suppression group,
+#'        meaning they will be suppressed or non-suppressed together.
+#'        A value of 0 indicates that the cell is not a member of any suppression group.                 
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -122,6 +126,22 @@
 #' 
 #' datF
 #' 
+#' 
+#' 
+#' #### with cell_grouping
+#' 
+#' candidates <- c(which(datF$values == 0), which(datF$values > 0))
+#' primary <- 10:12
+#' cell_grouping <- rep(0, 24)
+#' 
+#' # same as without cell_grouping
+#' GaussSuppression(x, candidates, primary, cell_grouping = cell_grouping)
+#' 
+#' cell_grouping[c(16, 20:21)] <- 1
+#' cell_grouping[c(10, 4)] <- 2  # 10 is primary
+#' 
+#' GaussSuppression(x, candidates, primary, cell_grouping = cell_grouping)
+#' 
 GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced = NULL, hidden = NULL, 
                              singleton = rep(FALSE, nrow(x)), singletonMethod = "anySum", printInc = TRUE, tolGauss = (.Machine$double.eps)^(1/2),
                              whenEmptySuppressed = warning, 
@@ -132,6 +152,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              xExtraPrimary = NULL,
                              unsafeAsNegative = FALSE,
                              printXdim = FALSE, 
+                             cell_grouping = NULL, 
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -205,6 +226,31 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
+  
+  # With cell_grouping some secondary cell may be found directly, and not within gauss. 
+  # a: primary cell in same group 
+  # b: primary cell in same group after removeDuplicatedCols applied 
+  secondary_from_cell_grouping_a <- integer(0)
+  secondary_from_cell_grouping_b <- integer(0)
+  if (!is.null(cell_grouping)) {
+    if(length(cell_grouping) != ncol(x)) {
+      stop("Wrong length of cell_grouping")
+    }
+    cell_grouping_00 <- cell_grouping != 0
+    cell_grouping_00[cell_grouping_00][colSums(abs(x[, cell_grouping_00, drop = FALSE])) != 0] <- FALSE
+    if (any(cell_grouping_00)) {
+      cell_grouping[cell_grouping_00] <- 0L
+      warning("cell_grouping of cells with empty input ignored")
+    }
+    if (any(cell_grouping != 0)) {
+      primary_ensured <- ensure_consistency_from_cell_grouping(cell_grouping, primary)
+      if (length(primary_ensured[[2]])) {
+        primary <- primary_ensured[[1]]
+        secondary_from_cell_grouping_a <- primary_ensured[[2]]
+      }
+    }
+  }
+  
   unsafePrimary <- integer(0)
   
   removeDuplicatedCols <- FALSE
@@ -248,6 +294,10 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       candidates <- idNew[unique(idxDD[candidates])]
       forced <- idNew[unique(idxDD[forced])]
       x <- x[, idxDDunique, drop = FALSE]
+      if (!is.null(cell_grouping)) {
+        cell_grouping <- update_cell_grouping_from_duplicated(cell_grouping, idxDD, idxDDunique)
+        cell_grouping <- cell_grouping[idxDDunique] 
+      }
       
       if (any(primary %in% forced)) {
         unsafePrimary <- c(unsafePrimary, primary[primary %in% forced])  # c(... since maybe future extension 
@@ -265,6 +315,24 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       }
     }
   }
+  
+  
+  if (!is.null(cell_grouping)) {
+    cell_grouping <- repeated_as_integer(cell_grouping)
+    if (!any(cell_grouping)) {
+      cell_grouping <- NULL
+    } else {
+      forced <- ensure_consistency_from_cell_grouping(cell_grouping, forced)[[1]]
+      primary_ensured <- ensure_consistency_from_cell_grouping(cell_grouping, primary)
+      if (length(primary_ensured[[2]])) {
+        primary <- primary_ensured[[1]]
+        secondary_from_cell_grouping_b <- primary_ensured[[2]]
+      }
+      candidates <- order_candidates_by_cell_grouping(candidates, cell_grouping) 
+    }
+  }
+  
+  
   
   if (!removeDuplicatedCols) {
     idxDD <- NULL
@@ -365,6 +433,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  whenPrimaryForced = whenPrimaryForced, 
                                  removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
                                  printXdim =  printXdim, 
+                                 cell_grouping = cell_grouping,
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -380,11 +449,26 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     }
   }
   
+  
+  if (length(secondary_from_cell_grouping_b)) {
+    secondary <- sort(c(secondary, secondary_from_cell_grouping_b))
+    unsafePrimary <- unsafePrimary[!(unsafePrimary %in% secondary_from_cell_grouping_b)]
+  }
+  
+  
   if(unsafeAsNegative){
     secondary <- c(secondary, -unsafePrimary)
   }
   
   secondary <- SecondaryFinal(secondary = secondary, primary = primary, idxDD = idxDD, idxDDunique = idxDDunique, candidatesOld = candidatesOld, primaryOld = primaryOld)
+  
+  if (length(secondary_from_cell_grouping_a)) {
+    secondary <- c(secondary, secondary_from_cell_grouping_a)
+    s_pos = secondary > 0
+    secondary <- c(sort(secondary[s_pos]), sort(secondary[!s_pos]))
+    secondary <- secondary[!duplicated(abs(secondary))]
+  }
+  
   
   return(secondary)
   #}
@@ -428,6 +512,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
                               removeDuplicatedRows, removeDuplicatedRows2,
                               printXdim, 
+                              cell_grouping,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -584,6 +669,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
   }
   
+  if (!is.null(cell_grouping)) {
+    if (grepl("Space", singletonMethod) | singletonNOTprimary) {
+      stop("Chosen singletonMethod combined with cell_grouping is currently not implemented")
+    }
+  }
   
   parentChildSingleton <- NULL
   keepSecondary <- integer(0)  # To store A indices that will proceed the elimination process 
@@ -1019,6 +1109,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
   }
   
+############################################################
+#   cell_grouping  is changed to cell_grouping[candidates]
+############################################################
+  if (!is.null(cell_grouping)) {
+    cell_grouping <- cell_grouping[candidates]
+  }
+  
   
   if (numSingletonElimination|numRevealsMessage) {
     
@@ -1323,6 +1420,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     startB <- B
   }
   
+  
+  j_values_cell_grouping <- integer(0)
   # The main Gaussian elimination loop 
   # Code made for speed, not readability
   for (j in seq_len(n)) {
@@ -1363,6 +1462,81 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       return(c(candidates[secondary], -unsafePrimary))
     }
     
+    if (!is.null(cell_grouping)) if (!(j %in% j_values_cell_grouping)) if (j > nForced) if (length(A$r[[j]])) {
+      
+      check_a <- j
+      check_b <- j + which(cell_grouping[-seq_len(j)] != 0)
+      
+      pgi <- FALSE
+      if (length(check_b)) {
+        pgi_new <- FALSE
+        pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a]], A$x[[check_a]], A$r[check_b], A$x[check_b], tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsA[check_b])
+        pgi <- rep(FALSE, length(pgi2))
+        
+        pgi_gr <- cell_grouping[check_a]
+        pgi_gr <- pgi_gr[pgi_gr != 0]
+        check_extra <- FALSE
+        
+        while (any(pgi2) | any(pgi_new) | check_extra) {
+          if (any(pgi2)) {
+            check_extra <- TRUE
+            pgi[!pgi] <- pgi2
+            pgi_gr <- unique(c(pgi_gr, cell_grouping[check_b[pgi]]))
+            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !pgi
+          }
+          pgi2 <- FALSE
+          if (any(pgi_new)) {
+            check_extra <- TRUE
+            w1 <- which(pgi_new)[1]
+            pgi_new[w1] <- FALSE
+            pgi[w1] <- TRUE
+            check_a1 <- check_b[w1]
+            check_b1 <- check_b[!pgi]
+            if (length(A$r[[check_a1]])) {
+              if (length(check_b1)) {
+                pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a1]], A$x[[check_a1]], A$r[check_b1], A$x[check_b1], tolGauss = tolGauss,
+                                                        kk_2_factorsB = kk_2_factorsA[check_b1])
+              }
+            } else {
+              warning("length(A$r[[check_a1]] is 0")
+            }
+          }
+          if (!any(pgi2) & !any(pgi_new) & check_extra) {
+            check_a1 <- c(j, check_b[!pgi])
+            check_b1 <- check_b[!pgi]
+            cat("_*_")
+            pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
+                                             kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                             N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
+            check_extra <- FALSE
+          }
+        }
+      }
+      
+      if (any(pgi)) {
+        pgi2 <- rep(FALSE, length(cell_grouping) - j)
+        pgi2[cell_grouping[-seq_len(j)] != 0] <- pgi
+        new_j_order <- j + c(which(pgi2), which(!pgi2))
+        
+        cell_grouping[-seq_len(j)] <- cell_grouping[new_j_order]
+        cell_grouping[SeqInc(j, j + sum(pgi))] <- pgi_gr[1]  # All set to same group   
+        
+        candidates[-seq_len(j)] <- candidates[new_j_order]
+        A$r[-seq_len(j)] <- A$r[new_j_order]
+        A$x[-seq_len(j)] <- A$x[new_j_order]
+        kk_2_factorsA[-seq_len(j)] <- kk_2_factorsA[new_j_order]
+        
+        if (N_GAUSS_DUPLICATES == 2) {
+          cat("#")
+          A_DUPLICATE$r[-seq_len(j)] <- A_DUPLICATE$r[new_j_order]
+          A_DUPLICATE$x[-seq_len(j)] <- A_DUPLICATE$x[new_j_order]
+          kk_2_factorsA_DUPLICATE[-seq_len(j)] <- kk_2_factorsA_DUPLICATE[new_j_order]
+        }
+        
+      }
+      
+    }
+
     if (length(A$r[[j]])) {
       if(numSingletonElimination)
         if((allow_GAUSS_DUPLICATES & singleton_num[A$r[[j]][1]]) | force_GAUSS_DUPLICATES)
@@ -1420,105 +1594,176 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       
       reduced <- FALSE
       if (j > nForced) {
-        if (is.null(singleton)) {
-          isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
-        } else {
-          subSubSec <- A$r[[j]][1] > maxInd2
-          if (grepl("Space", singletonMethod)) {
-            okArj <- A$r[[j]] <= maxInd
-            #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
-            isSecondary <- subSubSec 
-            if (!isSecondary) { 
-              isSecondary <- AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+        
+        if (!is.null(cell_grouping)) if (!(j %in% j_values_cell_grouping)) {
+          j_values_cell_grouping <- integer(0)
+        }
+        
+        
+        if (!is.null(cell_grouping) & !length(j_values_cell_grouping)) {
+          if (cell_grouping[j]) {
+            n_cell_grouping <- 1
+            cgj <- j + 1
+            while (cell_grouping[cgj] == cell_grouping[j]) {
+              n_cell_grouping <- n_cell_grouping + 1
+              cgj <- cgj + 1
+              if (cgj > length(cell_grouping)) {
+                break
+              }
             }
+            j_values_cell_grouping <- j - 1L + seq_len(n_cell_grouping)
+            isSecondary_values <- vector("list", n_cell_grouping)
+          }
+        }
+        
+        if (j %in% j_values_cell_grouping) {
+          if (j == j_values_cell_grouping[1]) {
+            j_values_loop <- j_values_cell_grouping
           } else {
-            if (subSubSec & !anySum0conservative) {
-              if (length(unique(sign_here(A$x[[j]]))) > 1) {  #  Old version when sign_here = function(x) x, old text:  # Not proportional to original sum, 
-                if (!any(subUsed[A$r[[j]]])) {     # but can’r be sure after gaussian elimination of another “Not proportional to sum”.
-                  subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
-                  subUsed[A$r[[j]]] <- TRUE
+            j_values_loop <- integer(0)
+          }
+        } else {
+          j_values_loop <- j
+        }
+        
+        j_correct_value <- j
+
+# Regarding the error message above; stop("Chosen singletonMethod combined with cell_grouping is currently not implemented")
+# This is about reduction being done inside the loop below. This needs to be checked more closely how to implement.
+        for(j in j_values_loop) {       
+          
+          if (is.null(singleton)) {
+            isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+          } else {
+            subSubSec <- A$r[[j]][1] > maxInd2
+            if (grepl("Space", singletonMethod)) {
+              okArj <- A$r[[j]] <= maxInd
+              #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+              isSecondary <- subSubSec 
+              if (!isSecondary) { 
+                isSecondary <- AnyProportionalGaussInt(A$r[[j]][okArj], A$x[[j]][okArj], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+              }
+            } else {
+              if (subSubSec & !anySum0conservative) {
+                if (length(unique(sign_here(A$x[[j]]))) > 1) {  #  Old version when sign_here = function(x) x, old text:  # Not proportional to original sum, 
+                  if (!any(subUsed[A$r[[j]]])) {     # but can't be sure after gaussian elimination of another "Not proportional to sum".
+                    subSubSec <- FALSE               # To be sure, non-overlapping restriction introduced (subUsed) 
+                    subUsed[A$r[[j]]] <- TRUE
+                  } else {
+                    # if(printInc) # "Can't-be-sure-suppression" if "AnyProportionalGaussInt(.." is FALSE
+                    #   # More advanced method may improve
+                  }
+                }
+              }
+              secondaryTRUE <- TRUE
+              if (subSubSec & singletonNOTprimary) {
+                r_here <- A$r[[j]]
+                length_Arj <- length(r_here)
+                if (anySum0) {
+                  r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1, anySum0maxiter)
+                  if (anySum02primary & length(r_here) > length_Arj) {
+                    secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
+                  } 
+                }
+                if (!Any0GaussInt(r_here, B$r)) {
+                  for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
+                    if(I_GAUSS_DUPLICATES == 2){
+                      A_TEMP <- A
+                      B_TEMP <- B
+                      eliminatedRows_TEMP <- eliminatedRows
+                      singleton_num_TEMP <- singleton_num
+                      
+                      A <- A_DUPLICATE
+                      B <- B_DUPLICATE
+                      eliminatedRows <- eliminatedRows_DUPLICATE
+                      singleton_num <- singleton_num_DUPLICATE
+                    }
+                    subSubSec <- FALSE
+                    for (i in c(keepSecondary, SeqInc(j + 1L, n))) {
+                      j_in_i <- A$r[[i]] %in% r_here
+                      if (all(j_in_i)) {
+                        A$r[[i]] <- integer(0)
+                        A$x[[i]] <- integer(0)
+                      } else {
+                        if (any(j_in_i)) {
+                          A$r[[i]] <- A$r[[i]][!j_in_i]
+                          A$x[[i]] <- A$x[[i]][!j_in_i]
+                        }
+                      }
+                    }
+                    for (i in seq_len(nB)) {
+                      j_in_i <- B$r[[i]] %in% r_here
+                      if (any(j_in_i)) {
+                        B$r[[i]] <- B$r[[i]][!j_in_i]
+                        B$x[[i]] <- B$x[[i]][!j_in_i]
+                      }
+                    }
+                    if (n2e) {
+                      A$r[[j]] <- integer(0)
+                      A$x[[j]] <- integer(0)
+                    }   
+                    isSecondary <- FALSE
+                    eliminatedRows[A$r[[j]]] <- TRUE
+                    if(I_GAUSS_DUPLICATES == 2){
+                      A_DUPLICATE <- A 
+                      B_DUPLICATE <- B 
+                      eliminatedRows_DUPLICATE <- eliminatedRows
+                      singleton_num_DUPLICATE <- singleton_num
+                      
+                      A <- A_TEMP
+                      B <- B_TEMP
+                      eliminatedRows <- eliminatedRows_TEMP
+                      singleton_num <- singleton_num_TEMP
+                    }
+                  } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
+                  reduced <- TRUE
                 } else {
-                  # if(printInc) # "Can't-be-sure-suppression" if "AnyProportionalGaussInt(.." is FALSE
-                  #   cat('@')   # More advanced method may improve
+                  isSecondary <- secondaryTRUE
+                }
+                
+              } else {
+                #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+                isSecondary <- subSubSec
+                if (!isSecondary) {
+                  isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
                 }
               }
             }
-            secondaryTRUE <- TRUE
-            if (subSubSec & singletonNOTprimary) {
-              r_here <- A$r[[j]]
-              length_Arj <- length(r_here)
-              if (anySum0) {
-                r_here <- ParentChildExtension(r_here, A$r, B$r, parentChildSingleton, easy1, anySum0maxiter)
-                if (anySum02primary & length(r_here) > length_Arj) {
-                  secondaryTRUE <- 1L     # To be sure, secondary made primary when anySum0 matters
-                } 
-              }
-              if (!Any0GaussInt(r_here, B$r)) {
-                for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){        
-                  if(I_GAUSS_DUPLICATES == 2){
-                    A_TEMP <- A
-                    B_TEMP <- B
-                    eliminatedRows_TEMP <- eliminatedRows
-                    singleton_num_TEMP <- singleton_num
-                    
-                    A <- A_DUPLICATE
-                    B <- B_DUPLICATE
-                    eliminatedRows <- eliminatedRows_DUPLICATE
-                    singleton_num <- singleton_num_DUPLICATE
-                  }
-                  subSubSec <- FALSE
-                  for (i in c(keepSecondary, SeqInc(j + 1L, n))) {
-                    j_in_i <- A$r[[i]] %in% r_here
-                    if (all(j_in_i)) {
-                      A$r[[i]] <- integer(0)
-                      A$x[[i]] <- integer(0)
-                    } else {
-                      if (any(j_in_i)) {
-                        A$r[[i]] <- A$r[[i]][!j_in_i]
-                        A$x[[i]] <- A$x[[i]][!j_in_i]
-                      }
-                    }
-                  }
-                  for (i in seq_len(nB)) {
-                    j_in_i <- B$r[[i]] %in% r_here
-                    if (any(j_in_i)) {
-                      B$r[[i]] <- B$r[[i]][!j_in_i]
-                      B$x[[i]] <- B$x[[i]][!j_in_i]
-                    }
-                  }
-                  if (n2e) {
-                    A$r[[j]] <- integer(0)
-                    A$x[[j]] <- integer(0)
-                  }   
-                  isSecondary <- FALSE
-                  eliminatedRows[A$r[[j]]] <- TRUE
-                  if(I_GAUSS_DUPLICATES == 2){
-                    A_DUPLICATE <- A 
-                    B_DUPLICATE <- B 
-                    eliminatedRows_DUPLICATE <- eliminatedRows
-                    singleton_num_DUPLICATE <- singleton_num
-                    
-                    A <- A_TEMP
-                    B <- B_TEMP
-                    eliminatedRows <- eliminatedRows_TEMP
-                    singleton_num <- singleton_num_TEMP
-                  }
-                } # end   for (I_GAUSS_DUPLICATES in 1:N_GAUSS_DUPLICATES){         
-                reduced <- TRUE
-              } else {
-                isSecondary <- secondaryTRUE
-              }
-              
-            } else {
-              #isSecondary <- subSubSec | (AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
-              isSecondary <- subSubSec
-              if (!isSecondary) {
-                isSecondary <- AnyProportionalGaussInt(A$r[[j]], A$x[[j]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
-              }
-            }
+          }
+          if (length(j_values_cell_grouping)) {
+            isSecondary_values[[j - j_correct_value + 1L]] =  isSecondary
           }
         }
-      } else {
+        
+        if (length(j_values_cell_grouping) & length(j_values_loop)) {
+          if (any(as.logical(isSecondary_values))) {
+            secondary_from_loop = TRUE
+          } else {
+            cat("_+_")
+            secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
+                                                           B, 
+                                                           kk_2_factorsA[j_values_loop], kk_2_factorsB, 
+                                                           singleton = singleton,
+                                                           DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                                           N_GAUSS_DUPLICATES = 1, dash = "+",
+                                                           maxInd = maxInd, testMaxInt = testMaxInt)
+            
+          }
+          if (secondary_from_loop) {
+            isSecondary_values <- lapply(isSecondary_values, function(element) if (!element) {
+              1L
+            } else {
+              element
+            })
+          }
+        }
+        if (length(j_values_cell_grouping)) {
+          j <- j_correct_value
+          isSecondary <- isSecondary_values[[match(j, j_values_cell_grouping)]] 
+        } 
+       
+      }
+      else {
         isSecondary <- FALSE
       }
       if (!isSecondary) {

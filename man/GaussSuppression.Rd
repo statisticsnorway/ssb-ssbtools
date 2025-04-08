@@ -23,6 +23,7 @@ GaussSuppression(
   xExtraPrimary = NULL,
   unsafeAsNegative = FALSE,
   printXdim = FALSE,
+  cell_grouping = NULL,
   ...
 )
 }
@@ -88,6 +89,11 @@ Whenever \code{iWait<Inf}, \code{iFunction} will also be called after last itera
 Additionally, the dimensions of the \code{x} matrix are printed twice:
 first, the dimensions of the input \code{x}, potentially extended with \code{xExtraPrimary};
 second, the dimensions after applying \code{singletonMethod} and \code{removeDuplicated}.}
+
+\item{cell_grouping}{Numeric vector indicating suppression group membership.
+Cells with the same non-zero value belong to the same suppression group,
+meaning they will be suppressed or non-suppressed together.
+A value of 0 indicates that the cell is not a member of any suppression group.}
 
 \item{...}{Extra unused parameters}
 }
@@ -161,6 +167,22 @@ datF$suppressedC[GaussSuppression(x, c(which(datF$values == 0), which(datF$value
                             primary = is.na(datF$primary), singleton = df$values == 1)] <- NA
 
 datF
+
+
+
+#### with cell_grouping
+
+candidates <- c(which(datF$values == 0), which(datF$values > 0))
+primary <- 10:12
+cell_grouping <- rep(0, 24)
+
+# same as without cell_grouping
+GaussSuppression(x, candidates, primary, cell_grouping = cell_grouping)
+
+cell_grouping[c(16, 20:21)] <- 1
+cell_grouping[c(10, 4)] <- 2  # 10 is primary
+
+GaussSuppression(x, candidates, primary, cell_grouping = cell_grouping)
 
 }
 \references{
