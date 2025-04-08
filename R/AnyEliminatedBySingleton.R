@@ -3,13 +3,22 @@
 # In a separate file for easiness and to avoid misunderstandings.
 # When this code is used, both A and B internally in the function are parts of the original B
 #
+# return_all parameter added for reuse for another purpose
+#
 AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss,
-                                     N_GAUSS_DUPLICATES, dash, maxInd, testMaxInt){
+                                     N_GAUSS_DUPLICATES, dash, maxInd, testMaxInt,
+                                     return_all = FALSE){
   n <- length(A$r)
   if (!n) {
+    if (return_all) {
+      stop("Unforeseen problem")
+    }
     return(FALSE)
   }
   nB <- length(B$r)
+  if (return_all) {
+    out <- rep(FALSE, nB)
+  }
   nrA <- rep(NA_integer_, n)
   nrB <- rep(NA_integer_, nB)
   
@@ -268,13 +277,23 @@ if (length(A$r[[j]])) {                                  # extra for special cas
     }
     for (i in seq_len(nB)){
       if(!length(B$r[[i]])){
-        return(TRUE)
+        if (!return_all) {
+          return(TRUE)
+        }
+        out[i] <- TRUE
       }
     }
   }
 }
   if (length(A$r[[n]])) {
-    return(AnyProportionalGaussInt_OLD(A$r[[n]], A$x[[n]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+    if (!return_all) {
+      return(AnyProportionalGaussInt_OLD(A$r[[n]], A$x[[n]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB))
+    }
+    out_n <- AnyProportionalGaussInt_OLD_ALL(A$r[[n]], A$x[[n]], B$r, B$x, tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsB)
+    out <- out | out_n  
   }
-  FALSE
+  if (!return_all) {
+    return(FALSE)
+  }
+  out
 }
