@@ -16,6 +16,10 @@
 #' By default, it is set to `TRUE`, preventing excessive data extension and aligning with 
 #' the default behavior of [Formula2ModelMatrix()], where `avoidHierarchical = FALSE`.
 #' 
+#' An attribute `table_formulas` is added to `formula` before `table_fun()` is called.  
+#' This attribute contains the version of `table_formulas` after applying `substitute_vars`.  
+#' This allows for special use in the function `table_fun()`.
+#' 
 #' Note: The use of `total_collapse` internally allows handling of variable names not present in the data. 
 #' This ensures flexibility when modifying the `table_formulas` parameter.
 #'
@@ -67,6 +71,8 @@ tables_by_formulas <- function(data,
   }
   
   formula <- combine_formulas(table_formulas)
+  
+  attr(formula, "table_formulas") <- table_formulas
   
   a <- table_fun(data, ..., 
                  formula = formula, 
