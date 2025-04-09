@@ -81,7 +81,23 @@
 #' @param cell_grouping Numeric vector indicating suppression group membership.
 #'        Cells with the same non-zero value belong to the same suppression group,
 #'        meaning they will be suppressed or non-suppressed together.
-#'        A value of 0 indicates that the cell is not a member of any suppression group.                 
+#'        A value of 0 indicates that the cell is not a member of any suppression group.
+#'        When used together with `table_memberships`, `cell_grouping` must be set to `TRUE` or `FALSE`;  
+#'        see `table_memberships` for details. 
+#' @param table_memberships A `data.frame` with `ncol(x)` rows and one logical column per linked table.  
+#'      This causes the `x` matrix to be rewritten into a block-diagonal structure, with duplicate rows  
+#'      and empty columns removed.  
+#'         When `table_memberships` is specified, `cell_grouping` must also be set to either `TRUE` or `FALSE`.  
+#'      If `cell_grouping = FALSE`, suppression is handled independently within each table,  
+#'      as a consequence of the block-diagonal structure,  
+#'      providing local protection per table.  
+#'      If `cell_grouping = TRUE`, common cells are protected consistently across tables,  
+#'      using the same method as when `cell_grouping` is used directly as input.  
+#'         The final secondary indices relate to the columns in the original input `x`.  
+#'      A cell is marked as secondary if any of the corresponding common cells are suppressed.  
+#'         Inconsistent suppression across common cells results in a warning (`cell_grouping = TRUE`)  
+#'      or a message (`cell_grouping = FALSE`).
+#'      
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
@@ -232,14 +248,17 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     if (singletonMethod != "none") {
       stop("For now singletonMethod must be none when table_memberships")
     }
-    if (!is.null(cell_grouping)) {
-      stop("Both table_memberships and cell_grouping cannot be specified")
-    }
     if (!is.null(xExtraPrimary)) {
       stop("Both table_memberships and xExtraPrimary cannot be specified")
     }
     if (nrow(table_memberships) != ncol(x)) {
       stop("nrow(table_memberships) != ncol(x)")
+    }
+    if (!(isTRUE(cell_grouping) | isFALSE(cell_grouping))) {
+      stop("When table_memberships is specified, cell_grouping must be either TRUE or FALSE.")
+    } else {
+      use_cell_grouping <- cell_grouping
+      cell_grouping <- NULL
     }
     
     table_x <- vector("list", ncol(table_memberships))
@@ -260,7 +279,9 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       table_id <- table_id[colsi]
     }
     
-    cell_grouping <- orig_col 
+    if (use_cell_grouping) {
+      cell_grouping <- orig_col
+    }
     
     x <- Matrix::bdiag(table_x)
     colnames(x) <- table_x_cnames 
@@ -286,7 +307,6 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       flush.console()
     }
   }
-  
   
   # With cell_grouping some secondary cell may be found directly, and not within gauss. 
   # a: primary cell in same group 
@@ -535,8 +555,13 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     not_secondary[secondary] <- FALSE
     secondary_out <- unique(orig_col[secondary])
     not_secondary_out <- unique(orig_col[not_secondary])
+    if (use_cell_grouping) {
+      message_fun <- warning
+    } else {
+      message_fun <- message
+    }
     if (length(unique(orig_col)) != length(secondary_out) + length(not_secondary_out)) {
-      warning("Inconsistent suppression across common cells within the algorithm")
+      message_fun("Inconsistent suppression across common cells within the algorithm")
     }
     secondary <- secondary_out  #######################################################   Not finished. Negative numbers must also be handled.
   }
