@@ -85,7 +85,7 @@
 #' @param ... Extra unused parameters
 #'
 #' @return Secondary suppression indices  
-#' @importFrom Matrix colSums t Matrix
+#' @importFrom Matrix colSums t Matrix bdiag
 #' @export
 #' 
 #' @references 
@@ -153,6 +153,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              unsafeAsNegative = FALSE,
                              printXdim = FALSE, 
                              cell_grouping = NULL, 
+                             table_memberships = NULL,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -223,6 +224,66 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
   if (!is.null(whenPrimaryForced)) {
     if (any(primary %in% forced)) {
       whenPrimaryForced("Primary suppression of forced cells ignored")
+    }
+  }
+  
+  
+  if (!is.null(table_memberships)) {
+    if (singletonMethod != "none") {
+      stop("For now singletonMethod must be none when table_memberships")
+    }
+    if (!is.null(cell_grouping)) {
+      stop("Both table_memberships and cell_grouping cannot be specified")
+    }
+    if (!is.null(xExtraPrimary)) {
+      stop("Both table_memberships and xExtraPrimary cannot be specified")
+    }
+    if (nrow(table_memberships) != ncol(x)) {
+      stop("nrow(table_memberships) != ncol(x)")
+    }
+    
+    table_x <- vector("list", ncol(table_memberships))
+    table_x_cnames <- character(0)
+    orig_col <- integer(0)
+    table_id <- integer(0)
+    for (i in seq_along(table_x)) {
+      ti <- table_memberships[, i]
+      dd <- DummyDuplicated(x[, ti, drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
+      table_x[[i]] <- x[!dd, ti, drop = FALSE]
+      table_x_cnames <- c(table_x_cnames, paste(i, seq_len(ncol(x))[ti], sep = "_"))
+      orig_col <- c(orig_col, seq_len(ncol(x))[ti])
+      table_id <- c(table_id, rep(i, sum(ti)))
+      colsi <- colSums(abs(table_x[[i]])) != 0
+      table_x[[i]] <- table_x[[i]][, colsi, drop = FALSE]
+      table_x_cnames <- table_x_cnames[colsi]
+      orig_col <- orig_col[colsi]
+      table_id <- table_id[colsi]
+    }
+    
+    cell_grouping <- orig_col 
+    
+    x <- Matrix::bdiag(table_x)
+    colnames(x) <- table_x_cnames 
+    rm(table_x)
+    
+    fix_by_table_memberships <- function(indices, orig_col) {
+      if (!length(indices)) {
+        return(indices)
+      }
+      ma <- match(orig_col, indices)
+      indices_new <- which(!is.na(ma))
+      indices_new <- indices_new[order(ma[!is.na(ma)])]
+      indices_new
+    }
+    candidates <- fix_by_table_memberships(candidates, orig_col)
+    primary <- fix_by_table_memberships(primary, orig_col)
+    forced <- fix_by_table_memberships(forced, orig_col)
+    hidden <- fix_by_table_memberships(hidden, orig_col)
+    
+    if (printXdim) {
+      printInc <- TRUE
+      cat("(table_memberships)<", nrow(x), "*", ncol(x), ">", sep = "")
+      flush.console()
     }
   }
   
@@ -469,6 +530,16 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     secondary <- secondary[!duplicated(abs(secondary))]
   }
   
+  if (!is.null(table_memberships)) {
+    not_secondary <- rep(TRUE, length(orig_col))
+    not_secondary[secondary] <- FALSE
+    secondary_out <- unique(orig_col[secondary])
+    not_secondary_out <- unique(orig_col[not_secondary])
+    if (length(unique(orig_col)) != length(secondary_out) + length(not_secondary_out)) {
+      warning("Inconsistent suppression across common cells within the algorithm")
+    }
+    secondary <- secondary_out  #######################################################   Not finished. Negative numbers must also be handled.
+  }
   
   return(secondary)
   #}

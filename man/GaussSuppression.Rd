@@ -24,6 +24,7 @@ GaussSuppression(
   unsafeAsNegative = FALSE,
   printXdim = FALSE,
   cell_grouping = NULL,
+  table_memberships = NULL,
   ...
 )
 }
