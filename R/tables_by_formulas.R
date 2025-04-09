@@ -78,11 +78,11 @@ tables_by_formulas <- function(data,
   preserved_attrs <- attributes(a)
   preserved_attrs <- preserved_attrs[setdiff(names(preserved_attrs), c("names", "class", "row.names"))]
   
-  table_indicators <- as.data.frame(matrix(NA, nrow(a), length(table_formulas)))
-  names(table_indicators) <- names(table_formulas)
+  table_memberships <- as.data.frame(matrix(NA, nrow(a), length(table_formulas)))
+  names(table_memberships) <- names(table_formulas)
   
   for (i in seq_along(table_formulas)) {
-    table_indicators[[i]] <- formula_selection(a, table_formulas[[i]], logical = TRUE)
+    table_memberships[[i]] <- formula_selection(a, table_formulas[[i]], logical = TRUE)
   }
   
   if (auto_collapse & length(substitute_vars)) {
@@ -93,7 +93,7 @@ tables_by_formulas <- function(data,
     a <- total_collapse_allow_missing(a, collapse_vars, total = total) 
   }
   
-  a <- cbind(a, table_indicators)
+  a <- cbind(a, table_memberships)
 
   # Restore the preserved attributes if they do not already exist
   for (attr_name in names(preserved_attrs)) {
