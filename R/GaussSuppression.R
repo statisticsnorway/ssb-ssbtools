@@ -301,6 +301,8 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     forced <- fix_by_table_memberships(forced, orig_col)
     hidden <- fix_by_table_memberships(hidden, orig_col)
     
+    ##    candidates <- candidates[order(table_id[candidates])]     ###################################### Maybe choose such order by a parameter 
+    
     if (printXdim) {
       printInc <- TRUE
       cat("(table_memberships)<", nrow(x), "*", ncol(x), ">", sep = "")
@@ -1560,25 +1562,38 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     
     if (!is.null(cell_grouping)) if (!(j %in% j_values_cell_grouping)) if (j > nForced) if (length(A$r[[j]])) {
       
-      check_a <- j
-      check_b <- j + which(cell_grouping[-seq_len(j)] != 0)
+      if (cell_grouping[j]) {
+        check_a <- which(cell_grouping == cell_grouping[j])
+        check_b <- j + which(!(cell_grouping[-seq_len(j)] %in% c(0L, cell_grouping[j])))
+        if (check_a[1] < j) {
+          stop("Something wrong in cell_grouping algorithm")
+        }
+      } else {
+        check_a <- j
+        check_b <- j + which(cell_grouping[-seq_len(j)] != 0)
+      }
       
-      pgi <- FALSE
+      pgi <- rep(TRUE, length(check_a) -1)
+      pgi_gr <- cell_grouping[check_a]
+      pgi_gr <- pgi_gr[pgi_gr != 0]
+    
       if (length(check_b)) {
-        pgi_new <- FALSE
-        pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a]], A$x[[check_a]], A$r[check_b], A$x[check_b], tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsA[check_b])
-        pgi <- rep(FALSE, length(pgi2))
         
-        pgi_gr <- cell_grouping[check_a]
-        pgi_gr <- pgi_gr[pgi_gr != 0]
+        pgi <- c(pgi, rep(FALSE, length(check_b)))
+        
+        pgi_new <- FALSE
+        # pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a]], A$x[[check_a]], A$r[check_b], A$x[check_b], tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsA[check_b])
+        pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a], x = A$x[check_a]), list(r = A$r[check_b], x = A$x[check_b]),
+                                         kk_2_factorsA[check_a], kk_2_factorsA[check_b], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                         N_GAUSS_DUPLICATES = 1, dash = "x", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
         check_extra <- FALSE
         
         while (any(pgi2) | any(pgi_new) | check_extra) {
           if (any(pgi2)) {
             check_extra <- TRUE
             pgi[!pgi] <- pgi2
-            pgi_gr <- unique(c(pgi_gr, cell_grouping[check_b[pgi]]))
-            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !pgi
+            pgi_gr <- unique(c(pgi_gr, cell_grouping[check_b[pgi2]]))
+            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !(pgi[-seq_len(length(check_a) -1)])
           }
           pgi2 <- FALSE
           if (any(pgi_new)) {
@@ -1598,8 +1613,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
           if (!any(pgi2) & !any(pgi_new) & check_extra) {
-            check_a1 <- c(j, check_b[!pgi])
-            check_b1 <- check_b[!pgi]
+            check_a1 <- c(check_a, check_b[(pgi[-seq_len(length(check_a) -1)])])
+            check_b1 <- check_b[!(pgi[-seq_len(length(check_a) -1)])]
             cat("_*_")
             pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
                                              kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
@@ -1615,7 +1630,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         new_j_order <- j + c(which(pgi2), which(!pgi2))
         
         cell_grouping[-seq_len(j)] <- cell_grouping[new_j_order]
-        cell_grouping[SeqInc(j, j + sum(pgi))] <- pgi_gr[1]  # All set to same group   
+        cell_grouping[SeqInc(j, j + sum(pgi))] <- pgi_gr[1]  # All set to same group
         
         candidates[-seq_len(j)] <- candidates[new_j_order]
         A$r[-seq_len(j)] <- A$r[new_j_order]
