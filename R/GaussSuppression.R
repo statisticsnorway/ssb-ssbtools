@@ -1593,7 +1593,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             check_extra <- TRUE
             pgi[!pgi] <- pgi2
             pgi_gr <- unique(c(pgi_gr, cell_grouping[check_b[pgi2]]))
-            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !(pgi[-seq_len(length(check_a) -1)])
+            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !(pgi[SeqInc(length(check_a), length(pgi))])
           }
           pgi2 <- FALSE
           if (any(pgi_new)) {
