@@ -1613,8 +1613,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
           if (!any(pgi2) & !any(pgi_new) & check_extra) {
-            check_a1 <- c(check_a, check_b[(pgi[-seq_len(length(check_a) -1)])])
-            check_b1 <- check_b[!(pgi[-seq_len(length(check_a) -1)])]
+            check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
+            check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
             cat("_*_")
             pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
                                              kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
