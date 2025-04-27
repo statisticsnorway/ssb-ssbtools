@@ -145,3 +145,16 @@ AnyProportionalGaussInt_OLD_ALL <- function(r, x, rB, xB, tolGauss,  kk_2_factor
   }
   out
 }
+
+
+
+
+# Checks that the same cell group is always together
+check_cell_grouping_within_gauss <- function(cell_grouping) {
+  a <- cell_grouping[c(TRUE, diff(cell_grouping) != 0)]
+  a <- a[a != 0]
+  if (anyDuplicated(a)) {
+    stop("Something wrong in cell_grouping algorithm")
+  }
+  NULL
+}

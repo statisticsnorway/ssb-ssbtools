@@ -269,14 +269,17 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       ti <- table_memberships[, i]
       dd <- DummyDuplicated(x[, ti, drop = FALSE], idx = FALSE, rows = TRUE, rnd = TRUE)
       table_x[[i]] <- x[!dd, ti, drop = FALSE]
-      table_x_cnames <- c(table_x_cnames, paste(i, seq_len(ncol(x))[ti], sep = "_"))
-      orig_col <- c(orig_col, seq_len(ncol(x))[ti])
-      table_id <- c(table_id, rep(i, sum(ti)))
+      table_x_cnames_i <- paste(i, seq_len(ncol(x))[ti], sep = "_")
+      orig_col_i <- seq_len(ncol(x))[ti]
+      table_id_i <- rep(i, sum(ti))
       colsi <- colSums(abs(table_x[[i]])) != 0
       table_x[[i]] <- table_x[[i]][, colsi, drop = FALSE]
-      table_x_cnames <- table_x_cnames[colsi]
-      orig_col <- orig_col[colsi]
-      table_id <- table_id[colsi]
+      table_x_cnames_i <- table_x_cnames_i[colsi]
+      orig_col_i <- orig_col_i[colsi]
+      table_id_i <- table_id_i[colsi]
+      table_x_cnames <- c(table_x_cnames, table_x_cnames_i)
+      orig_col <- c(orig_col, orig_col_i)
+      table_id <- c(table_id, table_id_i)
     }
     
     if (use_cell_grouping) {
@@ -1592,17 +1595,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           if (any(pgi2)) {
             check_extra <- TRUE
             pgi[!pgi] <- pgi2
-            pgi_gr <- unique(c(pgi_gr, cell_grouping[check_b[pgi2]]))
-            pgi_new <- (cell_grouping[check_b] %in% pgi_gr) & !(pgi[SeqInc(length(check_a), length(pgi))])
+            pgi_gr <- unique(c(pgi_gr, cell_grouping[c(check_a[-1], check_b)[pgi]]))
+            pgi_new <- pgi_new | (cell_grouping[check_b] %in% pgi_gr) & !(pgi[SeqInc(length(check_a), length(pgi))])
           }
           pgi2 <- FALSE
           if (any(pgi_new)) {
             check_extra <- TRUE
             w1 <- which(pgi_new)[1]
             pgi_new[w1] <- FALSE
-            pgi[w1] <- TRUE
+            pgi[SeqInc(length(check_a), length(pgi))][w1] <- TRUE   ###################
             check_a1 <- check_b[w1]
-            check_b1 <- check_b[!pgi]
+            check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]    ############   check_b[!pgi]
             if (length(A$r[[check_a1]])) {
               if (length(check_b1)) {
                 pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a1]], A$x[[check_a1]], A$r[check_b1], A$x[check_b1], tolGauss = tolGauss,
@@ -1615,10 +1618,13 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           if (!any(pgi2) & !any(pgi_new) & check_extra) {
             check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
             check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
-            cat("_*_")
+            # cat("_*_")
             pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
                                              kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                              N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
+            if (any(pgi2)) {
+              message("check_extra case found")
+            }
             check_extra <- FALSE
           }
         }
@@ -1626,11 +1632,16 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       
       if (any(pgi)) {
         pgi2 <- rep(FALSE, length(cell_grouping) - j)
-        pgi2[cell_grouping[-seq_len(j)] != 0] <- pgi
+        pgi2[c(check_a[-1], check_b)[pgi] - j] <- TRUE      # use other var name than pgi2?
         new_j_order <- j + c(which(pgi2), which(!pgi2))
-        
         cell_grouping[-seq_len(j)] <- cell_grouping[new_j_order]
+        if(any(cell_grouping[SeqInc(j + 1, j + sum(pgi))] %in% cell_grouping[SeqInc(j + sum(pgi) +1, length(cell_grouping))])){
+          message(j)
+          stop("Something wrong in cell_grouping algorithm")
+        }
         cell_grouping[SeqInc(j, j + sum(pgi))] <- pgi_gr[1]  # All set to same group
+        
+        check_cell_grouping_within_gauss(cell_grouping) 
         
         candidates[-seq_len(j)] <- candidates[new_j_order]
         A$r[-seq_len(j)] <- A$r[new_j_order]
@@ -1850,7 +1861,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           if (any(as.logical(isSecondary_values))) {
             secondary_from_loop = TRUE
           } else {
-            cat("_+_")
+            #cat("_+_")
             secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
                                                            B, 
                                                            kk_2_factorsA[j_values_loop], kk_2_factorsB, 
@@ -2247,6 +2258,15 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     flush.console()
   }
   MessageProblematicSingletons()
+  
+  if (!is.null(cell_grouping)) {
+    unique_cell_grouping <- c(unique(cell_grouping[secondary]), unique(cell_grouping[!secondary]))
+    unique_cell_grouping <- unique_cell_grouping[unique_cell_grouping != 0]
+    if (anyDuplicated(unique_cell_grouping)) {
+      warning("Inconsistent suppression seen early")
+    }
+  }
+  
   c(candidates[secondary], -unsafePrimary)
 }
 
