@@ -24,7 +24,6 @@ GaussSuppression(
   unsafeAsNegative = FALSE,
   printXdim = FALSE,
   cell_grouping = NULL,
-  table_memberships = NULL,
   ...
 )
 }
@@ -94,23 +93,7 @@ second, the dimensions after applying \code{singletonMethod} and \code{removeDup
 \item{cell_grouping}{Numeric vector indicating suppression group membership.
 Cells with the same non-zero value belong to the same suppression group,
 meaning they will be suppressed or non-suppressed together.
-A value of 0 indicates that the cell is not a member of any suppression group.
-When used together with \code{table_memberships}, \code{cell_grouping} must be set to \code{TRUE} or \code{FALSE};
-see \code{table_memberships} for details.}
-
-\item{table_memberships}{A \code{data.frame} with \code{ncol(x)} rows and one logical column per linked table.
-This causes the \code{x} matrix to be rewritten into a block-diagonal structure, with duplicate rows
-and empty columns removed.
-When \code{table_memberships} is specified, \code{cell_grouping} must also be set to either \code{TRUE} or \code{FALSE}.
-If \code{cell_grouping = FALSE}, suppression is handled independently within each table,
-as a consequence of the block-diagonal structure,
-providing local protection per table.
-If \code{cell_grouping = TRUE}, common cells are protected consistently across tables,
-using the same method as when \code{cell_grouping} is used directly as input.
-The final secondary indices relate to the columns in the original input \code{x}.
-A cell is marked as secondary if any of the corresponding common cells are suppressed.
-Inconsistent suppression across common cells results in a warning (\code{cell_grouping = TRUE})
-or a message (\code{cell_grouping = FALSE}).}
+A value of 0 indicates that the cell is not a member of any suppression group.}
 
 \item{...}{Extra unused parameters}
 }
