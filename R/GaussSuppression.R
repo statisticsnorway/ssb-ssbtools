@@ -1452,6 +1452,19 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         warning(paste(s, "unsafe primary cells due to forced cells"))  #  Forced cells -> All primary cells are not safe
       }
     }
+    if (!is.null(cell_grouping) & nForced > 0 & j == (nForced + 1)) {
+      is0Ar <- sapply(A$r, length) == 0
+      cell_grouping_not_eliminated <- unique(cell_grouping[!is0Ar])
+      cell_grouping_not_eliminated <- cell_grouping_not_eliminated[cell_grouping_not_eliminated > 0]
+      cell_grouping_eliminated <- unique(cell_grouping[is0Ar])
+      cell_grouping_eliminated <- cell_grouping_eliminated[cell_grouping_eliminated > 0]
+      cell_grouping_problematic <- cell_grouping_eliminated[cell_grouping_eliminated %in% cell_grouping_not_eliminated]
+      cell_grouping[cell_grouping %in% cell_grouping_eliminated] <- 0L
+      if (length(cell_grouping_problematic)) {
+        warning("some cell grouping ignored due to forced celles")
+        cell_grouping <- repeated_as_integer(cell_grouping)
+      }
+    }
     if (ii > m){ 
       if (printInc) {
         cat("\n")
