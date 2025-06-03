@@ -275,7 +275,7 @@ if (length(A$r[[j]])) {                                  # extra for special cas
         }
       }
     }
-    for (i in seq_len(nB)){
+    for (i in which(!is.na(nrB))) {
       if(!length(B$r[[i]])){
         if (!return_all) {
           return(TRUE)
