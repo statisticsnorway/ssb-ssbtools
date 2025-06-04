@@ -24,6 +24,7 @@ GaussSuppression(
   unsafeAsNegative = FALSE,
   printXdim = FALSE,
   cell_grouping = NULL,
+  table_id = NULL,
   ...
 )
 }
@@ -94,6 +95,11 @@ second, the dimensions after applying \code{singletonMethod} and \code{removeDup
 Cells with the same non-zero value belong to the same suppression group,
 meaning they will be suppressed or non-suppressed together.
 A value of 0 indicates that the cell is not a member of any suppression group.}
+
+\item{table_id}{A parameter that can be provided in addition to \code{cell_grouping} to reduce computation time,
+when \code{x} is a block-diagonal matrix. Each block represents a separate table, and \code{table_id}
+indicates table affiliation.
+Note: no check is performed to verify that \code{table_id} corresponds to the block structure of \code{x}.}
 
 \item{...}{Extra unused parameters}
 }

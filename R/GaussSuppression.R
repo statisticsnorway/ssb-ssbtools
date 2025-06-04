@@ -82,6 +82,10 @@
 #'        Cells with the same non-zero value belong to the same suppression group,
 #'        meaning they will be suppressed or non-suppressed together.
 #'        A value of 0 indicates that the cell is not a member of any suppression group.
+#' @param table_id A parameter that can be provided in addition to `cell_grouping` to reduce computation time, 
+#'        when `x` is a block-diagonal matrix. Each block represents a separate table, and `table_id` 
+#'        indicates table affiliation. 
+#'        Note: no check is performed to verify that `table_id` corresponds to the block structure of `x`.
 #'      
 #' @param ... Extra unused parameters
 #'
@@ -154,6 +158,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              unsafeAsNegative = FALSE,
                              printXdim = FALSE, 
                              cell_grouping = NULL, 
+                             table_id = NULL,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -236,6 +241,11 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     if(length(cell_grouping) != ncol(x)) {
       stop("Wrong length of cell_grouping")
     }
+    if (!is.null(table_id)) {
+      if(length(table_id) != length(cell_grouping)) {
+        stop("Wrong length of table_id")
+      }
+    }
     cell_grouping_00 <- cell_grouping != 0
     cell_grouping_00[cell_grouping_00][colSums(abs(x[, cell_grouping_00, drop = FALSE])) != 0] <- FALSE
     if (any(cell_grouping_00)) {
@@ -297,6 +307,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
       if (!is.null(cell_grouping)) {
         cell_grouping <- update_cell_grouping_from_duplicated(cell_grouping, idxDD, idxDDunique)
         cell_grouping <- cell_grouping[idxDDunique] 
+        table_id <- table_id[idxDDunique]
       }
       
       if (any(primary %in% forced)) {
@@ -321,6 +332,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
     cell_grouping <- repeated_as_integer(cell_grouping)
     if (!any(cell_grouping)) {
       cell_grouping <- NULL
+      table_id <- NULL
     } else {
       forced <- ensure_consistency_from_cell_grouping(cell_grouping, forced)[[1]]
       primary_ensured <- ensure_consistency_from_cell_grouping(cell_grouping, primary)
@@ -433,7 +445,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  whenPrimaryForced = whenPrimaryForced, 
                                  removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
                                  printXdim =  printXdim, 
-                                 cell_grouping = cell_grouping,
+                                 cell_grouping = cell_grouping, table_id = table_id,
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -511,7 +523,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               ncol_x_input, ncol_x_with_xExtraPrimary, whenPrimaryForced,
                               removeDuplicatedRows, removeDuplicatedRows2,
                               printXdim, 
-                              cell_grouping,
+                              cell_grouping, table_id,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -1027,6 +1039,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   force_GAUSS_DUPLICATES    <- get0("force_GAUSS_DUPLICATES", ifnotfound = FALSE)
   order_GAUSS_DUPLICATES    <- get0("order_GAUSS_DUPLICATES", ifnotfound = TRUE)
+  force_dimensional_check   <- get0("foRce_dimensional_check", ifnotfound = FALSE)
   
   if (!n2e) {
     orderA <- seq_len(nrow(x))
@@ -1113,8 +1126,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
 ############################################################
   if (!is.null(cell_grouping)) {
     cell_grouping <- cell_grouping[candidates]
+    if (!is.null(table_id)) {
+      table_id <- table_id[candidates]
+    }
   }
-  
   
   if (numSingletonElimination|numRevealsMessage) {
     
@@ -1490,6 +1505,8 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       pgi <- rep(TRUE, length(check_a) -1)
       pgi_gr <- cell_grouping[check_a]
       pgi_gr <- pgi_gr[pgi_gr != 0]
+      
+      dimensional_check <- is.null(table_id)
     
       if (length(check_b)) {
         
@@ -1502,12 +1519,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                          N_GAUSS_DUPLICATES = 1, dash = "x", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
         check_extra <- FALSE
         
+        pgi_tid_old <- NULL
+          
         while (any(pgi2) | any(pgi_new) | check_extra) {
           if (any(pgi2)) {
             check_extra <- TRUE
             pgi[!pgi] <- pgi2
             pgi_gr <- unique(c(pgi_gr, cell_grouping[c(check_a[-1], check_b)[pgi]]))
             pgi_new <- pgi_new | (cell_grouping[check_b] %in% pgi_gr) & !(pgi[SeqInc(length(check_a), length(pgi))])
+            pgi_tid <- table_id[c(j, c(check_a[-1], check_b)[pgi])]
+            dimensional_check <- decide_dimensional_check(dimensional_check, pgi_tid, pgi_tid_old)
+            pgi_tid_old <- pgi_tid
           }
           pgi2 <- FALSE
           if (any(pgi_new)) {
@@ -1515,6 +1537,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             w1 <- which(pgi_new)[1]
             pgi_new[w1] <- FALSE
             pgi[SeqInc(length(check_a), length(pgi))][w1] <- TRUE   ###################
+            pgi_tid <- table_id[c(j, c(check_a[-1], check_b)[pgi])]
+            dimensional_check <- decide_dimensional_check(dimensional_check, pgi_tid, pgi_tid_old)
+            pgi_tid_old <- pgi_tid
             check_a1 <- check_b[w1]
             check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]    ############   check_b[!pgi]
             if (length(A$r[[check_a1]])) {
@@ -1527,14 +1552,20 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             }
           }
           if (!any(pgi2) & !any(pgi_new) & check_extra) {
+            if ((force_dimensional_check |  dimensional_check)) {
             check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
             check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
-            # cat("_*_")
             pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
                                              kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                              N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
             if (any(pgi2)) {
-              message("check_extra case found")
+              message("dimensional_check 1 case found")
+              if(!dimensional_check){
+                stop("dimensional_check PROBLEM 1")
+              }
+            } 
+            } else {
+              pgi2 <- FALSE
             }
             check_extra <- FALSE
           }
@@ -1546,6 +1577,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         pgi2[c(check_a[-1], check_b)[pgi] - j] <- TRUE      # use other var name than pgi2?
         new_j_order <- j + c(which(pgi2), which(!pgi2))
         cell_grouping[-seq_len(j)] <- cell_grouping[new_j_order]
+        if (!is.null(table_id)) {
+          table_id[-seq_len(j)] <- table_id[new_j_order]
+        }
         if(any(cell_grouping[SeqInc(j + 1, j + sum(pgi))] %in% cell_grouping[SeqInc(j + sum(pgi) +1, length(cell_grouping))])){
           message(j)
           stop("Something wrong in cell_grouping algorithm")
@@ -1661,6 +1695,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         
         j_correct_value <- j
 
+# The loop, for(j in j_values_loop), is designed so that the same code is run during j_values_cell_grouping as during normal execution.        
 # Regarding the error message above; stop("Chosen singletonMethod combined with cell_grouping is currently not implemented")
 # This is about reduction being done inside the loop below. This needs to be checked more closely how to implement.
         for(j in j_values_loop) {       
@@ -1772,7 +1807,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           if (any(as.logical(isSecondary_values))) {
             secondary_from_loop = TRUE
           } else {
-            #cat("_+_")
+            if (length(j_values_loop) == 1) {
+              warning("Not expected that length(j_values_loop) == 1")
+            }
+            if ((force_dimensional_check |  dimensional_check) & length(j_values_loop) > 1) {
             secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
                                                            B, 
                                                            kk_2_factorsA[j_values_loop], kk_2_factorsB, 
@@ -1780,6 +1818,15 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                            DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                                            N_GAUSS_DUPLICATES = 1, dash = "+",
                                                            maxInd = maxInd, testMaxInt = testMaxInt)
+            if(secondary_from_loop) {
+              message("dimensional_check 2 case found")
+              if(!dimensional_check){
+                stop("dimensional_check PROBLEM 2")
+              }
+            } 
+            } else {
+              secondary_from_loop <- FALSE
+            }
             
           }
           if (secondary_from_loop) {
@@ -2158,12 +2205,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     }
   }
   
-  # cat("\n")
-  # print(table(kk_2_factorsA))
-  # print(table(kk_2_factorsB))
-  # print(table(sapply(A$x,class)))
-  # print(table(sapply(B$x,class)))
-  
   if (printInc) {
     cat("\n")
     flush.console()
@@ -2235,6 +2276,26 @@ AnyProportionalGaussInt_OLD <- function(r, x, rB, xB, tolGauss,  kk_2_factorsB) 
         }
       }
     }
+  }
+  FALSE
+}
+
+
+# Helper function used above
+# If new columns are added to an existing table_id, 
+# then there is reason to believe that the problem is 
+# not unidimensional (within table_id) and additional checks are needed.
+decide_dimensional_check <- function(dimensional_check, pgi_tid, pgi_tid_old) {
+  if (dimensional_check) {
+    return(TRUE)
+  }
+  if (is.null(pgi_tid_old)) {
+    return(FALSE)
+  }
+  tt_tid_new <- table(pgi_tid)
+  tt_tid_old <- table(pgi_tid_old)
+  if (any(tt_tid_new[names(tt_tid_old)] - tt_tid_old)) {
+    return(TRUE)
   }
   FALSE
 }
