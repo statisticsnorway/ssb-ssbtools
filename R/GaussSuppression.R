@@ -1553,17 +1553,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
           if (!any(pgi2) & !any(pgi_new) & check_extra) {
             if ((force_dimensional_check |  dimensional_check)) {
-            check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
-            check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
-            pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
-                                             kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
-                                             N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
-            if (any(pgi2)) {
-              message("dimensional_check 1 case found")
-              if(!dimensional_check){
-                stop("dimensional_check PROBLEM 1")
-              }
-            } 
+              check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
+              check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
+              pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
+                                               kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                               N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
+              if (any(pgi2)) {
+                message("dimensional_check 1 case found")
+                if(!dimensional_check){
+                  stop("dimensional_check PROBLEM 1")
+                }
+              } 
             } else {
               pgi2 <- FALSE
             }
@@ -1811,23 +1811,22 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               warning("Not expected that length(j_values_loop) == 1")
             }
             if ((force_dimensional_check |  dimensional_check) & length(j_values_loop) > 1) {
-            secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
-                                                           B, 
-                                                           kk_2_factorsA[j_values_loop], kk_2_factorsB, 
-                                                           singleton = singleton,
-                                                           DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
-                                                           N_GAUSS_DUPLICATES = 1, dash = "+",
-                                                           maxInd = maxInd, testMaxInt = testMaxInt)
-            if(secondary_from_loop) {
-              message("dimensional_check 2 case found")
-              if(!dimensional_check){
-                stop("dimensional_check PROBLEM 2")
-              }
-            } 
+              secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
+                                                             B, 
+                                                             kk_2_factorsA[j_values_loop], kk_2_factorsB, 
+                                                             singleton = singleton,
+                                                             DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
+                                                             N_GAUSS_DUPLICATES = 1, dash = "+",
+                                                             maxInd = maxInd, testMaxInt = testMaxInt)
+              if(secondary_from_loop) {
+                message("dimensional_check 2 case found")
+                if(!dimensional_check){
+                  stop("dimensional_check PROBLEM 2")
+                }
+              } 
             } else {
               secondary_from_loop <- FALSE
             }
-            
           }
           if (secondary_from_loop) {
             isSecondary_values <- lapply(isSecondary_values, function(element) if (!element) {
