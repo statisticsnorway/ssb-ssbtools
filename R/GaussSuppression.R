@@ -86,6 +86,10 @@
 #'        when `x` is a block-diagonal matrix. Each block represents a separate table, and `table_id` 
 #'        indicates table affiliation. 
 #'        Note: no check is performed to verify that `table_id` corresponds to the block structure of `x`.
+#' @param auto_anySumNOTprimary When `TRUE` (default), the `singletonMethod` `"anySumNOTprimary"` may be 
+#'        forced if a check indicates that singletons are not primary suppressed. 
+#'        Set this to `FALSE` in cases where the `x` matrix has already undergone 
+#'        duplicate row removal, as the check may then produce incorrect results.
 #'      
 #' @param ... Extra unused parameters
 #'
@@ -159,6 +163,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              printXdim = FALSE, 
                              cell_grouping = NULL, 
                              table_id = NULL,
+                             auto_anySumNOTprimary = TRUE,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -446,6 +451,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  removeDuplicatedRows = removeDuplicatedRows, removeDuplicatedRows2 = removeDuplicatedRows2,
                                  printXdim =  printXdim, 
                                  cell_grouping = cell_grouping, table_id = table_id,
+                                 auto_anySumNOTprimary = auto_anySumNOTprimary,
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -524,6 +530,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               removeDuplicatedRows, removeDuplicatedRows2,
                               printXdim, 
                               cell_grouping, table_id,
+                              auto_anySumNOTprimary, 
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -660,19 +667,17 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     sign_here <- sign
   }
   
-  
+  singletonNOTprimary <- FALSE
   anySum0 <- singletonMethod == "anySum0"
   if (singletonMethod == "anySumNOTprimary" | anySum0) {
     singletonMethod <- "anySum"
     singletonNOTprimary <- TRUE
   } else {
-    if (any(singleton)) {
+    if (auto_anySumNOTprimary & any(singleton)) {
       colSums_x <- colSums(x)
       singletonZ <- (colSums(x[singleton, , drop = FALSE]) == 1 & colSums_x == 1)
       singletonNOTprimary <- (sum(singletonZ) > sum(singletonZ[primary]))
-    } else {
-      singletonNOTprimary <- FALSE
-    }
+    } 
     if (singletonNOTprimary) {
       if (singletonMethod != "anySum")
         stop('singletonMethod must be "anySumNOTprimary" or "anySum0" when singletons not primary suppressed')

@@ -25,6 +25,7 @@ GaussSuppression(
   printXdim = FALSE,
   cell_grouping = NULL,
   table_id = NULL,
+  auto_anySumNOTprimary = TRUE,
   ...
 )
 }
@@ -100,6 +101,11 @@ A value of 0 indicates that the cell is not a member of any suppression group.}
 when \code{x} is a block-diagonal matrix. Each block represents a separate table, and \code{table_id}
 indicates table affiliation.
 Note: no check is performed to verify that \code{table_id} corresponds to the block structure of \code{x}.}
+
+\item{auto_anySumNOTprimary}{When \code{TRUE} (default), the \code{singletonMethod} \code{"anySumNOTprimary"} may be
+forced if a check indicates that singletons are not primary suppressed.
+Set this to \code{FALSE} in cases where the \code{x} matrix has already undergone
+duplicate row removal, as the check may then produce incorrect results.}
 
 \item{...}{Extra unused parameters}
 }
