@@ -1599,7 +1599,6 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         kk_2_factorsA[-seq_len(j)] <- kk_2_factorsA[new_j_order]
         
         if (N_GAUSS_DUPLICATES == 2) {
-          cat("#")
           A_DUPLICATE$r[-seq_len(j)] <- A_DUPLICATE$r[new_j_order]
           A_DUPLICATE$x[-seq_len(j)] <- A_DUPLICATE$x[new_j_order]
           kk_2_factorsA_DUPLICATE[-seq_len(j)] <- kk_2_factorsA_DUPLICATE[new_j_order]
@@ -1703,6 +1702,9 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
 # The loop, for(j in j_values_loop), is designed so that the same code is run during j_values_cell_grouping as during normal execution.        
 # Regarding the error message above; stop("Chosen singletonMethod combined with cell_grouping is currently not implemented")
 # This is about reduction being done inside the loop below. This needs to be checked more closely how to implement.
+        if (length(j_values_cell_grouping) & length(j_values_loop)) {
+          subUsed_old <- subUsed
+        }
         for(j in j_values_loop) {       
           
           if (is.null(singleton)) {
@@ -1835,10 +1837,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           }
           if (secondary_from_loop) {
             isSecondary_values <- lapply(isSecondary_values, function(element) if (!element) {
-              1L
+              1L      # That is, FALSE is set to 1L
             } else {
               element
             })
+            subUsed <- subUsed_old  # revert no longer subUsed since secondary instead
           }
         }
         if (length(j_values_cell_grouping)) {
