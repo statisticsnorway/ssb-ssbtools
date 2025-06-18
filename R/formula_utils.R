@@ -148,6 +148,49 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 
 
 
+#' Retrieve term labels from a formula
+#'
+#' This function extracts the term labels from the right-hand side of a given R formula.
+#' If an intercept is to be included (and a name for the intercept is provided), it will be added
+#' as the first element of the returned vector.
+#'
+#' The default intercept value, "(Intercept)", is chosen to be consistent with the intercept label
+#' returned by functions such as [stats::lm()], [stats::model.matrix()], and similar modeling functions.
+#'
+#' @param formula An R formula, e.g. ~ x1 * x2.
+#' @param intercept A character string indicating the name for the intercept. The default value is "(Intercept)".
+#' If NULL is provided, the intercept will not be included, even if present in the formula.
+#'
+#' @return A character vector containing the term labels. If an intercept is present and intercept is not NULL,
+#' the intercept is returned first, followed by the remaining terms.
+#' 
+#' @keywords internal
+#' @export
+#' 
+#' @note This function is documented by ChatGPT after some discussion. 
+#'
+#' @examples
+#' # With intercept:
+#' formula_term_labels(~ x1 * x2)
+#'
+#' # Without intercept:
+#' formula_term_labels(~ x1 * x2, intercept = NULL)
+#'
+formula_term_labels <- function(formula, intercept = "(Intercept)") {
+  terms_obj <- terms(formula)
+  terms <- attr(terms_obj, "term.labels")
+  if (!is.null(intercept)) {
+    if (attr(terms_obj, "intercept")) {
+      terms <- c(intercept, terms)
+    }
+  }
+  terms
+}
+
+
+
+
+
 #' Functions for formula manipulation
 #' 
 #' @details
@@ -155,6 +198,7 @@ combine_formulas <- function(lof, operator = "+", simplify = FALSE, env = parent
 #' *  \code{\link{combine_formulas}}: Combine formulas
 #' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
 #' *  \code{\link{substitute_formula_vars}}: Replace variables in formula with sum of other variables
+#' *  \code{\link{formula_term_labels}}: Retrieve term labels from a formula
 #'
 #' @docType data
 #' @name formula_utils

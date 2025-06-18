@@ -12,5 +12,6 @@ Functions for formula manipulation
 \item \code{\link{combine_formulas}}: Combine formulas
 \item \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
 \item \code{\link{substitute_formula_vars}}: Replace variables in formula with sum of other variables
+\item \code{\link{formula_term_labels}}: Retrieve term labels from a formula
 }
 }
