@@ -1778,7 +1778,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                       A$x[[j]] <- integer(0)
                     }   
                     isSecondary <- FALSE
-                    eliminatedRows[A$r[[j]]] <- TRUE
+                    eliminatedRows[r_here] <- TRUE
                     if(I_GAUSS_DUPLICATES == 2){
                       A_DUPLICATE <- A 
                       B_DUPLICATE <- B 
