@@ -56,7 +56,8 @@ that contains the results for all tables.</p>
 <span>  auto_collapse <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  collapse_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  total <span class="op">=</span> <span class="st">"Total"</span>,</span>
-<span>  hierarchical_extend0 <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  hierarchical_extend0 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  term_labels <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -104,6 +105,11 @@ after any call triggered by the <code>auto_collapse</code> parameter.</p></dd>
 <dd><p>Controls automatic hierarchy generation for <code><a href="Extend0.html">Extend0()</a></code>.
 See "Details" for more information.</p></dd>
 
+
+<dt id="arg-term-labels">term_labels<a class="anchor" aria-label="anchor" href="#arg-term-labels"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, a <code>term_labels</code> column (as constructed by <code><a href="output_term_labels.html">output_term_labels()</a></code>)
+is included as the first column of the output.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -140,35 +146,37 @@ This ensures flexibility when modifying the <code>table_formulas</code> paramete
 <span class="r-in"><span>                   substitute_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geo"</span>, <span class="st">"eu"</span><span class="op">)</span>, region1 <span class="op">=</span> <span class="st">"eu"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                   collapse_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sector <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sector2"</span>, <span class="st">"sector4"</span><span class="op">)</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                   sum_vars <span class="op">=</span> <span class="st">"value"</span>, </span></span>
-<span class="r-in"><span>                   total <span class="op">=</span> <span class="st">"T"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   total <span class="op">=</span> <span class="st">"T"</span>,</span></span>
+<span class="r-in"><span>                   term_labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [pre_aggregate 20*6-&gt;10*5] [ModelMatrix] [crossprod] [cbind]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      region        sector value table_1 table_2 table_3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         T             T 462.3    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   Iceland             T  37.1    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Portugal             T 162.5    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     Spain             T 262.7    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        EU             T 425.2    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     nonEU             T  37.1    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         T       private 429.5    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         T        public  32.8    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         T   Agriculture 240.2   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        T Entertainment 131.5   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        T  Governmental  32.8   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        T      Industry  57.8   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  Iceland       private  37.1    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Portugal       private 138.9    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 Portugal        public  23.6    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16    Spain       private 253.5    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17    Spain        public   9.2    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18       EU       private 392.4    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19       EU        public  32.8    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20    nonEU       private  37.1    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       EU   Agriculture 240.2   FALSE    TRUE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       EU Entertainment 114.7   FALSE    TRUE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23       EU  Governmental  32.8   FALSE    TRUE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24       EU      Industry  37.5   FALSE    TRUE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25    nonEU Entertainment  16.8   FALSE    TRUE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26    nonEU      Industry  20.3   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    term_labels   region        sector value table_1 table_2 table_3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  (Intercept)        T             T 462.3    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          geo  Iceland             T  37.1    TRUE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          geo Portugal             T 162.5    TRUE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          geo    Spain             T 262.7    TRUE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           eu       EU             T 425.2    TRUE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6           eu    nonEU             T  37.1    TRUE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      sector2        T       private 429.5    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      sector2        T        public  32.8    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      sector4        T   Agriculture 240.2   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10     sector4        T Entertainment 131.5   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11     sector4        T  Governmental  32.8   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12     sector4        T      Industry  57.8   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 geo:sector2  Iceland       private  37.1    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 geo:sector2 Portugal       private 138.9    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 geo:sector2 Portugal        public  23.6    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 geo:sector2    Spain       private 253.5    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 geo:sector2    Spain        public   9.2    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  eu:sector2       EU       private 392.4    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  eu:sector2       EU        public  32.8    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  eu:sector2    nonEU       private  37.1    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  eu:sector4       EU   Agriculture 240.2   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  eu:sector4       EU Entertainment 114.7   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  eu:sector4       EU  Governmental  32.8   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  eu:sector4       EU      Industry  37.5   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  eu:sector4    nonEU Entertainment  16.8   FALSE    TRUE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  eu:sector4    nonEU      Industry  20.3   FALSE    TRUE   FALSE</span>
+<span class="r-in"><span>                   </span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
