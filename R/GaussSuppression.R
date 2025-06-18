@@ -1564,7 +1564,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                                N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
               if (any(pgi2)) {
-                message("dimensional_check 1 case found")
+                PrintInfo("dimensional_check 1 case found")
                 if(!dimensional_check){
                   stop("dimensional_check PROBLEM 1")
                 }
@@ -1826,7 +1826,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                                                              N_GAUSS_DUPLICATES = 1, dash = "+",
                                                              maxInd = maxInd, testMaxInt = testMaxInt)
               if(secondary_from_loop) {
-                message("dimensional_check 2 case found")
+                PrintInfo("dimensional_check 2 case found")
                 if(!dimensional_check){
                   stop("dimensional_check PROBLEM 2")
                 }
