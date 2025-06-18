@@ -60,6 +60,10 @@ When \code{hierarchical_extend0} is \code{TRUE}, hierarchies are generated autom
 By default, it is set to \code{TRUE}, preventing excessive data extension and aligning with
 the default behavior of \code{\link[=Formula2ModelMatrix]{Formula2ModelMatrix()}}, where \code{avoidHierarchical = FALSE}.
 
+An attribute \code{table_formulas} is added to \code{formula} before \code{table_fun()} is called.
+This attribute contains the version of \code{table_formulas} after applying \code{substitute_vars}.
+This allows for special use in the function \code{table_fun()}.
+
 Note: The use of \code{total_collapse} internally allows handling of variable names not present in the data.
 This ensures flexibility when modifying the \code{table_formulas} parameter.
 }
