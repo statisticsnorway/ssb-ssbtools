@@ -1,11 +1,16 @@
 #
 # This is an internal function for GaussSuppression.
 # In a separate file for easiness and to avoid misunderstandings.
-# When this code is used, both A and B internally in the function are parts of the original B
+# A generalized function of AnyProportionalGaussInt_OLD().
+# It looks at whether multiple variables together cause elimination.
+# Initially the function was only used to check for Singleton revelations and 
+# the function name was AnyEliminatedBySingleton
+# When this code is used for singleton checking, 
+# both A and B internally in the function are parts of the original B
 #
 # return_all parameter added for reuse for another purpose
 #
-AnyEliminatedBySingleton <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss,
+AnyEliminatedByMultiple <- function(A, B, kk_2_factorsA, kk_2_factorsB, singleton, DoTestMaxInt, tolGauss,
                                      N_GAUSS_DUPLICATES, dash, maxInd, testMaxInt,
                                      return_all = FALSE){
   n <- length(A$r)

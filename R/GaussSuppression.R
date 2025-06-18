@@ -1415,7 +1415,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
           kk_2_factorsB <- kk_2_factorsB[seq_len(n_relevant_primary)]
           for (i in seq_along(singleP)) {
             p <- primarySingletonNum == singleP[i]
-            eliminatedBySingleton[i] <- AnyEliminatedBySingleton(list(r = B$r[p], x = B$x[p]), 
+            eliminatedBySingleton[i] <- AnyEliminatedByMultiple(list(r = B$r[p], x = B$x[p]), 
                                                                  list(r = B$r[!p], x = B$x[!p]), 
                                                                  kk_2_factorsB[p], kk_2_factorsB[!p], 
                                                                  singleton = singleton,
@@ -1519,7 +1519,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
         
         pgi_new <- FALSE
         # pgi2 <- AnyProportionalGaussInt_OLD_ALL(A$r[[check_a]], A$x[[check_a]], A$r[check_b], A$x[check_b], tolGauss = tolGauss, kk_2_factorsB = kk_2_factorsA[check_b])
-        pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a], x = A$x[check_a]), list(r = A$r[check_b], x = A$x[check_b]),
+        pgi2 <- AnyEliminatedByMultiple(list(r = A$r[check_a], x = A$x[check_a]), list(r = A$r[check_b], x = A$x[check_b]),
                                          kk_2_factorsA[check_a], kk_2_factorsA[check_b], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                          N_GAUSS_DUPLICATES = 1, dash = "x", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
         check_extra <- FALSE
@@ -1560,7 +1560,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
             if ((force_dimensional_check |  dimensional_check)) {
               check_a1 <- c(check_a, check_b[(pgi[SeqInc(length(check_a), length(pgi))])])
               check_b1 <- check_b[!(pgi[SeqInc(length(check_a), length(pgi))])]
-              pgi2 <- AnyEliminatedBySingleton(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
+              pgi2 <- AnyEliminatedByMultiple(list(r = A$r[check_a1], x = A$x[check_a1]), list(r = A$r[check_b1], x = A$x[check_b1]),
                                                kk_2_factorsA[check_a1], kk_2_factorsA[check_b1], singleton = singleton, DoTestMaxInt = DoTestMaxInt, tolGauss = tolGauss,
                                                N_GAUSS_DUPLICATES = 1, dash = "*", maxInd = maxInd, testMaxInt = testMaxInt, return_all = TRUE)
               if (any(pgi2)) {
@@ -1818,7 +1818,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               warning("Not expected that length(j_values_loop) == 1")
             }
             if ((force_dimensional_check |  dimensional_check) & length(j_values_loop) > 1) {
-              secondary_from_loop = AnyEliminatedBySingleton(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
+              secondary_from_loop = AnyEliminatedByMultiple(list(r = A$r[j_values_loop], x = A$x[j_values_loop]), 
                                                              B, 
                                                              kk_2_factorsA[j_values_loop], kk_2_factorsB, 
                                                              singleton = singleton,
