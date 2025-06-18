@@ -13,7 +13,8 @@ tables_by_formulas(
   auto_collapse = TRUE,
   collapse_vars = NULL,
   total = "Total",
-  hierarchical_extend0 = TRUE
+  hierarchical_extend0 = TRUE,
+  term_labels = FALSE
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ after any call triggered by the \code{auto_collapse} parameter.}
 
 \item{hierarchical_extend0}{Controls automatic hierarchy generation for \code{\link[=Extend0]{Extend0()}}.
 See "Details" for more information.}
+
+\item{term_labels}{Logical. If \code{TRUE}, a \code{term_labels} column (as constructed by \code{\link[=output_term_labels]{output_term_labels()}})
+is included as the first column of the output.}
 }
 \value{
 A single \code{data.frame} containing results for all tables defined in \code{table_formulas}.
@@ -76,7 +80,9 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
                    collapse_vars = list(sector = c("sector2", "sector4")), 
                    sum_vars = "value", 
-                   total = "T")
+                   total = "T",
+                   term_labels = TRUE)
+                   
 }
 \seealso{
 \code{\link{filter_by_variable}}

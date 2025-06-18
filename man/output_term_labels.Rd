@@ -29,5 +29,5 @@ cbind(term_labels, out)
 
 }
 \seealso{
-\code{\link[=formula_term_labels]{formula_term_labels()}}
+\code{\link[=formula_term_labels]{formula_term_labels()}}, \code{\link[=tables_by_formulas]{tables_by_formulas()}}
 }

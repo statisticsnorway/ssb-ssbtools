@@ -37,6 +37,8 @@
 #' @param total A string used to name totals. Passed to both `table_fun` and [total_collapse()].  
 #' @param hierarchical_extend0 Controls automatic hierarchy generation for [Extend0()]. 
 #'                              See "Details" for more information. 
+#' @param term_labels Logical. If `TRUE`, a `term_labels` column (as constructed by [output_term_labels()]) 
+#'                    is included as the first column of the output.
 #'
 #' @return A single `data.frame` containing results for all tables defined in `table_formulas`.
 #' @export
@@ -52,7 +54,9 @@
 #'                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
 #'                    collapse_vars = list(sector = c("sector2", "sector4")), 
 #'                    sum_vars = "value", 
-#'                    total = "T")
+#'                    total = "T",
+#'                    term_labels = TRUE)
+#'                    
 tables_by_formulas <- function(data,
                                table_fun, 
                                ..., 
@@ -61,7 +65,8 @@ tables_by_formulas <- function(data,
                                auto_collapse = TRUE,
                                collapse_vars = NULL, 
                                total = "Total",
-                               hierarchical_extend0 = TRUE) {
+                               hierarchical_extend0 = TRUE,
+                               term_labels = FALSE) {
   
   if (length(substitute_vars)) {
     for (i in seq_along(table_formulas)) {
@@ -106,6 +111,10 @@ tables_by_formulas <- function(data,
     if (is.null(attr(a, attr_name))) {
       attr(a, attr_name) <- preserved_attrs[[attr_name]]
     }
+  }
+  
+  if (term_labels) {
+    a <- cbind(term_labels = output_term_labels(a), a)
   }
   
   a

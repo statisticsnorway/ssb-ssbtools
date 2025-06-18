@@ -8,7 +8,7 @@
 #'
 #' @returns vector of term labels
 #' @export
-#' @seealso [formula_term_labels()]
+#' @seealso [formula_term_labels()], [tables_by_formulas()]
 #'
 #' @examples
 #' 
