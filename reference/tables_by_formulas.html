@@ -119,6 +119,9 @@ specifies the <code>hierarchical</code> parameter in <code><a href="Extend0.html
 When <code>hierarchical_extend0</code> is <code>TRUE</code>, hierarchies are generated automatically.
 By default, it is set to <code>TRUE</code>, preventing excessive data extension and aligning with
 the default behavior of <code><a href="FormulaSums.html">Formula2ModelMatrix()</a></code>, where <code>avoidHierarchical = FALSE</code>.</p>
+<p>An attribute <code>table_formulas</code> is added to <code>formula</code> before <code>table_fun()</code> is called.
+This attribute contains the version of <code>table_formulas</code> after applying <code>substitute_vars</code>.
+This allows for special use in the function <code>table_fun()</code>.</p>
 <p>Note: The use of <code>total_collapse</code> internally allows handling of variable names not present in the data.
 This ensures flexibility when modifying the <code>table_formulas</code> parameter.</p>
     </div>
@@ -177,7 +180,7 @@ This ensures flexibility when modifying the <code>table_formulas</code> paramete
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
