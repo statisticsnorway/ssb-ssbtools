@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,22 @@
       <small>Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.7.8" id="ssbtools-178">SSBtools 1.7.8<a class="anchor" aria-label="anchor" href="#ssbtools-178"></a></h2>
+<ul><li>The <code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code> function is updated with a new parameter: <code>cell_grouping</code>.
+<ul><li>This allows certain cells to be suppressed or non-suppressed together.<br></li>
+<li>The change enables a consistent linked-table algorithm, achieved by using an <code>x</code> input structured as a block-diagonal matrix.<br></li>
+<li>See also the related new parameters: <code>table_id</code> and <code>auto_anySumNOTprimary</code>.</li>
+</ul></li>
+<li>New function <code><a href="../reference/formula_term_labels.html">formula_term_labels()</a></code>.
+<ul><li>Part of the utility functions listed under <code><a href="../reference/formula_utils.html">?formula_utils</a></code>.<br></li>
+<li>Extracts term labels from the right-hand side of a given R formula.</li>
+</ul></li>
+<li>Functionality to extract term labels from a data frame.
+<ul><li>New function <code><a href="../reference/output_term_labels.html">output_term_labels()</a></code>.<br></li>
+<li>New parameter <code>term_labels</code> in <code><a href="../reference/tables_by_formulas.html">tables_by_formulas()</a></code>, used to include term labels in the output.</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.7.5" id="ssbtools-175">SSBtools 1.7.5<a class="anchor" aria-label="anchor" href="#ssbtools-175"></a></h2><p class="text-muted">CRAN release: 2025-03-14</p>
 <ul><li>The title and description in the DESCRIPTION file have been updated<br>
