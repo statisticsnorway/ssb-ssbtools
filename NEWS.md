@@ -1,4 +1,4 @@
-## SSBtools 1.7.8 
+## SSBtools 1.8.0 
 * The `GaussSuppression()` function is updated with a new parameter: `cell_grouping`.  
   - This allows certain cells to be suppressed or non-suppressed together.  
   - The change enables a consistent linked-table algorithm, achieved by using an `x` input structured as a block-diagonal matrix.  
