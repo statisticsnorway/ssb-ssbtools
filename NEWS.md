@@ -1,3 +1,17 @@
+## SSBtools 1.7.8 
+* The `GaussSuppression()` function is updated with a new parameter: `cell_grouping`.  
+  - This allows certain cells to be suppressed or non-suppressed together.  
+  - The change enables a consistent linked-table algorithm, achieved by using an `x` input structured as a block-diagonal matrix.  
+  - See also the related new parameters: `table_id` and `auto_anySumNOTprimary`.
+* New function `formula_term_labels()`.  
+  - Part of the utility functions listed under `?formula_utils`.  
+  - Extracts term labels from the right-hand side of a given R formula.
+* Functionality to extract term labels from a data frame.  
+  - New function `output_term_labels()`.  
+  - New parameter `term_labels` in `tables_by_formulas()`, used to include term labels in the output.
+
+
+
 ## SSBtools 1.7.5 
 * The title and description in the DESCRIPTION file have been updated  
   to avoid giving the impression that the package is strictly internal to Statistics Norway.
