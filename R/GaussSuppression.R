@@ -641,7 +641,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   
   
   if (forceForcedNotSingletonNum | forceForcedNotSingletonFreq) {
-    cS1 <- which(colSums(x) == 1)
+    cS1 <- which(single_col(x))
     cS1 <- cS1[cS1 %in% candidates[seq_len(nForced)]]
     if (length(cS1)) {
       cS1rS <- rowSums(x[, cS1, drop = FALSE]) > 0
@@ -674,8 +674,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     singletonNOTprimary <- TRUE
   } else {
     if (auto_anySumNOTprimary & any(singleton)) {
-      colSums_x <- colSums(x)
-      singletonZ <- (colSums(x[singleton, , drop = FALSE]) == 1 & colSums_x == 1)
+      singletonZ <- (single_col(x[singleton, , drop = FALSE]) & single_col(x))
       singletonNOTprimary <- (sum(singletonZ) > sum(singletonZ[primary]))
     } 
     if (singletonNOTprimary) {
@@ -839,10 +838,10 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
     if (any(singleton_num)) {
       singleton_num_logical <- as.logical(singleton_num)
       if (singleton2Primary) {   # Change from if(forceSingleton2Primary)  
-        cS1 <- which(colSums(x) == 1)
+        cS1 <- which(single_col(x))
         cS1 <- cS1[!(cS1 %in% primary)]
         if (length(cS1)) {
-          cS1 <- cS1[colSums(x[singleton_num_logical, cS1, drop = FALSE]) == 1]
+          cS1 <- cS1[single_col(x[singleton_num_logical, cS1, drop = FALSE])]
         }
         if (length(cS1)) {
           if (forceSingleton2Primary) {   # Now forceSingleton2Primary used instead of above
@@ -855,7 +854,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       }
       if (singleton2Primary) {
         singletonNotInPublish <- singleton_num_logical
-        singletonNotInPublish[rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
+        singletonNotInPublish[rowSums(x[, primary[single_col(x[, primary, drop = FALSE])], drop = FALSE]) > 0] <- FALSE  # singletonNotInPublish[innerprimary] <- FALSE
         if (any(singletonNotInPublish)) {
           PrintInfo("singleton2Primary is used")
           pZ <- Matrix(0, length(singletonNotInPublish), sum(singletonNotInPublish))
@@ -867,7 +866,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       relevant_ncol_x <- ncol(x)
       if (sub2Sum) {
         pZs <- x * singleton_num_logical
-        pZ <- x * (rowSums(x[, primary[colSums(x[, primary, drop = FALSE]) == 1], drop = FALSE]) > 0)  #  x * innerprimary
+        pZ <- x * (rowSums(x[, primary[single_col(x[, primary, drop = FALSE])], drop = FALSE]) > 0)  #  x * innerprimary
         pZ[ , primary] <- 0  # Not relevant when already suppressed 
         if (integerUnique) {
           if (!is.integer(singleton_num)) {
@@ -914,7 +913,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
               diffMatrix <- diffMatrix[, colSums(diffMatrix[!singleton_num_logical, , drop = FALSE]) == 0, drop = FALSE]
               diffMatrix <- diffMatrix[singleton_num_logical, , drop = FALSE]
               if (ncol(diffMatrix)) {
-                colSums_diffMatrix_is1 <- colSums(diffMatrix) == 1
+                colSums_diffMatrix_is1 <- single_col(diffMatrix)
                 if (any(colSums_diffMatrix_is1)) {
                   PrintInfo("hierarchySearch is used in the standard way")
                   colSums_pZ_requirement[as.integer(colnames(diffMatrix)[colSums_diffMatrix_is1])] <- TRUE
