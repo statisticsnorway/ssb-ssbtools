@@ -69,6 +69,73 @@ RowGroups <- function(x, returnGroups = FALSE, returnGroupsId = FALSE, NAomit = 
   out
 }
 
+
+
+#' Fast alternative to `anyDuplicated()`
+#'
+#' Implemented similarly to [RowGroups()].  
+#' 
+#' With `data.table` input and the data.table package available, 
+#' `anyDuplicated.data.table()` will be used.
+#'
+#' @param x A data frame, tibble, or data.table. 
+#' @param cols Columns to check for duplicates.
+#'
+#' @returns Index of the first duplicate row, if any; otherwise 0.
+#' @export
+#'
+#' @examples
+#' z <- SSBtoolsData("power10to2")
+#' head(z, 12)
+#' tail(z)
+#' 
+#' any_duplicated_rows(z, c("A", "B"))
+#' any_duplicated_rows(z, c("a", "A", "B"))
+#' any_duplicated_rows(z, c("a", "A", "b"))
+any_duplicated_rows <- function(x, cols = names(x)) {
+  if (inherits(x, "data.table")) {
+    if (requireNamespace("data.table", quietly = TRUE)) {
+      return(anyDuplicated(x[, ..cols]))
+    }
+  } 
+  as_data_frame <- !identical(class(x), "data.frame")
+  n <- NROW(x)
+  if (n == 0) {
+    return(FALSE)
+  }
+  if (n > 30) {
+    ad <- any_duplicated_rows_(x[1:10, cols, drop = FALSE], as_data_frame)
+    if (ad) return(ad)
+  }
+  if (n > 3000) {
+    ad <- any_duplicated_rows_(x[1:1000, cols, drop = FALSE], as_data_frame)
+    if (ad) return(ad)
+  }
+  if (n > 3e+05) {
+    ad <- any_duplicated_rows_(x[1:1e+05, cols, drop = FALSE], as_data_frame)
+    if (ad) return(ad)
+  }
+  if (n > 3e+07) {
+    ad <- any_duplicated_rows_(x[1:1e+07, cols, drop = FALSE], as_data_frame)
+    if (ad) return(ad)
+  }
+  any_duplicated_rows_(x[, cols, drop = FALSE], as_data_frame)
+}
+
+
+any_duplicated_rows_ <- function(x, as_data_frame = FALSE) {
+  if (as_data_frame) {
+    x <- as.data.frame(x)
+  }
+  xInteger <- AsFactorInteger(x)
+  if (!is.null(xInteger)) {
+    return(anyDuplicated(xInteger))
+  }
+  anyDuplicated(x)
+}
+
+
+
 RowGroups0rows <- function(x, returnGroups = FALSE, returnGroupsId = FALSE) {
   if (!(returnGroups | returnGroupsId)) 
     return(integer(0))
@@ -211,8 +278,7 @@ RowGroupsDT <- function(data, returnGroups = FALSE, returnGroupsId = FALSE, NAom
 .datatable.aware <- TRUE 
 
 # To avoid check problems
-utils::globalVariables(c(".GRP", ".I", ":=", "G_r0u_P"))
-
+utils::globalVariables(c(".GRP", ".I", ":=", "G_r0u_P", "..cols"))
 
 
 
