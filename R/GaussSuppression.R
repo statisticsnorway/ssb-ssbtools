@@ -90,6 +90,9 @@
 #'        forced if a check indicates that singletons are not primary suppressed. 
 #'        Set this to `FALSE` in cases where the `x` matrix has already undergone 
 #'        duplicate row removal, as the check may then produce incorrect results.
+#' @param auto_subSumAny When `TRUE` (default), and `singletonMethod` is `"anySum"`, 
+#'        it is internally changed to `"subSumAny"` if there are forced cells. 
+#'        This is done to give information about unsafe cells.
 #'      
 #' @param ... Extra unused parameters
 #'
@@ -164,6 +167,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                              cell_grouping = NULL, 
                              table_id = NULL,
                              auto_anySumNOTprimary = TRUE,
+                             auto_subSumAny = TRUE,
                              ...) {
   
   if (identical(removeDuplicated, "test")){
@@ -452,6 +456,7 @@ GaussSuppression <- function(x, candidates = 1:ncol(x), primary = NULL, forced =
                                  printXdim =  printXdim, 
                                  cell_grouping = cell_grouping, table_id = table_id,
                                  auto_anySumNOTprimary = auto_anySumNOTprimary,
+                                 auto_subSumAny = auto_subSumAny,
                                  ...)
   
   unsafePrimary <- c(unsafePrimary, -secondary[secondary < 0])
@@ -531,6 +536,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
                               printXdim, 
                               cell_grouping, table_id,
                               auto_anySumNOTprimary, 
+                              auto_subSumAny,
                               ...) {
   
   # Trick:  GaussSuppressionPrintInfo <- message
@@ -730,7 +736,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   }
   
   # In order to give information about unsafe cells, "anySum" is internally changed to "subSumAny" when there are forced cells.
-  if (!singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
+  if (auto_subSumAny & !singletonNOTprimary & singletonMethod == "anySum" & nForced > 0) {
     singletonMethod <- "subSumAny"
   }
   
