@@ -14,6 +14,7 @@
 #'
 #' @return Logical vectors specifying duplicated columns or vector of indices (first match)
 #' @importFrom stats runif
+#' @importFrom Matrix t
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -36,6 +37,9 @@
 #' which(!DummyDuplicated(Matrix::t(z), rows = TRUE))
 #' which(!DummyDuplicated(Matrix::t(z), rows = TRUE, rnd = TRUE))
 DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
+  if (ncol(x) == 0 | nrow(x) == 0) {
+    return(DummyDuplicated_empty(x, idx = idx, rows = rows))
+  }
   if (rnd) {
     return(XprodRnd(x = x, idx = idx, rows = rows, seed = 123)) 
   }
@@ -184,6 +188,23 @@ single_col <- function(..., value = 1) {
 
 
 
+DummyDuplicated_empty <- function(x, idx = FALSE, rows = FALSE) {
+  if (rows) {
+    return(DummyDuplicated_empty(t(x), idx))
+  }
+  if (ncol(x) == 0) {
+    if (idx) {
+      return(integer(0))
+    } else {
+      return(logical(0))
+    }
+  }
+  idx_ <- rep(1L, ncol(x))
+  if (idx) {
+    return(idx_)
+  }
+  duplicated(idx_)
+}
 
 
 
