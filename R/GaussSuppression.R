@@ -873,7 +873,11 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
       if (sub2Sum) {
         pZs <- x * singleton_num_logical
         pZ <- x * (rowSums(x[, primary[single_col(x[, primary, drop = FALSE])], drop = FALSE]) > 0)  #  x * innerprimary
-        pZ[ , primary] <- 0  # Not relevant when already suppressed 
+        pZ[ , primary] <- 0  # Not relevant when already suppressed
+        neg_cols <- which(colSums(pZ < 0) > 0)
+        if (length(neg_cols)) {
+          pZ[, neg_cols] <- 0  # Avoid special columns with negative values 
+        }
         if (integerUnique) {
           if (!is.integer(singleton_num)) {
             stop("singleton as integer needed, but something is wrong since this check has been done earlier")
@@ -958,7 +962,7 @@ GaussSuppression1 <- function(x, candidates, primary, printInc, singleton, nForc
   if (grepl("subSum", singletonMethod)) {
     if (any(singleton)) {
       pZ <- x * singleton
-      colZ <- colSums(pZ) > 1
+      colZ <- (colSums(pZ) > 1) &  !(colSums(pZ < 0) > 0)  # (! ... ) to avoid special columns with negative values
       if (any(colZ)) {                                     # Same code below  
         pZ <- pZ[, colZ, drop = FALSE]
         nodupl <- which(!DummyDuplicated(pZ, rnd = TRUE)) # which(!duplicated(as.matrix(t(pZ)))) 
