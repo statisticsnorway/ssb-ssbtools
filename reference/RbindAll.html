@@ -77,44 +77,44 @@
 <span class="r-in"><span><span class="va">zD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>idD <span class="op">=</span> <span class="fl">99</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, xD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">RbindAll</span><span class="op">(</span><span class="va">zA</span>, <span class="va">zB</span>, <span class="va">zC</span>, <span class="va">zD</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    idA idB idC idC2 idC3 idD      x   xA   xB   xC   xD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  10 100  100  100  99  0.542 0.88   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  20 200  200  100  99  0.692 0.53   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3  30 100  200  100  99 -1.134 0.78   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4  40 200  200  100  99  1.053 0.22   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5  50 100  200  100  99  0.817 0.64   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6  10 200  200  100  99 -0.048 0.04   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7  20 100  200  100  99  1.340 0.49   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8  30 200  200  100  99  0.306 0.04   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  40 100  200  100  99 -0.634 0.72   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10  50 200  200  100  99  0.279 0.18   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  NA  10  NA   NA   NA  NA  1.296   NA 0.85   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  NA  20  NA   NA   NA  NA -0.115   NA 0.02   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  NA  30  NA   NA   NA  NA  2.161   NA 0.40   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  NA  40  NA   NA   NA  NA -0.475   NA 0.95   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  NA  50  NA   NA   NA  NA -0.505   NA 0.66   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  NA  NA 100   NA   NA  NA -1.175   NA   NA 0.66   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  NA  NA 200   NA   NA  NA  0.002   NA   NA 0.77   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  NA  NA  NA   NA   NA  99  0.029   NA   NA   NA 0.58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  10 100  100  100  99  0.817 0.72   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  20 200  200  100  99 -0.048 0.18   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3  30 100  200  100  99  1.340 0.90   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4  40 200  200  100  99  0.306 0.43   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5  50 100  200  100  99 -0.634 0.45   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6  10 200  200  100  99  0.279 0.56   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7  20 100  200  100  99  1.189 0.98   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8  30 200  200  100  99  0.775 0.55   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  40 100  200  100  99  0.363 0.32   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10  50 200  200  100  99 -0.036 0.00   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  NA  10  NA   NA   NA  NA -0.505   NA 0.33   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  NA  20  NA   NA   NA  NA  1.051   NA 0.66   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  NA  30  NA   NA   NA  NA -0.256   NA 0.77   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  NA  40  NA   NA   NA  NA  0.414   NA 0.51   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  NA  50  NA   NA   NA  NA -1.684   NA 0.82   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  NA  NA 100   NA   NA  NA  0.192   NA   NA 0.49   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  NA  NA 200   NA   NA  NA -0.086   NA   NA 0.38   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  NA  NA  NA   NA   NA  99  0.932   NA   NA   NA 0.86</span>
 <span class="r-in"><span><span class="fu">RbindAll</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">zA</span>, <span class="va">zB</span>, <span class="va">zC</span>, <span class="va">zD</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    idA idB idC idC2 idC3 idD      x   xA   xB   xC   xD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  10 100  100  100  99  0.542 0.88   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  20 200  200  100  99  0.692 0.53   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3  30 100  200  100  99 -1.134 0.78   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4  40 200  200  100  99  1.053 0.22   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5  50 100  200  100  99  0.817 0.64   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6  10 200  200  100  99 -0.048 0.04   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7  20 100  200  100  99  1.340 0.49   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8  30 200  200  100  99  0.306 0.04   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  40 100  200  100  99 -0.634 0.72   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10  50 200  200  100  99  0.279 0.18   NA   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  NA  10  NA   NA   NA  NA  1.296   NA 0.85   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  NA  20  NA   NA   NA  NA -0.115   NA 0.02   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  NA  30  NA   NA   NA  NA  2.161   NA 0.40   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  NA  40  NA   NA   NA  NA -0.475   NA 0.95   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  NA  50  NA   NA   NA  NA -0.505   NA 0.66   NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  NA  NA 100   NA   NA  NA -1.175   NA   NA 0.66   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  NA  NA 200   NA   NA  NA  0.002   NA   NA 0.77   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  NA  NA  NA   NA   NA  99  0.029   NA   NA   NA 0.58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  10 100  100  100  99  0.817 0.72   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  20 200  200  100  99 -0.048 0.18   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3  30 100  200  100  99  1.340 0.90   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4  40 200  200  100  99  0.306 0.43   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5  50 100  200  100  99 -0.634 0.45   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6  10 200  200  100  99  0.279 0.56   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7  20 100  200  100  99  1.189 0.98   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8  30 200  200  100  99  0.775 0.55   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  40 100  200  100  99  0.363 0.32   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10  50 200  200  100  99 -0.036 0.00   NA   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  NA  10  NA   NA   NA  NA -0.505   NA 0.33   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  NA  20  NA   NA   NA  NA  1.051   NA 0.66   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  NA  30  NA   NA   NA  NA -0.256   NA 0.77   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  NA  40  NA   NA   NA  NA  0.414   NA 0.51   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  NA  50  NA   NA   NA  NA -1.684   NA 0.82   NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  NA  NA 100   NA   NA  NA  0.192   NA   NA 0.49   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  NA  NA 200   NA   NA  NA -0.086   NA   NA 0.38   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  NA  NA  NA   NA   NA  99  0.932   NA   NA   NA 0.86</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

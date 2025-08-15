@@ -97,11 +97,11 @@ where <code>w=weights[order(x)]</code>.</p>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">27</span><span class="op">)</span><span class="op">/</span><span class="fl">27</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span>, <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">/</span><span class="fl">5</span>, weights <span class="op">=</span> <span class="va">w</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         0%        20%        40%        60%        80%       100% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.7234136 12.2447730 17.0414801 20.7235809 25.0149596 27.0073780 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0%       20%       40%       60%       80%      100% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.047919 12.014960 16.871172 21.114838 24.870455 27.182283 </span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span>, <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">/</span><span class="fl">5</span>, weights <span class="op">=</span> <span class="va">w</span>, type <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         0%        20%        40%        60%        80%       100% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.7234136 12.4830157 17.4940910 21.1282711 24.5409455 27.0073780 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0%       20%       40%       60%       80%      100% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.047919 12.279096 17.356901 21.342948 24.513734 27.182283 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0%  25%  50%  75% 100% </span>

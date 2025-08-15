@@ -72,6 +72,7 @@ The singleton problem and the related problem of zeros are also handled.</p>
 <span>  cell_grouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  table_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_anySumNOTprimary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  auto_subSumAny <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -195,6 +196,12 @@ Note: no check is performed to verify that <code>table_id</code> corresponds to 
 forced if a check indicates that singletons are not primary suppressed.
 Set this to <code>FALSE</code> in cases where the <code>x</code> matrix has already undergone
 duplicate row removal, as the check may then produce incorrect results.</p></dd>
+
+
+<dt id="arg-auto-subsumany">auto_subSumAny<a class="anchor" aria-label="anchor" href="#arg-auto-subsumany"></a></dt>
+<dd><p>When <code>TRUE</code> (default), and <code>singletonMethod</code> is <code>"anySum"</code>,
+it is internally changed to <code>"subSumAny"</code> if there are forced cells.
+This is done to give information about unsafe cells.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

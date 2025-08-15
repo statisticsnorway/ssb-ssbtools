@@ -32,6 +32,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.1" id="ssbtools-181">SSBtools 1.8.1<a class="anchor" aria-label="anchor" href="#ssbtools-181"></a></h2>
+<ul><li>
+<code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code> updates:
+<ul><li>Now handles negative values in the model matrix.<br></li>
+<li>Added new parameter <code>auto_subSumAny</code> to optionally disable the automatic switch of the singleton method.<br></li>
+<li>These changes prepare <code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code> for use in a new algorithm for linked tables.</li>
+</ul></li>
+<li>
+<code><a href="../reference/DummyDuplicated.html">DummyDuplicated()</a></code> improvements:
+<ul><li>Now supports empty matrix input (0 columns and/or 0 rows).<br></li>
+<li>The documentation remark “(dummy matrix not required)” is now more accurate.
+<ul><li>Previously, columns with a column sum of 0 were treated as if they contained only zeros.</li>
+</ul></li>
+</ul></li>
+<li>New function <code><a href="../reference/any_duplicated_rows.html">any_duplicated_rows()</a></code>:
+<ul><li>Fast alternative to <code><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">base::anyDuplicated()</a></code>, implemented similarly to <code><a href="../reference/RowGroups.html">RowGroups()</a></code>.</li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0" id="ssbtools-180">SSBtools 1.8.0<a class="anchor" aria-label="anchor" href="#ssbtools-180"></a></h2><p class="text-muted">CRAN release: 2025-06-19</p>
 <ul><li>The <code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code> function is updated with a new parameter: <code>cell_grouping</code>.
 <ul><li>This allows certain cells to be suppressed or non-suppressed together.<br></li>
