@@ -1,3 +1,18 @@
+
+## SSBtools 1.8.1 
+* `GaussSuppression()` updates:  
+  - Now handles negative values in the model matrix.  
+  - Added new parameter `auto_subSumAny` to optionally disable the automatic switch of the singleton method.  
+  - These changes prepare `GaussSuppression()` for use in a new algorithm for linked tables.
+* `DummyDuplicated()` improvements:  
+  - Now supports empty matrix input (0 columns and/or 0 rows).  
+  - The documentation remark "(dummy matrix not required)" is now more accurate.  
+    - Previously, columns with a column sum of 0 were treated as if they contained only zeros.
+* New function `any_duplicated_rows()`:  
+  - Fast alternative to `base::anyDuplicated()`, implemented similarly to `RowGroups()`.
+
+
+
 ## SSBtools 1.8.0 
 * The `GaussSuppression()` function is updated with a new parameter: `cell_grouping`.  
   - This allows certain cells to be suppressed or non-suppressed together.  

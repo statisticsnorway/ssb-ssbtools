@@ -14,6 +14,7 @@
 #'
 #' @return Logical vectors specifying duplicated columns or vector of indices (first match)
 #' @importFrom stats runif
+#' @importFrom Matrix t
 #' @export
 #' @author Øyvind Langsrud
 #'
@@ -36,6 +37,9 @@
 #' which(!DummyDuplicated(Matrix::t(z), rows = TRUE))
 #' which(!DummyDuplicated(Matrix::t(z), rows = TRUE, rnd = TRUE))
 DummyDuplicated <- function(x, idx = FALSE, rows = FALSE, rnd = FALSE) {
+  if (ncol(x) == 0 | nrow(x) == 0) {
+    return(DummyDuplicated_empty(x, idx = idx, rows = rows))
+  }
   if (rnd) {
     return(XprodRnd(x = x, idx = idx, rows = rows, seed = 123)) 
   }
@@ -121,9 +125,9 @@ XprodRnd <- function(x, duplic = TRUE, idx = FALSE, rows = FALSE, seed = NULL) {
   # Not actually xtu, but maMax plays the role of xtu in the function that needs it
   # See DummyDuplicatedSpec used by GaussSuppression
   if (rows) {
-    maMax[rowSums(x) == 0] <- 0L
+    maMax[zero_col(x, rows = TRUE)] <- 0L
   } else {
-    maMax[colSums(x) == 0] <- 0L
+    maMax[zero_col(x)] <- 0L
   }
   maMax
 }
@@ -159,11 +163,48 @@ Sample_Symmetric_integer.max <- function(size, replace = FALSE, n = .Machine$int
 
 
 
+# Identifies rows or columns that contain only zeros.
+# Memory usage is reduced by applying abs() checks only 
+# to rows/columns whose total sum is already zero.
+zero_col <- function(x, rows = FALSE, value = 0) {
+  if (rows) {
+    a <- rowSums(x) == value
+    if (any(a)) {
+      a[a] <- rowSums(abs(x[a, , drop = FALSE])) == value
+    }
+    return(a)
+  }
+  a <- colSums(x) == value
+  if (any(a)) {
+    a[a] <- colSums(abs(x[, a, drop = FALSE])) == value
+  }
+  a
+}
+
+
+single_col <- function(..., value = 1) {
+  zero_col(..., value = value)
+}
 
 
 
-
-
+DummyDuplicated_empty <- function(x, idx = FALSE, rows = FALSE) {
+  if (rows) {
+    return(DummyDuplicated_empty(t(x), idx))
+  }
+  if (ncol(x) == 0) {
+    if (idx) {
+      return(integer(0))
+    } else {
+      return(logical(0))
+    }
+  }
+  idx_ <- rep(1L, ncol(x))
+  if (idx) {
+    return(idx_)
+  }
+  duplicated(idx_)
+}
 
 
 

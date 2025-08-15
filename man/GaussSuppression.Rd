@@ -26,6 +26,7 @@ GaussSuppression(
   cell_grouping = NULL,
   table_id = NULL,
   auto_anySumNOTprimary = TRUE,
+  auto_subSumAny = TRUE,
   ...
 )
 }
@@ -106,6 +107,10 @@ Note: no check is performed to verify that \code{table_id} corresponds to the bl
 forced if a check indicates that singletons are not primary suppressed.
 Set this to \code{FALSE} in cases where the \code{x} matrix has already undergone
 duplicate row removal, as the check may then produce incorrect results.}
+
+\item{auto_subSumAny}{When \code{TRUE} (default), and \code{singletonMethod} is \code{"anySum"},
+it is internally changed to \code{"subSumAny"} if there are forced cells.
+This is done to give information about unsafe cells.}
 
 \item{...}{Extra unused parameters}
 }
