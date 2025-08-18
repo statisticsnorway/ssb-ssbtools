@@ -1,8 +1,8 @@
 Package: SSBtools
 Type: Package
 Title: Algorithms and Tools for Tabular Statistics and Hierarchical Computations
-Version: 1.8.0
-Date: 2025-06-19
+Version: 1.8.1
+Date: 2025-08-18
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no",
                     comment = c(ORCID = "0000-0002-1380-4396")),
