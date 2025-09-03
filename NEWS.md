@@ -1,4 +1,9 @@
 
+## SSBtools 1.8.2
+* New functions `zero_col()` and `single_col()`:
+  - Previously internal only, now exported for use in other packages.
+
+
 ## SSBtools 1.8.1 
 * `GaussSuppression()` updates:  
   - Now handles negative values in the model matrix.  
