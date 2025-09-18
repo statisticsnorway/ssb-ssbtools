@@ -4,7 +4,7 @@
 \alias{get_colnames}
 \title{Get column names from a data.frame, tibble, or data.table}
 \usage{
-get_colnames(data, cols, preserve_duplicates = FALSE)
+get_colnames(data, cols, preserve_duplicates = FALSE, preserve_NULL = FALSE)
 }
 \arguments{
 \item{data}{A data frame, tibble, or data.table.}
@@ -15,9 +15,14 @@ or \code{NULL}.}
 \item{preserve_duplicates}{Logical, default \code{FALSE}.
 If \code{TRUE}, duplicates and order in \code{cols} are preserved.
 If \code{FALSE}, duplicates are removed while preserving order of first appearance.}
+
+\item{preserve_NULL}{Logical, default \code{FALSE}.
+If \code{TRUE}, returns \code{NULL} when \code{cols = NULL}.
+If \code{FALSE}, returns \code{character(0)} when \code{cols = NULL}.}
 }
 \value{
-A character vector of column names.
+A character vector of column names, or \code{NULL} if \code{cols = NULL}
+and \code{preserve_NULL = TRUE}.
 }
 \description{
 This helper function returns column names based on either column
@@ -25,8 +30,9 @@ indices (numeric) or column names (character). It works consistently
 across \code{data.frame}, \code{tibble}, and \code{data.table} objects.
 }
 \details{
-If \code{cols = NULL}, the function returns \code{character(0)}, matching the
+By default, \code{cols = NULL} returns \code{character(0)}, matching the
 behavior of \code{names(data[1, NULL, drop = FALSE])}.
+If \code{preserve_NULL = TRUE}, the function instead returns \code{NULL}.
 }
 \note{
 This function is written and documented by ChatGPT after some discussion.
@@ -34,18 +40,16 @@ This function is written and documented by ChatGPT after some discussion.
 \examples{
 df <- data.frame(a = 1, b = 2, c = 3)
 
-# NULL input returns character(0)
+# NULL input handling
 get_colnames(df, NULL)
+get_colnames(df, NULL, preserve_NULL = TRUE)
 
-# Default: duplicates removed
+# Numeric input
 get_colnames(df, c(2, 2, 1))
-
-# Explicitly preserve duplicates
 get_colnames(df, c(2, 2, 1), preserve_duplicates = TRUE)
 
 # Character input
 get_colnames(df, c("c", "a", "c"))
-
 get_colnames(df, c("c", "a", "c"), preserve_duplicates = TRUE)
 
 }
