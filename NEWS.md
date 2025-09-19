@@ -2,6 +2,9 @@
 ## SSBtools 1.8.2
 * New functions `zero_col()` and `single_col()`:
   - Previously internal only, now exported for use in other packages.
+* New helper function `get_colnames()`:
+  - Returns column names based on either indices or names, working consistently
+    across `data.frame`, `tibble`, and `data.table`.  
 
 
 ## SSBtools 1.8.1 
