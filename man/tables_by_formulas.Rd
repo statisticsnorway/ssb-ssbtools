@@ -36,7 +36,7 @@ with the \code{variables} parameter according to \code{substitute_vars}.}
 \item{collapse_vars}{When specified, \code{\link[=total_collapse]{total_collapse()}} is called with \code{collapse_vars} as the \code{variables} parameter,
 after any call triggered by the \code{auto_collapse} parameter.}
 
-\item{total}{A string used to name totals. Passed to both \code{table_fun} and \code{\link[=total_collapse]{total_collapse()}}.}
+\item{total}{string(s) used to name totals. Passed to both \code{table_fun} and \code{\link[=total_collapse]{total_collapse()}}.}
 
 \item{hierarchical_extend0}{Controls automatic hierarchy generation for \code{\link[=Extend0]{Extend0()}}.
 See "Details" for more information.}
