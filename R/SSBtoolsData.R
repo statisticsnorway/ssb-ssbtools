@@ -35,6 +35,8 @@
 #' 
 #' \strong{power10to1, power10to2, \eqn{\ldots}:} `power10to`\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns. 
 #'         Tip: Try `FindDimLists(SSBtoolsData("power10to3"))`  
+#'         
+#' \strong{barcelona2025:} Example data in \href{https://langsrud.com/stat/A0_poster_Barcelona_2025.html}{poster at expert meeting in Barcelona 2025}.
 #' 
 #' @export
 #' @importFrom utils data
@@ -47,6 +49,7 @@
 #' SSBtoolsData("sprt_emp_ageHier")
 #' SSBtoolsData("sprt_emp_withEU")
 #' SSBtoolsData("d1w")
+#' SSBtoolsData("barcelona2025")
 SSBtoolsData <- function(dataset) {
   if (dataset == "FIFA2018ABCD") {
     return(data.frame(stringsAsFactors = FALSE, mapsFrom = c("Australia", "Iran", "Saudi Arabia", "Egypt", "Morocco", "Nigeria", "Argentina", "Peru", "Uruguay", "Croatia", "Denmark", "France", "Iceland", "Portugal", "Russia", "Spain", "Iceland", "Russia", "Russia", "Croatia", "Europe", "nonEU", "Europe", "nonSchengen"), 
@@ -168,6 +171,42 @@ SSBtoolsData <- function(dataset) {
       stop("Not enough letters for coding")
     }
     return(Power10toN(n))
+  }
+  
+  if (dataset == "barcelona2025") {
+    q <- data.frame(
+      country = c(
+        "Denmark", "Denmark", "Denmark", "Denmark", "Denmark",
+        "Finland", "Finland", "Finland", "Finland", "Finland",
+        "Finland", "France", "France", "France", "France",
+        "France", "France", "France", "France", "France"
+      ),
+      city = c(
+        NA, NA, NA, NA, NA,
+        NA, NA, NA, NA, NA,
+        NA, "Paris", "Paris", "Paris", "Paris",
+        "Paris", "Paris", NA, NA, NA
+      ),
+      age = c(
+        "old", "young", "young", "young", "young",
+        "old", "old", "young", "young", "young",
+        "young", "old", "old", "old", "young",
+        "young", "young", "old", "old", "young"
+      ),
+      sex = c(
+        "male", "female", "male", "male", "male",
+        "female", "male", "female", "female", "male",
+        "male", "female", "female", "male", "female",
+        "female", "male", "female", "female", "female"
+      ),
+      income = c(
+        760, 480, 1910, 1810, 570,
+        520, 1470, 710, 440, 1020,
+        1550, 940, 4340, 4730, 5630,
+        590, 600, 940, 1150, 1090
+      )
+    )
+    return(q)
   }
   
   stop(paste("No data with dataset =", dataset))

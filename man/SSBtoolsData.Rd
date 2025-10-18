@@ -45,6 +45,8 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.
 
 \strong{power10to1, power10to2, \eqn{\ldots}:} \code{power10to}\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns.
 Tip: Try \code{FindDimLists(SSBtoolsData("power10to3"))}
+
+\strong{barcelona2025:} Example data in \href{https://langsrud.com/stat/A0_poster_Barcelona_2025.html}{poster at expert meeting in Barcelona 2025}.
 }
 \examples{
 SSBtoolsData("FIFA2018ABCD")
@@ -53,6 +55,7 @@ SSBtoolsData("sprt_emp_geoHier")
 SSBtoolsData("sprt_emp_ageHier")
 SSBtoolsData("sprt_emp_withEU")
 SSBtoolsData("d1w")
+SSBtoolsData("barcelona2025")
 }
 \author{
 Øyvind Langsrud and Daniel Lupp
