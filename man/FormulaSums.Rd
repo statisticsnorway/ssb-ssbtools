@@ -35,7 +35,12 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 
 \item{crossTable}{Cross table in output when TRUE}
 
-\item{total}{String used to name totals}
+\item{total}{Total code(s) which can be provided in several forms:
+\itemize{
+\item A single string (e.g. \code{"TOTAL"}) to be applied to all variables.
+\item A \strong{named vector} or \strong{named list} giving one total code per variable,
+e.g. \code{c(var1 = "ALL_A", var2 = "ALL_B")} or \code{list(var1 = "ALL_A", var2 = "ALL_B")}.
+}}
 
 \item{printInc}{Printing "..." to console when TRUE}
 
