@@ -51,7 +51,12 @@
 #' df
 #' 
 #' diff_groups(df)
-#'                              
+#' 
+#' 
+#' d2 <- SSBtoolsData("d2")
+#' diff_groups(d2[1:2])$groups
+#' diff_groups(d2[2:3])$groups
+#'                            
 #' 
 diff_groups <- function(x, ..., sep_common = "_=_", sep_diff = "_-_", sep_sum = c("_=_", "_+_")) {
   

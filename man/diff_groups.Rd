@@ -69,6 +69,11 @@ df <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d",
 df
 
 diff_groups(df)
-                             
+
+
+d2 <- SSBtoolsData("d2")
+diff_groups(d2[1:2])$groups
+diff_groups(d2[2:3])$groups
+                           
 
 }
