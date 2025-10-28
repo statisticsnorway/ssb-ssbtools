@@ -22,6 +22,11 @@
 #'
 #' @param x A data frame with exactly two columns.
 #' @param ... Additional arguments passed to `RowGroups()`.
+#' 
+#' @param hiddenNA Logical. When `TRUE` (default), missing codes (`NA`) are treated as 
+#' hidden categories — they are not available for computing difference and sum groups. 
+#' See *Note* for details on how this differs from the `NAomit` parameter in `RowGroups()`.
+#' 
 #' @param sep_common A character string used in the `common` column to separate codes 
 #' that are identical across the two input columns.
 #' @param sep_diff A character string used in the `diff_1_2` and `diff_2_1` columns to 
@@ -32,10 +37,21 @@
 #' sum of several codes in the other. The first element (`sep_sum[1]`) acts as an equality 
 #' sign, and the second element (`sep_sum[2]`) acts as a plus sign. If `sep_sum` has 
 #' length 1, the same value is used for both positions.
+#' 
+#' 
+#' @param outputNA Character string used to represent `NA` values within the newly 
+#' constructed text strings in the additional output columns. 
+#' Only relevant when `hiddenNA = FALSE`.
 #'
 #' @returns A list (as returned by `RowGroups()`), where the `groups` data frame is 
 #' extended with additional descriptive columns indicating common, difference, and sum 
 #' relationships between the two code columns.
+#' 
+#' @note
+#' The parameter `NAomit` from `RowGroups()` can still be set via `...`, but using it 
+#' will remove rows containing `NA` before processing. The relationships found will then 
+#' reflect the reduced data, which is usually not the intended behaviour when identifying 
+#' relationships between code sets.
 #'
 #' @export
 #'
@@ -58,7 +74,10 @@
 #' diff_groups(d2[2:3])$groups
 #'                            
 #' 
-diff_groups <- function(x, ..., sep_common = "_=_", sep_diff = "_-_", sep_sum = c("_=_", "_+_")) {
+diff_groups <- function(x, ...,
+                        hiddenNA = TRUE,
+                        sep_common = "_=_", sep_diff = "_-_", sep_sum = c("_=_", "_+_"),
+                        outputNA = "NA") {
   
   sep_sum <- rep_len(sep_sum, 2)
   
@@ -87,11 +106,22 @@ diff_groups <- function(x, ..., sep_common = "_=_", sep_diff = "_-_", sep_sum = 
   g$is_child_1[t1] <- TRUE
   g$is_child_2[t2] <- TRUE
   
+  if (hiddenNA) {
+    g$is_common[is.na(g[[1]]) | is.na(g[[2]])] <- FALSE
+    g$is_child_1[is.na(g[[1]])] <- FALSE
+    g$is_child_2[is.na(g[[2]])] <- FALSE
+    g$is_child_1[is.na(g[[2]])] <- FALSE
+    g$is_child_2[is.na(g[[1]])] <- FALSE
+    
+    outputNA <- as.character(outputNA)
+    
+  } 
+  
   g$common <- paste(g[[1]], g[[2]], sep = sep_common)
   g$common[!g$is_common] <- NA
   
-  dc12 <- diff_cells(g[2:1], g[g$is_child_2, 2:1], sep_diff, sep_sum)
-  dc21 <- diff_cells(g[1:2], g[g$is_child_1, 1:2], sep_diff, sep_sum)
+  dc12 <- diff_cells(g[2:1], g[g$is_child_2, 2:1], sep_diff, sep_sum, hiddenNA, outputNA)
+  dc21 <- diff_cells(g[1:2], g[g$is_child_1, 1:2], sep_diff, sep_sum, hiddenNA, outputNA)
   
   g$diff_1_2 <- dc12$d
   g$diff_2_1 <- dc21$d
@@ -111,7 +141,13 @@ unique_once <- function(x) {
 
 
 
-diff_cells <- function(orig, dcols, sep_diff, sep_sum) {
+diff_cells <- function(orig, dcols, sep_diff, sep_sum, hiddenNA, outputNA) {
+  
+  if (!hiddenNA) {
+    orig[is.na(orig)] <- outputNA
+    dcols[is.na(dcols)] <- outputNA
+  }
+  
   d <- orig[[2]]
   d[!(orig[[2]] %in% dcols[[2]])] <- NA
   

@@ -7,15 +7,21 @@
 diff_groups(
   x,
   ...,
+  hiddenNA = TRUE,
   sep_common = "_=_",
   sep_diff = "_-_",
-  sep_sum = c("_=_", "_+_")
+  sep_sum = c("_=_", "_+_"),
+  outputNA = "NA"
 )
 }
 \arguments{
 \item{x}{A data frame with exactly two columns.}
 
 \item{...}{Additional arguments passed to \code{RowGroups()}.}
+
+\item{hiddenNA}{Logical. When \code{TRUE} (default), missing codes (\code{NA}) are treated as
+hidden categories — they are not available for computing difference and sum groups.
+See \emph{Note} for details on how this differs from the \code{NAomit} parameter in \code{RowGroups()}.}
 
 \item{sep_common}{A character string used in the \code{common} column to separate codes
 that are identical across the two input columns.}
@@ -29,6 +35,10 @@ child codes from the other column are subtracted.}
 sum of several codes in the other. The first element (\code{sep_sum[1]}) acts as an equality
 sign, and the second element (\code{sep_sum[2]}) acts as a plus sign. If \code{sep_sum} has
 length 1, the same value is used for both positions.}
+
+\item{outputNA}{Character string used to represent \code{NA} values within the newly
+constructed text strings in the additional output columns.
+Only relevant when \code{hiddenNA = FALSE}.}
 }
 \value{
 A list (as returned by \code{RowGroups()}), where the \code{groups} data frame is
@@ -56,6 +66,12 @@ column, joined using \code{sep_diff}.
 \item \strong{sum_1_2}, \strong{sum_2_1} — sum groups where a parent code in one column equals the
 sum of several codes in the other.
 }
+}
+\note{
+The parameter \code{NAomit} from \code{RowGroups()} can still be set via \code{...}, but using it
+will remove rows containing \code{NA} before processing. The relationships found will then
+reflect the reduced data, which is usually not the intended behaviour when identifying
+relationships between code sets.
 }
 \examples{
 
