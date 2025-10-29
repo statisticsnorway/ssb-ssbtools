@@ -40,6 +40,10 @@
 #'         
 #' \strong{barcelona2025:} Example data in \href{https://langsrud.com/stat/A0_poster_Barcelona_2025.html}{poster at expert meeting in Barcelona 2025}.
 #' 
+#' \strong{paris2025_freq:} Example frequency data for INSEE Statistical Methodology Days (JMS 2025)
+#' 
+#' \strong{paris2025_micro:} Example microdata for INSEE Statistical Methodology Days (JMS 2025)
+#' 
 #' @export
 #' @importFrom utils data
 #' @author Øyvind Langsrud and Daniel Lupp
@@ -52,6 +56,7 @@
 #' SSBtoolsData("sprt_emp_withEU")
 #' SSBtoolsData("d1w")
 #' SSBtoolsData("barcelona2025")
+#' SSBtoolsData("paris2025_freq")
 SSBtoolsData <- function(dataset) {
   if (dataset == "FIFA2018ABCD") {
     return(data.frame(stringsAsFactors = FALSE, mapsFrom = c("Australia", "Iran", "Saudi Arabia", "Egypt", "Morocco", "Nigeria", "Argentina", "Peru", "Uruguay", "Croatia", "Denmark", "France", "Iceland", "Portugal", "Russia", "Spain", "Iceland", "Russia", "Russia", "Croatia", "Europe", "nonEU", "Europe", "nonSchengen"), 
@@ -217,6 +222,26 @@ SSBtoolsData <- function(dataset) {
         1550, 940, 4340, 4730, 5630,
         590, 600, 940, 1150, 1090
       )
+    )
+    return(q)
+  }
+  
+  if (dataset == "paris2025_freq") {
+    microdata <- SSBtoolsData("paris2025_micro")
+    q <- MakeFreq(microdata[1:3])
+    q$freq <- as.integer(q$freq) # MakeFreq() should be changed so that freq become integer
+    return(q)
+  }
+  
+  if (dataset == "paris2025_micro") {
+    q <- data.frame(
+      nation    = c(rep("Denmark", 2), rep("France", 8), rep("USA", 7)),
+      continent = c(rep("Europe", 10), rep("America", 7)),
+      age       = c("old", "young", rep("old", 6), rep("young", 2),
+                    rep("old", 3), rep("young", 4)),
+      income    = c(1220, 160,
+                    1450, 1860, 3030, 5880, 6570, 9370, 460, 1300,
+                    530, 3980, 8500, 280, 700, 3640, 4680)
     )
     return(q)
   }
