@@ -36,6 +36,8 @@
 #' \strong{power10to1, power10to2, \eqn{\ldots}:} `power10to`\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns. 
 #'         Tip: Try `FindDimLists(SSBtoolsData("power10to3"))`  
 #'         
+#' \strong{code_pairs:} Example dataset with two code columns illustrating paired categorical codes. 
+#'         
 #' \strong{barcelona2025:} Example data in \href{https://langsrud.com/stat/A0_poster_Barcelona_2025.html}{poster at expert meeting in Barcelona 2025}.
 #' 
 #' @export
@@ -171,6 +173,16 @@ SSBtoolsData <- function(dataset) {
       stop("Not enough letters for coding")
     }
     return(Power10toN(n))
+  }
+  
+  if (dataset == "code_pairs") {
+    q <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d", 
+                               "d", "g", "f", "a", "c", "e", "a", "e", "d", 
+                               "f", "f", "i", "i", "c", "a", "a", "a"), 
+                    code_2 = c("O", "N", "S", "S", "N", "v", "U", "v", "O", 
+                               "N", "T", "R", "S", "N", "P", "N", "P", "N", 
+                               "S", "Q", "v", "v", "N", "S", "N", "S"))
+    return(q)
   }
   
   if (dataset == "barcelona2025") {
