@@ -35,6 +35,14 @@
 #' 
 #' \strong{power10to1, power10to2, \eqn{\ldots}:} `power10to`\eqn{i} is hierarchical data with \eqn{10^i} rows and \eqn{2*i} columns. 
 #'         Tip: Try `FindDimLists(SSBtoolsData("power10to3"))`  
+#'         
+#' \strong{code_pairs:} Example dataset with two code columns illustrating paired categorical codes. 
+#'         
+#' \strong{barcelona2025:} Example data in \href{https://langsrud.com/stat/A0_poster_Barcelona_2025.html}{poster at expert meeting in Barcelona 2025}.
+#' 
+#' \strong{paris2025_freq:} Example frequency data for INSEE Statistical Methodology Days (JMS 2025)
+#' 
+#' \strong{paris2025_micro:} Example microdata for INSEE Statistical Methodology Days (JMS 2025)
 #' 
 #' @export
 #' @importFrom utils data
@@ -47,6 +55,8 @@
 #' SSBtoolsData("sprt_emp_ageHier")
 #' SSBtoolsData("sprt_emp_withEU")
 #' SSBtoolsData("d1w")
+#' SSBtoolsData("barcelona2025")
+#' SSBtoolsData("paris2025_freq")
 SSBtoolsData <- function(dataset) {
   if (dataset == "FIFA2018ABCD") {
     return(data.frame(stringsAsFactors = FALSE, mapsFrom = c("Australia", "Iran", "Saudi Arabia", "Egypt", "Morocco", "Nigeria", "Argentina", "Peru", "Uruguay", "Croatia", "Denmark", "France", "Iceland", "Portugal", "Russia", "Spain", "Iceland", "Russia", "Russia", "Croatia", "Europe", "nonEU", "Europe", "nonSchengen"), 
@@ -168,6 +178,72 @@ SSBtoolsData <- function(dataset) {
       stop("Not enough letters for coding")
     }
     return(Power10toN(n))
+  }
+  
+  if (dataset == "code_pairs") {
+    q <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d", 
+                               "d", "g", "f", "a", "c", "e", "a", "e", "d", 
+                               "f", "f", "i", "i", "c", "a", "a", "a"), 
+                    code_2 = c("O", "N", "S", "S", "N", "v", "U", "v", "O", 
+                               "N", "T", "R", "S", "N", "P", "N", "P", "N", 
+                               "S", "Q", "v", "v", "N", "S", "N", "S"))
+    return(q)
+  }
+  
+  if (dataset == "barcelona2025") {
+    q <- data.frame(
+      country = c(
+        "Denmark", "Denmark", "Denmark", "Denmark", "Denmark",
+        "Finland", "Finland", "Finland", "Finland", "Finland",
+        "Finland", "France", "France", "France", "France",
+        "France", "France", "France", "France", "France"
+      ),
+      city = c(
+        NA, NA, NA, NA, NA,
+        NA, NA, NA, NA, NA,
+        NA, "Paris", "Paris", "Paris", "Paris",
+        "Paris", "Paris", NA, NA, NA
+      ),
+      age = c(
+        "old", "young", "young", "young", "young",
+        "old", "old", "young", "young", "young",
+        "young", "old", "old", "old", "young",
+        "young", "young", "old", "old", "young"
+      ),
+      sex = c(
+        "male", "female", "male", "male", "male",
+        "female", "male", "female", "female", "male",
+        "male", "female", "female", "male", "female",
+        "female", "male", "female", "female", "female"
+      ),
+      income = c(
+        760, 480, 1910, 1810, 570,
+        520, 1470, 710, 440, 1020,
+        1550, 940, 4340, 4730, 5630,
+        590, 600, 940, 1150, 1090
+      )
+    )
+    return(q)
+  }
+  
+  if (dataset == "paris2025_freq") {
+    microdata <- SSBtoolsData("paris2025_micro")
+    q <- MakeFreq(microdata[1:3])
+    q$freq <- as.integer(q$freq) # MakeFreq() should be changed so that freq become integer
+    return(q)
+  }
+  
+  if (dataset == "paris2025_micro") {
+    q <- data.frame(
+      nation    = c(rep("Denmark", 2), rep("France", 8), rep("USA", 7)),
+      continent = c(rep("Europe", 10), rep("America", 7)),
+      age       = c("old", "young", rep("old", 6), rep("young", 2),
+                    rep("old", 3), rep("young", 4)),
+      income    = c(1220, 160,
+                    1450, 1860, 3030, 5880, 6570, 9370, 460, 1300,
+                    530, 3980, 8500, 280, 700, 3640, 4680)
+    )
+    return(q)
   }
   
   stop(paste("No data with dataset =", dataset))
