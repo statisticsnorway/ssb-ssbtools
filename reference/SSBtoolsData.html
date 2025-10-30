@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,10 @@ countries within groups A-D in the football championship, 2018 FIFA World Cup.</
 <p><strong>d2s, d2ws:</strong> <code>d2</code> and <code>d2w</code> modified to smaller/easier data.</p>
 <p><strong>power10to1, power10to2, \(\ldots\):</strong> <code>power10to</code>\(i\) is hierarchical data with \(10^i\) rows and \(2*i\) columns.
 Tip: Try <code>FindDimLists(SSBtoolsData("power10to3"))</code></p>
+<p><strong>code_pairs:</strong> Example dataset with two code columns illustrating paired categorical codes.</p>
+<p><strong>barcelona2025:</strong> Example data in <a href="https://langsrud.com/stat/A0_poster_Barcelona_2025.html" class="external-link">poster at expert meeting in Barcelona 2025</a>.</p>
+<p><strong>paris2025_freq:</strong> Example frequency data for INSEE Statistical Methodology Days (JMS 2025)</p>
+<p><strong>paris2025_micro:</strong> Example microdata for INSEE Statistical Methodology Days (JMS 2025)</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -167,6 +171,36 @@ Tip: Try <code>FindDimLists(SSBtoolsData("power10to3"))</code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6      F    12     9         24       22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7      G     6     4         22        8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8      H     9     3         38       15</span>
+<span class="r-in"><span><span class="fu">SSBtoolsData</span><span class="op">(</span><span class="st">"barcelona2025"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    country  city   age    sex income</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Denmark  &lt;NA&gt;   old   male    760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Denmark  &lt;NA&gt; young female    480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Denmark  &lt;NA&gt; young   male   1910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Denmark  &lt;NA&gt; young   male   1810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  Denmark  &lt;NA&gt; young   male    570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Finland  &lt;NA&gt;   old female    520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Finland  &lt;NA&gt;   old   male   1470</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Finland  &lt;NA&gt; young female    710</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Finland  &lt;NA&gt; young female    440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Finland  &lt;NA&gt; young   male   1020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Finland  &lt;NA&gt; young   male   1550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  France Paris   old female    940</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  France Paris   old female   4340</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  France Paris   old   male   4730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  France Paris young female   5630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  France Paris young female    590</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  France Paris young   male    600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  France  &lt;NA&gt;   old female    940</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  France  &lt;NA&gt;   old female   1150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  France  &lt;NA&gt; young female   1090</span>
+<span class="r-in"><span><span class="fu">SSBtoolsData</span><span class="op">(</span><span class="st">"paris2025_freq"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    nation continent   age freq</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Denmark    Europe   old    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Denmark    Europe young    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  France    Europe   old    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  France    Europe young    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     USA   America   old    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     USA   America young    4</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
