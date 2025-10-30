@@ -1,4 +1,11 @@
 
+## SSBtools 1.8.4
+* New functions `diff_groups()` and `data_diff_groups()`:
+  - Identify and describe relationships between paired codes, and add results
+    back to data frames.
+* New example datasets `code_pairs`, `barcelona2025`, `paris2025_freq`, and `paris2025_micro`.
+
+
 ## SSBtools 1.8.2
 * New functions `zero_col()` and `single_col()`:
   - Previously internal only, now exported for use in other packages.
