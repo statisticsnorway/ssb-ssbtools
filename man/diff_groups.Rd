@@ -93,3 +93,6 @@ diff_groups(d2[2:3])$groups
                            
 
 }
+\seealso{
+\code{\link[=data_diff_groups]{data_diff_groups()}} for adding the results back as new columns in the data frame.
+}

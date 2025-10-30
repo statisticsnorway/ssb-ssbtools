@@ -52,6 +52,8 @@
 #' will remove rows containing `NA` before processing. The relationships found will then 
 #' reflect the reduced data, which is usually not the intended behaviour when identifying 
 #' relationships between code sets.
+#' 
+#' @seealso [data_diff_groups()] for adding the results back as new columns in the data frame.
 #'
 #' @export
 #'
@@ -176,5 +178,58 @@ diff_cells <- function(orig, dcols, sep_diff, sep_sum, hiddenNA, outputNA) {
   }
   list(d = d, s = s)
 }
+
+
+
+#' Add diff_groups results as columns in a data frame
+#'
+#' `data_diff_groups()` is a wrapper around [diff_groups()] that runs the same analysis
+#' on two variables in a data frame and adds selected results back as new columns.
+#'
+#' @param data A data frame containing the variables to be compared.
+#' @param input_vars Character vector of length two specifying the names of the two 
+#' variables in `data` to be compared.
+#' @param output_vars Named character vector defining which variables from the group 
+#' results are added to `data`, and what their names will be in the output.
+#' @param ... Additional arguments passed to [diff_groups()].
+#'
+#' @returns A data frame identical to `data`, but with additional variables describing
+#' relationships between the two specified columns.
+#' 
+#' @export
+#'
+#' @examples
+#' df <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d", 
+#'                             "d", "g", "f", "a", "c", "e", "a", "e", "d", 
+#'                             "f", "f", "i", "i", "c", "a", "a", "a"), 
+#'                  code_2 = c("O", "N", "S", "S", "N", "v", "U", "v", "O", 
+#'                             "N", "T", "R", "S", "N", "P", "N", "P", "N", 
+#'                             "S", "Q", "v", "v", "N", "S", "N", "S"))
+#' 
+#' data_diff_groups(df, input_vars = c("code_1", "code_2"))
+#'
+data_diff_groups <- function(data, 
+                             input_vars, 
+                             output_vars = c(is_common = "is_common", 
+                                             diff_1_2 = "diff_1_2", 
+                                             diff_2_1 = "diff_2_1", 
+                                             sum_1_2 = "sum_1_2",
+                                             sum_2_1 = "sum_2_1"), ...) {
+  
+  dg <- diff_groups(data[input_vars], ...)
+  
+  dg$groups <- dg$groups[names(output_vars)]
+  names(dg$groups) <- output_vars
+  
+  to_cbind <- dg$groups[dg$idx, , drop = FALSE]
+  rownames(to_cbind) <- NULL
+  
+  cbind(data, to_cbind)
+}
+
+
+
+
+
 
 
