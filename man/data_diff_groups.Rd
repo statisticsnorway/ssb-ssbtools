@@ -32,12 +32,7 @@ relationships between the two specified columns.
 on two variables in a data frame and adds selected results back as new columns.
 }
 \examples{
-df <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d", 
-                            "d", "g", "f", "a", "c", "e", "a", "e", "d", 
-                            "f", "f", "i", "i", "c", "a", "a", "a"), 
-                 code_2 = c("O", "N", "S", "S", "N", "v", "U", "v", "O", 
-                            "N", "T", "R", "S", "N", "P", "N", "P", "N", 
-                            "S", "Q", "v", "v", "N", "S", "N", "S"))
+df <- cbind(v1 = 1, SSBtoolsData("code_pairs"), v4 = 4)
 
 data_diff_groups(df, input_vars = c("code_1", "code_2"))
 

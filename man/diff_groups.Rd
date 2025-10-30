@@ -75,12 +75,7 @@ relationships between code sets.
 }
 \examples{
 
-df <- data.frame(code_1 = c("d", "a", "f", "b", "d", "j", "g", "h", "d", 
-                            "d", "g", "f", "a", "c", "e", "a", "e", "d", 
-                            "f", "f", "i", "i", "c", "a", "a", "a"), 
-                 code_2 = c("O", "N", "S", "S", "N", "v", "U", "v", "O", 
-                            "N", "T", "R", "S", "N", "P", "N", "P", "N", 
-                            "S", "Q", "v", "v", "N", "S", "N", "S"))
+df <- SSBtoolsData("code_pairs")
 
 df
 
