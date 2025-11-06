@@ -210,7 +210,7 @@ diff_cells_extra <- function(orig, not_child_2, diff_name, sep) {
     if (any(rows)) {
       from <- c(from, which(rows))
       to <- c(to, rep(paste0(paste(code1, collapse = sep[1]), sep[2], 
-                             paste(code2, collapse = sep[1])), sum(rows)))
+                             paste(code2, collapse = sep[2])), sum(rows)))
     }
     
     to_process[unique_not_child_2 %in% code2] <- FALSE
