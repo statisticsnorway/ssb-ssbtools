@@ -1,0 +1,253 @@
+# Package index
+
+## All functions
+
+- [`AddLeadingZeros()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/AddLeadingZeros.md)
+  : Add leading zeros to numbers while preserving other text
+
+- [`As_TsparseMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/As_TsparseMatrix.md)
+  : Transform to TsparseMatrix/dgTMatrix
+
+- [`AutoHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoHierarchies.md)
+  : Ensure standardized coding of hierarchies
+
+- [`AutoSplit()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoSplit.md)
+  : Creating variables by splitting the elements of a character vector
+  without needing a split string
+
+- [`CbindIdMatch()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/CbindIdMatch.md)
+  : Combine several data frames by using id variables to match rows
+
+- [`CheckInput()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/CheckInput.md)
+  [`check_input()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/CheckInput.md)
+  : Checking function inputs
+
+- [`DataDummyHierarchy()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DataDummyHierarchy.md)
+  [`DataDummyHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DataDummyHierarchy.md)
+  : Create a (signed) dummy matrix for hierarcical mapping of codes in
+  data
+
+- [`DimList2Hierarchy()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DimList2Hierarchy.md)
+  : DimList2Hierarchy
+
+- [`DimList2Hrc()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DimList2Hrc.md)
+  [`Hrc2DimList()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DimList2Hrc.md)
+  : DimList2Hrc/Hrc2DimList
+
+- [`DummyApply()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DummyApply.md)
+  : Apply a function to subsets defined by a dummy matrix
+
+- [`DummyDuplicated()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DummyDuplicated.md)
+  : Duplicated columns in dummy matrix
+
+- [`DummyHierarchy()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DummyHierarchy.md)
+  [`DummyHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DummyHierarchy.md)
+  : Converting hierarchy specifications to a (signed) dummy matrix
+
+- [`Extend0()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0.md)
+  : Add zero frequency rows
+
+- [`Extend0rnd1()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
+  [`Extend0rnd2()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
+  [`Extend0rnd1b()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
+  : varGroups-attribute to Extend0, Example functions
+
+- [`FactorLevCorr()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FactorLevCorr.md)
+  : Factor level correlation
+
+- [`FindCommonCells()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindCommonCells.md)
+  : Finding commonCells
+
+- [`FindDimLists()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDimLists.md)
+  : Finding dimList
+
+- [`FindDisclosiveCells()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDisclosiveCells.md)
+  : Find directly disclosive cells
+
+- [`FindHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindHierarchies.md)
+  : Finding hierarchies automatically from data
+
+- [`FindTableGroup()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindTableGroup.md)
+  : Finding table(s) of hierarchical variable groups
+
+- [`FormulaSelection()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSelection.md)
+  [`formula_selection()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSelection.md)
+  : Limit matrix or data frame to selected model terms
+
+- [`FormulaSums()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSums.md)
+  [`Formula2ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSums.md)
+  : Sums (aggregates) and/or sparse model matrix with possible cross
+  table
+
+- [`GaussIndependent()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussIndependent.md)
+  [`GaussRank()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussIndependent.md)
+  : Linearly independent rows and columns by Gaussian elimination
+
+- [`GaussIterationFunction()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussIterationFunction.md)
+  :
+
+  An `iFunction` argument to `GaussSuppression`
+
+- [`GaussSuppression()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussSuppression.md)
+  : Secondary suppression by Gaussian elimination
+
+- [`HierarchicalGroups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchicalGroups.md)
+  : Finding hierarchical variable groups
+
+- [`HierarchicalWildcardGlobbing()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchicalWildcardGlobbing.md)
+  : Find variable combinations by advanced wildcard/globbing
+  specifications.
+
+- [`Hierarchies2ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Hierarchies2ModelMatrix.md)
+  : Model matrix representing crossed hierarchies
+
+- [`HierarchiesAndFormula2ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchiesAndFormula2ModelMatrix.md)
+  : Model matrix representing crossed hierarchies according to a formula
+
+- [`Hierarchy2Formula()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Hierarchy2Formula.md)
+  [`Formula2Hierarchy()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Hierarchy2Formula.md)
+  [`Hierarchies2Formulas()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Hierarchy2Formula.md)
+  : Hierarchy2Formula
+
+- [`HierarchyCompute()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchyCompute.md)
+  : Hierarchical Computations
+
+- [`HierarchyCompute2()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/HierarchyCompute2.md)
+  : Extended Hierarchical Computations
+
+- [`LSfitNonNeg()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/LSfitNonNeg.md)
+  : Non-negative regression fits with a sparse overparameterized model
+  matrix
+
+- [`MakeHierFormula()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/MakeHierFormula.md)
+  : Make model formula from data taking into account hierarchical
+  variables
+
+- [`Match()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Match.md)
+  : Matching rows in data frames
+
+- [`Matrix2list()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Matrix2list.md)
+  [`Matrix2listInt()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Matrix2list.md)
+  : Convert matrix to sparse list
+
+- [`Mipf()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Mipf.md)
+  : Iterative proportional fitting from matrix input
+
+- [`ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/ModelMatrix.md)
+  [`NamesFromModelMatrixInput()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/ModelMatrix.md)
+  : Model matrix from hierarchies and/or a formula
+
+- [`NumSingleton()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/NumSingleton.md)
+  :
+
+  Decoding of `singletonMethod`
+
+- [`Number()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Number.md)
+  : Adding leading zeros
+
+- [`RbindAll()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/RbindAll.md)
+  : Combining several data frames when the columns don't match
+
+- [`Reduce0exact()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Reduce0exact.md)
+  : Reducing a non-negative regression problem
+
+- [`RoundWhole()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/RoundWhole.md)
+  : Round values that are close two whole numbers
+
+- [`RowGroups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/RowGroups.md)
+  : Create numbering according to unique rows
+
+- [`SSBtoolsData()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/SSBtoolsData.md)
+  : Function that returns a dataset
+
+- [`SortRows()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/SortRows.md)
+  : Sorting rows of a matrix or data frame
+
+- [`Stack()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Stack.md)
+  : Stack columns from a data frame and include variables.
+
+- [`UniqueSeq()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/UniqueSeq.md)
+  : Sequence within unique values
+
+- [`Unstack()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Unstack.md)
+  : Unstack a column from a data frame and include additional variables.
+
+- [`WildcardGlobbing()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/WildcardGlobbing.md)
+  : Row selection by wildcard/globbing
+
+- [`WildcardGlobbingVector()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/WildcardGlobbingVector.md)
+  : Selection of elements by wildcard/globbing
+
+- [`aggregate_by_pkg()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_by_pkg.md)
+  : Aggregate by base R or data.table
+
+- [`aggregate_multiple_fun()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_multiple_fun.md)
+  :
+
+  Wrapper to `aggregate`
+
+- [`any_duplicated_rows()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/any_duplicated_rows.md)
+  :
+
+  Fast alternative to
+  [`anyDuplicated()`](https://rdrr.io/r/base/duplicated.html)
+
+- [`data_diff_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/data_diff_groups.md)
+  : Add diff_groups results as columns in a data frame
+
+- [`diff_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/diff_groups.md)
+  : Difference and Sum Groups
+
+- [`dummy_aggregate()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/dummy_aggregate.md)
+  :
+
+  `aggregate_multiple_fun` using a dummy matrix
+
+- [`filter_by_variable()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/filter_by_variable.md)
+  [`names_by_variable()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/filter_by_variable.md)
+  : Filter a List of Items or Retrieve Names by a Variable
+
+- [`formula_utils`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_utils.md)
+  : Functions for formula manipulation
+
+- [`get_colnames()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/get_colnames.md)
+  : Get column names from a data.frame, tibble, or data.table
+
+- [`hierarchies_as_vars()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/hierarchies_as_vars.md)
+  : Hierarchies coded as variables
+
+- [`map_hierarchies_to_data()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/map_hierarchies_to_data.md)
+  : Add variables to dataset based on hierarchies
+
+- [`matlabColon()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/matlabColon.md)
+  [`SeqInc()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/matlabColon.md)
+  : Simulate Matlab's ':'
+
+- [`max_contribution()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/max_contribution.md)
+  [`n_contributors()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/max_contribution.md)
+  : Find Major Contributions to Aggregates and Count Contributors
+
+- [`model_aggregate()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/model_aggregate.md)
+  : Hierarchical aggregation via model specification
+
+- [`output_term_labels()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/output_term_labels.md)
+  : Extract vector of term labels from a data.frame
+
+- [`quantile_weighted()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/quantile_weighted.md)
+  : Weighted quantiles
+
+- [`table_all_integers()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/table_all_integers.md)
+  : Table all integers from 1 to n
+
+- [`tables_by_formulas()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/tables_by_formulas.md)
+  : Tabular Statistics Based on Formulas
+
+- [`total_collapse()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/total_collapse.md)
+  : Collapse variables to single representation
+
+- [`vars_to_hierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/vars_to_hierarchies.md)
+  : Transform hierarchies coded as Variables to "to-from" format
+
+- [`zero_col()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/zero_col.md)
+  [`single_col()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/zero_col.md)
+  : Check for empty matrix columns (or rows)

@@ -1,8 +1,8 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-10-31T09:50Z
+last_built: 2025-11-10T12:57Z
 urls:
   reference: https://statisticsnorway.github.io/ssb-ssbtools/reference
   article: https://statisticsnorway.github.io/ssb-ssbtools/articles
