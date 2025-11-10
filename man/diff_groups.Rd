@@ -11,7 +11,8 @@ diff_groups(
   sep_common = "_=_",
   sep_diff = "_-_",
   sep_sum = c("_=_", "_+_"),
-  outputNA = "NA"
+  outputNA = "NA",
+  diff_extra = FALSE
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ length 1, the same value is used for both positions.}
 \item{outputNA}{Character string used to represent \code{NA} values within the newly
 constructed text strings in the additional output columns.
 Only relevant when \code{hiddenNA = FALSE}.}
+
+\item{diff_extra}{Logical. When TRUE, additional difference-group variables are returned when found.}
 }
 \value{
 A list (as returned by \code{RowGroups()}), where the \code{groups} data frame is

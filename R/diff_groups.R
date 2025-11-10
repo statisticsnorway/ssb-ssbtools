@@ -42,6 +42,8 @@
 #' @param outputNA Character string used to represent `NA` values within the newly 
 #' constructed text strings in the additional output columns. 
 #' Only relevant when `hiddenNA = FALSE`.
+#' 
+#' @param diff_extra Logical. When TRUE, additional difference-group variables are returned when found.
 #'
 #' @returns A list (as returned by `RowGroups()`), where the `groups` data frame is 
 #' extended with additional descriptive columns indicating common, difference, and sum 
@@ -54,6 +56,8 @@
 #' relationships between code sets.
 #' 
 #' @seealso [data_diff_groups()] for adding the results back as new columns in the data frame.
+#' 
+#' @importFrom stats setNames
 #'
 #' @export
 #'
@@ -74,7 +78,8 @@
 diff_groups <- function(x, ...,
                         hiddenNA = TRUE,
                         sep_common = "_=_", sep_diff = "_-_", sep_sum = c("_=_", "_+_"),
-                        outputNA = "NA") {
+                        outputNA = "NA",
+                        diff_extra = FALSE) {
   
   sep_sum <- rep_len(sep_sum, 2)
   
@@ -127,6 +132,14 @@ diff_groups <- function(x, ...,
   g$sum_2_1 <- dc21$s
   
   
+  if (diff_extra) {
+    sep <- c(sep_sum[2], sep_diff)
+    g <- cbind(g, 
+               diff_cells_extra(g[1:2], g[!g$is_child_2 & !g$is_common, 2], "diff_1_2", sep = sep), 
+               diff_cells_extra(g[2:1], g[!g$is_child_1 & !g$is_common, 1], "diff_2_1", sep = sep))
+  }
+  
+  
   rg$groups <- g
   rg
 }
@@ -175,6 +188,50 @@ diff_cells <- function(orig, dcols, sep_diff, sep_sum, hiddenNA, outputNA) {
 }
 
 
+diff_cells_extra <- function(orig, not_child_2, diff_name, sep) {
+  
+  from <- integer(0)
+  to <- character(0)
+  
+  unique_not_child_2 <- unique(not_child_2)
+  
+  to_process <- rep(TRUE, length(unique_not_child_2))
+  
+  while (any(to_process)) {
+    code2 <- unique_not_child_2[which(to_process)[1]]
+    code1 <- unique(orig[[1]][orig[[2]] == code2])
+    
+    code2a <- unique(orig[[2]][orig[[1]] %in% code1])
+    code2b <- unique(orig[[2]][!(orig[[1]] %in% code1)])
+    code2 <- code2a[!(code2a %in% code2b)]
+    
+    rows <- (orig[[1]] %in% code1) & !(orig[[2]] %in% code2)
+    
+    if (any(rows)) {
+      from <- c(from, which(rows))
+      to <- c(to, rep(paste0(paste(code1, collapse = sep[1]), sep[2], 
+                             paste(code2, collapse = sep[2])), sum(rows)))
+    }
+    
+    to_process[unique_not_child_2 %in% code2] <- FALSE
+  }
+  
+  if (!length(from)) {
+    return(as.data.frame(matrix(0, nrow(orig), 0)))
+  }
+  
+  hi <- setNames(list(data.frame(from = from, to = to)), diff_name)
+  
+  d <- setNames(data.frame(seq_len(nrow(orig))), diff_name)
+  
+  mhi <- map_hierarchies_to_data(d, hi, 
+    name_function = function(name, level) paste(name, Number(level), sep = "_"))[-1]
+  
+  rownames(mhi) <- NULL
+  mhi
+}
+
+
 
 #' Add diff_groups results as columns in a data frame
 #'
@@ -204,18 +261,42 @@ data_diff_groups <- function(data,
                                              diff_1_2 = "diff_1_2", 
                                              diff_2_1 = "diff_2_1", 
                                              sum_1_2 = "sum_1_2",
-                                             sum_2_1 = "sum_2_1"), ...) {
-  
+                                             sum_2_1 = "sum_2_1"),
+                             ...) {
   dg <- diff_groups(data[input_vars], ...)
   
-  dg$groups <- dg$groups[names(output_vars)]
-  names(dg$groups) <- output_vars
+  wanted <- names(output_vars)
+  diff_12_cols <- grep("^diff_1_2", names(dg$groups), value = TRUE)
+  diff_21_cols <- grep("^diff_2_1", names(dg$groups), value = TRUE)
+  if ("diff_1_2" %in% wanted) wanted <- union(wanted, diff_12_cols)
+  if ("diff_2_1" %in% wanted) wanted <- union(wanted, diff_21_cols)
+  
+  final_map <- output_vars
+  derive_map <- function(prefix, wanted, final_map) {
+    if (!prefix %in% names(output_vars)) return(final_map)
+    base_name <- output_vars[[prefix]]
+    new_cols <- grep(paste0("^", prefix), wanted, value = TRUE)
+    new_cols <- setdiff(new_cols, names(final_map))
+    if (length(new_cols)) {
+      suffix <- sub(paste0("^", prefix), "", new_cols)
+      names_to_add <- setNames(paste0(base_name, suffix), new_cols)
+      final_map <- c(final_map, names_to_add)
+    }
+    final_map
+  }
+  final_map <- derive_map("diff_1_2", wanted, final_map)
+  final_map <- derive_map("diff_2_1", wanted, final_map)
+  
+  keep_cols <- names(dg$groups)[names(dg$groups) %in% wanted]
+  dg$groups <- dg$groups[keep_cols]
+  names(dg$groups) <- unname(final_map[keep_cols])
   
   to_cbind <- dg$groups[dg$idx, , drop = FALSE]
   rownames(to_cbind) <- NULL
-  
   cbind(data, to_cbind)
 }
+
+
 
 
 
