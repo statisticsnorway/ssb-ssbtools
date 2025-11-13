@@ -4,7 +4,7 @@
 #' list, or vector to base R numeric, integer, or character types.
 #'
 #' Variables with class `integer64` often appear when reading data from Arrow
-#' files, for example using [arrow::read_parquet()]. Arrow supports 64-bit
+#' files, for example using `arrow::read_parquet()`. Arrow supports 64-bit
 #' integer values, while the R language (and thus all R packages, including
 #' the tidyverse) only supports 32-bit integers and 64-bit floating-point
 #' numbers. These 64-bit integers therefore need conversion when loaded into R.
