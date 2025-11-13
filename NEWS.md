@@ -1,3 +1,7 @@
+## SSBtools 1.8.5
+* `max_contribution()` now accepts integer vectors for `y`. 
+  - Previously, integer input caused an error due to dgTMatrix in the Matrix package requiring a numeric (double) `x` slot.
+
 
 ## SSBtools 1.8.4
 * New functions `diff_groups()` and `data_diff_groups()`:

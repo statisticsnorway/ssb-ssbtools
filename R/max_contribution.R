@@ -165,7 +165,7 @@ max_contribution <- function(x,
   xT <- As_TsparseMatrix(x) 
   
   if (id_input) {
-    gT <- new("dgTMatrix", i = 0:(nrow(x) - 1L), j = id - 1L, x = y, Dim = c(nrow(xT), max(id)))
+    gT <- new("dgTMatrix", i = 0:(nrow(x) - 1L), j = id - 1L, x = as.numeric(y), Dim = c(nrow(xT), max(id)))
     gT <- As_TsparseMatrix(crossprod(gT, xT),  do_drop0 = FALSE)
     if(do_abs) {
       gT <- abs(gT)
