@@ -1,5 +1,12 @@
 # Changelog
 
+## SSBtools 1.8.5
+
+- [`max_contribution()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/max_contribution.md)
+  now accepts integer vectors for `y`.
+  - Previously, integer input caused an error due to dgTMatrix in the
+    Matrix package requiring a numeric (double) `x` slot.
+
 ## SSBtools 1.8.4
 
 CRAN release: 2025-10-31
