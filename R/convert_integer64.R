@@ -44,6 +44,10 @@
 #'   * `"warn"` — convert to `numeric` and allow warnings about precision loss
 #'   * `"quiet"` — convert to `numeric` but suppress such warnings
 #'
+#' @param always_character Logical. If `TRUE`, all `integer64` values are converted
+#'   directly to `character`, overriding both `to_integer` and `precision_loss`.
+#'   Default is `FALSE`.
+#'
 #' @return The same type of object as the input (`data.frame`, list, or vector),
 #'   with all `integer64` values converted to base R `integer`, `numeric`, or
 #'   `character` depending on settings.
@@ -87,7 +91,8 @@
 #'
 convert_integer64 <- function(df,
                               to_integer = "if_fits",
-                              precision_loss = "character") {
+                              precision_loss = "character",
+                              always_character = FALSE) {
   
   
   # Allow input to be a single vector (not just a list or data.frame)
@@ -148,6 +153,11 @@ convert_integer64 <- function(df,
   
   df[] <- lapply(df, function(x) {
     if (inherits(x, "integer64")) {
+      
+      if (always_character) {
+        return(as.character(x))
+      }
+      
       # Convert the integer64 column to either numeric or character,
       # depending on the precision_loss setting.
       x <- as_num(x)

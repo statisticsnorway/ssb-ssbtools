@@ -4,7 +4,12 @@
 \alias{convert_integer64}
 \title{Convert \code{integer64} data to base R numeric, integer, or character types}
 \usage{
-convert_integer64(df, to_integer = "if_fits", precision_loss = "character")
+convert_integer64(
+  df,
+  to_integer = "if_fits",
+  precision_loss = "character",
+  always_character = FALSE
+)
 }
 \arguments{
 \item{df}{A \code{data.frame}, list, or vector to process.}
@@ -27,6 +32,10 @@ Must be one of:
 \item \code{"warn"} — convert to \code{numeric} and allow warnings about precision loss
 \item \code{"quiet"} — convert to \code{numeric} but suppress such warnings
 }}
+
+\item{always_character}{Logical. If \code{TRUE}, all \code{integer64} values are converted
+directly to \code{character}, overriding both \code{to_integer} and \code{precision_loss}.
+Default is \code{FALSE}.}
 }
 \value{
 The same type of object as the input (\code{data.frame}, list, or vector),
