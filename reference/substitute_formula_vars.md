@@ -49,5 +49,5 @@ f <- ~b + a*c  + b:d
 substitute_formula_vars(f, list(a = c("hello", "world", "b"), 
                                 b = c("Q1", "Q2")))
 #> ~(Q1 + Q2) + (hello + world + b) * c + (Q1 + Q2):d
-#> <environment: 0x55c2d236ce38>
+#> <environment: 0x55cee7d87a10>
 ```

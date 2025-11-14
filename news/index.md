@@ -2,6 +2,12 @@
 
 ## SSBtools 1.8.5
 
+- New function
+  [`convert_integer64()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/convert_integer64.md).
+  - Helper for converting `integer64` data (from
+    [bit64](https://cran.r-project.org/package=bit64) or
+    [arrow](https://cran.r-project.org/package=arrow) imports) to base R
+    `integer`, `numeric`, or `character`.
 - [`max_contribution()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/max_contribution.md)
   now accepts integer vectors for `y`.
   - Previously, integer input caused an error due to dgTMatrix in the

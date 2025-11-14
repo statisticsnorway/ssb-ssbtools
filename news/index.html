@@ -33,7 +33,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.5" id="ssbtools-185">SSBtools 1.8.5<a class="anchor" aria-label="anchor" href="#ssbtools-185"></a></h2>
-<ul><li>
+<ul><li>New function <code><a href="../reference/convert_integer64.html">convert_integer64()</a></code>.
+<ul><li>Helper for converting <code>integer64</code> data (from <a href="https://cran.r-project.org/package=bit64" class="external-link">bit64</a> or <a href="https://cran.r-project.org/package=arrow" class="external-link">arrow</a> imports) to base R <code>integer</code>, <code>numeric</code>, or <code>character</code>.</li>
+</ul></li>
+<li>
 <code><a href="../reference/max_contribution.html">max_contribution()</a></code> now accepts integer vectors for <code>y</code>.
 <ul><li>Previously, integer input caused an error due to dgTMatrix in the Matrix package requiring a numeric (double) <code>x</code> slot.</li>
 </ul></li>

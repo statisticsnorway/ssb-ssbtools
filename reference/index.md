@@ -192,6 +192,12 @@
   Fast alternative to
   [`anyDuplicated()`](https://rdrr.io/r/base/duplicated.html)
 
+- [`convert_integer64()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/convert_integer64.md)
+  :
+
+  Convert `integer64` data to base R numeric, integer, or character
+  types
+
 - [`data_diff_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/data_diff_groups.md)
   : Add diff_groups results as columns in a data frame
 
