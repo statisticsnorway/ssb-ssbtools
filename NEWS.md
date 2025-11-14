@@ -1,3 +1,21 @@
+## SSBtools 1.8.5
+* New function `convert_integer64()`.
+  - Helper for converting `integer64` data (from 
+  [bit64](https://cran.r-project.org/package=bit64) 
+  or 
+  [arrow](https://cran.r-project.org/package=arrow) 
+  imports) 
+    to base R `integer`, `numeric`, or `character`.
+* `max_contribution()` now accepts integer vectors for `y`. 
+  - Previously, integer input caused an error due to dgTMatrix in the Matrix package requiring a numeric (double) `x` slot.
+
+
+## SSBtools 1.8.4
+* New functions `diff_groups()` and `data_diff_groups()`:
+  - Identify and describe relationships between paired codes, and add results
+    back to data frames.
+* New example datasets `code_pairs`, `barcelona2025`, `paris2025_freq`, and `paris2025_micro`.
+
 
 ## SSBtools 1.8.2
 * New functions `zero_col()` and `single_col()`:
