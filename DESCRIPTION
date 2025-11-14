@@ -22,4 +22,5 @@ RoxygenNote: 7.3.2
 Encoding: UTF-8
 Suggests: 
     testthat, 
-    data.table
+    data.table,
+    bit64
