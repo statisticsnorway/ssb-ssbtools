@@ -22,7 +22,11 @@ AutoHierarchies(
 
 \item{data}{Matrix or data frame with data containing codes of relevant variables}
 
-\item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.}
+\item{total}{Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.
+If a named vector or named list is provided, names are matched
+against \code{names(hierarchies)}, and matching entries are applied to the
+corresponding hierarchies. Hierarchies without a matching name use the
+recycled default value.}
 
 \item{hierarchyVarNames}{Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}. However:
 \itemize{
