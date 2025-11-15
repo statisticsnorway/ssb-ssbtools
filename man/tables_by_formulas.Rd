@@ -84,7 +84,7 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
                    collapse_vars = list(sector = c("sector2", "sector4")), 
                    sum_vars = "value", 
-                   total = "T",
+                   total = c(region = "E", sector = "T"),
                    term_labels = TRUE)
                    
 }
