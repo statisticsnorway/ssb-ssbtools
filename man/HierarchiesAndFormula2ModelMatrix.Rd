@@ -37,7 +37,8 @@ TRUE means that codes from input are included in output. Values corresponding to
 
 \item{crossTable}{Cross table in output when TRUE}
 
-\item{total}{Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}}}
+\item{total}{Vector of total codes (possibly recycled) passed to \link{AutoHierarchies},
+with optional named vector/list support.}
 
 \item{simplify}{When TRUE (default) the model can be simplified when total codes are found in the hierarchies (see examples).}
 

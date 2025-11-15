@@ -9,7 +9,8 @@
 #'         TRUE means that codes from input are included in output. Values corresponding to \code{"rowFactor"} or \code{""} are ignored.
 #' @param makeColNames Colnames included when TRUE (default).
 #' @param crossTable Cross table in output when TRUE
-#' @param total Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} 
+#' @param total Vector of total codes (possibly recycled) passed to [AutoHierarchies], 
+#'              with optional named vector/list support.
 #' @param simplify When TRUE (default) the model can be simplified when total codes are found in the hierarchies (see examples).
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}
 #' @param unionComplement Logical vector (possibly recycled) for each element of hierarchies.
@@ -91,7 +92,16 @@ HierarchiesAndFormula2ModelMatrix <- function(data, hierarchies, formula, inputI
   if (any(is.na(ma))) 
     stop("Var in formula not in hi")
   
+  total <- unlist(total)
+  total_input <- total
+  
   total <- rep_len(total, nHier)[ma]
+  
+  if (!is.null(names(total_input))) {
+    ma2 <- match(names(hierarchies), names(total_input))
+    total[!is.na(ma2)] <- total_input[ma2[!is.na(ma2)]]
+  }
+  
   unionComplement <- rep_len(unionComplement, nHier)[ma]
   inputInOutput <- rep_len(inputInOutput, nHier)[ma]
   
