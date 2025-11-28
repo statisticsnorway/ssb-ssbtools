@@ -25,7 +25,9 @@ FindDimLists(
 
 \item{xReturn}{When TRUE x is also in output, possibly changed according to addName.}
 
-\item{total}{String used to name totals. A vector of length \code{ncol(x)} is also possible (see examples).}
+\item{total}{String used to name totals. Can also be a vector of length \code{ncol(x)}
+or a named vector/list. If named, the dimension names used in
+the output must be present among the names in \code{total}.}
 }
 \value{
 Output is a list according to the specifications in sdcTable.

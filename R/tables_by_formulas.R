@@ -34,7 +34,12 @@
 #'                      with the `variables` parameter according to `substitute_vars`.             
 #' @param collapse_vars When specified, [total_collapse()] is called with `collapse_vars` as the `variables` parameter, 
 #'                      after any call triggered by the `auto_collapse` parameter.
-#' @param total A string used to name totals. Passed to both `table_fun` and [total_collapse()].  
+#' @param total string(s) used to name totals. Passed to both `table_fun` and [total_collapse()].
+#'              When `total` is named, the names are handled in a way that accounts for both 
+#'              `substitute_vars` with `auto_collapse` and `collapse_vars`. 
+#'              You may supply names corresponding to either input or output variables. 
+#'              Inconsistent or incompatible naming will result in an error.
+#'
 #' @param hierarchical_extend0 Controls automatic hierarchy generation for [Extend0()]. 
 #'                              See "Details" for more information. 
 #' @param term_labels Logical. If `TRUE`, a `term_labels` column (as constructed by [output_term_labels()]) 
@@ -54,7 +59,7 @@
 #'                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
 #'                    collapse_vars = list(sector = c("sector2", "sector4")), 
 #'                    sum_vars = "value", 
-#'                    total = "T",
+#'                    total = c(region = "E", sector = "T"),
 #'                    term_labels = TRUE)
 #'                    
 tables_by_formulas <- function(data,
@@ -73,6 +78,11 @@ tables_by_formulas <- function(data,
       table_formulas[[i]] <- substitute_formula_vars(table_formulas[[i]], substitute_vars)
     }
     substitute_vars_removed <- remove_included_substitute_elements(substitute_vars) 
+  }
+  
+  if (!is.null(names(total))) {
+    total <- update_total_reverse(total, collapse_vars)
+    total <- update_total_reverse(total, substitute_vars_removed)
   }
   
   formula <- combine_formulas(table_formulas)
@@ -96,12 +106,26 @@ tables_by_formulas <- function(data,
     table_memberships[[i]] <- formula_selection(a, table_formulas[[i]], logical = TRUE)
   }
   
+  total_sel <- 1
+  
+  if (auto_collapse & length(substitute_vars) | length(collapse_vars)) {
+    total <- unlist(total)
+  }
+  
   if (auto_collapse & length(substitute_vars)) {
-    a <- total_collapse_allow_missing(a, substitute_vars_removed, total = total) 
+    if (!is.null(names(total))) {
+      total <- update_total(total, substitute_vars_removed)
+      total_sel <- names(substitute_vars_removed)
+    }
+    a <- total_collapse_allow_missing(a, substitute_vars_removed, total = total[total_sel]) 
   }
   
   if (length(collapse_vars)) {
-    a <- total_collapse_allow_missing(a, collapse_vars, total = total) 
+    if (!is.null(names(total))) {
+      total <- update_total(total, collapse_vars)
+      total_sel <- names(collapse_vars)
+    }
+    a <- total_collapse_allow_missing(a, collapse_vars, total = total[total_sel]) 
   }
   
   a <- cbind(a, table_memberships)
@@ -157,4 +181,42 @@ total_collapse_allow_missing <- function(data, variables, ...) {
   }
   total_collapse(data, variables, ...)
 }
+
+update_total <- function(total, collapse_vars) {
+  old_total <- total[!(names(total) %in% unlist(collapse_vars))]
+  new_total <- rep(NA_character_, length(collapse_vars))
+  names(new_total) <- names(collapse_vars)
+  for (i in seq_along(collapse_vars)) {
+    total_i <- unique(total[collapse_vars[[i]]])
+    if (length(total_i) != 1) {
+      stop(paste0("Unique total code needed within collapse_vars. Found ", 
+                  names(collapse_vars)[i], ": ", 
+                  paste(total_i, collapse = ", ")))
+    }
+    new_total[i] <- total_i
+  }
+  c(old_total, new_total)
+}
+
+
+
+update_total_reverse <- function(total, collapse_vars) {
+  from_total <- total[(names(total) %in% unlist(collapse_vars))]
+  to_total <- total[(names(total) %in% names(collapse_vars))]
+  for (i in seq_along(collapse_vars)) {
+    ma <- match(names(collapse_vars)[i], names(to_total))
+    if (!is.na(ma)) {
+      cv <- collapse_vars[[i]][!(collapse_vars[[i]] %in% names(total))]
+      new_total <- rep(to_total[ma], length(cv))
+      names(new_total) <- cv
+      total <- c(total, new_total)
+    }
+  }
+  total
+}
+
+  
+  
+  
+  
 

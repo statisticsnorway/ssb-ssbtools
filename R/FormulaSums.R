@@ -14,7 +14,11 @@
 #' @param formula A model formula
 #' @param makeNames Column/row names made when TRUE
 #' @param crossTable Cross table in output when TRUE
-#' @param total String used to name totals
+#' @param total Total code(s) which can be provided in several forms:
+#'
+#' * A single string (e.g. `"TOTAL"`) to be applied to all variables.
+#' * A **named vector** or **named list** giving one total code per variable,  
+#'   e.g. `c(var1 = "ALL_A", var2 = "ALL_B")` or `list(var1 = "ALL_A", var2 = "ALL_B")`.
 #' @param printInc  Printing "..." to console when TRUE
 #' @param dropResponse When TRUE response part of formula ignored.
 #' @param makeModelMatrix Make model matrix when TRUE. NULL means automatic.
@@ -135,7 +139,19 @@ FormulaSums <- function(data, formula, makeNames = TRUE, crossTable = FALSE, tot
   
   firstROW <- CharacterDataFrame(data[1, hgid, drop = FALSE])
   firstROW <- as.matrix(firstROW)
-  firstROW[, ] <- total
+  total <- unlist(total)
+  if (length(total) > 1 & is.null(names(total))) {
+    stop("total must be named when several total codes")
+  }
+  if (length(total) > 1 | !is.null(names(total))) {
+    ma <- match(colnames(firstROW), names(total))
+    if (anyNA(ma)) {
+      stop(paste("total code(s) missing for:", paste(colnames(firstROW)[is.na(ma)], collapse = ", ")))
+    }
+    firstROW[, ] <- total[ma]
+  } else {
+    firstROW[, ] <- total
+  }
   rownames(firstROW) <- NULL
   
   nFac <- NCOL(fac)

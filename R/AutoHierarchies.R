@@ -20,6 +20,10 @@
 #' @param hierarchies List of hierarchies
 #' @param data Matrix or data frame with data containing codes of relevant variables
 #' @param total Within \code{AutoHierarchies}: Vector of total codes (possibly recycled) used when running \code{\link{Hrc2DimList}} or \code{\link{FindDimLists}}.  
+#'              If a named vector or named list is provided, names are matched
+#'              against \code{names(hierarchies)}, and matching entries are applied to the
+#'              corresponding hierarchies. Hierarchies without a matching name use the
+#'              recycled default value.
 #' @param hierarchyVarNames Variable names in the hierarchy tables as in \code{\link{HierarchyFix}}. However:
 #'   - `level` is by default not required (see `autoLevel` below).
 #'   - If the `sign` variable is missing, it defaults to a variable of 1s.
@@ -125,7 +129,17 @@ AutoHierarchies <- function(hierarchies, data = NULL, total = "Total",
                             autoLevel = TRUE, 
                             autoNames = c(to = "from", parentCode = "code", parent = "child", root = "leaf"),
                             ...) {
+ 
+  total <- unlist(total)
+  total_input <- total
+  
   total <- rep_len(total, length(hierarchies))
+  
+  if (!is.null(names(total_input))) {
+    ma <- match(names(hierarchies), names(total_input))
+    total[!is.na(ma)] <- total_input[ma[!is.na(ma)]]
+  }  
+
   
   if (is.null(names(hierarchies))) {
     names(hierarchies) <- rep(NA, length(hierarchies))

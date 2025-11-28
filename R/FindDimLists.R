@@ -11,7 +11,9 @@
 #' @param addName When TRUE the variable name is added to the level names, except for variables with most levels.
 #' @param sep A character string to separate when addName apply.
 #' @param xReturn When TRUE x is also in output, possibly changed according to addName.
-#' @param total String used to name totals. A vector of length `ncol(x)` is also possible (see examples).  
+#' @param total String used to name totals. Can also be a vector of length `ncol(x)` 
+#'              or a named vector/list. If named, the dimension names used in
+#'              the output must be present among the names in `total`.
 #'
 #' @return Output is a list according to the specifications in sdcTable.
 #'         When xReturn is TRUE output has an extra list level and x is the first element.
@@ -40,12 +42,26 @@ FindDimLists <- function(x, groupVarInd = HierarchicalGroups(x = x), addName = F
   
   # Generalization to `length(total)>1` could also have been implemented by changing 
   # CheckLevels, DimFromHier and DimFromHier1. Making the change here is easier and safer.
+  
+  total <- unlist(total)
+  
   if (length(total) > 1) {
-    if (length(total) != ncol(x)) {
-      stop("wrong length of total")
+    if (is.null(names(total))) {
+      if (length(total) != ncol(x)) {
+        stop("wrong length of total")
+      }
     }
     dimLists <- FindDimLists(x = x, groupVarInd = groupVarInd, addName = addName, sep = sep, xReturn = xReturn, total = "t_O2T_aL83")
-    tot <- total[match(names(dimLists), colnames(x))]
+    if (is.null(names(total))) {
+      tot <- total[match(names(dimLists), colnames(x))]
+    } else {
+      ma <- match(names(dimLists), names(total))
+      if (anyNA(ma)) {
+        stop(paste("Missing total name for", paste(names(dimLists)[is.na(ma)], collapse = ", "))) 
+      }
+      tot <- total[ma]
+    }
+    
     for (i in seq_along(dimLists)) {
       if (tot[i] %in% dimLists[[i]][, 2, drop = TRUE]) {
         stop(paste0('"',tot[i], '"', " cannot be total code for ", "'", names(dimLists)[i], "'",  " since already a level name"))

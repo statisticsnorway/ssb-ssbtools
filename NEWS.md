@@ -1,4 +1,11 @@
 ## SSBtools 1.8.5
+* Added support for named total vectors in `ModelMatrix()` and related functions.
+  - `FormulaSums()`/`Formula2ModelMatrix()` can now accept multiple total codes
+    via named total vectors.
+  - See also the underlying functions `FindDimLists()` and `AutoHierarchies()`,
+    which now also support named total vectors.
+  - `tables_by_formulas()` has been updated so that named total vectors are handled
+    flexibly in connection with both `substitute_vars` and `collapse_vars`.
 * New function `convert_integer64()`.
   - Helper for converting `integer64` data (from 
   [bit64](https://cran.r-project.org/package=bit64) 

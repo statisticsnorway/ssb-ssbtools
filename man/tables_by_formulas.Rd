@@ -36,7 +36,11 @@ with the \code{variables} parameter according to \code{substitute_vars}.}
 \item{collapse_vars}{When specified, \code{\link[=total_collapse]{total_collapse()}} is called with \code{collapse_vars} as the \code{variables} parameter,
 after any call triggered by the \code{auto_collapse} parameter.}
 
-\item{total}{A string used to name totals. Passed to both \code{table_fun} and \code{\link[=total_collapse]{total_collapse()}}.}
+\item{total}{string(s) used to name totals. Passed to both \code{table_fun} and \code{\link[=total_collapse]{total_collapse()}}.
+When \code{total} is named, the names are handled in a way that accounts for both
+\code{substitute_vars} with \code{auto_collapse} and \code{collapse_vars}.
+You may supply names corresponding to either input or output variables.
+Inconsistent or incompatible naming will result in an error.}
 
 \item{hierarchical_extend0}{Controls automatic hierarchy generation for \code{\link[=Extend0]{Extend0()}}.
 See "Details" for more information.}
@@ -80,7 +84,7 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
                    collapse_vars = list(sector = c("sector2", "sector4")), 
                    sum_vars = "value", 
-                   total = "T",
+                   total = c(region = "E", sector = "T"),
                    term_labels = TRUE)
                    
 }
