@@ -58,8 +58,9 @@ HierarchiesAndFormula2ModelMatrix(
 
 - total:
 
-  Vector of total codes (possibly recycled) used when running
-  [`Hrc2DimList`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DimList2Hrc.md)
+  Vector of total codes (possibly recycled) passed to
+  [AutoHierarchies](https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoHierarchies.md),
+  with optional named vector/list support.
 
 - simplify:
 

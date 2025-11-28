@@ -42,8 +42,9 @@ FindDimLists(
 
 - total:
 
-  String used to name totals. A vector of length `ncol(x)` is also
-  possible (see examples).
+  String used to name totals. Can also be a vector of length `ncol(x)`
+  or a named vector/list. If named, the dimension names used in the
+  output must be present among the names in `total`.
 
 ## Value
 

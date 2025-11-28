@@ -81,7 +81,10 @@
 
 
 <dt id="arg-total">total<a class="anchor" aria-label="anchor" href="#arg-total"></a></dt>
-<dd><p>String used to name totals</p></dd>
+<dd><p>Total code(s) which can be provided in several forms:</p><ul><li><p>A single string (e.g. <code>"TOTAL"</code>) to be applied to all variables.</p></li>
+<li><p>A <strong>named vector</strong> or <strong>named list</strong> giving one total code per variable,
+e.g. <code>c(var1 = "ALL_A", var2 = "ALL_B")</code> or <code>list(var1 = "ALL_A", var2 = "ALL_B")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-printinc">printInc<a class="anchor" aria-label="anchor" href="#arg-printinc"></a></dt>

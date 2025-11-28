@@ -65,8 +65,13 @@ tables_by_formulas(
 
 - total:
 
-  A string used to name totals. Passed to both `table_fun` and
+  string(s) used to name totals. Passed to both `table_fun` and
   [`total_collapse()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/total_collapse.md).
+  When `total` is named, the names are handled in a way that accounts
+  for both `substitute_vars` with `auto_collapse` and `collapse_vars`.
+  You may supply names corresponding to either input or output
+  variables. Inconsistent or incompatible naming will result in an
+  error.
 
 - hierarchical_extend0:
 
@@ -129,22 +134,22 @@ tables_by_formulas(SSBtoolsData("magnitude1"),
                    substitute_vars = list(region = c("geo", "eu"), region1 = "eu"), 
                    collapse_vars = list(sector = c("sector2", "sector4")), 
                    sum_vars = "value", 
-                   total = "T",
+                   total = c(region = "E", sector = "T"),
                    term_labels = TRUE)
 #> [pre_aggregate 20*6->10*5] [ModelMatrix] [crossprod] [cbind]
 #>    term_labels   region        sector value table_1 table_2 table_3
-#> 1  (Intercept)        T             T 462.3    TRUE   FALSE   FALSE
+#> 1  (Intercept)        E             T 462.3    TRUE   FALSE   FALSE
 #> 2          geo  Iceland             T  37.1    TRUE   FALSE    TRUE
 #> 3          geo Portugal             T 162.5    TRUE   FALSE    TRUE
 #> 4          geo    Spain             T 262.7    TRUE   FALSE    TRUE
 #> 5           eu       EU             T 425.2    TRUE   FALSE    TRUE
 #> 6           eu    nonEU             T  37.1    TRUE   FALSE    TRUE
-#> 7      sector2        T       private 429.5    TRUE   FALSE   FALSE
-#> 8      sector2        T        public  32.8    TRUE   FALSE   FALSE
-#> 9      sector4        T   Agriculture 240.2   FALSE   FALSE    TRUE
-#> 10     sector4        T Entertainment 131.5   FALSE   FALSE    TRUE
-#> 11     sector4        T  Governmental  32.8   FALSE   FALSE    TRUE
-#> 12     sector4        T      Industry  57.8   FALSE   FALSE    TRUE
+#> 7      sector2        E       private 429.5    TRUE   FALSE   FALSE
+#> 8      sector2        E        public  32.8    TRUE   FALSE   FALSE
+#> 9      sector4        E   Agriculture 240.2   FALSE   FALSE    TRUE
+#> 10     sector4        E Entertainment 131.5   FALSE   FALSE    TRUE
+#> 11     sector4        E  Governmental  32.8   FALSE   FALSE    TRUE
+#> 12     sector4        E      Industry  57.8   FALSE   FALSE    TRUE
 #> 13 geo:sector2  Iceland       private  37.1    TRUE   FALSE   FALSE
 #> 14 geo:sector2 Portugal       private 138.9    TRUE   FALSE   FALSE
 #> 15 geo:sector2 Portugal        public  23.6    TRUE   FALSE   FALSE

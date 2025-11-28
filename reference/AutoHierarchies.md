@@ -37,6 +37,10 @@ AutoHierarchies(
   [`Hrc2DimList`](https://statisticsnorway.github.io/ssb-ssbtools/reference/DimList2Hrc.md)
   or
   [`FindDimLists`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDimLists.md).
+  If a named vector or named list is provided, names are matched against
+  `names(hierarchies)`, and matching entries are applied to the
+  corresponding hierarchies. Hierarchies without a matching name use the
+  recycled default value.
 
 - hierarchyVarNames:
 

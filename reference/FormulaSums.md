@@ -48,7 +48,13 @@ Formula2ModelMatrix(data, formula, dropResponse = TRUE, ...)
 
 - total:
 
-  String used to name totals
+  Total code(s) which can be provided in several forms:
+
+  - A single string (e.g. `"TOTAL"`) to be applied to all variables.
+
+  - A **named vector** or **named list** giving one total code per
+    variable, e.g. `c(var1 = "ALL_A", var2 = "ALL_B")` or
+    `list(var1 = "ALL_A", var2 = "ALL_B")`.
 
 - printInc:
 

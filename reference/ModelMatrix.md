@@ -75,7 +75,12 @@ NamesFromModelMatrixInput(
 
 - total:
 
-  String(s) used to name totals
+  String(s) used to name totals, passed to underlying functions. Named
+  vectors or lists are supported. See
+  [`FindDimLists()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDimLists.md),
+  [`Formula2ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSums.md)
+  and
+  [`AutoHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoHierarchies.md).
 
 - removeEmpty:
 

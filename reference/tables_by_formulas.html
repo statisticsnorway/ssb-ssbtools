@@ -98,7 +98,11 @@ after any call triggered by the <code>auto_collapse</code> parameter.</p></dd>
 
 
 <dt id="arg-total">total<a class="anchor" aria-label="anchor" href="#arg-total"></a></dt>
-<dd><p>A string used to name totals. Passed to both <code>table_fun</code> and <code><a href="total_collapse.html">total_collapse()</a></code>.</p></dd>
+<dd><p>string(s) used to name totals. Passed to both <code>table_fun</code> and <code><a href="total_collapse.html">total_collapse()</a></code>.
+When <code>total</code> is named, the names are handled in a way that accounts for both
+<code>substitute_vars</code> with <code>auto_collapse</code> and <code>collapse_vars</code>.
+You may supply names corresponding to either input or output variables.
+Inconsistent or incompatible naming will result in an error.</p></dd>
 
 
 <dt id="arg-hierarchical-extend-">hierarchical_extend0<a class="anchor" aria-label="anchor" href="#arg-hierarchical-extend-"></a></dt>
@@ -146,22 +150,22 @@ This ensures flexibility when modifying the <code>table_formulas</code> paramete
 <span class="r-in"><span>                   substitute_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geo"</span>, <span class="st">"eu"</span><span class="op">)</span>, region1 <span class="op">=</span> <span class="st">"eu"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                   collapse_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sector <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sector2"</span>, <span class="st">"sector4"</span><span class="op">)</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                   sum_vars <span class="op">=</span> <span class="st">"value"</span>, </span></span>
-<span class="r-in"><span>                   total <span class="op">=</span> <span class="st">"T"</span>,</span></span>
+<span class="r-in"><span>                   total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>region <span class="op">=</span> <span class="st">"E"</span>, sector <span class="op">=</span> <span class="st">"T"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   term_labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [pre_aggregate 20*6-&gt;10*5] [ModelMatrix] [crossprod] [cbind]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    term_labels   region        sector value table_1 table_2 table_3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  (Intercept)        T             T 462.3    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  (Intercept)        E             T 462.3    TRUE   FALSE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          geo  Iceland             T  37.1    TRUE   FALSE    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3          geo Portugal             T 162.5    TRUE   FALSE    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4          geo    Spain             T 262.7    TRUE   FALSE    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5           eu       EU             T 425.2    TRUE   FALSE    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6           eu    nonEU             T  37.1    TRUE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7      sector2        T       private 429.5    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8      sector2        T        public  32.8    TRUE   FALSE   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      sector4        T   Agriculture 240.2   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10     sector4        T Entertainment 131.5   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11     sector4        T  Governmental  32.8   FALSE   FALSE    TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12     sector4        T      Industry  57.8   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      sector2        E       private 429.5    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      sector2        E        public  32.8    TRUE   FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      sector4        E   Agriculture 240.2   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10     sector4        E Entertainment 131.5   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11     sector4        E  Governmental  32.8   FALSE   FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12     sector4        E      Industry  57.8   FALSE   FALSE    TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13 geo:sector2  Iceland       private  37.1    TRUE   FALSE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 geo:sector2 Portugal       private 138.9    TRUE   FALSE   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 geo:sector2 Portugal        public  23.6    TRUE   FALSE   FALSE</span>

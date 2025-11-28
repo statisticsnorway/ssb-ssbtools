@@ -2,6 +2,19 @@
 
 ## SSBtools 1.8.5
 
+- Added support for named total vectors in
+  [`ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/ModelMatrix.md)
+  and related functions.
+  - [`FormulaSums()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSums.md)/[`Formula2ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSums.md)
+    can now accept multiple total codes via named total vectors.
+  - See also the underlying functions
+    [`FindDimLists()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FindDimLists.md)
+    and
+    [`AutoHierarchies()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/AutoHierarchies.md),
+    which now also support named total vectors.
+  - [`tables_by_formulas()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/tables_by_formulas.md)
+    has been updated so that named total vectors are handled flexibly in
+    connection with both `substitute_vars` and `collapse_vars`.
 - New function
   [`convert_integer64()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/convert_integer64.md).
   - Helper for converting `integer64` data (from

@@ -65,7 +65,11 @@
 
 
 <dt id="arg-total">total<a class="anchor" aria-label="anchor" href="#arg-total"></a></dt>
-<dd><p>Within <code>AutoHierarchies</code>: Vector of total codes (possibly recycled) used when running <code><a href="DimList2Hrc.html">Hrc2DimList</a></code> or <code><a href="FindDimLists.html">FindDimLists</a></code>.</p></dd>
+<dd><p>Within <code>AutoHierarchies</code>: Vector of total codes (possibly recycled) used when running <code><a href="DimList2Hrc.html">Hrc2DimList</a></code> or <code><a href="FindDimLists.html">FindDimLists</a></code>.
+If a named vector or named list is provided, names are matched
+against <code>names(hierarchies)</code>, and matching entries are applied to the
+corresponding hierarchies. Hierarchies without a matching name use the
+recycled default value.</p></dd>
 
 
 <dt id="arg-hierarchyvarnames">hierarchyVarNames<a class="anchor" aria-label="anchor" href="#arg-hierarchyvarnames"></a></dt>
