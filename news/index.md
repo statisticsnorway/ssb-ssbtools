@@ -1,6 +1,8 @@
 # Changelog
 
-## SSBtools 1.8.5
+## SSBtools 1.8.6
+
+CRAN release: 2025-12-01
 
 - Added support for named total vectors in
   [`ModelMatrix()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/ModelMatrix.md)
