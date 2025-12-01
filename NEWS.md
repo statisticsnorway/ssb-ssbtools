@@ -1,4 +1,4 @@
-## SSBtools 1.8.5
+## SSBtools 1.8.6
 * Added support for named total vectors in `ModelMatrix()` and related functions.
   - `FormulaSums()`/`Formula2ModelMatrix()` can now accept multiple total codes
     via named total vectors.
