@@ -79,7 +79,7 @@ dummy_aggregate <- function(data, x, vars, fun = NULL, dummy = TRUE,
                             when_non_dummy = warning, keep_names = TRUE, ...) {
   
   if (anyDuplicated(names(data))) {
-    data <- data[, !duplicated(names(data), fromLast = TRUE)]
+    data <- data[!duplicated(names(data), fromLast = TRUE)]
   }
 
   x <- uniqTsparse(As_TsparseMatrix(x))
