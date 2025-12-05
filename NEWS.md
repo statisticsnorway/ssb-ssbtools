@@ -1,3 +1,10 @@
+
+## SSBtools 1.8.7
+* Bugfix in `model_aggregate()` for the special case where `fun_vars` overlap
+  with other variable names (`preagg_var` and the table's dimension variables).
+  - This is resolved by changing how `dummy_aggregate()` handles duplicated
+    variable names: the last occurrence is now used.
+
 ## SSBtools 1.8.6
 * Added support for named total vectors in `ModelMatrix()` and related functions.
   - `FormulaSums()`/`Formula2ModelMatrix()` can now accept multiple total codes
