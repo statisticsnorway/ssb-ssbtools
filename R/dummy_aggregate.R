@@ -9,6 +9,12 @@
 #' Functionality for non-dummy  matrices as well.
 #' 
 #' Internally this function make use of the `ind` parameter to `aggregate_multiple_fun`  
+#' 
+#' If duplicate column names are present in `data`, only the last occurrence is
+#' used. This choice is consistent with the structure of the data after
+#' pre-aggregation with [aggregate_by_pkg()], where overlaps between the `by`
+#' and `var` parameters may produce columns with identical names, and the last
+#' column represents the intended value.
 #'
 #' @param x A (sparse) dummy matrix
 #' @inheritParams aggregate_multiple_fun
@@ -71,6 +77,10 @@
 #'                 
 dummy_aggregate <- function(data, x, vars, fun = NULL, dummy = TRUE, 
                             when_non_dummy = warning, keep_names = TRUE, ...) {
+  
+  if (anyDuplicated(names(data))) {
+    data <- data[, !duplicated(names(data), fromLast = TRUE)]
+  }
 
   x <- uniqTsparse(As_TsparseMatrix(x))
   seq_len_ncol_x <- seq_len(ncol(x))
