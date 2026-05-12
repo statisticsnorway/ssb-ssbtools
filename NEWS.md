@@ -1,3 +1,9 @@
+
+## SSBtools 1.8.7
+* Fix in `table_all_integers()`
+  - Avoid base R `factor()` bug causing every 100,000th table count to be incorrectly set to 0.
+  - See [GaussSuppression issue #155](https://github.com/statisticsnorway/ssb-gausssuppression/issues/155)
+
 ## SSBtools 1.8.6
 * Added support for named total vectors in `ModelMatrix()` and related functions.
   - `FormulaSums()`/`Formula2ModelMatrix()` can now accept multiple total codes
