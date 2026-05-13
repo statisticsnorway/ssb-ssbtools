@@ -11,5 +11,5 @@
 #' table_all_integers(c(2, 3, 5, 3, 5, 3), 7)
 #' 
 table_all_integers <- function(x, n) {
-  table(factor(x, levels = seq_len(n)))
+  table(factor(as.integer(x), levels = seq_len(n)))
 }

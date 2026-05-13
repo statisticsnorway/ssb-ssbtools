@@ -107,5 +107,5 @@ if (requireNamespace("bit64", quietly = TRUE)) {
 
 }
 \seealso{
-\code{\link[bit64:as.integer64.character]{bit64::as.integer64()}}
+\code{\link[bit64:as.integer64]{bit64::as.integer64()}}
 }
