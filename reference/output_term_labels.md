@@ -28,6 +28,7 @@ vector of term labels
 ## Examples
 
 ``` r
+
 out <- model_aggregate(SSBtoolsData("magnitude1"), 
                        formula = ~eu:sector4 + geo * sector2, 
                        sum_vars = "value",

@@ -97,6 +97,7 @@ See Examples.
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
 data2 <- SSBtoolsData("z2")
 x <- ModelMatrix(data2, formula = ~fylke + kostragr * hovedint - 1)
@@ -154,7 +155,7 @@ eps <- 1e-05
 # Estimate yHat by loglin
 out <- loglin(tab, list(c(1, 2), c(1, 3), c(1, 4), c(1, 5), c(2, 3, 4), c(3, 4, 5)), 
               fit = TRUE, iter = iter, eps = eps)
-#> 7 iterations: deviation 4.223548e-07 
+#> 7 iterations: deviation 5.075708e-08 
 yHatLoglin <- matrix(((out$fit)), ncol = 1)
 
 # Transform the data for input to Mipf
@@ -165,11 +166,11 @@ z <- Matrix::t(x) %*% df$Freq
 
 # Estimate yHat by Mipf
 yHatPMipf <- Mipf(x, z, iter = iter, eps = eps)
-#> :......  6 iterations: deviation 4.228204e-07
+#> :......  6 iterations: deviation 4.842877e-08
 
 # Maximal absolute difference
 max(abs(yHatPMipf - yHatLoglin))
-#> [1] 1.391527e-09
+#> [1] 1.964509e-10
 
 # Note: loglin reports one iteration extra 
 
@@ -177,8 +178,8 @@ max(abs(yHatPMipf - yHatLoglin))
 max(abs(Mipf(x = FormulaSums(df, ~A:B + C - 1), 
              z = FormulaSums(df, Freq ~ A:B + C -1)) 
              - matrix(loglin(tab, list(1:2, 3), fit = TRUE)$fit, ncol = 1)))
-#> :.  1 iterations: deviation 8.940697e-082 iterations: deviation 9.126961e-08 
-#> [1] 9.367795e-11
+#> :.  1 iterations: deviation 2.142042e-072 iterations: deviation 2.160668e-07 
+#> [1] 1.482476e-10
 
 
 #########################################

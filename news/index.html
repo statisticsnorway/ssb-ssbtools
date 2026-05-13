@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,14 @@
       <small>Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.7" id="ssbtools-187">SSBtools 1.8.7<a class="anchor" aria-label="anchor" href="#ssbtools-187"></a></h2><p class="text-muted">CRAN release: 2026-05-12</p>
+<ul><li>Fix in <code><a href="../reference/table_all_integers.html">table_all_integers()</a></code>
+<ul><li>Avoid base R <code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor()</a></code> bug causing every 100,000th table count to be incorrectly set to 0.</li>
+<li>See <a href="https://github.com/statisticsnorway/ssb-gausssuppression/issues/155" class="external-link">GaussSuppression issue </a><a href="https://github.com/statisticsnorway/ssb-ssbtools/issues/155" class="external-link">#155</a>
+</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.6" id="ssbtools-186">SSBtools 1.8.6<a class="anchor" aria-label="anchor" href="#ssbtools-186"></a></h2><p class="text-muted">CRAN release: 2025-12-01</p>
 <ul><li>Added support for named total vectors in <code><a href="../reference/ModelMatrix.html">ModelMatrix()</a></code> and related functions.

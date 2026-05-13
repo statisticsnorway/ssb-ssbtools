@@ -64,6 +64,7 @@ designed having in mind that the input matrix is a dummy matrix.
 ## Examples
 
 ``` r
+
 x <- ModelMatrix(SSBtoolsData("z2"), formula = ~fylke + kostragr * hovedint - 1)
 
 GaussIndependent(x)

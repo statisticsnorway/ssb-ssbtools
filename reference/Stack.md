@@ -61,6 +61,7 @@ rowData, valueName, indName
 ## Examples
 
 ``` r
+
  z <- data.frame(n=c(10,20,30), ssb=c('S','S','B'),
  Ayes=1:3,Ano=4:6,Byes=7:9,Bno=10:12)
  zRow <- data.frame(letter=c('A','A','B','B'),answer=c('yes','no','yes','no') )

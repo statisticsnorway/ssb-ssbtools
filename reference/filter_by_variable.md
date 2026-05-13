@@ -59,6 +59,7 @@ function.
 ## Examples
 
 ``` r
+
 items <- list(
   table_1 = ~region * sector2, 
   table_2 = ~region1:sector4 - 1, 
@@ -74,20 +75,20 @@ variable_mapping <- list(
 filter_by_variable("value", items, variable_mapping)
 #> $table_1
 #> ~region * sector2
-#> <environment: 0x55b5ee52ff38>
+#> <environment: 0x557f6bf80838>
 #> 
 #> $table_2
 #> ~region1:sector4 - 1
-#> <environment: 0x55b5ee52ff38>
+#> <environment: 0x557f6bf80838>
 #> 
 filter_by_variable("y", items, variable_mapping)
 #> $table_2
 #> ~region1:sector4 - 1
-#> <environment: 0x55b5ee52ff38>
+#> <environment: 0x557f6bf80838>
 #> 
 #> $table_3
 #> ~region + sector4 - 1
-#> <environment: 0x55b5ee52ff38>
+#> <environment: 0x557f6bf80838>
 #> 
 filter_by_variable("nonexistent", items, variable_mapping)
 #> named list()

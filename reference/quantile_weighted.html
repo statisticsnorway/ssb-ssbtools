@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,11 +97,11 @@ where <code>w=weights[order(x)]</code>.</p>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">27</span><span class="op">)</span><span class="op">/</span><span class="fl">27</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span>, <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">/</span><span class="fl">5</span>, weights <span class="op">=</span> <span class="va">w</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        0%       20%       40%       60%       80%      100% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1.198987 11.932099 17.139868 20.893309 24.929626 26.667965 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         0%        20%        40%        60%        80%       100% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.7234136 12.2447730 17.0414801 20.7235809 25.0149596 27.0073780 </span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span>, <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">/</span><span class="fl">5</span>, weights <span class="op">=</span> <span class="va">w</span>, type <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        0%       20%       40%       60%       80%      100% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1.198987 12.241779 17.385632 21.183700 24.492988 26.667965 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         0%        20%        40%        60%        80%       100% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.7234136 12.4830157 17.4940910 21.1282711 24.5409455 27.0073780 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">quantile_weighted</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0%  25%  50%  75% 100% </span>

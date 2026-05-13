@@ -193,8 +193,8 @@ HierarchicalWildcardGlobbing(zFrame, wg[1, ])
 #> 39    Merc 280  200 3440            New York
 #> 40    Merc 280  300 3440           Charlotte
 #> 41    Merc 280  600 3440             Raleigh
-#> 42    Merc 280  700 3440             Bismark
-#> 43 Merc 450SLC  100 3780             Bismark
+#> 42    Merc 280  700 3440            Bismarck
+#> 43 Merc 450SLC  100 3780            Bismarck
 #> 44 Merc 450SLC  200 3780          Cincinnati
 #> 45   Merc 240D  100 3190           Cleveland
 #> 46 Merc 450SLC  300 3780           Cleveland
@@ -204,7 +204,7 @@ HierarchicalWildcardGlobbing(zFrame, wg[1, ])
 #> 50 Merc 450SLC  700 3780       Oklahoma City
 #> 51   Merc 240D  700 3190        Philadelphia
 #> 52  Merc 450SE  100 4070        Philadelphia
-#> 53  Merc 450SE  200 4070           Pittsburg
+#> 53  Merc 450SE  200 4070          Pittsburgh
 #> 54  Merc 450SE  300 4070          Providence
 #> 55  Merc 450SE  600 4070            Columbia
 #> 56  Merc 450SE  700 4070         Sioux Falls
@@ -288,9 +288,9 @@ HierarchicalWildcardGlobbing(zFrame, wg[1:2, ])
 #> 55    Ferrari Dino 64701 2770           Charlotte
 #> 56        Merc 280   600 3440             Raleigh
 #> 57    Ferrari Dino 64702 2770             Raleigh
-#> 58        Merc 280   700 3440             Bismark
-#> 59     Merc 450SLC   100 3780             Bismark
-#> 60        Fiat 128 13401 2200             Bismark
+#> 58        Merc 280   700 3440            Bismarck
+#> 59     Merc 450SLC   100 3780            Bismarck
+#> 60        Fiat 128 13401 2200            Bismarck
 #> 61     Merc 450SLC   200 3780          Cincinnati
 #> 62        Fiat 128 13402 2200          Cincinnati
 #> 63       Merc 240D   100 3190           Cleveland
@@ -303,7 +303,7 @@ HierarchicalWildcardGlobbing(zFrame, wg[1:2, ])
 #> 70     Merc 450SLC   700 3780       Oklahoma City
 #> 71       Merc 240D   700 3190        Philadelphia
 #> 72      Merc 450SE   100 4070        Philadelphia
-#> 73      Merc 450SE   200 4070           Pittsburg
+#> 73      Merc 450SE   200 4070          Pittsburgh
 #> 74      Merc 450SE   300 4070          Providence
 #> 75       Fiat X1-9 13401 1935          Providence
 #> 76      Merc 450SE   600 4070            Columbia

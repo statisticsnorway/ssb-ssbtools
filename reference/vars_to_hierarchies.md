@@ -23,6 +23,7 @@ List of hierarchies
 ## Examples
 
 ``` r
+
 a <- hierarchies_as_vars(list(f = 
        c("AB = A + B", "CD = C + D", "AC = A + C", "ABCD = AB + CD")))
 a

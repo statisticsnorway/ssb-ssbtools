@@ -98,7 +98,7 @@ This function is written and documented with help from ChatGPT.
 
 ## See also
 
-[`bit64::as.integer64()`](https://rdrr.io/pkg/bit64/man/as.integer64.character.html)
+[`bit64::as.integer64()`](https://bit64.r-lib.org/reference/as.integer64.character.html)
 
 ## Examples
 

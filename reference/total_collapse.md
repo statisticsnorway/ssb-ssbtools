@@ -58,6 +58,7 @@ A character vector (if `variables` is a vector) or a modified data frame
 ## Examples
 
 ``` r
+
 # Creates data that can act as input
 magnitude1 <- SSBtoolsData("magnitude1")
 a <- model_aggregate(magnitude1, 

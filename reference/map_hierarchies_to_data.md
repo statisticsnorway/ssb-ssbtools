@@ -53,6 +53,7 @@ Input `data` with extra Variables
 ## Examples
 
 ``` r
+
 # Examples similar those from hierarchies_as_vars
 
 z <- SSBtoolsData("sprt_emp_withEU")

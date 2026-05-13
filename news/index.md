@@ -1,5 +1,17 @@
 # Changelog
 
+## SSBtools 1.8.7
+
+CRAN release: 2026-05-12
+
+- Fix in
+  [`table_all_integers()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/table_all_integers.md)
+  - Avoid base R [`factor()`](https://rdrr.io/r/base/factor.html) bug
+    causing every 100,000th table count to be incorrectly set to 0.
+  - See [GaussSuppression
+    issue](https://github.com/statisticsnorway/ssb-gausssuppression/issues/155)
+    [\#155](https://github.com/statisticsnorway/ssb-ssbtools/issues/155)
+
 ## SSBtools 1.8.6
 
 CRAN release: 2025-12-01
@@ -264,6 +276,7 @@ CRAN release: 2024-12-04
   - Example of usage:
 
     ``` r
+
     a <- get_klass(classification = "24")
     b <- hier_create(root = "Total", nodes = LETTERS[1:5])
     AutoHierarchies(list(tree = a, letter = b))

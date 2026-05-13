@@ -102,6 +102,7 @@ Internally this function make use of the `ind` parameter to
 ## Examples
 
 ``` r
+
 # Code that generates output similar to the 
 # last example in aggregate_multiple_fun
 

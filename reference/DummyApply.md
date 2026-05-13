@@ -42,6 +42,7 @@ With a dummy `x` and `FUN = sum`, output is equivalent to
 ## Examples
 
 ``` r
+
 z <- SSBtoolsData("sprt_emp_withEU")
 z$age[z$age == "Y15-29"] <- "young"
 z$age[z$age == "Y30-64"] <- "old"

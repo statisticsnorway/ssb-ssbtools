@@ -38,6 +38,7 @@ numeric data type), the algorithm is recursive.
 ## Examples
 
 ``` r
+
 a <- data.frame(x = c("a", "b", "c"), y = c("A", "B"), z = 1:6)
 b <- data.frame(x = c("b", "c"), y = c("B", "K", "A", "B"), z = c(2, 3, 5, 6))
 

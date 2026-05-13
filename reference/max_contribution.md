@@ -121,6 +121,7 @@ aggregate.
 ## Examples
 
 ``` r
+
 z <- SSBtoolsData("magnitude1")
 a <- ModelMatrix(z, formula = ~sector4 + geo, crossTable = TRUE)
 

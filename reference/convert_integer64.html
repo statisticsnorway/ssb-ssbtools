@@ -9,7 +9,7 @@ list, or vector to base R numeric, integer, or character types."><meta property=
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,13 +114,13 @@ without any checks or dependency tests, can be defined as:</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/bit64/man/as.integer64.character.html" class="external-link">bit64::as.integer64()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://bit64.r-lib.org/reference/as.integer64.character.html" class="external-link">bit64::as.integer64()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"bit64"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">x</span>  <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bit64/man/seq.integer64.html" class="external-link">seq.integer64</a></span><span class="op">(</span><span class="fl">2025</span>, <span class="fl">10</span><span class="op">^</span><span class="fl">9</span>, <span class="fl">3</span> <span class="op">*</span> <span class="fl">10</span><span class="op">^</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">x</span>  <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://bit64.r-lib.org/reference/seq.integer64.html" class="external-link">seq.integer64</a></span><span class="op">(</span><span class="fl">2025</span>, <span class="fl">10</span><span class="op">^</span><span class="fl">9</span>, <span class="fl">3</span> <span class="op">*</span> <span class="fl">10</span><span class="op">^</span><span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">convert_integer64</span><span class="op">(</span><span class="va">x</span><span class="op">*</span><span class="fl">4</span>, <span class="st">"always_quiet"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -143,7 +143,7 @@ without any checks or dependency tests, can be defined as:</p>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df4</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"# Examples showing that integer64 is problematic:\n"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>      <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bit64/man/seq.integer64.html" class="external-link">seq.integer64</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://bit64.r-lib.org/reference/seq.integer64.html" class="external-link">seq.integer64</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fl">0.5</span> <span class="op">*</span> <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">y</span> <span class="op">*</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
