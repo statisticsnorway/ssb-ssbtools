@@ -59,7 +59,7 @@
 #'
 #' @examples
 #' if (requireNamespace("bit64", quietly = TRUE)) {
-#'   x  <- bit64::seq.integer64(2025, 10^9, 3 * 10^8)
+#'   x  <- seq(bit64::as.integer64(2025L), 10^9, 3 * 10^8)
 #'   print(x)
 #'   
 #'   print(convert_integer64(x*4, "always_quiet"))
@@ -82,7 +82,7 @@
 #'   print(df4)
 #'   
 #'   cat("# Examples showing that integer64 is problematic:\n")
-#'       y <- bit64::seq.integer64(1, 3)
+#'       y <- seq(bit64::as.integer64(1L), 3)
 #'       print(y)
 #'       print(0.5 * y)
 #'       print(y * 0.5)
