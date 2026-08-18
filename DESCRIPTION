@@ -1,7 +1,7 @@
 Package: SSBtools
 Type: Package
 Title: Algorithms and Tools for Tabular Statistics and Hierarchical Computations
-Version: 1.8.7
+Version: 1.8.8
 Date: 2026-05-12
 Authors@R: c(person("Øyvind", "Langsrud", role = c("aut", "cre"),
                     email = "oyl@ssb.no",
@@ -23,4 +23,4 @@ Suggests:
     testthat, 
     data.table,
     bit64
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
