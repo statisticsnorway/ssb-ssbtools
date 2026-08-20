@@ -1,9 +1,11 @@
 
 ## SSBtools 1.8.8
-* Bugfix in `model_aggregate()` for the special case where `fun_vars` overlap
+* Bugfix in `model_aggregate()` for special cases where `fun_vars` or `sum_vars` overlap 
   with other variable names (`preagg_var` and the table's dimension variables).
-  - This is resolved by changing how `dummy_aggregate()` handles duplicated
+  - For `fun_vars`, this is resolved by changing how `dummy_aggregate()` handles duplicated 
     variable names: the last occurrence is now used.
+  - For `sum_vars`, duplicated variable names in an internal data frame are
+    similarly resolved by keeping the last occurrence.
 * Changed the `convert_integer()` example to avoid using a function that will be unexported in a future release of 
   [bit64](https://cran.r-project.org/package=bit64). 
   - Thanks to Michael Chirico for reporting the issue ([#142](https://github.com/statisticsnorway/ssb-ssbtools/issues/142)) 

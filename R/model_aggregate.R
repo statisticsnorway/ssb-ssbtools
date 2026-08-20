@@ -271,6 +271,7 @@ model_aggregate = function(
       cat("*")
       flush.console()
     }
+    sum_data <- sum_data[!duplicated(names(sum_data), fromLast = TRUE)]
     sum_data <- sum_data[unique(sum_vars)]
     if (verbose) {
       cat(dim(data)[2] + c(dim(sum_data)[2], 0)[1], "] ", sep = "")   # trick for 0 when NULL
