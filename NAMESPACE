@@ -116,40 +116,48 @@ export(vars_to_hierarchies)
 export(zero_col)
 import(Matrix)
 importFrom(MASS,ginv)
-importFrom(Matrix,Diagonal)
-importFrom(Matrix,Matrix)
-importFrom(Matrix,bdiag)
-importFrom(Matrix,colSums)
-importFrom(Matrix,crossprod)
-importFrom(Matrix,drop0)
-importFrom(Matrix,fac2sparse)
-importFrom(Matrix,rowSums)
-importFrom(Matrix,sparse.model.matrix)
-importFrom(Matrix,sparseMatrix)
-importFrom(Matrix,t)
-importFrom(Matrix,uniqTsparse)
-importFrom(methods,as)
-importFrom(methods,hasArg)
-importFrom(methods,new)
-importFrom(stats,aggregate)
-importFrom(stats,approx)
-importFrom(stats,as.formula)
-importFrom(stats,complete.cases)
-importFrom(stats,delete.response)
-importFrom(stats,dist)
-importFrom(stats,formula)
-importFrom(stats,hat)
-importFrom(stats,hclust)
-importFrom(stats,model.frame)
-importFrom(stats,model.matrix)
-importFrom(stats,runif)
-importFrom(stats,setNames)
-importFrom(stats,terms)
-importFrom(utils,combn)
-importFrom(utils,compareVersion)
-importFrom(utils,data)
-importFrom(utils,flush.console)
-importFrom(utils,glob2rx)
-importFrom(utils,packageVersion)
-importFrom(utils,stack)
-importFrom(utils,unstack)
+importFrom(Matrix,
+  Diagonal,
+  Matrix,
+  bdiag,
+  colSums,
+  crossprod,
+  drop0,
+  fac2sparse,
+  rowSums,
+  sparse.model.matrix,
+  sparseMatrix,
+  t,
+  uniqTsparse
+)
+importFrom(methods,
+  as,
+  hasArg,
+  new
+)
+importFrom(stats,
+  aggregate,
+  approx,
+  as.formula,
+  complete.cases,
+  delete.response,
+  dist,
+  formula,
+  hat,
+  hclust,
+  model.frame,
+  model.matrix,
+  runif,
+  setNames,
+  terms
+)
+importFrom(utils,
+  combn,
+  compareVersion,
+  data,
+  flush.console,
+  glob2rx,
+  packageVersion,
+  stack,
+  unstack
+)
