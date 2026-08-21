@@ -95,6 +95,13 @@ data frame
 Internally this function make use of the `ind` parameter to
 `aggregate_multiple_fun`
 
+If duplicate column names are present in `data`, only the last
+occurrence is used. This choice is consistent with the structure of the
+data after pre-aggregation with
+[`aggregate_by_pkg()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_by_pkg.md),
+where overlaps between the `by` and `var` parameters may produce columns
+with identical names, and the last column represents the intended value.
+
 ## See also
 
 [`aggregate_multiple_fun`](https://statisticsnorway.github.io/ssb-ssbtools/reference/aggregate_multiple_fun.md)

@@ -11,7 +11,7 @@ Functionality for non-dummy  matrices as well."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -113,6 +113,11 @@ In this case, the data will not be subjected to <code>unlist</code>. See <code><
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Internally this function make use of the <code>ind</code> parameter to <code>aggregate_multiple_fun</code></p>
+<p>If duplicate column names are present in <code>data</code>, only the last occurrence is
+used. This choice is consistent with the structure of the data after
+pre-aggregation with <code><a href="aggregate_by_pkg.html">aggregate_by_pkg()</a></code>, where overlaps between the <code>by</code>
+and <code>var</code> parameters may produce columns with identical names, and the last
+column represents the intended value.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -211,7 +216,7 @@ In this case, the data will not be subjected to <code>unlist</code>. See <code><
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,16 @@
       <small>Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.8" id="ssbtools-188">SSBtools 1.8.8<a class="anchor" aria-label="anchor" href="#ssbtools-188"></a></h2>
+<ul><li>Bugfix in <code><a href="../reference/model_aggregate.html">model_aggregate()</a></code> for special cases where <code>fun_vars</code> or <code>sum_vars</code> overlap with other variable names (<code>preagg_var</code> and the table’s dimension variables).
+<ul><li>For <code>fun_vars</code>, this is resolved by changing how <code><a href="../reference/dummy_aggregate.html">dummy_aggregate()</a></code> handles duplicated variable names: the last occurrence is now used.</li>
+<li>For <code>sum_vars</code>, duplicated variable names in an internal data frame are similarly resolved by keeping the last occurrence.</li>
+</ul></li>
+<li>Changed the <code>convert_integer()</code> example to avoid using a function that will be unexported in a future release of <a href="https://cran.r-project.org/package=bit64" class="external-link">bit64</a>.
+<ul><li>Thanks to Michael Chirico for reporting the issue (<a href="https://github.com/statisticsnorway/ssb-ssbtools/issues/142" class="external-link">#142</a>) and providing the fix (<a href="https://github.com/statisticsnorway/ssb-ssbtools/pull/143" class="external-link">#143</a>).</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.7" id="ssbtools-187">SSBtools 1.8.7<a class="anchor" aria-label="anchor" href="#ssbtools-187"></a></h2><p class="text-muted">CRAN release: 2026-05-12</p>
 <ul><li>Fix in <code><a href="../reference/table_all_integers.html">table_all_integers()</a></code>
@@ -331,7 +341,7 @@ designed specifically to work with input to <code><a href="../reference/ModelMat
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
