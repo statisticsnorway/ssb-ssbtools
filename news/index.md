@@ -2,6 +2,8 @@
 
 ## SSBtools 1.8.8
 
+CRAN release: 2026-08-21
+
 - Bugfix in
   [`model_aggregate()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/model_aggregate.md)
   for special cases where `fun_vars` or `sum_vars` overlap with other

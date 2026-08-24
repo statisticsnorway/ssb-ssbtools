@@ -75,20 +75,20 @@ variable_mapping <- list(
 filter_by_variable("value", items, variable_mapping)
 #> $table_1
 #> ~region * sector2
-#> <environment: 0x56205a39ae88>
+#> <environment: 0x55b3192ded68>
 #> 
 #> $table_2
 #> ~region1:sector4 - 1
-#> <environment: 0x56205a39ae88>
+#> <environment: 0x55b3192ded68>
 #> 
 filter_by_variable("y", items, variable_mapping)
 #> $table_2
 #> ~region1:sector4 - 1
-#> <environment: 0x56205a39ae88>
+#> <environment: 0x55b3192ded68>
 #> 
 #> $table_3
 #> ~region + sector4 - 1
-#> <environment: 0x56205a39ae88>
+#> <environment: 0x55b3192ded68>
 #> 
 filter_by_variable("nonexistent", items, variable_mapping)
 #> named list()
