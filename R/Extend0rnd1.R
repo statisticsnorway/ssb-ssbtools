@@ -58,19 +58,32 @@ Extend0rnd1 <- function(data, varGroups, k = 1, rndSeed = 123) {
     on.exit(.Random.seed <<- exitSeed)
     set.seed(rndSeed)
   }
-  if (length(varGroups) != 2)
-    stop("length(varGroups) must be 2")
   n <- k * nrow(data)
-  n1 <- nrow(varGroups[[1]])
-  n2 <- nrow(varGroups[[2]])
+  nGroups <- sapply(varGroups, nrow)
   
-  n1rep <- ceiling(n/n1)
-  n2rep <- floor(n1 * n1rep/n2)
-  ind <- cbind(rep(seq_len(n1), n1rep), 
-               sample(c(rep(seq_len(n2), n2rep), sample.int(n2, n1 * n1rep - n2 * n2rep)))) # sample(rep(seq_len(n2), n2rep), n1 * n1rep))
+  nrep <- ceiling(n / nGroups[1])
+  N <- nGroups[1] * nrep
+  
+  ind <- matrix(NA_integer_, N, length(varGroups))
+  ind[, 1] <- rep(seq_len(nGroups[1]), nrep)
+  
+  for (j in SeqInc(2, length(varGroups))) {
+    nj <- nGroups[j]
+    njrep <- floor(N / nj)
+    
+    ind[, j] <- sample(c(
+      rep(seq_len(nj), njrep),
+      sample.int(nj, N - nj * njrep)
+    ))
+  }
+  
   ind <- SortRows(unique(ind))
   
-  cbind(varGroups[[1]][ind[, 1], , drop = FALSE], varGroups[[2]][ind[, 2], , drop = FALSE])
+  do.call(cbind, Map(
+    function(x, i) x[i, , drop = FALSE],
+    varGroups,
+    as.data.frame(ind)
+  ))
 }
 
 #' @rdname Extend0rnd1
