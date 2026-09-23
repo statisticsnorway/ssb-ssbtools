@@ -1,4 +1,10 @@
 
+## SSBtools 1.8.9
+* Improved support for advanced `Extend0` functionality:
+  - `Extend0rnd1()` updated to support an arbitrary number of `varGroups` elements.
+  - New functions `Extend0_n_rnd_groups()` and `Extend0_with_n_rnd_groups()` for
+    adding zero-frequency rows using complete and sampled group combinations.
+
 ## SSBtools 1.8.8
 * Bugfix in `model_aggregate()` for special cases where `fun_vars` or `sum_vars` overlap 
   with other variable names (`preagg_var` and the table's dimension variables).
