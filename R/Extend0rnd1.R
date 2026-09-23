@@ -6,7 +6,7 @@
 #' 
 #' The point is to create a function that takes `data` and `varGroups` as input
 #' and that returns a data frame with a limited number of combinations of the elements in `varGroups`.
-#' The example function here is limited to two varGroups elements.
+#' The examples here use two `varGroups` elements, but any number of elements can be used.
 #'
 #' @param data data.frame within \code{\link{Extend0}}
 #' @param varGroups argument to \code{\link{Extend0}}

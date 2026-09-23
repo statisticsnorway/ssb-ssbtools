@@ -33,7 +33,7 @@ makes \code{Extend0} behave differently
 \details{
 The point is to create a function that takes \code{data} and \code{varGroups} as input
 and that returns a data frame with a limited number of combinations of the elements in \code{varGroups}.
-The example function here is limited to two varGroups elements.
+The examples here use two \code{varGroups} elements, but any number of elements can be used.
 }
 \examples{
 z <- SSBtoolsData("sprt_emp_withEU")[c(1, 5, 8, 14), ]
