@@ -151,6 +151,12 @@ Extend0 <- function(data, freqName = "freq", hierarchical = TRUE, varGroups = NU
     }
   }
   
+  # Avoid duplicates when using FunctionExtend0
+  if (!is.null(FunctionExtend0)) {
+    ma <- Match(z, z)
+    z <- z[unique(ma[!is.na(ma)]), , drop = FALSE]
+  }
+  
   if (length(extraVar)) {
     extraVar1 <- data[1, extraVar, drop = FALSE]
     for (i in seq_along(extraVar1)) {
