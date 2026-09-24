@@ -47,6 +47,11 @@
 - [`Extend0()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0.md)
   : Add zero frequency rows
 
+- [`Extend0_n_rnd_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0_n_rnd_groups.md)
+  [`Extend0_with_n_rnd_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0_n_rnd_groups.md)
+  : Add zero-frequency rows using complete and sampled group
+  combinations
+
 - [`Extend0rnd1()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
   [`Extend0rnd2()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
   [`Extend0rnd1b()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)

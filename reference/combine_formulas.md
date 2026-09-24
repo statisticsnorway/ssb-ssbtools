@@ -42,26 +42,26 @@ Daniel Lupp and Øyvind Langsrud
 lof1 <- c(~a+b, ~a:c, ~c*d)
 combine_formulas(lof1)
 #> ~(a + b) + (a:c) + (c * d)
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 combine_formulas(lof1, operator = "*")
 #> ~(a + b) * (a:c) * (c * d)
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 combine_formulas(lof1, simplify = TRUE)
 #> ~a + b + c + d + a:c + c:d
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 
 # Intercept is included when needed
 lof2 <- c(~a+b -1, ~a:c -1, ~c*d)
 combine_formulas(lof2)
 #> ~(a + b - 1) + (a:c - 1) + (c * d) + 1
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 combine_formulas(lof2, simplify = TRUE)
 #> ~a + b + c + d + a:c + c:d
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 combine_formulas(lof2[1:2])
 #> ~(a + b - 1) + (a:c - 1)
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 combine_formulas(lof2[1:2], simplify = TRUE)
 #> ~a + b + a:c - 1
-#> <environment: 0x55b311b55d78>
+#> <environment: 0x563902c3ecb0>
 ```

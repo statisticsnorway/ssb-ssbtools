@@ -1,5 +1,17 @@
 # Changelog
 
+## SSBtools 1.8.9
+
+- Improved support for advanced `Extend0` functionality:
+  - [`Extend0rnd1()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
+    updated to support an arbitrary number of `varGroups` elements.
+  - New functions
+    [`Extend0_n_rnd_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0_n_rnd_groups.md)
+    and
+    [`Extend0_with_n_rnd_groups()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0_n_rnd_groups.md)
+    for adding zero-frequency rows using complete and sampled group
+    combinations.
+
 ## SSBtools 1.8.8
 
 CRAN release: 2026-08-21
