@@ -2,6 +2,8 @@
 
 ## SSBtools 1.8.9
 
+CRAN release: 2026-09-24
+
 - Improved support for advanced `Extend0` functionality:
   - [`Extend0rnd1()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/Extend0rnd1.md)
     updated to support an arbitrary number of `varGroups` elements.
