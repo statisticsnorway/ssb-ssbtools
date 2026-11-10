@@ -5,6 +5,8 @@
 #' It is a generic function which means that methods for other input objects can be added. 
 #' 
 #' The selection is based on `startCol` or `startRow` attribute in input `x`.
+#' The `startCol` or `startRow`  attribute is preserved in the output, 
+#' allowing the result to be used as input to another call.
 #' 
 #' With **formula as character**:
 #' * **`~`** is included: 
@@ -42,6 +44,8 @@
 #' x4 <- FormulaSelection(x, c("1", "age"))
 #' x5 <- FormulaSelection(x, c("(Intercept)", "age"))
 #' 
+#' FormulaSelection(x5, ~age - 1)
+#' 
 #' 
 #' a <- ModelMatrix(z, formula = ~age * geo + year, crossTable = TRUE)
 #' b <- cbind(as.data.frame(a$crossTable), 
@@ -51,10 +55,13 @@
 #' rownames(b) <- NULL
 #' attr(b, "startRow") <- attr(a$modelMatrix, "startCol", exact = TRUE)
 #' 
-#' FormulaSelection(b, ~geo * age)
 #' FormulaSelection(b, "age:geo")
 #' FormulaSelection(b, ~year - 1)
 #' FormulaSelection(b, ~geo:age, logical = TRUE)
+#' 
+#' k <- FormulaSelection(b, ~geo * age)
+#' k
+#' FormulaSelection(k, ~geo + age)
 FormulaSelection.default <- function(x, formula, intercept = NA, logical = FALSE) {
 
   if (is.character(formula)) {
@@ -71,7 +78,7 @@ FormulaSelection.default <- function(x, formula, intercept = NA, logical = FALSE
   if (!inherits(formula, "formula")) {
     stop("parameter formula must be a single formula")
   }
-           
+  
   if (is.na(intercept)) {
     intercept <- TRUE
   }
@@ -102,13 +109,25 @@ FormulaSelection.default <- function(x, formula, intercept = NA, logical = FALSE
   if (logical) {
     return(selection)
   }
+  
+  new_index <- rep(0L, n)
+  new_index[selection] <- seq_len(sum(selection))
+  
   if (isCol) {
     out <- x[, selection, drop = FALSE]
-    attr(out, "startCol") <- NULL
+    s <- attr(x, "startCol")
+    s <- s[s %in% which(selection)]
+    s[] <- new_index[s]
+    attr(out, "startCol") <- s
   } else {
     out <- x[selection, , drop = FALSE]
-    attr(out, "startRow") <- NULL
+    rownames(out) <- NULL
+    s <- attr(x, "startRow")
+    s <- s[s %in% which(selection)]
+    s[] <- new_index[s]
+    attr(out, "startRow") <- s
   }
+  
   out
 }
 
