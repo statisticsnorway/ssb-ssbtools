@@ -44,7 +44,8 @@ Limited model matrix or a data frame
 ## Details
 
 The selection is based on `startCol` or `startRow` attribute in input
-`x`.
+`x`. The `startCol` or `startRow` attribute is preserved in the output,
+allowing the result to be used as input to another call.
 
 With **formula as character**:
 
@@ -140,6 +141,28 @@ x3 <- FormulaSelection(x, "age", intercept = TRUE)
 x4 <- FormulaSelection(x, c("1", "age"))
 x5 <- FormulaSelection(x, c("(Intercept)", "age"))
 
+FormulaSelection(x5, ~age - 1)
+#> 18 x 2 sparse Matrix of class "dgCMatrix"
+#>       old-Total young-Total
+#>  [1,]         .           1
+#>  [2,]         .           1
+#>  [3,]         .           1
+#>  [4,]         1           .
+#>  [5,]         1           .
+#>  [6,]         1           .
+#>  [7,]         .           1
+#>  [8,]         .           1
+#>  [9,]         .           1
+#> [10,]         1           .
+#> [11,]         1           .
+#> [12,]         1           .
+#> [13,]         .           1
+#> [14,]         .           1
+#> [15,]         .           1
+#> [16,]         1           .
+#> [17,]         1           .
+#> [18,]         1           .
+
 
 a <- ModelMatrix(z, formula = ~age * geo + year, crossTable = TRUE)
 b <- cbind(as.data.frame(a$crossTable), 
@@ -149,7 +172,25 @@ b <- cbind(as.data.frame(a$crossTable),
 rownames(b) <- NULL
 attr(b, "startRow") <- attr(a$modelMatrix, "startCol", exact = TRUE)
 
-FormulaSelection(b, ~geo * age)
+FormulaSelection(b, "age:geo")
+#>     age      geo  year   sum   max
+#> 1   old  Iceland Total   5.0   1.9
+#> 2   old Portugal Total  70.3  25.8
+#> 3   old    Spain Total 362.0 122.1
+#> 4 young  Iceland Total   5.6   1.9
+#> 5 young Portugal Total  38.5  14.2
+#> 6 young    Spain Total 199.4  69.1
+FormulaSelection(b, ~year - 1)
+#>     age   geo year   sum   max
+#> 1 Total Total 2014 222.3 120.3
+#> 2 Total Total 2015 225.0 119.6
+#> 3 Total Total 2016 233.5 122.1
+FormulaSelection(b, ~geo:age, logical = TRUE)
+#>  [1]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+#> [13]  TRUE  TRUE  TRUE
+
+k <- FormulaSelection(b, ~geo * age)
+k
 #>      age      geo  year   sum   max
 #> 1  Total    Total Total 680.8 122.1
 #> 2    old    Total Total 437.3 122.1
@@ -157,26 +198,18 @@ FormulaSelection(b, ~geo * age)
 #> 4  Total  Iceland Total  10.6   1.9
 #> 5  Total Portugal Total 108.8  25.8
 #> 6  Total    Spain Total 561.4 122.1
-#> 10   old  Iceland Total   5.0   1.9
-#> 11   old Portugal Total  70.3  25.8
-#> 12   old    Spain Total 362.0 122.1
-#> 13 young  Iceland Total   5.6   1.9
-#> 14 young Portugal Total  38.5  14.2
-#> 15 young    Spain Total 199.4  69.1
-FormulaSelection(b, "age:geo")
-#>      age      geo  year   sum   max
-#> 10   old  Iceland Total   5.0   1.9
-#> 11   old Portugal Total  70.3  25.8
-#> 12   old    Spain Total 362.0 122.1
-#> 13 young  Iceland Total   5.6   1.9
-#> 14 young Portugal Total  38.5  14.2
-#> 15 young    Spain Total 199.4  69.1
-FormulaSelection(b, ~year - 1)
-#>     age   geo year   sum   max
-#> 7 Total Total 2014 222.3 120.3
-#> 8 Total Total 2015 225.0 119.6
-#> 9 Total Total 2016 233.5 122.1
-FormulaSelection(b, ~geo:age, logical = TRUE)
-#>  [1]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE
-#> [13]  TRUE  TRUE  TRUE
+#> 7    old  Iceland Total   5.0   1.9
+#> 8    old Portugal Total  70.3  25.8
+#> 9    old    Spain Total 362.0 122.1
+#> 10 young  Iceland Total   5.6   1.9
+#> 11 young Portugal Total  38.5  14.2
+#> 12 young    Spain Total 199.4  69.1
+FormulaSelection(k, ~geo + age)
+#>     age      geo  year   sum   max
+#> 1 Total    Total Total 680.8 122.1
+#> 2   old    Total Total 437.3 122.1
+#> 3 young    Total Total 243.5  69.1
+#> 4 Total  Iceland Total  10.6   1.9
+#> 5 Total Portugal Total 108.8  25.8
+#> 6 Total    Spain Total 561.4 122.1
 ```
