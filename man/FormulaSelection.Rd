@@ -32,6 +32,8 @@ It is a generic function which means that methods for other input objects can be
 }
 \details{
 The selection is based on \code{startCol} or \code{startRow} attribute in input \code{x}.
+The \code{startCol} or \code{startRow}  attribute is preserved in the output,
+allowing the result to be used as input to another call.
 
 With \strong{formula as character}:
 \itemize{
@@ -63,6 +65,8 @@ x3 <- FormulaSelection(x, "age", intercept = TRUE)
 x4 <- FormulaSelection(x, c("1", "age"))
 x5 <- FormulaSelection(x, c("(Intercept)", "age"))
 
+FormulaSelection(x5, ~age - 1)
+
 
 a <- ModelMatrix(z, formula = ~age * geo + year, crossTable = TRUE)
 b <- cbind(as.data.frame(a$crossTable), 
@@ -72,8 +76,11 @@ b <- cbind(as.data.frame(a$crossTable),
 rownames(b) <- NULL
 attr(b, "startRow") <- attr(a$modelMatrix, "startCol", exact = TRUE)
 
-FormulaSelection(b, ~geo * age)
 FormulaSelection(b, "age:geo")
 FormulaSelection(b, ~year - 1)
 FormulaSelection(b, ~geo:age, logical = TRUE)
+
+k <- FormulaSelection(b, ~geo * age)
+k
+FormulaSelection(k, ~geo + age)
 }
