@@ -1,3 +1,7 @@
+## SSBtools x.x.x
+* Improvement to `FormulaSelection()` and its identical wrapper `formula_selection()`.
+  - The output can now be used as input to another call, 
+    as the `startCol` or `startRow` attribute is preserved.  
 
 ## SSBtools 1.8.9
 * Improved support for advanced `Extend0` functionality:
