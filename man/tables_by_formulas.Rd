@@ -14,7 +14,9 @@ tables_by_formulas(
   collapse_vars = NULL,
   total = "Total",
   hierarchical_extend0 = TRUE,
-  term_labels = FALSE
+  term_labels = FALSE,
+  double_vars = NULL,
+  collapse_double_vars = TRUE
 )
 }
 \arguments{
@@ -47,6 +49,14 @@ See "Details" for more information.}
 
 \item{term_labels}{Logical. If \code{TRUE}, a \code{term_labels} column (as constructed by \code{\link[=output_term_labels]{output_term_labels()}})
 is included as the first column of the output.}
+
+\item{double_vars}{A named list specifying pairs of variables for double
+substitution. The substitutions are performed by \code{table_fun}.
+When specified, the number of tables is doubled, with names prefixed
+by \code{a_} and \code{b_} for the first and second substitutions, respectively.}
+
+\item{collapse_double_vars}{Logical. If \code{TRUE} (the default), \code{collapse_vars}
+is automatically extended according to \code{double_vars}.}
 }
 \value{
 A single \code{data.frame} containing results for all tables defined in \code{table_formulas}.

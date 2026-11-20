@@ -44,6 +44,14 @@
 #'                              See "Details" for more information. 
 #' @param term_labels Logical. If `TRUE`, a `term_labels` column (as constructed by [output_term_labels()]) 
 #'                    is included as the first column of the output.
+#'                    
+#' @param double_vars A named list specifying pairs of variables for double
+#'   substitution. The substitutions are performed by `table_fun`.
+#'   When specified, the number of tables is doubled, with names prefixed
+#'   by `a_` and `b_` for the first and second substitutions, respectively.
+#'   
+#' @param collapse_double_vars Logical. If `TRUE` (the default), `collapse_vars`
+#'   is automatically extended according to `double_vars`.                  
 #'
 #' @return A single `data.frame` containing results for all tables defined in `table_formulas`.
 #' @export
@@ -71,14 +79,34 @@ tables_by_formulas <- function(data,
                                collapse_vars = NULL, 
                                total = "Total",
                                hierarchical_extend0 = TRUE,
-                               term_labels = FALSE) {
+                               term_labels = FALSE,
+                               double_vars = NULL,
+                               collapse_double_vars = TRUE) {
   
   if (length(substitute_vars)) {
     for (i in seq_along(table_formulas)) {
       table_formulas[[i]] <- substitute_formula_vars(table_formulas[[i]], substitute_vars)
     }
     substitute_vars_removed <- remove_included_substitute_elements(substitute_vars) 
+  } else {
+    substitute_vars_removed <- NULL 
   }
+  
+  if (collapse_double_vars && !is.null(double_vars)) {
+    if (is.null(collapse_vars)) {
+      collapse_vars <- list()
+    }
+    
+    missing_vars <- setdiff(names(double_vars), unlist(collapse_vars))
+    collapse_vars <- c(collapse_vars, as.list(setNames(missing_vars, missing_vars)))
+    
+    collapse_vars <- lapply(collapse_vars, \(x) {
+      unlist(lapply(x, \(v) {
+        if (v %in% names(double_vars)) double_vars[[v]] else v
+      }), use.names = FALSE)
+    })
+  }
+  
   
   if (!is.null(names(total))) {
     total <- update_total_reverse(total, collapse_vars)
@@ -93,11 +121,27 @@ tables_by_formulas <- function(data,
                  formula = formula, 
                  avoid_hierarchical = TRUE, avoidHierarchical = TRUE, 
                  total = total, 
-                 hierarchical_extend0 = hierarchical_extend0)
+                 hierarchical_extend0 = hierarchical_extend0,
+                 double_vars = double_vars)
   
   # Extract all attributes except names, class, and row.names
   preserved_attrs <- attributes(a)
   preserved_attrs <- preserved_attrs[setdiff(names(preserved_attrs), c("names", "class", "row.names"))]
+  
+  if (!is.null(double_vars)) {
+    double_vars_a <- lapply(double_vars, \(x) x[1])
+    double_vars_b <- lapply(double_vars, \(x) x[2])
+    
+    table_formulas_a <- lapply(table_formulas, substitute_formula_vars,
+                               replacements = double_vars_a)
+    table_formulas_b <- lapply(table_formulas, substitute_formula_vars,
+                               replacements = double_vars_b)
+    
+    names(table_formulas_a) <- paste0("a_", names(table_formulas))
+    names(table_formulas_b) <- paste0("b_", names(table_formulas))
+    
+    table_formulas <- c(table_formulas_a, table_formulas_b)
+  }
   
   table_memberships <- as.data.frame(matrix(NA, nrow(a), length(table_formulas)))
   names(table_memberships) <- names(table_formulas)
