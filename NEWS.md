@@ -2,6 +2,10 @@
 * Improvement to `FormulaSelection()` and its identical wrapper `formula_selection()`.
   - The output can now be used as input to another call, 
     as the `startCol` or `startRow` attribute is preserved.  
+* New function `formula_setdiff()`.  
+  - Part of the utility functions listed under `?formula_utils`.  
+  - Generate a difference formula: 
+        Returns a formula containing the terms in `formula_x` that are not present in `formula_y`.     
 
 ## SSBtools 1.8.9
 * Improved support for advanced `Extend0` functionality:
