@@ -5,7 +5,11 @@
 * New function `formula_setdiff()`.  
   - Part of the utility functions listed under `?formula_utils`.  
   - Generate a difference formula: 
-        Returns a formula containing the terms in `formula_x` that are not present in `formula_y`.     
+        Returns a formula containing the terms in `formula_x` that are not present in `formula_y`.
+* Added parameters `double_vars` and `collapse_double_vars` to `tables_by_formulas()`.
+  - Enables double substitution of variables and automatic collapsing of the resulting variables.
+  - Developed with Eurostat's requirements for double NACE reporting in mind.
+        
 
 ## SSBtools 1.8.9
 * Improved support for advanced `Extend0` functionality:
