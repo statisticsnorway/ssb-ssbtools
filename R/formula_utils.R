@@ -191,6 +191,46 @@ formula_term_labels <- function(formula, intercept = "(Intercept)") {
 
 
 
+
+#' Generate a difference formula
+#'
+#' Returns a formula containing the terms in `formula_x` that are not
+#' present in `formula_y`. 
+#'
+#' @param formula_x An R formula from which terms are selected.
+#' @param formula_y An R formula specifying terms to be excluded.
+#' @param env the environment for the output formula 
+#'
+#' @returns An R formula containing the terms present in `formula_x`
+#'   but not in `formula_y`.
+#'   
+#' @importFrom stats reformulate   
+#' @export
+#' @author Øyvind Langsrud
+#'
+#' @examples
+#' formula_x <- ~a * b + c
+#' formula_y <- ~a + b
+#' formula_setdiff(formula_x, formula_y)
+#'
+#' # The intercept is handled separately
+#' formula_setdiff(~a + b, ~a - 1)
+#' formula_setdiff(~a + b - 1, ~a)
+#'
+#' # Identical formulas
+#' formula_setdiff(~a + b, ~a + b)
+formula_setdiff <- function(formula_x, formula_y,  env = parent.frame()) {
+  diff_terms <- setdiff(
+    formula_term_labels(formula_x),
+    formula_term_labels(formula_y)
+  )
+  intercept <- "(Intercept)" %in% diff_terms
+  reformulate(setdiff(diff_terms, "(Intercept)"), intercept = intercept, env = env)
+}
+
+
+
+
 #' Functions for formula manipulation
 #' 
 #' @details
@@ -199,6 +239,7 @@ formula_term_labels <- function(formula, intercept = "(Intercept)") {
 #' *  \code{\link{formula_from_vars}}:  Generate model formula by specifying which variables have totals or not
 #' *  \code{\link{substitute_formula_vars}}: Replace variables in formula with sum of other variables
 #' *  \code{\link{formula_term_labels}}: Retrieve term labels from a formula
+#' *  \code{\link{formula_setdiff}}: Generate a difference formula
 #'
 #' @docType data
 #' @name formula_utils

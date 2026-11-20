@@ -96,6 +96,7 @@ export(fix_fun_amf)
 export(fix_vars_amf)
 export(formula_from_vars)
 export(formula_selection)
+export(formula_setdiff)
 export(formula_term_labels)
 export(get_colnames)
 export(hierarchies_as_vars)
@@ -149,6 +150,7 @@ importFrom(stats,
   hclust,
   model.frame,
   model.matrix,
+  reformulate,
   runif,
   setNames,
   terms
