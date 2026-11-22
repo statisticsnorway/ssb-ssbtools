@@ -117,12 +117,23 @@ tables_by_formulas <- function(data,
   
   attr(formula, "table_formulas") <- table_formulas
   
-  a <- table_fun(data, ..., 
-                 formula = formula, 
-                 avoid_hierarchical = TRUE, avoidHierarchical = TRUE, 
-                 total = total, 
-                 hierarchical_extend0 = hierarchical_extend0,
-                 double_vars = double_vars)
+  
+  # Avoid passing double_vars to table_fun when NULL
+  # Prevent unnecessary warnings from unused_dots checks.
+  if (is.null(double_vars)) {
+    a <- table_fun(data, ...,
+                   formula = formula,
+                   avoid_hierarchical = TRUE, avoidHierarchical = TRUE,
+                   total = total,
+                   hierarchical_extend0 = hierarchical_extend0)
+  } else {
+    a <- table_fun(data, ...,
+                   formula = formula,
+                   avoid_hierarchical = TRUE, avoidHierarchical = TRUE,
+                   total = total,
+                   hierarchical_extend0 = hierarchical_extend0,
+                   double_vars = double_vars)
+  }
   
   # Extract all attributes except names, class, and row.names
   preserved_attrs <- attributes(a)
