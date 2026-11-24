@@ -27,6 +27,8 @@ GaussSuppression(
   table_id = NULL,
   auto_anySumNOTprimary = TRUE,
   auto_subSumAny = TRUE,
+  run_gauss = TRUE,
+  force_gauss = FALSE,
   ...
 )
 }
@@ -111,6 +113,16 @@ duplicate row removal, as the check may then produce incorrect results.}
 \item{auto_subSumAny}{When \code{TRUE} (default), and \code{singletonMethod} is \code{"anySum"},
 it is internally changed to \code{"subSumAny"} if there are forced cells.
 This is done to give information about unsafe cells.}
+
+\item{run_gauss}{Logical. If \code{FALSE}, an empty solution is returned instead
+of running the algorithm. Typically used when a fast but incorrect
+result is acceptable.}
+
+\item{force_gauss}{Logical. If \code{TRUE}, overrides \code{run_gauss} and ensures
+that the algorithm is executed. Intended primarily for developers
+implementing functions that require the algorithm to run regardless
+of the \code{run_gauss} setting. The two parameters serve essentially
+the same purpose, but have opposite default values.}
 
 \item{...}{Extra unused parameters}
 }

@@ -2,6 +2,16 @@
 * Improvement to `FormulaSelection()` and its identical wrapper `formula_selection()`.
   - The output can now be used as input to another call, 
     as the `startCol` or `startRow` attribute is preserved.  
+* New function `formula_setdiff()`.  
+  - Part of the utility functions listed under `?formula_utils`.  
+  - Generate a difference formula: 
+        Returns a formula containing the terms in `formula_x` that are not present in `formula_y`.
+* Added parameters `double_vars` and `collapse_double_vars` to `tables_by_formulas()`.
+  - Enables double substitution of variables and automatic collapsing of the resulting variables.
+  - Developed with Eurostat's requirements for double NACE reporting in mind.
+* Added parameters `run_gauss` and `force_gauss` to `GaussSuppression()`.
+  - In particular, `run_gauss = FALSE` allows the algorithm to be skipped when a fast but incorrect result is acceptable.
+        
 
 ## SSBtools 1.8.9
 * Improved support for advanced `Extend0` functionality:
