@@ -218,6 +218,9 @@
   [`names_by_variable()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/filter_by_variable.md)
   : Filter a List of Items or Retrieve Names by a Variable
 
+- [`formula_setdiff()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_setdiff.md)
+  : Generate a difference formula
+
 - [`formula_utils`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_utils.md)
   : Functions for formula manipulation
 

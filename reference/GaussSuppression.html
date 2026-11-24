@@ -73,6 +73,8 @@ The singleton problem and the related problem of zeros are also handled.</p>
 <span>  table_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_anySumNOTprimary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  auto_subSumAny <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  run_gauss <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  force_gauss <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -202,6 +204,20 @@ duplicate row removal, as the check may then produce incorrect results.</p></dd>
 <dd><p>When <code>TRUE</code> (default), and <code>singletonMethod</code> is <code>"anySum"</code>,
 it is internally changed to <code>"subSumAny"</code> if there are forced cells.
 This is done to give information about unsafe cells.</p></dd>
+
+
+<dt id="arg-run-gauss">run_gauss<a class="anchor" aria-label="anchor" href="#arg-run-gauss"></a></dt>
+<dd><p>Logical. If <code>FALSE</code>, an empty solution is returned instead
+of running the algorithm. Typically used when a fast but incorrect
+result is acceptable.</p></dd>
+
+
+<dt id="arg-force-gauss">force_gauss<a class="anchor" aria-label="anchor" href="#arg-force-gauss"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, overrides <code>run_gauss</code> and ensures
+that the algorithm is executed. Intended primarily for developers
+implementing functions that require the algorithm to run regardless
+of the <code>run_gauss</code> setting. The two parameters serve essentially
+the same purpose, but have opposite default values.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

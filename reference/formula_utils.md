@@ -16,3 +16,6 @@ Functions for formula manipulation
 
 - [`formula_term_labels`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_term_labels.md):
   Retrieve term labels from a formula
+
+- [`formula_setdiff`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_setdiff.md):
+  Generate a difference formula

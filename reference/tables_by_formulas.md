@@ -20,7 +20,9 @@ tables_by_formulas(
   collapse_vars = NULL,
   total = "Total",
   hierarchical_extend0 = TRUE,
-  term_labels = FALSE
+  term_labels = FALSE,
+  double_vars = NULL,
+  collapse_double_vars = TRUE
 )
 ```
 
@@ -84,6 +86,18 @@ tables_by_formulas(
   Logical. If `TRUE`, a `term_labels` column (as constructed by
   [`output_term_labels()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/output_term_labels.md))
   is included as the first column of the output.
+
+- double_vars:
+
+  A named list specifying pairs of variables for double substitution.
+  The substitutions are performed by `table_fun`. When specified, the
+  number of tables is doubled, with names prefixed by `a_` and `b_` for
+  the first and second substitutions, respectively.
+
+- collapse_double_vars:
+
+  Logical. If `TRUE` (the default), `collapse_vars` is automatically
+  extended according to `double_vars`.
 
 ## Value
 

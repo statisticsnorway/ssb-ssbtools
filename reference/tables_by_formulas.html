@@ -57,7 +57,9 @@ that contains the results for all tables.</p>
 <span>  collapse_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  total <span class="op">=</span> <span class="st">"Total"</span>,</span>
 <span>  hierarchical_extend0 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  term_labels <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  term_labels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  double_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  collapse_double_vars <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -113,6 +115,18 @@ See "Details" for more information.</p></dd>
 <dt id="arg-term-labels">term_labels<a class="anchor" aria-label="anchor" href="#arg-term-labels"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, a <code>term_labels</code> column (as constructed by <code><a href="output_term_labels.html">output_term_labels()</a></code>)
 is included as the first column of the output.</p></dd>
+
+
+<dt id="arg-double-vars">double_vars<a class="anchor" aria-label="anchor" href="#arg-double-vars"></a></dt>
+<dd><p>A named list specifying pairs of variables for double
+substitution. The substitutions are performed by <code>table_fun</code>.
+When specified, the number of tables is doubled, with names prefixed
+by <code>a_</code> and <code>b_</code> for the first and second substitutions, respectively.</p></dd>
+
+
+<dt id="arg-collapse-double-vars">collapse_double_vars<a class="anchor" aria-label="anchor" href="#arg-collapse-double-vars"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (the default), <code>collapse_vars</code>
+is automatically extended according to <code>double_vars</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

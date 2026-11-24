@@ -34,6 +34,8 @@ GaussSuppression(
   table_id = NULL,
   auto_anySumNOTprimary = TRUE,
   auto_subSumAny = TRUE,
+  run_gauss = TRUE,
+  force_gauss = FALSE,
   ...
 )
 ```
@@ -196,6 +198,20 @@ GaussSuppression(
   When `TRUE` (default), and `singletonMethod` is `"anySum"`, it is
   internally changed to `"subSumAny"` if there are forced cells. This is
   done to give information about unsafe cells.
+
+- run_gauss:
+
+  Logical. If `FALSE`, an empty solution is returned instead of running
+  the algorithm. Typically used when a fast but incorrect result is
+  acceptable.
+
+- force_gauss:
+
+  Logical. If `TRUE`, overrides `run_gauss` and ensures that the
+  algorithm is executed. Intended primarily for developers implementing
+  functions that require the algorithm to run regardless of the
+  `run_gauss` setting. The two parameters serve essentially the same
+  purpose, but have opposite default values.
 
 - ...:
 
