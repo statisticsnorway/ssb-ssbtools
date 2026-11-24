@@ -20,13 +20,13 @@ Source:
 [`DESCRIPTION`](https://github.com/statisticsnorway/ssb-ssbtools/blob/master/DESCRIPTION)
 
 Langsrud Ø, Lupp D (2026). *SSBtools: Algorithms and Tools for Tabular
-Statistics and Hierarchical Computations*. R package version 1.8.9,
+Statistics and Hierarchical Computations*. R package version 1.9.0,
 <https://github.com/statisticsnorway/ssb-ssbtools>.
 
     @Manual{,
       title = {SSBtools: Algorithms and Tools for Tabular Statistics and Hierarchical Computations},
       author = {Øyvind Langsrud and Daniel Lupp},
       year = {2026},
-      note = {R package version 1.8.9},
+      note = {R package version 1.9.0},
       url = {https://github.com/statisticsnorway/ssb-ssbtools},
     }

@@ -39,18 +39,18 @@ formula_x <- ~a * b + c
 formula_y <- ~a + b
 formula_setdiff(formula_x, formula_y)
 #> ~c + a:b - 1
-#> <environment: 0x5fa3d154b140>
+#> <environment: 0x58e6d1b3c6b8>
 
 # The intercept is handled separately
 formula_setdiff(~a + b, ~a - 1)
 #> ~b
-#> <environment: 0x5fa3d154b140>
+#> <environment: 0x58e6d1b3c6b8>
 formula_setdiff(~a + b - 1, ~a)
 #> ~b - 1
-#> <environment: 0x5fa3d154b140>
+#> <environment: 0x58e6d1b3c6b8>
 
 # Identical formulas
 formula_setdiff(~a + b, ~a + b)
 #> ~-1
-#> <environment: 0x5fa3d154b140>
+#> <environment: 0x58e6d1b3c6b8>
 ```

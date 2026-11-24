@@ -9,7 +9,7 @@ present in formula_y."><meta property="og:image" content="https://statisticsnorw
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,20 +76,20 @@ but not in <code>formula_y</code>.</p>
 <span class="r-in"><span><span class="va">formula_y</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span></span></span>
 <span class="r-in"><span><span class="fu">formula_setdiff</span><span class="op">(</span><span class="va">formula_x</span>, <span class="va">formula_y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~c + a:b - 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5fa3d154b140&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x58e6d1b3c6b8&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The intercept is handled separately</span></span></span>
 <span class="r-in"><span><span class="fu">formula_setdiff</span><span class="op">(</span><span class="op">~</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span>, <span class="op">~</span><span class="va">a</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5fa3d154b140&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x58e6d1b3c6b8&gt;</span>
 <span class="r-in"><span><span class="fu">formula_setdiff</span><span class="op">(</span><span class="op">~</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">-</span> <span class="fl">1</span>, <span class="op">~</span><span class="va">a</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~b - 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5fa3d154b140&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x58e6d1b3c6b8&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Identical formulas</span></span></span>
 <span class="r-in"><span><span class="fu">formula_setdiff</span><span class="op">(</span><span class="op">~</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span>, <span class="op">~</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~-1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5fa3d154b140&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x58e6d1b3c6b8&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -1,5 +1,30 @@
 # Changelog
 
+## SSBtools 1.9.0
+
+- Improvement to
+  [`FormulaSelection()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSelection.md)
+  and its identical wrapper
+  [`formula_selection()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/FormulaSelection.md).
+  - The output can now be used as input to another call, as the
+    `startCol` or `startRow` attribute is preserved.  
+- New function
+  [`formula_setdiff()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_setdiff.md).
+  - Part of the utility functions listed under
+    [`?formula_utils`](https://statisticsnorway.github.io/ssb-ssbtools/reference/formula_utils.md).  
+  - Generate a difference formula: Returns a formula containing the
+    terms in `formula_x` that are not present in `formula_y`.
+- Added parameters `double_vars` and `collapse_double_vars` to
+  [`tables_by_formulas()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/tables_by_formulas.md).
+  - Enables double substitution of variables and automatic collapsing of
+    the resulting variables.
+  - Developed with Eurostat’s requirements for double NACE reporting in
+    mind.
+- Added parameters `run_gauss` and `force_gauss` to
+  [`GaussSuppression()`](https://statisticsnorway.github.io/ssb-ssbtools/reference/GaussSuppression.md).
+  - In particular, `run_gauss = FALSE` allows the algorithm to be
+    skipped when a fast but incorrect result is acceptable.
+
 ## SSBtools 1.8.9
 
 CRAN release: 2026-09-24

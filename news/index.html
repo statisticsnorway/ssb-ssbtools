@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SSBtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,23 @@
       <small>Source: <a href="https://github.com/statisticsnorway/ssb-ssbtools/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.9.0" id="ssbtools-190">SSBtools 1.9.0<a class="anchor" aria-label="anchor" href="#ssbtools-190"></a></h2>
+<ul><li>Improvement to <code><a href="../reference/FormulaSelection.html">FormulaSelection()</a></code> and its identical wrapper <code><a href="../reference/FormulaSelection.html">formula_selection()</a></code>.
+<ul><li>The output can now be used as input to another call, as the <code>startCol</code> or <code>startRow</code> attribute is preserved.<br></li>
+</ul></li>
+<li>New function <code><a href="../reference/formula_setdiff.html">formula_setdiff()</a></code>.
+<ul><li>Part of the utility functions listed under <code><a href="../reference/formula_utils.html">?formula_utils</a></code>.<br></li>
+<li>Generate a difference formula: Returns a formula containing the terms in <code>formula_x</code> that are not present in <code>formula_y</code>.</li>
+</ul></li>
+<li>Added parameters <code>double_vars</code> and <code>collapse_double_vars</code> to <code><a href="../reference/tables_by_formulas.html">tables_by_formulas()</a></code>.
+<ul><li>Enables double substitution of variables and automatic collapsing of the resulting variables.</li>
+<li>Developed with Eurostat’s requirements for double NACE reporting in mind.</li>
+</ul></li>
+<li>Added parameters <code>run_gauss</code> and <code>force_gauss</code> to <code><a href="../reference/GaussSuppression.html">GaussSuppression()</a></code>.
+<ul><li>In particular, <code>run_gauss = FALSE</code> allows the algorithm to be skipped when a fast but incorrect result is acceptable.</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.9" id="ssbtools-189">SSBtools 1.8.9<a class="anchor" aria-label="anchor" href="#ssbtools-189"></a></h2><p class="text-muted">CRAN release: 2026-09-24</p>
 <ul><li>Improved support for advanced <code>Extend0</code> functionality:
